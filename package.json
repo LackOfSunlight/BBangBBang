@@ -7,9 +7,9 @@
   "scripts": {
     "start": "node dist/app.js",
     "build": "tsc",
-    "dev": "tsx src/app.ts",
+    "dev": "tsx game.server/src/app.ts",
     "copy-assets": "copyfiles --up 1 \"assets/**/*\" dist ",
-    "protoc": "protoc --ts_out game.server/src/generated --ts_opt long_type_string,add_js_extension --proto_path game.server/src/proto game.server/src/proto/gamePacket.proto game.server/src/proto/packet/room_actions.proto game.server/src/proto/packet/notifications.proto game.server/src/proto/packet/game_actions.proto game.server/src/proto/packet/auth.proto game.server/src/proto/common/types.proto game.server/src/proto/common/enums.proto"
+    "protoc": "protoc --ts_out game.server/src/generated --ts_opt long_type_string --proto_path game.server/src/proto game.server/src/proto/common/enums.proto game.server/src/proto/common/types.proto game.server/src/proto/packet/auth.proto game.server/src/proto/packet/game_actions.proto game.server/src/proto/packet/notifications.proto game.server/src/proto/packet/room_actions.proto game.server/src/proto/gamePacket.proto"
   },
   "repository": {
     "type": "git",

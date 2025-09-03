@@ -10,15 +10,15 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { AnimationType } from "../common/enums.js";
-import { WarningType } from "../common/enums.js";
-import { WinType } from "../common/enums.js";
-import { PhaseType } from "../common/enums.js";
-import { CardType } from "../common/enums.js";
-import { CharacterPositionData } from "../common/types.js";
-import { GameStateData } from "../common/types.js";
-import { RoomData } from "../common/types.js";
-import { UserData } from "../common/types.js";
+import { AnimationType } from "../common/enums";
+import { WarningType } from "../common/enums";
+import { WinType } from "../common/enums";
+import { PhaseType } from "../common/enums";
+import { CardType } from "../common/enums";
+import { CharacterPositionData } from "../common/types";
+import { GameStateData } from "../common/types";
+import { RoomData } from "../common/types";
+import { UserData } from "../common/types";
 /**
  * @generated from protobuf message S2CJoinRoomNotification
  */

@@ -10,11 +10,11 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { SelectCardType } from "../common/enums.js";
-import { CardData } from "../common/types.js";
-import { ReactionType } from "../common/enums.js";
-import { CardType } from "../common/enums.js";
-import { GlobalFailCode } from "../common/enums.js";
+import { SelectCardType } from "../common/enums";
+import { CardData } from "../common/types";
+import { ReactionType } from "../common/enums";
+import { CardType } from "../common/enums";
+import { GlobalFailCode } from "../common/enums";
 /**
  * 게임 시작 전 역할 및 캐릭터 셔플 요청
  *

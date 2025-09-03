@@ -10,12 +10,12 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { CharacterStateType } from "./enums.js";
-import { PhaseType } from "./enums.js";
-import { CardType } from "./enums.js";
-import { RoleType } from "./enums.js";
-import { CharacterType } from "./enums.js";
-import { RoomStateType } from "./enums.js";
+import { CharacterStateType } from "./enums";
+import { PhaseType } from "./enums";
+import { CardType } from "./enums";
+import { RoleType } from "./enums";
+import { CharacterType } from "./enums";
+import { RoomStateType } from "./enums";
 /**
  *
  * 게임 데이터 명세

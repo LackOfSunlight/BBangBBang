@@ -10,8 +10,8 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { GlobalFailCode } from "../common/enums.js";
-import { RoomData } from "../common/types.js";
+import { GlobalFailCode } from "../common/enums";
+import { RoomData } from "../common/types";
 /**
  * @generated from protobuf message C2SCreateRoomRequest
  */

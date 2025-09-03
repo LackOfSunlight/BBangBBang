@@ -1,15 +1,22 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "nodenext",
-    "types": ["node"],
-    "moduleResolution": "nodenext",
-    "outDir": "./dist",
     "rootDir": "./game.server/src",
+    "outDir": "./game.server/dist",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "target": "esnext",
+    "types": ["node"],
+    "sourceMap": false,
+    "declaration": true,
+    "declarationMap": true,
     "strict": true,
-    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
     "skipLibCheck": true
   },
-  "include": ["game.server/src/**/*"],
-   "exclude": ["dist"] 
+  "include": [
+    "game.server/src/*/"
+  ]
 }
