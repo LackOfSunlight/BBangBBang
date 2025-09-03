@@ -10,8 +10,8 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserData } from "../common/types.js";
-import { GlobalFailCode } from "../common/enums.js";
+import { UserData } from "../common/types";
+import { GlobalFailCode } from "../common/enums";
 /**
  *
  * 패킷 명세
