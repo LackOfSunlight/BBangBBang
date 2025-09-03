@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+import "common/enums.proto";
+import "common/types.proto";
+
+message C2SCreateRoomRequest {
+    string name = 1;
+    int32 maxUserNum = 2;
+}
+
+message S2CCreateRoomResponse {
+    bool success = 1;
+    RoomData room = 2;
+    GlobalFailCode failCode = 3;
+}
+
+message C2SGetRoomListRequest {
+    
+}
+
+message S2CGetRoomListResponse{
+    repeated RoomData rooms = 1;
+}
+
+message C2SJoinRoomRequest {
+    int32 roomId = 1;
+}
+
+message S2CJoinRoomResponse {
+    bool success = 1;
+    RoomData room = 2;
+    GlobalFailCode failCode = 3;
+}
+
+message C2SJoinRandomRoomRequest {
+}
+
+message S2CJoinRandomRoomResponse {
+    bool success = 1;
+    RoomData room = 2;
+    GlobalFailCode failCode = 3;
+}
+
+message C2SLeaveRoomRequest {
+
+}
+
+message S2CLeaveRoomResponse {
+    bool success = 1;
+    GlobalFailCode failCode = 2;
+}

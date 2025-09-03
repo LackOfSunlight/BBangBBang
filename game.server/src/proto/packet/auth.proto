@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+import "common/enums.proto";
+import "common/types.proto";
+
+/* 
+    패킷 명세
+*/
+message C2SRegisterRequest {
+    string email = 1;
+    string nickname = 2;
+    string password = 3;
+}
+
+message S2CRegisterResponse {
+    bool success = 1;
+    string message = 2;
+    GlobalFailCode failCode = 3;
+}
+
+message C2SLoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message S2CLoginResponse {
+    bool success = 1;
+    string message = 2;
+    string token = 3;
+    UserData myInfo = 4;
+    GlobalFailCode failCode = 5;
+}

@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+import "common/enums.proto";
+import "common/types.proto";
+
+// 게임 시작 전 역할 및 캐릭터 셔플 요청
+message C2SGamePrepareRequest {
+
+}
+
+message S2CGamePrepareResponse {
+    bool success = 1;
+    GlobalFailCode failCode = 2;
+}
+
+message C2SGameStartRequest {
+
+}
+
+message S2CGameStartResponse {
+    bool success = 1;
+    GlobalFailCode failCode = 2;
+}
+
+message C2SPositionUpdateRequest {
+    double x = 1;
+    double y = 2;
+}
+
+message S2CPositionUpdateResponse {
+    bool success = 1;
+    GlobalFailCode failCode = 2;
+}
+
+message C2SUseCardRequest {
+    CardType cardType = 1;
+    int64 targetUserId = 2; // 타겟이 없으면 빈 값
+}
+
+message S2CUseCardResponse { // 성공 여부만 반환하고 대상 유저 효과는 S2CUserUpdateNotification로 통지
+    bool success = 1;
+    GlobalFailCode failCode = 2;
+}
+
+message C2SFleaMarketPickRequest {
+    int32 pickIndex = 1;
+}
+
+message S2CFleaMarketPickResponse {
+    bool success = 1;
+    GlobalFailCode failCode = 2;
+}
+
+message C2SReactionRequest {
+    ReactionType reactionType = 1; // NOT_USE_CARD = 1
+}
+
+message S2CReactionResponse {
+    bool success = 1;
+    GlobalFailCode failCode = 2;
+}
+
+message C2SDestroyCardRequest {
+    repeated CardData destroyCards = 1;
+}
+
+message S2CDestroyCardResponse {
+    repeated CardData handCards = 1;
+}
+
+message C2SCardSelectRequest {
+    SelectCardType selectType = 1; // 0: 핸드, 1: 장비, 2: 무기, 3: 디버프
+    CardType selectCardType = 2; // selectType이  0일 경우 0, / 1, 2, 3일 경우 원하는 장비의 cardType
+}
+
+message S2CCardSelectResponse {
+    bool success = 1;
+    GlobalFailCode failCode = 2;
+}
+
+message C2SPassDebuffRequest {
+    int64 targetUserId = 1;
+    CardType debuffCardType = 2;
+}
+
+message S2CPassDebuffResponse {
+    bool success = 1;
+    GlobalFailCode failCode = 2;
+}
