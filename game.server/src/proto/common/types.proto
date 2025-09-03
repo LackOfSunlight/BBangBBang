@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+import "common/enums.proto";
+
+/*
+    게임 데이터 명세
+*/
+message RoomData {
+    int32 id = 1;
+    int64 ownerId = 2;
+    string name = 3;
+    int32 maxUserNum = 4;
+    RoomStateType state = 5; // WAIT 0, PREPARE 1, INAGAME 2
+    repeated UserData users = 6; // 인덱스 기반으로 턴 진행
+}
+
+// 입장했을 때는 랜덤으로 체력만큼 카드 받음.
+// 하루 종료 시 체력만큼의 카드만 남길 수 있음.
+// 이후 낮이 될 때마다 카드를 두 장 받고 시작함.
+message UserData {
+    int64 id = 1;
+    string nickname = 2;
+    CharacterData character = 3;
+}
+
+message CharacterData {
+    CharacterType characterType = 1;
+    RoleType roleType = 2;
+    int32 hp = 3;
+    int32 weapon = 4;
+    CharacterStateInfoData stateInfo = 5;
+    repeated int32 equips = 6;
+    repeated int32 debuffs = 7;
+    repeated CardData handCards = 8;
+    int32 bbangCount = 9;
+    int32 handCardsCount = 10;
+}
+
+message CharacterPositionData {
+    int64 id = 1;
+    double x = 2;
+    double y = 3;
+}
+
+message CardData {
+    CardType type = 1;
+    int32 count = 2;
+}
+
+message GameStateData {
+    PhaseType phaseType = 1; // DAY 1, EVENING 2, END 3 (하루 종료 시 카드 버리는 턴)
+    int64 nextPhaseAt = 2; // 다음 페이즈 시작 시점(밀리초 타임스탬프)
+}
+
+message CharacterStateInfoData {
+    CharacterStateType state = 1;
+    CharacterStateType nextState = 2;
+    int64 nextStateAt = 3; // state가 nextState로 풀리는 밀리초 타임스탬프. state가 NONE이면 0
+    int64 stateTargetUserId = 4; // state에 target이 있을 경우
+}

@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+import "common/enums.proto";
+import "common/types.proto";
+
+message S2CJoinRoomNotification {
+    UserData joinUser = 1;
+}
+
+message S2CLeaveRoomNotification {
+    int64 userId = 1;
+}
+
+message S2CGamePrepareNotification {
+    RoomData room = 1;
+}
+
+message S2CGameStartNotification {
+    GameStateData gameState = 1;
+    repeated UserData users = 2;
+    repeated CharacterPositionData characterPositions = 3;
+}
+
+message S2CPositionUpdateNotification {
+    repeated CharacterPositionData characterPositions = 1;
+}
+
+message S2CUseCardNotification {
+    CardType cardType = 1;
+    int64 userId = 2;
+    int64 targetUserId = 3; // 타겟이 없으면 0
+}
+
+message S2CEquipCardNotification {
+    CardType cardType = 1;
+    int64 userId = 2;
+}
+
+message S2CCardEffectNotification {
+    CardType cardType = 1;
+    int64 userId = 2;
+    bool success = 3;
+}
+
+message S2CFleaMarketNotification {
+    repeated CardType cardTypes = 1;
+    repeated int32 pickIndex = 2;
+}
+
+message S2CUserUpdateNotification {
+    repeated UserData user = 1;
+}
+
+message S2CPhaseUpdateNotification {
+    PhaseType phaseType = 1; // DAY 1, END 3 (EVENING은 필요시 추가)
+    int64 nextPhaseAt = 2; // 다음 페이즈 시작 시점(밀리초 타임스탬프)
+    repeated CharacterPositionData characterPositions = 3; // 변경된 캐릭터 위치
+}
+
+message S2CGameEndNotification {
+    repeated int64 winners = 1;
+    WinType winType = 2;
+}
+
+message S2CWarningNotification {
+    WarningType warningType = 1;
+    int64 expectedAt = 2; // 밀리초 타임스탬프
+}
+
+message S2CAnimationNotification {
+    int64 userId = 1;
+    AnimationType animationType = 2;
+}

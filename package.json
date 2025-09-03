@@ -1,0 +1,36 @@
+{
+  "name": "bbangbbang",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node dist/app.js",
+    "build": "tsc",
+    "dev": "tsx src/app.ts",
+    "copy-assets": "copyfiles --up 1 \"assets/**/*\" dist ",
+    "protoc": "protoc --ts_out game.server/src/generated --ts_opt long_type_string,add_js_extension --proto_path game.server/src/proto game.server/src/proto/gamePacket.proto game.server/src/proto/packet/room_actions.proto game.server/src/proto/packet/notifications.proto game.server/src/proto/packet/game_actions.proto game.server/src/proto/packet/auth.proto game.server/src/proto/common/types.proto game.server/src/proto/common/enums.proto"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LackOfSunlight/BBangBBang.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LackOfSunlight/BBangBBang/issues"
+  },
+  "homepage": "https://github.com/LackOfSunlight/BBangBBang#readme",
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@protobuf-ts/plugin": "^2.11.1",
+    "@protobuf-ts/runtime": "^2.11.1",
+    "protobufjs": "^7.5.4"
+  }
+}

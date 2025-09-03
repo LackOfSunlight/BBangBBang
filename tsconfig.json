@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "nodenext",
+    "types": ["node"],
+    "moduleResolution": "nodenext",
+    "outDir": "./dist",
+    "rootDir": "./game.server/src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["game.server/src/**/*"],
+   "exclude": ["dist"] 
+}
