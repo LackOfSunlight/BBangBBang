@@ -45,4 +45,52 @@ export declare enum GamePacketType {
     warningNotification = "warningNotification",
     animationNotification = "animationNotification"
 }
+export declare const gamePackType: {
+    readonly registerRequest: "registerRequest";
+    readonly registerResponse: "registerResponse";
+    readonly loginRequest: "loginRequest";
+    readonly loginResponse: "loginResponse";
+    readonly createRoomRequest: "createRoomRequest";
+    readonly createRoomResponse: "createRoomResponse";
+    readonly getRoomListRequest: "getRoomListRequest";
+    readonly getRoomListResponse: "getRoomListResponse";
+    readonly joinRoomRequest: "joinRoomRequest";
+    readonly joinRoomResponse: "joinRoomResponse";
+    readonly joinRandomRoomRequest: "joinRandomRoomRequest";
+    readonly joinRandomRoomResponse: "joinRandomRoomResponse";
+    readonly joinRoomNotification: "joinRoomNotification";
+    readonly leaveRoomRequest: "leaveRoomRequest";
+    readonly leaveRoomResponse: "leaveRoomResponse";
+    readonly leaveRoomNotification: "leaveRoomNotification";
+    readonly gamePrepareRequest: "gamePrepareRequest";
+    readonly gamePrepareResponse: "gamePrepareResponse";
+    readonly gamePrepareNotification: "gamePrepareNotification";
+    readonly gameStartRequest: "gameStartRequest";
+    readonly gameStartResponse: "gameStartResponse";
+    readonly gameStartNotification: "gameStartNotification";
+    readonly positionUpdateRequest: "positionUpdateRequest";
+    readonly positionUpdateNotification: "positionUpdateNotification";
+    readonly useCardRequest: "useCardRequest";
+    readonly useCardResponse: "useCardResponse";
+    readonly useCardNotification: "useCardNotification";
+    readonly equipCardNotification: "equipCardNotification";
+    readonly cardEffectNotification: "cardEffectNotification";
+    readonly fleaMarketNotification: "fleaMarketNotification";
+    readonly fleaMarketPickRequest: "fleaMarketPickRequest";
+    readonly fleaMarketPickResponse: "fleaMarketPickResponse";
+    readonly userUpdateNotification: "userUpdateNotification";
+    readonly phaseUpdateNotification: "phaseUpdateNotification";
+    readonly reactionRequest: "reactionRequest";
+    readonly reactionResponse: "reactionResponse";
+    readonly destroyCardRequest: "destroyCardRequest";
+    readonly destroyCardResponse: "destroyCardResponse";
+    readonly gameEndNotification: "gameEndNotification";
+    readonly cardSelectRequest: "cardSelectRequest";
+    readonly cardSelectResponse: "cardSelectResponse";
+    readonly passDebuffRequest: "passDebuffRequest";
+    readonly passDebuffResponse: "passDebuffResponse";
+    readonly warningNotification: "warningNotification";
+    readonly animationNotification: "animationNotification";
+};
+export type gamePackType = typeof GamePacketType[keyof typeof GamePacketType];
 //# sourceMappingURL=gamePacketType.d.ts.map
