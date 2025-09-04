@@ -1,6 +1,5 @@
 // server.ts
 import { createServer } from "net";
-import { handleData } from "./handlers/packetHandler.js";
 import  onConnection  from "./sockets/on.connection.js";
 
 const PORT = 3000;
