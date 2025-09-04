@@ -183,4 +183,3 @@ export const gamePackType = {
 
 // literal union 타입 자동 추출
 export type gamePackType = typeof GamePacketType[keyof typeof GamePacketType];
-

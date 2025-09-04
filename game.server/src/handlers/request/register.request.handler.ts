@@ -2,6 +2,7 @@ import { Socket } from "net";
 import { GamePacket } from "../../generated/gamePacket.js";
 import { getGamePacketType } from "../../utils/type.converter.js";
 import { gamePackType } from "../../enums/gamePacketType.js";
+import registerResponseHandler from "../response/register.response.handler.js";
 
 const registerRequestHandler = (socket: Socket, gamePacket: GamePacket) => {
   const payload = getGamePacketType(gamePacket, gamePackType.registerRequest);
@@ -12,5 +13,7 @@ const registerRequestHandler = (socket: Socket, gamePacket: GamePacket) => {
     console.log(payload.registerRequest.nickname);
     console.log(payload.registerRequest.password);
   }
+
+  registerResponseHandler(socket, gamePacket);
 };
 export default registerRequestHandler;
