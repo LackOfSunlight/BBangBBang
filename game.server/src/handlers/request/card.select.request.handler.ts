@@ -4,7 +4,8 @@ import { GamePacket } from "../../generated/gamePacket.js";
 import { GamePacketType } from "../../enums/gamePacketType.js";
 import { getGamePacketType } from "../../utils/type.converter.js"
 
-const cardSelectRequestHandler = (socket:Socket, gamePacket:GamePacket) =>{
+const cardSelectRequestHandler = (socket:Socket, gamePacket: GamePacket) =>{
+
 
 
 

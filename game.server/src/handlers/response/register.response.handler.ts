@@ -7,18 +7,17 @@ import { GlobalFailCode } from "../../generated/common/enums.js";
 import { sendData } from "../../utils/sendData.js";
 
 const registerResponseHandler = (socket: Socket, gamePacket: GamePacket) => {
-  const newGamePacket: GamePacket = {
-    payload: {
-      oneofKind: "registerResponse",
-      registerResponse: {
-        success: true,
-        message: "성공",
-        failCode: GlobalFailCode.NONE_FAILCODE,
-      },
-    },
-  };
 
-  sendData(socket, newGamePacket, GamePacketType.registerResponse);
+  const payload = getGamePacketType(gamePacket, gamePackType.registerResponse);
+
+  if(payload){
+    if(payload.registerResponse.failCode === GlobalFailCode.NONE_FAILCODE){
+      payload.registerResponse.message = '회원가입을 완료하였습니다.'
+    }
+  }
+
+  sendData(socket, gamePacket, GamePacketType.registerResponse);
+
 };
 
 export default registerResponseHandler;

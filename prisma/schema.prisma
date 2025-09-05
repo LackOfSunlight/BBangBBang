@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../game.server/src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+  nickname String @unique
+  createdAt DateTime @default(now())
+
+  roomsOwned Room[]       @relation("RoomOwner")     // 내가 만든 방들
+  rooms      UserData[]   @relation("UserRooms")     // 내가 참가한 방들
+}
+
+model Room{
+  id Int @id  @default(autoincrement())
+  ownerId Int
+  name String
+  mazUserNum Int
+  state RoomStateType
+  createdAt DateTime @default(now())
+
+  owner   User       @relation("RoomOwner", fields: [ownerId], references: [id])
+  users   UserData[] @relation("RoomUsers")
+}
+
+model UserData{
+  userId Int
+  roomId Int
+
+  user User @relation("UserRooms", fields: [userId], references: [id])
+  room Room @relation("RoomUsers", fields: [roomId], references: [id])
+
+  @@id([userId, roomId]) // 복합 PK: 같은 유저가 같은 방에 중복 참가 불가
+}
+
+enum RoomStateType {
+  
+    WAIT
+    PREPARE
+    INGAME
+}
