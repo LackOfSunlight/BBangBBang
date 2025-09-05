@@ -7,9 +7,9 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const generatedDir = path.join(__dirname, '..', 'game.server', 'dist', 'generated');
+const distDir = path.join(__dirname, '..', 'game.server', 'dist');
 
-globSync(path.join(generatedDir, '**', '*.js')).forEach(file => {
+globSync(path.join(distDir, '**', '*.js')).forEach(file => {
     let content = fs.readFileSync(file, 'utf8');
     let modified = false;
 
@@ -31,4 +31,4 @@ globSync(path.join(generatedDir, '**', '*.js')).forEach(file => {
     }
 });
 
-console.log('Finished adding .js extensions to generated imports.');
+console.log('Finished adding .js extensions to imports.');
