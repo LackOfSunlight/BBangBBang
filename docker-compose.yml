@@ -7,27 +7,5 @@ services:
       dockerfile: Dockerfile
     container_name: bbangbbang-game-server
     ports:
-      - "8080:3000" # Dockerfile에서 EXPOSE한 포트와 맞춥니다.
-    environment:
-      - DATABASE_URL=mysql://root:rootpassword123@db:3306/bbang_db
-    depends_on:
-      - db
-
-  db:
-    image: mysql:8.0
-    container_name: bbang-mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword123
-      MYSQL_ROOT_HOST: '%'
-      MYSQL_DATABASE: bbang_db
-      MYSQL_USER: bbang_user
-      MYSQL_PASSWORD: password123
-    ports:
-      - "3307:3306"
-    volumes:
-      - db-data:/var/lib/mysql
-
-volumes:
-  db-data:
+      - "8080:3000"
     
