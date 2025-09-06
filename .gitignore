@@ -6,3 +6,5 @@ node_modules/
 .env
 # generated prisma
 /game.server/src/generated/prisma
+.env 
+/game.server/dist/ 
