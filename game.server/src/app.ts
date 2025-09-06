@@ -6,6 +6,7 @@ import  onConnection  from "./sockets/on.connection.js";
 const PORT = 3000;
 
 const server = createServer(onConnection);
+console.log(`ㅌㅌ`);
 
 // 서버 실행
 server.listen(PORT, () => {
