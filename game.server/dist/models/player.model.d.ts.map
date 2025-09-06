@@ -1,1 +1,0 @@
-{"version":3,"file":"player.model.d.ts","sourceRoot":"","sources":["../../src/models/player.model.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,KAAK,CAAC;AAE7B,qBAAa,MAAM;IAER,EAAE,EAAE,MAAM;IACV,QAAQ,EAAE,MAAM;IAChB,MAAM,EAAE,MAAM;gBAFd,EAAE,EAAE,MAAM,EACV,QAAQ,EAAE,MAAM,EAChB,MAAM,EAAE,MAAM;CAKxB"}
