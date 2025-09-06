@@ -3,3 +3,4 @@
 node_modules
 /game.server/src/generated/prisma
 .env 
+/game.server/dist/ 
