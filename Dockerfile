@@ -13,6 +13,11 @@ COPY package*.json ./
 # npm ci는 package-lock.json에 따라 정확한 버전의 종속성을 설치하여 빌드의 일관성을 보장합니다.
 RUN npm ci
 
+# wait-for-it.sh 스크립트를 컨테이너에 복사합니다.
+COPY wait-for-it.sh /usr/wait-for-it.sh 
+
+RUN chmod +x /usr/wait-for-it.sh 
+
 # 현재 디렉토리의 모든 파일을 컨테이너의 작업 디렉토리로 복사합니다.
 COPY . .
 
