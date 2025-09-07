@@ -1,25 +1,13 @@
-import { Socket } from "net";
+import { GameSocket } from "../../utils/game.socket.js";
 import { GamePacket} from "../../generated/gamePacket.js";
 import { sendData } from '../../utils/sendData';
-import { GamePacketType, gamePackType } from "../../enums/gamePacketType.js";
+import { GamePacketType, gamePackTypeSelect } from "../../enums/gamePacketType.js";
 import { GlobalFailCode } from "../../generated/common/enums.js";
 
-const loginResponseHandler = (socket:Socket, gamePacket:GamePacket) =>{
+const loginResponseHandler = (socket:GameSocket, gamePacket:GamePacket) =>{
   
-      const newGamePacket: GamePacket = {
-        payload: {
-          oneofKind: GamePacketType.loginResponse,
-          loginResponse: {
-            success: true,
-            message: `로그인 성공`,
-            token: `토큰`,
-            myInfo: undefined,
-            failCode: GlobalFailCode.NONE_FAILCODE
-          },
-        },
-      };
 
-      sendData(socket, newGamePacket, GamePacketType.loginResponse);
+      sendData(socket, gamePacket, GamePacketType.loginResponse);
 }
 
 export default  loginResponseHandler;

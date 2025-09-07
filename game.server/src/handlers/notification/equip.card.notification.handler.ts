@@ -1,8 +1,8 @@
-import { Socket } from "net";
+import { GameSocket } from "../../utils/game.socket.js";
 import { S2CEquipCardNotification } from "../../generated/packet/notifications.js";
 import { GamePacket } from "../../generated/gamePacket.js";
 
-const equipCardNotificationHandler = (socket:Socket, gamePacket:GamePacket) =>{
+const equipCardNotificationHandler = (socket:GameSocket, gamePacket:GamePacket) =>{
 
 }
 

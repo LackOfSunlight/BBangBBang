@@ -1,41 +1,29 @@
-import { Player } from "./player.model.js";
-import { Game } from "./game.model.js";
+import { RoomData } from "../generated/common/types";
+import { RoomStateType } from "../generated/common/enums";
+import { User } from "./user.model";
 
-export enum RoomStatus {
-  Waiting,
-  InProgress,
-  Finished,
-}
+export class Room implements RoomData {
+  id: number;
+  ownerId: string;
+  name: string;
+  maxUserNum: number;
+  state: RoomStateType;
+  users: User[];
 
-export class Room {
-  public players: Player[] = [];
-  public game: Game | null = null;
-  public status: RoomStatus = RoomStatus.Waiting;
-
-  constructor(public id: string, public name: string, private maxPlayers: number = 4) {}
-
-  addPlayer(player: Player): boolean {
-    if (this.players.length >= this.maxPlayers) {
-      return false; // Room is full
-    }
-    this.players.push(player);
-    return true;
+  constructor(
+    id: number,
+    ownerId: string,
+    name: string,
+    maxUserNum: number,
+    state: RoomStateType,
+    users: User[]
+  ) {
+    this.id = id;
+    this.ownerId = ownerId;
+    this.name = name;
+    this.maxUserNum = maxUserNum;
+    this.state = state;
+    this.users = users;
   }
 
-  removePlayer(playerId: string) {
-    this.players = this.players.filter((p) => p.id !== playerId);
-  }
-
-  isFull(): boolean {
-    return this.players.length === this.maxPlayers;
-  }
-
-  // Method to start the game
-  startGame() {
-    if (this.isFull() && this.status === RoomStatus.Waiting) {
-      this.status = RoomStatus.InProgress;
-      this.game = new Game(this.players);
-      // Further game initialization logic...
-    }
-  }
 }

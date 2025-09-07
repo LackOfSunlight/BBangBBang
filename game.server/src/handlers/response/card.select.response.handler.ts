@@ -1,8 +1,8 @@
-import { Socket } from "net";
+import { GameSocket } from "../../utils/game.socket.js";
 import { S2CCardSelectResponse } from "../../generated/packet/game_actions.js";
 import { GamePacket } from "../../generated/gamePacket.js";
 
-const cardSelectResponseHandler = (socket:Socket, gamePacket:GamePacket) =>{
+const cardSelectResponseHandler = (socket:GameSocket, gamePacket:GamePacket) =>{
 
 }
 

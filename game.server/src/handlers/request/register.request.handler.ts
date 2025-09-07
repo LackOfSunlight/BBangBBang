@@ -1,7 +1,7 @@
-import { Socket } from "net";
+import { GameSocket } from "../../utils/game.socket.js";
 import { GamePacket } from "../../generated/gamePacket.js";
 import { getGamePacketType } from "../../utils/type.converter.js";
-import { GamePacketType, gamePackType } from "../../enums/gamePacketType.js";
+import { GamePacketType, gamePackTypeSelect } from "../../enums/gamePacketType.js";
 import registerResponseHandler from "../response/register.response.handler.js";
 import { prisma } from "../../utils/db.js";
 import { GlobalFailCode } from "../../generated/common/enums.js";
@@ -10,11 +10,11 @@ import * as bcrypt from "bcrypt";
 
 
 const registerRequestHandler = async (
-  socket: Socket,
+  socket: GameSocket,
   gamePacket: GamePacket
 ) => {
 
-  const payload = getGamePacketType(gamePacket, gamePackType.registerRequest);
+  const payload = getGamePacketType(gamePacket, gamePackTypeSelect.registerRequest);
   if (!payload) return; // payload 없으면 종료
 
   const req = payload.registerRequest;

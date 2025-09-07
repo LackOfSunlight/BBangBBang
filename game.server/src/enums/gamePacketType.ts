@@ -91,7 +91,7 @@ export enum GamePacketType {
 
 // game.server/src/enums/gamePacketType.ts
 
-export const gamePackType = {
+export const gamePackTypeSelect = {
   registerRequest: "registerRequest",
   registerResponse: "registerResponse",
   loginRequest: "loginRequest",
@@ -182,4 +182,4 @@ export const gamePackType = {
 } as const;
 
 // literal union 타입 자동 추출
-export type gamePackType = typeof GamePacketType[keyof typeof GamePacketType];
+export type gamePackTypeSelect = typeof GamePacketType[keyof typeof GamePacketType];
