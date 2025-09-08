@@ -10,6 +10,7 @@ import { prisma } from '../../utils/db.js';
 import joinRoomResponseHandler from '../response/join.room.response.handler.js';
 import { RoomStateType } from '../../generated/common/enums.js';
 import joinRoomNotificationHandler from '../notification/join.room.notification.handler.js';
+import { setJoinRoomNotification } from '../notification/join.room.notification.handler.js';
 
 const joinRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.joinRoomRequest);
@@ -39,7 +40,7 @@ const joinRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
   await addUserToRoom(req.roomId, user);
 
   socket.roomId = room.id;
-  
+
   joinRoomResponseHandler(socket, setJoinRoomResponse(true,  GlobalFailCode.NONE_FAILCODE, room));
 
   joinRoomNotificationHandler(socket, setJoinRoomNotification(user));
@@ -56,19 +57,6 @@ const setJoinRoomResponse = (success: boolean, failCode: GlobalFailCode, room?: 
 			},
 		},
 	};
-
-  return newGamePacket;
-};
-
-const setJoinRoomNotification = (joinUser: User):GamePacket => {
-  const newGamePacket: GamePacket = {
-    payload:{
-      oneofKind: GamePacketType.joinRoomNotification,
-      joinRoomNotification:{
-        joinUser
-      }
-    }
-  };
 
   return newGamePacket;
 };

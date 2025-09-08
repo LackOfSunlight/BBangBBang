@@ -6,6 +6,7 @@ import { getRoom } from '../../utils/redis.util.js';
 import { Room } from '../../models/room.model.js';
 import { sendData } from '../../utils/send.data.js';
 import { GamePacketType } from '../../enums/gamePacketType.js';
+import { User } from '../../models/user.model.js';
 
 const joinRoomNotificationHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const roomId = socket.roomId;
@@ -23,6 +24,20 @@ const joinRoomNotificationHandler = async (socket: GameSocket, gamePacket: GameP
         }
     }
     
+};
+
+
+export const setJoinRoomNotification = (joinUser: User):GamePacket => {
+  const newGamePacket: GamePacket = {
+    payload:{
+      oneofKind: GamePacketType.joinRoomNotification,
+      joinRoomNotification:{
+        joinUser
+      }
+    }
+  };
+
+  return newGamePacket;
 };
 
 export default joinRoomNotificationHandler;
