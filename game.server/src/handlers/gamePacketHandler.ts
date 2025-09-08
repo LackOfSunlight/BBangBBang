@@ -1,7 +1,7 @@
 // game.server/src/handlers/gamePacketHandler.ts
 import { Socket } from "net";
 import { GamePacket } from "../generated/gamePacket.js";
-import { GamePacketType, gamePackType } from "../enums/gamePacketType.js";
+import { GamePacketType, gamePackTypeSelect } from "../enums/gamePacketType.js";
 
 // Request Handlers
 import registerRequestHandler from "./request/register.request.handler.js";
