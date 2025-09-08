@@ -5,9 +5,7 @@ node_modules/
 dist/
 game.server/dist/
 
-# Prisma
-prisma/migrations/
-.env
-
-# Generated files
-game.server/src/generated
+node_modules
+/game.server/src/generated/prisma
+.env 
+/game.server/dist/ 
