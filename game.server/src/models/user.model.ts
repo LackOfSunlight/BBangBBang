@@ -12,8 +12,4 @@ export class User implements UserData{
         this.nickname =nickName;
     }
 
-    setCharacter(characterData: CharacterData): void{
-        this.character = characterData;
-    }
-
 }
