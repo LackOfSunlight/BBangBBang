@@ -1,8 +1,8 @@
-import { Socket } from "net";
+import { GameSocket } from "../../type/game.socket.js";
 import { S2CPhaseUpdateNotification } from "../../generated/packet/notifications.js";
 import { GamePacket } from "../../generated/gamePacket.js";
 
-const phaseUpdateNotificationHandler = (socket:Socket, gamePacket:GamePacket) =>{
+const phaseUpdateNotificationHandler = (socket:GameSocket, gamePacket:GamePacket) =>{
 
 }
 

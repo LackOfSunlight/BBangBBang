@@ -1,9 +1,9 @@
-import { Socket } from "net";
+import { GameSocket } from "../../type/game.socket.js";
 import { C2SLeaveRoomRequest } from "../../generated/packet/room_actions.js";
 import { GamePacket } from "../../generated/gamePacket.js";
 
 
-const leaveRoomRequestHandler = (socket:Socket, gamePacket:GamePacket) =>{
+const leaveRoomRequestHandler = (socket:GameSocket, gamePacket:GamePacket) =>{
 
 }
 
