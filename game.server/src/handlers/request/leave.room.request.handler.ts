@@ -1,13 +1,11 @@
-import { GameSocket } from '../../type/game.socket.js';
-import { GamePacket } from '../../generated/gamePacket.js';
-import { getGamePacketType } from '../../utils/type.converter.js';
-import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.js';
-import { getRoom, removeUserFromRoom } from '../../utils/redis.util.js';
-import { GlobalFailCode } from '../../generated/common/enums.js';
-import { sendData } from '../../utils/send.data.js';
-import { broadcastDataToRoom } from '../../utils/notification.util.js';
-import leaveRoomResponseHandler from '../response/leave.room.response.handler.js';
-import leaveRoomNotificationHandler from '../notification/leave.room.notification.handler.js';
+import { gamePackTypeSelect } from '../../enums/gamePacketType';
+import { GlobalFailCode } from '../../generated/common/enums';
+import { GamePacket } from '../../generated/gamePacket';
+import { GameSocket } from '../../type/game.socket';
+import { getRoom, removeUserFromRoom } from '../../utils/redis.util';
+import { getGamePacketType } from '../../utils/type.converter';
+import leaveRoomNotificationHandler from '../notification/leave.room.notification.handler';
+import leaveRoomResponseHandler from '../response/leave.room.response.handler';
 
 const leaveRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.leaveRoomRequest);
@@ -31,11 +29,14 @@ const leaveRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacke
 		}
 	} catch (error) {
 		let failCode = GlobalFailCode.UNKNOWN_ERROR;
-		if (error instanceof Error && error.message.includes('Room not found')) {
-			failCode = GlobalFailCode.ROOM_NOT_FOUND;
+		if (error instanceof Error) {
+			if (error.message === '방을 찾을 수 없습니다.') {
+				failCode = GlobalFailCode.ROOM_NOT_FOUND;
+			} else {
+				failCode = GlobalFailCode.UNKNOWN_ERROR;
+			}
+			await leaveRoomResponseHandler(socket, failCode);
 		}
-		await leaveRoomResponseHandler(socket, failCode);
 	}
 };
-
 export default leaveRoomRequestHandler;

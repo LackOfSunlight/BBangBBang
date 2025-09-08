@@ -1,9 +1,9 @@
-import { GameSocket } from '../../type/game.socket.js';
-import { GamePacket } from '../../generated/gamePacket.js';
-import { getGamePacketType } from '../../utils/type.converter.js';
-import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.js';
-import { sendData } from '../../utils/send.data.js';
-import { GlobalFailCode } from '../../generated/common/enums.js';
+import { GamePacketType } from "../../enums/gamePacketType";
+import { GlobalFailCode } from "../../generated/common/enums";
+import { GamePacket } from "../../generated/gamePacket";
+import { GameSocket } from "../../type/game.socket";
+import { sendData } from "../../utils/send.data";
+
 
 const leaveRoomResponseHandler = async (socket: GameSocket, failCode: GlobalFailCode) => {
 	const success = failCode === GlobalFailCode.NONE_FAILCODE;

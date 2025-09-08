@@ -1,92 +1,119 @@
-import { GameSocket } from "../../../type/game.socket";
-import { GamePacket } from "../../../generated/gamePacket";
-import { GamePacketType } from "../../../enums/gamePacketType";
-import { C2SLeaveRoomRequest } from "../../../generated/packet/room_actions";
-import leaveRoomRequestHandler from "../leave.room.request.handler";
-import * as redisUtil from "../../../utils/redis.util";
-import leaveRoomResponseHandler from "../../response/leave.room.response.handler";
-import * as notificationUtil from "../../../utils/notification.util";
-import { getGamePacketType } from "../../../utils/type.converter";
-import { GlobalFailCode } from "../../../generated/common/enums";
+import { GameSocket } from '../../../type/game.socket';
+import { GamePacket } from '../../../generated/gamePacket';
+import { GamePacketType } from '../../../enums/gamePacketType';
+import { GlobalFailCode } from '../../../generated/common/enums';
+import { getRoom, removeUserFromRoom } from '../../../utils/redis.util';
+import leaveRoomResponseHandler from '../../response/leave.room.response.handler';
+import leaveRoomNotificationHandler from '../../notification/leave.room.notification.handler';
+import { getGamePacketType } from '../../../utils/type.converter';
+import { Room } from '../../../models/room.model';
+import { User } from '../../../models/user.model';
+import leaveRoomRequestHandler from '../leave.room.request.handler';
 
-jest.mock('../../../utils/redis.util');
-jest.mock('../../response/leave.room.response.handler');
-jest.mock('../../../utils/notification.util');
+// --- Mocking Strategy Change ---
+// 모듈에서 사용하는 함수를 명시적으로 모킹합니다.
+jest.mock('../../../utils/redis.util', () => ({
+	__esModule: true,
+	getRoom: jest.fn(),
+	removeUserFromRoom: jest.fn(),
+}));
+
 jest.mock('../../../utils/type.converter');
 
+// 비동기 핸들러들을 async mock 함수로 모킹합니다.
+jest.mock('../../response/leave.room.response.handler', () => ({
+	__esModule: true,
+	default: jest.fn().mockResolvedValue(undefined),
+}));
+jest.mock('../../notification/leave.room.notification.handler', () => ({
+	__esModule: true,
+	default: jest.fn().mockResolvedValue(undefined),
+}));
+
 describe('leaveRoomRequestHandler', () => {
-    let socket: GameSocket;
-    let gamePacket: GamePacket;
+	let socket: GameSocket;
+	let gamePacket: GamePacket;
 
-    beforeEach(() => {
-        socket = {
-            userId: 'testUser',
-            roomId: 1,
-        } as GameSocket;
+	// 모킹된 함수들 (새로운 방식)
+	const mockGetRoom = getRoom as jest.Mock;
+	const mockRemoveUserFromRoom = removeUserFromRoom as jest.Mock;
+	const mockLeaveRoomResponseHandler = leaveRoomResponseHandler as jest.Mock;
+	const mockLeaveRoomNotificationHandler = leaveRoomNotificationHandler as jest.Mock;
+	const mockGetGamePacketType = getGamePacketType as jest.Mock;
 
-        const leaveRoomRequest: C2SLeaveRoomRequest = {
-            // In the current implementation, the request is empty
-        };
+	beforeEach(() => {
+		jest.clearAllMocks();
+		socket = { userId: 'user123', roomId: 1 } as GameSocket;
+		gamePacket = {
+			payload: {
+				oneofKind: GamePacketType.leaveRoomRequest,
+				leaveRoomRequest: {},
+			},
+		};
+		mockGetGamePacketType.mockReturnValue(gamePacket.payload);
+	});
 
-        gamePacket = {
-            payload: {
-                oneofKind: GamePacketType.leaveRoomRequest,
-                leaveRoomRequest: leaveRoomRequest,
-            },
-        };
+	it('방 나가기 성공 및 다른 유저에게 알림 전송', async () => {
+		const remainingUser: User = {
+			id: 'user456',
+			nickname: 'test',
+			character: 1,
+			position: 1,
+			isReady: false,
+		};
+		const updatedRoom: Room = {
+			id: 1,
+			name: 'Test Room',
+			users: [remainingUser],
+			maxUserNum: 4,
+			isPrivate: false,
+			password: '',
+		};
+		mockRemoveUserFromRoom.mockResolvedValue(undefined);
+		mockGetRoom.mockResolvedValue(updatedRoom);
 
-        (getGamePacketType as jest.Mock).mockReturnValue(gamePacket.payload);
-    });
+		await leaveRoomRequestHandler(socket, gamePacket);
 
-    afterEach(() => {
-        jest.clearAllMocks();
-    });
+		expect(mockRemoveUserFromRoom).toHaveBeenCalledWith(1, 'user123');
+		expect(mockLeaveRoomResponseHandler).toHaveBeenCalledWith(socket, GlobalFailCode.NONE_FAILCODE);
+		expect(mockGetRoom).toHaveBeenCalledWith(1);
+		expect(mockLeaveRoomNotificationHandler).toHaveBeenCalledWith(socket, updatedRoom);
+	});
 
-    it('should handle a successful leave room request', async () => {
-        const room = { id: 1, users: [{ id: 'anotherUser' }] };
-        (redisUtil.removeUserFromRoom as jest.Mock).mockResolvedValue(undefined);
-        (redisUtil.getRoom as jest.Mock).mockResolvedValue(room);
+	it('소켓에 userId나 roomId가 없으면 INVALID_REQUEST 응답 전송', async () => {
+		socket.userId = undefined;
+		await leaveRoomRequestHandler(socket, gamePacket);
+		expect(mockLeaveRoomResponseHandler).toHaveBeenCalledWith(
+			socket,
+			GlobalFailCode.INVALID_REQUEST,
+		);
+		expect(mockRemoveUserFromRoom).not.toHaveBeenCalled();
+	});
 
-        await leaveRoomRequestHandler(socket, gamePacket);
+	// FAILING TEST CASE - NOW WITH MORE ROBUST MOCKING
+	it('존재하지 않는 방 에러 발생 시 ROOM_NOT_FOUND 응답 전송', async () => {
+		// 준비
+		const error = new Error('Room not found');
+		mockRemoveUserFromRoom.mockRejectedValue(error);
 
-        expect(redisUtil.removeUserFromRoom).toHaveBeenCalledWith(socket.roomId, socket.userId);
-        expect(leaveRoomResponseHandler).toHaveBeenCalledWith(socket, expect.objectContaining({
-            payload: {
-                oneofKind: GamePacketType.leaveRoomResponse,
-                leaveRoomResponse: {
-                    success: true,
-                    failCode: GlobalFailCode.NONE_FAILCODE,
-                },
-            },
-        }));
-        expect(notificationUtil.sendNotificationToRoom).toHaveBeenCalledWith(socket.roomId, expect.objectContaining({
-            payload: {
-                oneofKind: GamePacketType.leaveRoomNotification,
-                leaveRoomNotification: {
-                    userId: socket.userId,
-                },
-            },
-        }));
-        expect(socket.roomId).toBeUndefined();
-    });
+		// 실행
+		await leaveRoomRequestHandler(socket, gamePacket);
 
-    it('should handle a failed leave room request', async () => {
-        const error = new Error('Failed to remove user from room');
-        (redisUtil.removeUserFromRoom as jest.Mock).mockRejectedValue(error);
+		// 검증
+		expect(mockLeaveRoomResponseHandler).toHaveBeenCalledWith(
+			socket,
+			GlobalFailCode.ROOM_NOT_FOUND,
+		);
+	});
 
-        await leaveRoomRequestHandler(socket, gamePacket);
+	it('유저 삭제 중 일반 에러 발생 시 UNKNOWN_ERROR 응답 전송', async () => {
+		const error = new Error('Some other Redis error');
+		mockRemoveUserFromRoom.mockRejectedValue(error);
 
-        expect(redisUtil.removeUserFromRoom).toHaveBeenCalledWith(socket.roomId, socket.userId);
-        expect(leaveRoomResponseHandler).toHaveBeenCalledWith(socket, expect.objectContaining({
-            payload: {
-                oneofKind: GamePacketType.leaveRoomResponse,
-                leaveRoomResponse: {
-                    success: false,
-                    failCode: GlobalFailCode.LEAVE_ROOM_FAILED,
-                },
-            },
-        }));
-        expect(notificationUtil.sendNotificationToRoom).not.toHaveBeenCalled();
-        expect(socket.roomId).toBe(1); // Should not be changed
-    });
+		await leaveRoomRequestHandler(socket, gamePacket);
+
+		expect(mockLeaveRoomResponseHandler).toHaveBeenCalledWith(socket, GlobalFailCode.UNKNOWN_ERROR);
+		expect(mockGetRoom).not.toHaveBeenCalled();
+		expect(mockLeaveRoomNotificationHandler).not.toHaveBeenCalled();
+	});
 });
