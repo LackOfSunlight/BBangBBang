@@ -1,3 +1,10 @@
+# Dependencies
+node_modules/
+# Build outputs
+/game.server/dist/
+# Environment variables
 .env
-
-node_modules
+# generated prisma
+/game.server/src/generated/prisma
+.env 
+/game.server/dist/ 

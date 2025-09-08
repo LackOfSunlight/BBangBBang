@@ -5,7 +5,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "target": "esnext",
-    "types": ["node"],
+    "types": ["node", "jest"],
     "sourceMap": false,
     "declaration": true,
     "declarationMap": true,
@@ -17,6 +17,6 @@
     "skipLibCheck": true
   },
   "include": [
-    "game.server/src/*/"
-  ]
+    "game.server/src/**/*.ts"
+, "game.server/src/utils/test/redis.util.test.test"  ]
 }

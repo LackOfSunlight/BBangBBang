@@ -1,24 +1,11 @@
 // server.ts
 import { createServer } from "net";
-import { handleData } from "./handlers/packetHandler.js";
+import  onConnection  from "./sockets/on.connection.js";
+
 
 const PORT = 3000;
 
-const server = createServer((socket) => {
-  console.log("클라이언트 접속:", socket.remoteAddress, socket.remotePort);
-
-  socket.on("data", (chunk: Buffer) => {
-    handleData(socket, chunk);
-  });
-
-  socket.on("end", () => {
-    console.log("클라이언트 종료");
-  });
-
-  socket.on("error", (err) => {
-    console.error("소켓 에러:", err);
-  });
-});
+const server = createServer(onConnection);
 
 // 서버 실행
 server.listen(PORT, () => {
