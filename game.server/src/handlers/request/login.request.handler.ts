@@ -7,6 +7,7 @@ import { GlobalFailCode } from '../../generated/common/enums.js';
 import { UserData } from '../../generated/common/types.js';
 import { prisma } from '../../utils/db.js';
 import * as bcrypt from 'bcrypt';
+import { addSocket } from '../../sockets/socket.manger.js';
 
 const loginRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.loginRequest);
@@ -35,6 +36,8 @@ const loginRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) =
 	}
 
 	socket.userId = userinfo.id.toString();
+	addSocket(socket);
+
 	const user: UserData = {
 		id: userinfo.id.toString(),
 		nickname: userinfo.nickname,
@@ -44,7 +47,9 @@ const loginRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) =
 		socket,
 		setLoginResponse(true, '로그인 성공', userinfo.email, GlobalFailCode.NONE_FAILCODE, user),
 	);
-};
+
+}
+
 
 const setLoginResponse = (
 	success: boolean,

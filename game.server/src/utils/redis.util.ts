@@ -84,3 +84,19 @@ export const updateUserFromRoom = async (
 
   return updatedUser;
 };
+
+
+// 전체 방 불러오기
+export const getRooms = async (): Promise<Room[]> => {
+  // room:* 패턴으로 모든 방 키 조회
+  const keys = await redis.keys("room:*");
+  if (keys.length === 0) return [];
+
+  // 모든 방 데이터를 가져오기
+  const roomsData = await redis.mget(keys);
+  const rooms: Room[] = roomsData
+    .filter((d) => d !== null)
+    .map((d) => JSON.parse(d!) as Room);
+
+  return rooms;
+};
