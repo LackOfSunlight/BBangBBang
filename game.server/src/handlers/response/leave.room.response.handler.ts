@@ -5,18 +5,14 @@ import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.j
 import { sendData } from '../../utils/send.data.js';
 import { GlobalFailCode } from '../../generated/common/enums.js';
 
-const leaveRoomResponseHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
-	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.leaveRoomResponse);
-	if (!payload) return;
-
-	const res = payload.leaveRoomResponse;
-
+const leaveRoomResponseHandler = async (socket: GameSocket, failCode: GlobalFailCode) => {
+	const success = failCode === GlobalFailCode.NONE_FAILCODE;
 	const responsePacket: GamePacket = {
 		payload: {
 			oneofKind: GamePacketType.leaveRoomResponse,
 			leaveRoomResponse: {
-				success: true,
-				failCode: GlobalFailCode.NONE_FAILCODE,
+				success: success,
+				failCode: failCode,
 			},
 		},
 	};
