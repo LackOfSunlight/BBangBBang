@@ -1,8 +1,8 @@
-import { Socket } from "net";
+import { GameSocket } from "../../type/game.socket.js";
 import { C2SFleaMarketPickRequest } from "../../generated/packet/game_actions.js";
 import { GamePacket } from "../../generated/gamePacket.js";
 
-const fleaMarketPickRequestHandler = (socket:Socket, gamePacket:GamePacket) =>{
+const fleaMarketPickRequestHandler = (socket:GameSocket, gamePacket:GamePacket) =>{
 
 }
 

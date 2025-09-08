@@ -1,8 +1,8 @@
-import { Socket } from "net";
+import { GameSocket } from "../../type/game.socket.js";
 import { C2SGameStartRequest } from "../../generated/packet/game_actions.js";
 import { GamePacket } from "../../generated/gamePacket.js";
 
-const gameStartRequestHandler = (socket:Socket, gamePacket:GamePacket) =>{
+const gameStartRequestHandler = (socket:GameSocket, gamePacket:GamePacket) =>{
 
 }
 
