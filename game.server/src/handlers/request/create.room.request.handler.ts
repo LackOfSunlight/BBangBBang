@@ -58,7 +58,7 @@ const createRoomRequestHandler = async (
       setCreateResponse(false, GlobalFailCode.CREATE_ROOM_FAILED)
     );
 
-  const user: User = new User(userInfo.id.toString(), userInfo.nickname);
+  const user: User = new User(socket.userId, userInfo.nickname);
 
   const room: Room = new Room(
     roomDB.id,

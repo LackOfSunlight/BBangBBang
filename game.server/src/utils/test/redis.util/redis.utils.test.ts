@@ -21,7 +21,7 @@ import { User } from "../../../models/user.model";
       
       const room:Room = {
             id: 0,
-            ownerId: 'testRoom',
+            ownerId: '999999',
             name: '테스트 방입니다',
             maxUserNum: 6,
             state: RoomStateType.WAIT,

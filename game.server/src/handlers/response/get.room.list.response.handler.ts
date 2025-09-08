@@ -23,6 +23,7 @@ const getRoomListResponseHandler = (
   }
 
   console.log("룸리스트 전송");
+
   sendData(socket, gamePacket, GamePacketType.getRoomListResponse);
 };
 
