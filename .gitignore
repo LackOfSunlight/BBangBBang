@@ -7,4 +7,5 @@ game.server/dist/
 .env
 # Generated Prisma Client
 /game.server/src/generated/prisma
+/game.server/dist/ 
 
