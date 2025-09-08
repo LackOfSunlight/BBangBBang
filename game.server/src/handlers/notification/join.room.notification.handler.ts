@@ -18,15 +18,7 @@ const joinRoomNotificationHandler = async (socket: GameSocket, gamePacket: GameP
 
     if(!room) return;
 
-    broadcastDataToRoom(room.users,gamePacket,GamePacketType.joinRoomNotification,socket);
-    
-
-    // for(const roomUser of room.users){
-    //     const targetSocket = connectedSockets.get(roomUser.id);
-    //     if(targetSocket){
-    //         sendData(targetSocket,gamePacket, GamePacketType.joinRoomNotification);
-    //     }
-    // }
+    broadcastDataToRoom(room.users,gamePacket,GamePacketType.joinRoomNotification);
     
 };
 

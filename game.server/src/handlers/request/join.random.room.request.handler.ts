@@ -3,7 +3,7 @@ import { C2SJoinRandomRoomRequest } from '../../generated/packet/room_actions.js
 import { GamePacket } from '../../generated/gamePacket.js';
 import { getGamePacketType } from '../../utils/type.converter.js';
 import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.js';
-import { addUserToRoom, getRooms } from '../../utils/redis.util.js';
+import { addUserToRoom, getRoom, getRooms } from '../../utils/redis.util.js';
 import { Room } from '../../models/room.model.js';
 import { User } from '../../models/user.model.js';
 import { prisma } from '../../utils/db.js';
@@ -24,26 +24,33 @@ const joinRandomRoomRequestHandler = async (socket: GameSocket, gamePacket: Game
 	if (!userInfo) return;
 
 	const rooms: Room[] = await getRooms();
-	let roomId: number;
-    let selectUser:User = new User('0000','none'); 
 
-	for (const room of rooms) {
-		if (room.maxUserNum != room.users.length) {
-			const user: User = new User(socket.userId, userInfo.nickname);
-            selectUser = user;
-			roomId = room.id;
-            socket.roomId = roomId;
-			await addUserToRoom(room.id, user);
-			break;
-		}
-	}
+    const availableRooms = rooms.filter(room => room.users.length < room.maxUserNum);
 
-	const selectRoom: Room | undefined = rooms.find((n) => n.id === roomId);
 
-	if (selectRoom != undefined) {
+	let roomId: number | null = null;
+    let selectUser:User | null = null; 
+
+    if(availableRooms.length > 0){
+        const randomIndex = Math.floor(Math.random()*availableRooms.length);
+        const room = availableRooms[randomIndex];
+
+        const user = new User(socket.userId, userInfo.nickname);
+        selectUser = user;
+        roomId = room.id;
+
+        socket.roomId = roomId;
+        await addUserToRoom(room.id, user);
+    } else{
+        return joinRandomRoomResponseHandler(socket, setJoinRandomRoomResponse(false, GlobalFailCode.JOIN_ROOM_FAILED));
+    }
+
+	const selectedRoom: Room | null = await getRoom(roomId);
+
+	if (selectedRoom != null) {
 		joinRandomRoomResponseHandler(
 			socket,
-			setJoinRandomRoomResponse(true, GlobalFailCode.NONE_FAILCODE, selectRoom),
+			setJoinRandomRoomResponse(true, GlobalFailCode.NONE_FAILCODE, selectedRoom),
 		);
 
         joinRoomNotificationHandler(socket,setJoinRoomNotification(selectUser));
@@ -53,7 +60,7 @@ const joinRandomRoomRequestHandler = async (socket: GameSocket, gamePacket: Game
 const setJoinRandomRoomResponse = (
 	success: boolean,
 	failCode: GlobalFailCode,
-	room: Room,
+	room?: Room,
 ): GamePacket => {
 	const newGamePacket: GamePacket = {
 		payload: {

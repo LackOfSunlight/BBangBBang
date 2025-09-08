@@ -118,7 +118,8 @@ export function handleGamePacket(socket: Socket, gamePacket: GamePacket) {
     const packetType = payload.oneofKind as GamePacketType;
     const handler = handlers[packetType];
 
-    if (handler && !gamePacket) {
+
+    if (handler) {
         // The handler function is called with the socket and the specific payload
         handler(socket, gamePacket);
     } else {
