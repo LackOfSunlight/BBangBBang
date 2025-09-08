@@ -1,10 +1,26 @@
-import { GameSocket } from "../../type/game.socket.js";
-import { S2CLeaveRoomResponse } from "../../generated/packet/room_actions.js";
-import { GamePacket } from "../../generated/gamePacket.js";
+import { GameSocket } from '../../type/game.socket.js';
+import { GamePacket } from '../../generated/gamePacket.js';
+import { getGamePacketType } from '../../utils/type.converter.js';
+import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.js';
+import { sendData } from '../../utils/send.data.js';
+import { GlobalFailCode } from '../../generated/common/enums.js';
 
-const leaveRoomResponseHandler = (socket:GameSocket, gamePacket:GamePacket) =>{
+const leaveRoomResponseHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
+	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.leaveRoomResponse);
+	if (!payload) return;
 
-}
+	const res = payload.leaveRoomResponse;
 
+	const responsePacket: GamePacket = {
+		payload: {
+			oneofKind: GamePacketType.leaveRoomResponse,
+			leaveRoomResponse: {
+				success: true,
+				failCode: GlobalFailCode.NONE_FAILCODE,
+			},
+		},
+	};
+	sendData(socket, responsePacket, GamePacketType.leaveRoomResponse);
+};
 
-export default  leaveRoomResponseHandler;
+export default leaveRoomResponseHandler;
