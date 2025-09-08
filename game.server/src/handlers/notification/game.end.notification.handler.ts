@@ -1,4 +1,4 @@
-import { GameSocket } from "../../utils/game.socket.js";
+import { GameSocket } from "../../type/game.socket.js";
 import { S2CGameEndNotification } from "../../generated/packet/notifications.js";
 import { GamePacket } from "../../generated/gamePacket.js";
 

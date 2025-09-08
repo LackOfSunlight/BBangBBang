@@ -1,4 +1,4 @@
-import { GameSocket } from "../../utils/game.socket.js";
+import { GameSocket } from "../../type/game.socket.js";
 import { GamePacket } from "../../generated/gamePacket.js";
 import { getGamePacketType } from "../../utils/type.converter.js";
 import { GamePacketType, gamePackTypeSelect } from "../../enums/gamePacketType.js";

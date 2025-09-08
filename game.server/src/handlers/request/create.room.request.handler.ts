@@ -5,11 +5,10 @@ import { getGamePacketType } from "../../utils/type.converter.js";
 import { gamePackTypeSelect } from "../../enums/gamePacketType.js";
 import { RoomData } from "../../generated/common/types.js";
 import { RoomStateType } from "../../generated/common/enums.js";
-import { GameSocket } from "../../utils/game.socket.js";
+import { GameSocket } from "../../type/game.socket.js";
 
 const createRoomRequestHandler = (socket:GameSocket, gamePacket:GamePacket) =>{
     const payload = getGamePacketType(gamePacket, gamePackTypeSelect.createRoomRequest);
-
     if(payload){
 
         const roomData:RoomData ={

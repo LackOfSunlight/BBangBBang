@@ -1,6 +1,6 @@
-import { GameSocket } from "../../utils/game.socket.js";
+import { GameSocket } from "../../type/game.socket.js";
 import { GamePacket} from "../../generated/gamePacket.js";
-import { sendData } from '../../utils/sendData';
+import { sendData } from '../../utils/send.data.js';
 import { GamePacketType, gamePackTypeSelect } from "../../enums/gamePacketType.js";
 import { GlobalFailCode } from "../../generated/common/enums.js";
 
