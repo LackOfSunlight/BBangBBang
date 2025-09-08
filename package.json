@@ -37,6 +37,7 @@
     "@protobuf-ts/runtime": "^2.11.1",
     "bcrypt": "^6.0.0",
     "dotenv": "^17.2.2",
+    "ioredis": "^5.7.0",
     "prisma": "^6.15.0",
     "protobufjs": "^7.5.4"
   }
