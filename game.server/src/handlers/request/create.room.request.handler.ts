@@ -69,6 +69,8 @@ const createRoomRequestHandler = async (
     [user]
   );
 
+  socket.roomId = room.id;
+
   createRoomResponseHandler(
     socket,
     setCreateResponse(true, GlobalFailCode.NONE_FAILCODE, room)
