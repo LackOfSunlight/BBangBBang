@@ -1,8 +1,8 @@
-import { Socket } from "net";
+import { GameSocket } from "../../type/game.socket.js";
 import { S2CJoinRoomNotification } from "../../generated/packet/notifications.js";
 import { GamePacket } from "../../generated/gamePacket.js";
 
-const joinRoomNotificationHandler = (socket:Socket, gamePacket:GamePacket) =>{
+const joinRoomNotificationHandler = (socket:GameSocket, gamePacket:GamePacket) =>{
 
 }
 
