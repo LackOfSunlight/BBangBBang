@@ -14,39 +14,62 @@ import { setJoinRoomNotification } from '../notification/join.room.notification.
 
 const joinRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.joinRoomRequest);
-
 	if (!payload || !socket.userId) return;
 
-	const req = payload.joinRoomRequest;
+	const { joinRoomRequest: req } = payload;
 
+	// 유저 정보 조회
 	const userInfo = await prisma.user.findUnique({
 		where: { id: Number(socket.userId) },
-		select: {
-			nickname: true,
-		},
+		select: { nickname: true },
 	});
-
 	if (!userInfo) return;
 
-	const user: User = new User(socket.userId, userInfo.nickname);
-  const room:Room|null = await getRoom(req.roomId);
+	const user = new User(socket.userId, userInfo.nickname);
 
-  if(room?.maxUserNum === room?.users.length)
-    return joinRoomResponseHandler(socket, setJoinRoomResponse(false, GlobalFailCode.JOIN_ROOM_FAILED));
+	// 방 정보 가져오기
+	const room = await getRoom(req.roomId);
+	if (!room) {
+		return joinRoomResponseHandler(
+			socket,
+			setJoinRoomResponse(false, GlobalFailCode.JOIN_ROOM_FAILED),
+		);
+	}
 
-  if(room?.state != RoomStateType.WAIT)
-    return joinRoomResponseHandler(socket, setJoinRoomResponse(false, GlobalFailCode.JOIN_ROOM_FAILED));
+	// 입장 불가 조건 체크
+	if (room.users.length >= room.maxUserNum || room.state !== RoomStateType.WAIT) {
+		return joinRoomResponseHandler(
+			socket,
+			setJoinRoomResponse(false, GlobalFailCode.JOIN_ROOM_FAILED),
+		);
+	}
 
-  await addUserToRoom(req.roomId, user);
+	// 유저를 방에 추가
+	await addUserToRoom(req.roomId, user);
+	socket.roomId = room.id;
 
-  socket.roomId = room.id;
+	// 업데이트된 방 정보 다시 가져오기
+	const updatedRoom = await getRoom(req.roomId);
+	if (!updatedRoom) {
+		return joinRoomResponseHandler(
+			socket,
+			setJoinRoomResponse(false, GlobalFailCode.JOIN_ROOM_FAILED),
+		);
+	}
 
-  joinRoomResponseHandler(socket, setJoinRoomResponse(true,  GlobalFailCode.NONE_FAILCODE, room));
-
-  joinRoomNotificationHandler(socket, setJoinRoomNotification(user));
+	// 성공 응답 및 알림
+	joinRoomResponseHandler(
+		socket,
+		setJoinRoomResponse(true, GlobalFailCode.NONE_FAILCODE, updatedRoom),
+	);
+	joinRoomNotificationHandler(socket, setJoinRoomNotification(user));
 };
 
-const setJoinRoomResponse = (success: boolean, failCode: GlobalFailCode, room?: Room) : GamePacket => {
+const setJoinRoomResponse = (
+	success: boolean,
+	failCode: GlobalFailCode,
+	room?: Room,
+): GamePacket => {
 	const newGamePacket: GamePacket = {
 		payload: {
 			oneofKind: GamePacketType.joinRoomResponse,
@@ -58,7 +81,7 @@ const setJoinRoomResponse = (success: boolean, failCode: GlobalFailCode, room?: 
 		},
 	};
 
-  return newGamePacket;
+	return newGamePacket;
 };
 
 export default joinRoomRequestHandler;
