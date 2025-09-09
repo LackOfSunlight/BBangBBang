@@ -44,7 +44,7 @@ describe('leaveRoomRequestHandler', () => {
 	const mockLeaveRoomResponseHandler = leaveRoomResponseHandler as jest.Mock;
 	const mockLeaveRoomNotificationHandler = leaveRoomNotificationHandler as jest.Mock;
 	const mockGetGamePacketType = getGamePacketType as jest.Mock;
-	const mockRemoveUserFromRoom = removeUserFromRoom as jest.Mock;
+    const mockRemoveUserFromRoom = removeUserFromRoom as jest.Mock;
 
 	beforeEach(() => {
 		socket = {
@@ -106,8 +106,9 @@ describe('leaveRoomRequestHandler', () => {
 		expect(mockLeaveRoomNotificationHandler).toHaveBeenCalledWith(socket, gamePacket);
 	});
 
+    // 방장이 나가는 경우 (남은 유저가 있을 때)의 테스트 케이스
 	it('방장이 방을 나갈 때, 남은 유저에게 방장 권한이 위임되고 saveRoom이 호출되어야 한다', async () => {
-		// 준비
+		// 테스트를 위한 초기 방 및 유저 데이터
 		const users = [
 			{ id: 'user123', nickname: 'owner' },
 			{ id: 'user456', nickname: 'user2' },
@@ -144,8 +145,9 @@ describe('leaveRoomRequestHandler', () => {
 		randomSpy.mockRestore();
 	});
 
+    // 방장이 나가는 경우 (남은 유저가 없을 때)의 테스트 케이스
 	it('방장이 방을 나갈 때, 남은 유저가 없으면 방이 삭제되어야 한다', async () => {
-		// 준비
+		// 테스트를 위한 초기 방 및 유저 데이터
 		const users = [{ id: 'user123', nickname: 'owner' }];
 		const initialRoom: Room = {
 			id: 1,
@@ -155,13 +157,13 @@ describe('leaveRoomRequestHandler', () => {
 			state: RoomStateType.WAIT,
 			users: users,
 		};
-
+        // getRoom mock 함수가 초기 방 데이터를 반환하도록 설정
 		mockGetRoom.mockResolvedValue(initialRoom);
 
 		// 실행
 		await leaveRoomRequestHandler(socket, gamePacket);
 
-		// 검증
+		// 각 mock 함수가 예상대로 호출되었는지 검증
 		expect(mockGetRoom).toHaveBeenCalledWith(1);
 		expect(mockDeleteRoom).toHaveBeenCalledWith(1);
 		expect(mockLeaveRoomResponseHandler).toHaveBeenCalledWith(
@@ -171,48 +173,62 @@ describe('leaveRoomRequestHandler', () => {
 		expect(mockLeaveRoomNotificationHandler).not.toHaveBeenCalled();
 	});
 
-	// 기존의 통과했던 테스트 케이스들은 유지합니다.
+	// 소켓에 유저ID 또는 방ID가 없는 경우의 테스트 케이스
 	it('소켓에 userId나 roomId가 없으면 INVALID_REQUEST 응답 전송', async () => {
+        
+        // 소켓의 userId를 undefined로 설정하여 유효하지 않은 요청을 시뮬레이션
 		socket.userId = undefined;
 		await leaveRoomRequestHandler(socket, gamePacket);
+        // INVALID_REQUEST 응답이 전송되었는지 검증
 		expect(mockLeaveRoomResponseHandler).toHaveBeenCalledWith(
 			socket,
 			setLeaveRoomResponse(false, GlobalFailCode.INVALID_REQUEST),
 		);
+        // getRoom 함수가 호출되지 않았는지 검증
 		expect(mockGetRoom).not.toHaveBeenCalled();
 	});
-
+    
+    // 존재하지 않는 방 에러 발생 시의 테스트 케이스
 	it('존재하지 않는 방 에러 발생 시 ROOM_NOT_FOUND 응답 전송', async () => {
 		mockGetRoom.mockResolvedValue(null);
 		await leaveRoomRequestHandler(socket, gamePacket);
+        // getRoom 함수가 호출되었는지 검증
 		expect(mockGetRoom).toHaveBeenCalledWith(socket.roomId);
+        // ROOM_NOT_FOUND 응답이 전송되었는지 검증
 		expect(mockLeaveRoomResponseHandler).toHaveBeenCalledWith(
 			socket,
 			setLeaveRoomResponse(false, GlobalFailCode.ROOM_NOT_FOUND),
 		);
 	});
 
-	it('유저 삭제 중 일반 에러 발생 시 UNKNOWN_ERROR 응답 전송', async () => {
+    // 방 정보 저장/삭제 중 일반 에러 발생 시의 테스트 케이스
+	it('방 정보 저장/삭제 중 일반 에러 발생 시 UNKNOWN_ERROR 응답 전송', async () => {
+		// 테스트를 위한 초기 방 데이터
+		const users = [{ id: 'user123', nickname: 'user1' }];
+		const initialRoom: Room = {
+			id: 1,
+			ownerId: 'user456',
+			name: 'Test Room',
+			maxUserNum: 4,
+			state: RoomStateType.WAIT,
+			users: users,
+		};
+		
+        // getRoom mock 함수가 초기 방 데이터를 반환하도록 설정
+		mockGetRoom.mockResolvedValue(initialRoom);
 		const error = new Error('Some other Redis error');
-		mockRemoveUserFromRoom.mockRejectedValue(error);
+		mockSaveRoom.mockRejectedValue(error); // saveRoom 호출 시 에러를 발생시키도록 모킹
 
 		// 실행
 		await leaveRoomRequestHandler(socket, gamePacket);
 
-		// 검증
-		// 기존 코드: expect(mockLeaveRoomResponseHandler).toHaveBeenCalledWith(socket, GlobalFailCode.UNKNOWN_ERROR);
-		// 수정된 코드:
+		// getRoom 및 saveRoom 함수가 호출되었는지 검증
+		expect(mockGetRoom).toHaveBeenCalledWith(1);
+		expect(mockSaveRoom).toHaveBeenCalled();
+        // UNKNOWN_ERROR 응답이 전송되었는지 검증
 		expect(mockLeaveRoomResponseHandler).toHaveBeenCalledWith(
 			socket,
-			expect.objectContaining({
-				payload: expect.objectContaining({
-					oneofKind: 'leaveRoomResponse',
-					leaveRoomResponse: expect.objectContaining({
-						success: false,
-						failCode: GlobalFailCode.UNKNOWN_ERROR,
-					}),
-				}),
-			}),
+			setLeaveRoomResponse(false, GlobalFailCode.UNKNOWN_ERROR),
 		);
 	});
 });
