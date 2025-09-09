@@ -1,6 +1,7 @@
-import { Room } from '../models/room.model';
-import { User } from '../models/user.model';
-import redis from '../redis/redis';
+import { Room } from "../models/room.model";
+import { User } from "../models/user.model";
+import { Character } from "../models/character.model.js";
+import redis from "../redis/redis";
 
 // 방 저장
 export async function saveRoom(room: Room): Promise<void> {
@@ -101,4 +102,72 @@ export const getRooms = async (): Promise<Room[]> => {
 // 방 삭제
 export const deleteRoom = async (roomId: number): Promise<void> => {
 	await redis.del(`room:${roomId}`);
+};
+
+
+////////////////////////////////////////////////////////////////
+
+// 실시간 캐릭터 정보 저장
+export const updateCharacterInRedis = async (
+  characterType: number, // CharacterType을 기준으로 판별
+  updateData: Partial<Character>
+): Promise<Character | null> => {
+  // Redis에서 기존 캐릭터 데이터 가져오기
+  const key = `Character:${characterType}`; // 캐릭터가 중복하여 등장하지 않기에 캐릭터 타입을 키로 사용
+  const exists = await redis.exists(key);
+  if (!exists) return null;
+
+  const storedData = await redis.hgetall(key);
+  if (!storedData) return null;
+
+  // Redis Hash에서 불러온 데이터 타입 변환
+  const currentCharacter: Character = new Character(
+    Number(storedData.characterType),
+    Number(storedData.roleType),
+    Number(storedData.hp),
+    Number(storedData.weapon),
+    JSON.parse(storedData.equips || "[]"),
+    JSON.parse(storedData.debuffs || "[]"),
+    JSON.parse(storedData.handCards || "[]"),
+    Number(storedData.bbangCount),
+    Number(storedData.handCardsCount)
+  );
+
+  // 업데이트
+  const updatedCharacter = { ...currentCharacter, ...updateData };
+
+  // Redis에 다시 저장
+  const characterData = {
+    characterType: updatedCharacter.characterType.toString(),
+    roleType: updatedCharacter.roleType.toString(),
+    hp: updatedCharacter.hp.toString(),
+    weapon: updatedCharacter.weapon.toString(),
+    bbangCount: updatedCharacter.bbangCount.toString(),
+    handCardsCount: updatedCharacter.handCardsCount.toString(),
+    equips: JSON.stringify(updatedCharacter.equips),
+    debuffs: JSON.stringify(updatedCharacter.debuffs),
+    handCards: JSON.stringify(updatedCharacter.handCards),
+    stateInfo: updatedCharacter.stateInfo ? JSON.stringify(updatedCharacter.stateInfo) : "",
+  };
+
+  await redis.hset(key, characterData);
+
+  return updatedCharacter as Character;
+};
+
+// 방에서 특정 유저의 정보(아이디 제외한 속성값들) 배열로 가져오기
+export const getUserInfoFromRoom = async (roomId: number, socketId: string): Promise<any[]> => {
+  const data = await getRoom(roomId);
+  if (!data) return [];
+
+  // socket.id와 일치하는 유저 찾기
+  const user = data.users.find((u) => u.id === socketId);
+  if (!user) return [];
+
+  // id 제외한 나머지 속성값을 배열로 추출
+  const userValues = Object.entries(user)
+    .filter(([key]) => key !== 'id') // id 제외
+    .map(([_, value]) => value);     // 값만 배열로 저장
+
+  return userValues;
 };
