@@ -3,11 +3,16 @@ import { GameSocket } from "../../type/game.socket.js";
 import { GamePacket } from "../../generated/gamePacket.js";
 import { getGamePacketType } from '../../utils/type.converter.js';
 import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.js';
+
 import useCardResponseHandler from '../response/use.card.response.handler.js';
-import { CardType, GlobalFailCode } from "../../generated/common/enums.js";
 import useCardNotificationHandler from "../notification/use.card.notification.handler.js";
-import { getRoom } from "../../utils/redis.util.js";
-import { applyCardEffect } from "../../utils/card.effect.js";
+import userUpdateNotificationHandler from "../notification/user.update.notification.handler.js";
+
+import { CardType, GlobalFailCode } from "../../generated/common/enums.js";
+
+//import { applyCardEffect } from "../../utils/applyCardEffect.js";
+import { User } from "../../models/user.model";
+import { getUserInfoFromRoom } from "../../utils/redis.util.js";
  
 
 const useCardRequestHandler = async (socket:GameSocket, gamePacket:GamePacket) => {
@@ -25,18 +30,19 @@ const useCardRequestHandler = async (socket:GameSocket, gamePacket:GamePacket) =
         console.warn(`[useCardRequestHandler] 잘못된 카드 타입 요청: NONE`);
         return setUseCardResponse(false, GlobalFailCode.INVALID_REQUEST);
     }
-    
-    const  roomId = socket.roomId;
 
     //try{
     console.log(
         `[useCardRequestHandler] 유저 ${socket.userId} 가 ${req.targetUserId} 를 대상으로 ${CardType[req.cardType]} 카드를 사용하려 합니다)`
     );
 
-    const roomData = await getRoom(roomId!);
+    if(!socket.roomId || !socket.userId) return;
+    const userData = await getUserInfoFromRoom(socket.roomId, socket.userId);
+
+    if (!socket.userId || !req.targetUserId) return;
 
     // 카드 사용 로직
-    //const effectResult = applyCardEffect(userMap, socket.userId!, req.targetUserId);
+    //const effectResult = applyCardEffect(CardType[req.cardType], socket.userId, req.targetUserId);
 
     // 카드 사용 고지
     await useCardResponseHandler(socket, 
@@ -44,9 +50,10 @@ const useCardRequestHandler = async (socket:GameSocket, gamePacket:GamePacket) =
     );
     await useCardNotificationHandler(socket,
         setUseCardNotification(req.cardType, socket.userId!, req.targetUserId),
-        roomData!
     );
-    
+    await userUpdateNotificationHandler(socket,  
+       setUserUpdateNotification( userData ) 
+    );
     //}catch (error) {}
 };
 
@@ -81,6 +88,21 @@ export const setUseCardNotification = (
                 cardType: cardType,
                 userId: userId,
                 targetUserId: targetUserId
+            }
+        }
+    }
+
+    return NotificationPacket;
+};
+
+export const setUserUpdateNotification = (
+    user: User[]
+) : GamePacket => {
+    const NotificationPacket: GamePacket = {
+        payload: {
+            oneofKind: GamePacketType.userUpdateNotification,
+            userUpdateNotification: {
+                user: user
             }
         }
     }

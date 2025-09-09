@@ -154,3 +154,20 @@ export const updateCharacterInRedis = async (
 
   return updatedCharacter as Character;
 };
+
+// 방에서 특정 유저의 정보(아이디 제외한 속성값들) 배열로 가져오기
+export const getUserInfoFromRoom = async (roomId: number, socketId: string): Promise<any[]> => {
+  const data = await getRoom(roomId);
+  if (!data) return [];
+
+  // socket.id와 일치하는 유저 찾기
+  const user = data.users.find((u) => u.id === socketId);
+  if (!user) return [];
+
+  // id 제외한 나머지 속성값을 배열로 추출
+  const userValues = Object.entries(user)
+    .filter(([key]) => key !== 'id') // id 제외
+    .map(([_, value]) => value);     // 값만 배열로 저장
+
+  return userValues;
+};
