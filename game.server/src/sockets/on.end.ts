@@ -1,6 +1,6 @@
 import { Socket } from 'net';
 import { handleError } from '../handlers/handleError.js';
-import { removeSocket } from './socket.manger.js';
+import { removeSocket } from '../managers/socket.manger.js';
 
 const onEnd = (socket:Socket) => async () => {
   try {

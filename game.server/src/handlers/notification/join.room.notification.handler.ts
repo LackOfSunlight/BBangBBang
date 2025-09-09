@@ -1,12 +1,13 @@
 import { GameSocket } from '../../type/game.socket.js';
 import { S2CJoinRoomNotification } from '../../generated/packet/notifications.js';
 import { GamePacket } from '../../generated/gamePacket.js';
-import { connectedSockets } from '../../sockets/socket.manger.js';
+import { connectedSockets } from '../../managers/socket.manger.js';
 import { getRoom } from '../../utils/redis.util.js';
 import { Room } from '../../models/room.model.js';
 import { sendData } from '../../utils/send.data.js';
 import { GamePacketType } from '../../enums/gamePacketType.js';
 import { User } from '../../models/user.model.js';
+import { broadcastDataToRoom } from '../../utils/notification.util.js';
 
 const joinRoomNotificationHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const roomId = socket.roomId;
@@ -17,12 +18,7 @@ const joinRoomNotificationHandler = async (socket: GameSocket, gamePacket: GameP
 
     if(!room) return;
 
-    for(const roomUser of room.users){
-        const targetSocket = connectedSockets.get(roomUser.id);
-        if(targetSocket){
-            sendData(targetSocket,gamePacket, GamePacketType.joinRoomNotification);
-        }
-    }
+    broadcastDataToRoom(room.users,gamePacket,GamePacketType.joinRoomNotification);
     
 };
 
