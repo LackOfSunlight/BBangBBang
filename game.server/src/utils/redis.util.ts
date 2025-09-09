@@ -100,3 +100,4 @@ export const getRooms = async (): Promise<Room[]> => {
 
   return rooms;
 };
+
