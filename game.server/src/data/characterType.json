@@ -1,0 +1,56 @@
+[
+    {
+    "id":"CHA00001",
+    "name":"빨깅이",
+    "characterType": "RED",
+    "hp": 4
+    },
+        {
+    "id":"CHA00003",
+    "name":"상어군",
+    "characterType": "SHARK",
+    "hp": 4
+    },
+        {
+    "id":"CHA00005",
+    "name":"말랑이",
+    "characterType": "MALANG",
+    "hp": 4
+    },
+        {
+    "id":"CHA00007",
+    "name":"개굴군",
+    "characterType": "FROGGY",
+    "hp": 4
+    },
+        {
+    "id":"CHA00008",
+    "name":"핑크군",
+    "characterType": "PINK",
+    "hp": 4
+    },
+        {
+    "id":"CHA00009",
+    "name":"물안경군",
+    "characterType": "SWIM_GLASSES",
+    "hp": 4
+    },
+        {
+    "id":"CHA00010",
+    "name":"가면군",
+    "characterType": "MASK",
+    "hp": 4
+    },
+        {
+    "id":"CHA00012",
+    "name":"공룡이",
+    "characterType": "DINOSAUR",
+    "hp": 3
+    },
+        {
+    "id":"CHA00013",
+    "name":"핑크슬라임",
+    "characterType": "PINK_SLIME",
+    "hp": 3
+    }
+]
