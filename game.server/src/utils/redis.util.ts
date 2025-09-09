@@ -133,7 +133,7 @@ export const updateCharacterInRedis = async (
     Number(storedData.handCardsCount)
   );
 
-  // 업데이트 (얕은 병합)
+  // 업데이트
   const updatedCharacter = { ...currentCharacter, ...updateData };
 
   // Redis에 다시 저장

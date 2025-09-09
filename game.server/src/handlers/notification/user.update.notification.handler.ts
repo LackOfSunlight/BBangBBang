@@ -6,18 +6,22 @@ import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.j
 //import { CardType, GlobalFailCode } from "../../generated/common/enums.js";
 import { broadcastDataToRoom } from "../../utils/notification.util.js";
 import { Room } from "../../models/room.model";
+import {getRoom } from "../../utils/redis.util.js";
 
-const userUpdateNotificationHandler = (socket:GameSocket, gamePacket:GamePacket) =>{
+const userUpdateNotificationHandler = async (socket:GameSocket, gamePacket:GamePacket) =>{
     const payload = getGamePacketType(gamePacket, gamePackTypeSelect.userUpdateNotification);
     if(!payload) return;
     const noti = payload.userUpdateNotification;
 
-    // broadcastDataToRoom(
-    //         roomData.users,
-    //         gamePacket,
-    //         GamePacketType.userUpdateNotification,
-    //         socket
-    // );
+    if(!socket.roomId) return;
+    const roomData:Room|null = await getRoom(socket.roomId);
+    if(!roomData) return;
+    broadcastDataToRoom(
+            roomData.users,
+            gamePacket,
+            GamePacketType.userUpdateNotification,
+            socket
+    );
 }
 
 
