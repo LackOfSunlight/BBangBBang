@@ -7,8 +7,6 @@ const cardBbangEffect = async (roomId:number, userId:string, targetUserId:string
     // 유효성 검증
     if (!user || !target || !target.character) return; 
 
-    // if (!target.character) return;
-
     // 1. 방어 카드 확인 (C# 코드 참고)
     // const defCardIndex = target.character.handCards.findIndex(c => c.rcode === "Shield"); 
     // if (defCardIndex !== -1) {
@@ -18,7 +16,7 @@ const cardBbangEffect = async (roomId:number, userId:string, targetUserId:string
 
     // 2. 방어 카드 없으면 HP 감소
     target.character.hp -= 1;
-    const result = await updateCharacterFromRoom(roomId, targetUserId, target.character);
+    return await updateCharacterFromRoom(roomId, targetUserId, target.character);
     
 }
 

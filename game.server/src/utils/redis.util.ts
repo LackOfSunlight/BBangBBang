@@ -165,7 +165,7 @@ export const getUserInfoFromRoom = async (roomId: number, socketId: string): Pro
   const user = data.users.find((u) => u.id === socketId);
   if (!user) return [];
 
-  // id 제외한 나머지 속성값을 배열로 추출
+  // 속성값을 배열로 추출
   const userValues = Object.entries(user)
     //.filter(([key]) => key !== 'id') // id 제외
     .map(([_, value]) => value);     // 값만 배열로 저장

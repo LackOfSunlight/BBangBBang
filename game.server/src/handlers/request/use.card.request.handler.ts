@@ -38,10 +38,11 @@ const useCardRequestHandler = async (socket:GameSocket, gamePacket:GamePacket) =
 
     // 필요값들 유효성 체크
     if(!socket.roomId || !socket.userId || !req.targetUserId) return; 
+    
+    // 카드 효과 적용
+    applyCardEffect(socket.roomId, req.cardType, socket.userId, req.targetUserId);
+    // 카드 효과 적용 후 유저 정보 가져오기
     const userData = await getUserInfoFromRoom(socket.roomId, socket.userId);
-
-    // 카드 사용 로직
-    const effectResult = applyCardEffect(socket.roomId, req.cardType, socket.userId, req.targetUserId);
 
     // 카드 사용 고지
     await useCardResponseHandler(socket, 
