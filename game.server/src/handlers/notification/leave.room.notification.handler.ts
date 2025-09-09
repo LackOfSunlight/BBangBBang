@@ -27,7 +27,7 @@ const leaveRoomNotificationHandler = async (socket: GameSocket, gamePacket: Game
 
 	// 자신(방을 나간 유저)을 제외한 나머지 유저들에게 알림을 보냅니다.
 	broadcastDataToRoom(
-        //room?.ownerId,
+        // room?.ownerId,
 		room?.users,
 		notificationPacket,
 		GamePacketType.leaveRoomNotification,
