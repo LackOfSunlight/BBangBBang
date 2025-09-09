@@ -3,7 +3,7 @@ import { GamePacket } from "../generated/gamePacket.js";
 import { User } from "../models/user.model.js";
 import { GameSocket } from "../type/game.socket.js";
 import { sendData } from "./send.data.js";
-import { connectedSockets } from "../sockets/socket.manger.js";
+import { connectedSockets } from "../managers/socket.manger.js";
 
 
 // 특정 방의 모든 사용자에게 알림을 보내는 함수
