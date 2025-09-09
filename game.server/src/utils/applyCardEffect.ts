@@ -25,22 +25,6 @@ import cardWinLotteryEffect from "../card/card.win_lottery.effect.js";
 
 // 카드 효과 적용 함수
 export function applyCardEffect(roomId:number, CardType: number, userId: string, targetUserId: string) {
-  // const user = await getUserFromRoom(roomId, userId);
-  
-  // const target = await getUserFromRoom(roomId, targetUserId);
-  // if (!user || !target) return; 
-  
-
-  // if(user.character){
-  // const RoomUpdate = await updateCharacterFromRoom(roomId, userId, user.character);}
-
-
-  // if (!user || !target) {
-  //   console.log('User not found');
-  //   return;
-  // }
-
-  // if (!target.character) return;
 
   switch (CardType) {
     case 1: //'Bbang':
@@ -117,6 +101,3 @@ export function applyCardEffect(roomId:number, CardType: number, userId: string,
   }
 }
 
-// 테스트
-//applyCardEffect('Bbang', 'user1', 'user2');
-//console.log(users);
