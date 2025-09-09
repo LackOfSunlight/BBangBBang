@@ -53,16 +53,6 @@ const joinRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 		);
 	}
 
-	// 방이 max면 방 상태를 준비로 변경
-	if(room.maxUserNum === room.users.length){
-		room.state = RoomStateType.PREPARE;
-		await saveRoom(room);
-		room = await  getRoom(room.id);
-		if(!room){
-			return joinRoomResponseHandler(socket, setJoinRoomResponse(false, GlobalFailCode.JOIN_ROOM_FAILED));
-		}
-	}
-
 	socket.roomId = room.id;
 
 	// 성공 응답 및 알림
