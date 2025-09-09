@@ -1,7 +1,7 @@
 import { GameSocket } from '../../type/game.socket.js';
 import { S2CJoinRoomNotification } from '../../generated/packet/notifications.js';
 import { GamePacket } from '../../generated/gamePacket.js';
-import { connectedSockets } from '../../sockets/socket.manger.js';
+import { connectedSockets } from '../../managers/socket.manger.js';
 import { getRoom } from '../../utils/redis.util.js';
 import { Room } from '../../models/room.model.js';
 import { sendData } from '../../utils/send.data.js';

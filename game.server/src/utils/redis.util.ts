@@ -14,7 +14,7 @@ export async function getRoom(roomId: number): Promise<Room | null> {
 }
 
 // 유저를 방에 추가
-export async function addUserToRoom(roomId: number, user: User): Promise<void> {
+export async function addUserToRoom(roomId: number, user: User): Promise<Room | null> {
   const room = await getRoom(roomId);
   if (!room) throw new Error("Room not found");
 
@@ -24,6 +24,9 @@ export async function addUserToRoom(roomId: number, user: User): Promise<void> {
 
   room.users.push(user);
   await saveRoom(room);
+
+  return room;
+
 }
 
 // 유저를 방에서 제거
