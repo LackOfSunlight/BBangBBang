@@ -4,7 +4,7 @@ import { getGamePacketType } from '../../utils/type.converter.js';
 import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.js';
 import { GlobalFailCode } from '../../generated/common/enums.js';
 import { Room } from '../../models/room.model.js';
-import { addUserToRoom, getRoom } from '../../utils/redis.util.js';
+import { addUserToRoom, getRoom, saveRoom, updateUserFromRoom } from '../../utils/redis.util.js';
 import { User } from '../../models/user.model.js';
 import { prisma } from '../../utils/db.js';
 import joinRoomResponseHandler from '../response/join.room.response.handler.js';
@@ -52,6 +52,17 @@ const joinRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 			setJoinRoomResponse(false, GlobalFailCode.JOIN_ROOM_FAILED),
 		);
 	}
+
+	// 방이 max면 방 상태를 준비로 변경
+	if(room.maxUserNum === room.users.length){
+		room.state = RoomStateType.PREPARE;
+		await saveRoom(room);
+		room = await  getRoom(room.id);
+		if(!room){
+			return joinRoomResponseHandler(socket, setJoinRoomResponse(false, GlobalFailCode.JOIN_ROOM_FAILED));
+		}
+	}
+
 	socket.roomId = room.id;
 
 	// 성공 응답 및 알림
