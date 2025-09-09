@@ -77,7 +77,7 @@ const leaveRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacke
 	}
 };
 
-const setLeaveRoomResponse = (success: boolean, failCode: GlobalFailCode): GamePacket => {
+export const setLeaveRoomResponse = (success: boolean, failCode: GlobalFailCode): GamePacket => {
 	const newGamePacket: GamePacket = {
 		payload: {
 			oneofKind: GamePacketType.leaveRoomResponse,
