@@ -1,52 +1,52 @@
-import { Room } from "../models/room.model";
-import { User } from "../models/user.model";
-import redis from "../redis/redis";
+import { Room } from '../models/room.model';
+import { User } from '../models/user.model';
+import redis from '../redis/redis';
 
-// 방 저장 
+// 방 저장
 export async function saveRoom(room: Room): Promise<void> {
-  await redis.set(`room:${room.id}`, JSON.stringify(room));
+	await redis.set(`room:${room.id}`, JSON.stringify(room));
 }
 
 // 방 불러오기
 export async function getRoom(roomId: number): Promise<Room | null> {
-  const data = await redis.get(`room:${roomId}`);
-  return data ? JSON.parse(data) : null;
+	const data = await redis.get(`room:${roomId}`);
+	return data ? JSON.parse(data) : null;
 }
 
 // 유저를 방에 추가
-export async function addUserToRoom(roomId: number, user: User): Promise<void> {
+export async function addUserToRoom(roomId: number, user: User): Promise<Room | null> {
   const room = await getRoom(roomId);
   if (!room) throw new Error("Room not found");
 
-  if (room.users.length >= room.maxUserNum) {
-    throw new Error("Room is full");
-  }
+	if (room.users.length >= room.maxUserNum) {
+		throw new Error('Room is full');
+	}
 
   room.users.push(user);
   await saveRoom(room);
+
+  return room;
+
 }
 
 // 유저를 방에서 제거
 export async function removeUserFromRoom(roomId: number, userId: string): Promise<void> {
-  const room = await getRoom(roomId);
-  if (!room) throw new Error("Room not found");
+	const room = await getRoom(roomId);
+	if (!room) throw new Error('Room not found');
 
-  room.users = room.users.filter(u => u.id !== userId);
+	room.users = room.users.filter((u) => u.id !== userId);
 
-  await saveRoom(room);
+	await saveRoom(room);
 }
 
 // 방에서 특정 유저 가져오기
-export const getUserFromRoom = async (
-  roomId: number,
-  userId: string
-): Promise<User | null> => {
-  const data = await getRoom(roomId);
-  if (!data) return null;
+export const getUserFromRoom = async (roomId: number, userId: string): Promise<User | null> => {
+	const data = await getRoom(roomId);
+	if (!data) return null;
 
-  // 유저 찾기
-  const user = data.users.find((u) => u.id === userId);
-  return user ?? null;
+	// 유저 찾기
+	const user = data.users.find((u) => u.id === userId);
+	return user ?? null;
 };
 
 /* 방에서 특정 유저 정보 업데이트
@@ -59,44 +59,46 @@ const updated = await updateUserFromRoom(1, 1001, {character: charaterData });
   }
 */
 export const updateUserFromRoom = async (
-  roomId: number,
-  userId: string,
-  updateData: Partial<User> // 업데이트할 필드만 넘길 수 있도록 Partial<User>
+	roomId: number,
+	userId: string,
+	updateData: Partial<User>, // 업데이트할 필드만 넘길 수 있도록 Partial<User>
 ): Promise<User | null> => {
-  const data = await getRoom(roomId);
-    if (!data) return null;
+	const data = await getRoom(roomId);
+	if (!data) return null;
 
-  // 유저 찾기
-  const userIndex = data.users.findIndex((u) => u.id === userId);
-  if (userIndex === -1) return null;
+	// 유저 찾기
+	const userIndex = data.users.findIndex((u) => u.id === userId);
+	if (userIndex === -1) return null;
 
-  // 기존 유저 데이터
-  const user = data.users[userIndex];
+	// 기존 유저 데이터
+	const user = data.users[userIndex];
 
-  // 업데이트 (얕은 병합)
-  const updatedUser = { ...user, ...updateData };
+	// 업데이트 (얕은 병합)
+	const updatedUser = { ...user, ...updateData };
 
-  // 배열에 반영
-  data.users[userIndex] = updatedUser;
+	// 배열에 반영
+	data.users[userIndex] = updatedUser;
 
-  // Redis에 다시 저장
-  await redis.set(`room:${roomId}`, JSON.stringify(data));
+	// Redis에 다시 저장
+	await redis.set(`room:${roomId}`, JSON.stringify(data));
 
-  return updatedUser;
+	return updatedUser;
 };
-
 
 // 전체 방 불러오기
 export const getRooms = async (): Promise<Room[]> => {
-  // room:* 패턴으로 모든 방 키 조회
-  const keys = await redis.keys("room:*");
-  if (keys.length === 0) return [];
+	// room:* 패턴으로 모든 방 키 조회
+	const keys = await redis.keys('room:*');
+	if (keys.length === 0) return [];
 
-  // 모든 방 데이터를 가져오기
-  const roomsData = await redis.mget(keys);
-  const rooms: Room[] = roomsData
-    .filter((d) => d !== null)
-    .map((d) => JSON.parse(d!) as Room);
+	// 모든 방 데이터를 가져오기
+	const roomsData = await redis.mget(keys);
+	const rooms: Room[] = roomsData.filter((d) => d !== null).map((d) => JSON.parse(d!) as Room);
 
-  return rooms;
+	return rooms;
+};
+
+// 방 삭제
+export const deleteRoom = async (roomId: number): Promise<void> => {
+	await redis.del(`room:${roomId}`);
 };
