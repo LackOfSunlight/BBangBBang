@@ -14,16 +14,19 @@ export async function getRoom(roomId: number): Promise<Room | null> {
 }
 
 // 유저를 방에 추가
-export async function addUserToRoom(roomId: number, user: User): Promise<void> {
-	const room = await getRoom(roomId);
-	if (!room) throw new Error('Room not found');
+export async function addUserToRoom(roomId: number, user: User): Promise<Room | null> {
+  const room = await getRoom(roomId);
+  if (!room) throw new Error("Room not found");
 
 	if (room.users.length >= room.maxUserNum) {
 		throw new Error('Room is full');
 	}
 
-	room.users.push(user);
-	await saveRoom(room);
+  room.users.push(user);
+  await saveRoom(room);
+
+  return room;
+
 }
 
 // 유저를 방에서 제거

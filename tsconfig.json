@@ -14,7 +14,9 @@
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
   },
   "include": [
     "game.server/src/**/*.ts"

@@ -4,7 +4,7 @@ import { getGamePacketType } from '../../utils/type.converter.js';
 import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.js';
 import { GlobalFailCode } from '../../generated/common/enums.js';
 import { Room } from '../../models/room.model.js';
-import { addUserToRoom, getRoom } from '../../utils/redis.util.js';
+import { addUserToRoom, getRoom, saveRoom, updateUserFromRoom } from '../../utils/redis.util.js';
 import { User } from '../../models/user.model.js';
 import { prisma } from '../../utils/db.js';
 import joinRoomResponseHandler from '../response/join.room.response.handler.js';
@@ -28,7 +28,7 @@ const joinRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 	const user = new User(socket.userId, userInfo.nickname);
 
 	// 방 정보 가져오기
-	const room = await getRoom(req.roomId);
+	let room = await getRoom(req.roomId);
 	if (!room) {
 		return joinRoomResponseHandler(
 			socket,
@@ -45,22 +45,30 @@ const joinRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 	}
 
 	// 유저를 방에 추가
-	await addUserToRoom(req.roomId, user);
-	socket.roomId = room.id;
-
-	// 업데이트된 방 정보 다시 가져오기
-	const updatedRoom = await getRoom(req.roomId);
-	if (!updatedRoom) {
+	room = await addUserToRoom(req.roomId, user);
+	if (!room) {
 		return joinRoomResponseHandler(
 			socket,
 			setJoinRoomResponse(false, GlobalFailCode.JOIN_ROOM_FAILED),
 		);
 	}
 
+	// 방이 max면 방 상태를 준비로 변경
+	if(room.maxUserNum === room.users.length){
+		room.state = RoomStateType.PREPARE;
+		await saveRoom(room);
+		room = await  getRoom(room.id);
+		if(!room){
+			return joinRoomResponseHandler(socket, setJoinRoomResponse(false, GlobalFailCode.JOIN_ROOM_FAILED));
+		}
+	}
+
+	socket.roomId = room.id;
+
 	// 성공 응답 및 알림
 	joinRoomResponseHandler(
 		socket,
-		setJoinRoomResponse(true, GlobalFailCode.NONE_FAILCODE, updatedRoom),
+		setJoinRoomResponse(true, GlobalFailCode.NONE_FAILCODE, room),
 	);
 	joinRoomNotificationHandler(socket, setJoinRoomNotification(user));
 };
