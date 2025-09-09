@@ -1,4 +1,4 @@
-import { gamePackTypeSelect } from '../../enums/gamePacketType';
+import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType';
 import { GlobalFailCode } from '../../generated/common/enums';
 import { GamePacket } from '../../generated/gamePacket';
 import { GameSocket } from '../../type/game.socket';
@@ -14,7 +14,7 @@ const leaveRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacke
 	const roomId = socket.roomId;
 
 	if (!socket.userId || !roomId) {
-		await leaveRoomResponseHandler(socket, GlobalFailCode.INVALID_REQUEST);
+		await leaveRoomResponseHandler(socket, setLeaveRoomResponse(false, GlobalFailCode.INVALID_REQUEST));
 		return;
 	}
 
@@ -22,10 +22,10 @@ const leaveRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacke
 		await removeUserFromRoom(roomId, socket.userId);
 
 		// 성공 응답 및 알림 전송
-		await leaveRoomResponseHandler(socket, GlobalFailCode.NONE_FAILCODE);
+		await leaveRoomResponseHandler(socket, setLeaveRoomResponse(true, GlobalFailCode.NONE_FAILCODE));
 		const updatedRoom = await getRoom(roomId);
 		if (updatedRoom) {
-			await leaveRoomNotificationHandler(socket, updatedRoom);
+			await leaveRoomNotificationHandler(socket, gamePacket);
 		}
 	} catch (error) {
 		let failCode = GlobalFailCode.UNKNOWN_ERROR;
@@ -35,8 +35,27 @@ const leaveRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacke
 			} else {
 				failCode = GlobalFailCode.UNKNOWN_ERROR;
 			}
-			await leaveRoomResponseHandler(socket, failCode);
+			await leaveRoomResponseHandler(socket, setLeaveRoomResponse(false, failCode));
 		}
 	}
 };
+
+
+const setLeaveRoomResponse = (
+	success: boolean,
+	failCode: GlobalFailCode,
+): GamePacket => {
+	const newGamePacket: GamePacket = {
+		payload: {
+			oneofKind: GamePacketType.leaveRoomResponse,
+			leaveRoomResponse: {
+    			success,
+    			failCode,
+			},
+		},
+	};
+
+	return newGamePacket;
+};
+
 export default leaveRoomRequestHandler;

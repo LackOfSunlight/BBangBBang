@@ -7,7 +7,7 @@ import { GlobalFailCode } from '../../generated/common/enums.js';
 import { UserData } from '../../generated/common/types.js';
 import { prisma } from '../../utils/db.js';
 import * as bcrypt from 'bcrypt';
-import { addSocket } from '../../sockets/socket.manger.js';
+import { addSocket } from '../../managers/socket.manger.js';
 
 const loginRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.loginRequest);
