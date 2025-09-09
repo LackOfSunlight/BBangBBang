@@ -1,5 +1,6 @@
 import { Room } from "../models/room.model";
 import { User } from "../models/user.model";
+import { Character } from "../models/character.model.js";
 import redis from "../redis/redis";
 
 // 방 저장 
@@ -104,3 +105,52 @@ export const getRooms = async (): Promise<Room[]> => {
   return rooms;
 };
 
+////////////////////////////////////////////////////////////////
+
+// 실시간 캐릭터 정보 저장
+export const updateCharacterInRedis = async (
+  characterType: number, // CharacterType을 기준으로 판별
+  updateData: Partial<Character>
+): Promise<Character | null> => {
+  // Redis에서 기존 캐릭터 데이터 가져오기
+  const key = `Character:${characterType}`; // 캐릭터가 중복하여 등장하지 않기에 캐릭터 타입을 키로 사용
+  const exists = await redis.exists(key);
+  if (!exists) return null;
+
+  const storedData = await redis.hgetall(key);
+  if (!storedData) return null;
+
+  // Redis Hash에서 불러온 데이터 타입 변환
+  const currentCharacter: Character = new Character(
+    Number(storedData.characterType),
+    Number(storedData.roleType),
+    Number(storedData.hp),
+    Number(storedData.weapon),
+    JSON.parse(storedData.equips || "[]"),
+    JSON.parse(storedData.debuffs || "[]"),
+    JSON.parse(storedData.handCards || "[]"),
+    Number(storedData.bbangCount),
+    Number(storedData.handCardsCount)
+  );
+
+  // 업데이트 (얕은 병합)
+  const updatedCharacter = { ...currentCharacter, ...updateData };
+
+  // Redis에 다시 저장
+  const characterData = {
+    characterType: updatedCharacter.characterType.toString(),
+    roleType: updatedCharacter.roleType.toString(),
+    hp: updatedCharacter.hp.toString(),
+    weapon: updatedCharacter.weapon.toString(),
+    bbangCount: updatedCharacter.bbangCount.toString(),
+    handCardsCount: updatedCharacter.handCardsCount.toString(),
+    equips: JSON.stringify(updatedCharacter.equips),
+    debuffs: JSON.stringify(updatedCharacter.debuffs),
+    handCards: JSON.stringify(updatedCharacter.handCards),
+    stateInfo: updatedCharacter.stateInfo ? JSON.stringify(updatedCharacter.stateInfo) : "",
+  };
+
+  await redis.hset(key, characterData);
+
+  return updatedCharacter as Character;
+};
