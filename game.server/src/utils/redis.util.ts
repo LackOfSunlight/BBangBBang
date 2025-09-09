@@ -2,6 +2,7 @@ import { Room } from "../models/room.model";
 import { User } from "../models/user.model";
 import { Character } from "../models/character.model.js";
 import redis from "../redis/redis";
+import { CharacterData } from "../generated/common/types";
 
 // 방 저장
 export async function saveRoom(room: Room): Promise<void> {
@@ -59,17 +60,17 @@ const updated = await updateUserFromRoom(1, 1001, {character: charaterData });
   console.log("유저를 찾을 수 없음");
   }
 */
-export const updateUserFromRoom = async (
+export const updateCharacterFromRoom = async (
 	roomId: number,
 	userId: string,
-	updateData: Partial<User>, // 업데이트할 필드만 넘길 수 있도록 Partial<User>
-): Promise<User | null> => {
+	updateData: CharacterData, // 업데이트할 필드만 넘길 수 있도록 Partial<User>
+): Promise<void> => {
 	const data = await getRoom(roomId);
-	if (!data) return null;
+	if (!data) return;
 
 	// 유저 찾기
 	const userIndex = data.users.findIndex((u) => u.id === userId);
-	if (userIndex === -1) return null;
+	if (userIndex === -1) return;
 
 	// 기존 유저 데이터
 	const user = data.users[userIndex];
@@ -83,7 +84,7 @@ export const updateUserFromRoom = async (
 	// Redis에 다시 저장
 	await redis.set(`room:${roomId}`, JSON.stringify(data));
 
-	return updatedUser;
+	//return updatedUser;
 };
 
 // 전체 방 불러오기
@@ -105,7 +106,7 @@ export const deleteRoom = async (roomId: number): Promise<void> => {
 };
 
 
-////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // 실시간 캐릭터 정보 저장
 export const updateCharacterInRedis = async (
@@ -166,8 +167,9 @@ export const getUserInfoFromRoom = async (roomId: number, socketId: string): Pro
 
   // id 제외한 나머지 속성값을 배열로 추출
   const userValues = Object.entries(user)
-    .filter(([key]) => key !== 'id') // id 제외
+    //.filter(([key]) => key !== 'id') // id 제외
     .map(([_, value]) => value);     // 값만 배열로 저장
 
   return userValues;
 };
+
