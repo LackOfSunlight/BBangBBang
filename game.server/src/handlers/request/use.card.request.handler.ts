@@ -10,7 +10,7 @@ import userUpdateNotificationHandler from "../notification/user.update.notificat
 
 import { CardType, GlobalFailCode } from "../../generated/common/enums.js";
 
-//import { applyCardEffect } from "../../utils/applyCardEffect.js";
+import { applyCardEffect } from "../../utils/applyCardEffect.js";
 import { User } from "../../models/user.model";
 import { getUserInfoFromRoom } from "../../utils/redis.util.js";
  
@@ -36,13 +36,12 @@ const useCardRequestHandler = async (socket:GameSocket, gamePacket:GamePacket) =
         `[useCardRequestHandler] 유저 ${socket.userId} 가 ${req.targetUserId} 를 대상으로 ${CardType[req.cardType]} 카드를 사용하려 합니다)`
     );
 
-    if(!socket.roomId || !socket.userId) return;
+    // 필요값들 유효성 체크
+    if(!socket.roomId || !socket.userId || !req.targetUserId) return; 
     const userData = await getUserInfoFromRoom(socket.roomId, socket.userId);
 
-    if (!socket.userId || !req.targetUserId) return;
-
     // 카드 사용 로직
-    //const effectResult = applyCardEffect(CardType[req.cardType], socket.userId, req.targetUserId);
+    const effectResult = applyCardEffect(socket.roomId, req.cardType, socket.userId, req.targetUserId);
 
     // 카드 사용 고지
     await useCardResponseHandler(socket, 
