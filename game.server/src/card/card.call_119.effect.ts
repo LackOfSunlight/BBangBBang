@@ -1,6 +1,7 @@
 // cardType = 5
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
+import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../utils/redis.util.js';
 import { CharacterType } from '../generated/common/enums.js';
+import { CharacterData } from '../generated/common/types.js';
 
 // 캐릭터 타입별 최대 체력 정의
 const getMaxHp = (characterType: CharacterType): number => {
@@ -23,39 +24,50 @@ const getMaxHp = (characterType: CharacterType): number => {
 
 const cardCall119Effect = async (roomId: number, userId: string, targetUserId: string) => {
 	const user = await getUserFromRoom(roomId, userId);
-	const target = await getUserFromRoom(roomId, targetUserId);
 
 	// 유효성 검증
 	if (!user || !user.character) return;
 
-	// 119 호출 카드 효과: 체력 1 회복
-	// targetUserId가 있으면 해당 플레이어, 없으면 자신의 체력 회복
-	const targetUser = targetUserId && target ? target : user;
+	// 119 호출 카드 효과: 자신의 체력을 1 회복하거나, 나머지의 체력을 1 회복
+	// targetUserId가 있으면 자신의 체력 회복, 없으면 나머지 플레이어들의 체력 회복
+	
+	if (targetUserId) {
+		// 자신의 체력 회복
+		await healCharacter(roomId, user, user.character);
+	} else {
+		// 나머지 플레이어들의 체력 회복
+		// 방의 모든 사용자 정보를 가져와서 자신을 제외한 나머지 플레이어들을 회복
+		const room = await getRoom(roomId);
+		if (!room) return;
 
-	// 대상 유저의 캐릭터가 존재하는지 확인
-	if (!targetUser.character) {
-		console.warn(`[119 호출] 대상 유저 ${targetUser.nickname}의 캐릭터 정보가 없습니다.`);
+		for (const roomUser of room.users) {
+			if (roomUser.id !== userId && roomUser.character) {
+				await healCharacter(roomId, roomUser, roomUser.character);
+			}
+		}
+	}
+};
+
+// 체력 회복 로직을 별도 함수로 분리
+const healCharacter = async (roomId: number, targetUser: { id: string; nickname: string }, character: CharacterData) => {
+	// 최대 체력 확인
+	const maxHp = getMaxHp(character.characterType);
+
+	// 체력이 이미 최대치인지 확인
+	if (character.hp >= maxHp) {
+		console.log(`[119 호출] ${targetUser.nickname}의 체력이 이미 최대치(${maxHp})입니다.`);
 		return;
 	}
 
-	// 최대 체력 확인
-	const maxHp = getMaxHp(targetUser.character.characterType);
-
-	// 체력이 이미 최대치인지 확인
-	if (targetUser.character.hp >= maxHp) {
-		console.log(`[119 호출] ${targetUser.nickname}의 체력이 이미 최대치(${maxHp})입니다.`);
-		return; // void 반환
-	}
-
 	// 체력 1 회복 (최대 체력 제한 적용)
-	const previousHp = targetUser.character.hp;
-	targetUser.character.hp = Math.min(targetUser.character.hp + 1, maxHp);
+	const previousHp = character.hp;
+	character.hp = Math.min(character.hp + 1, maxHp);
 
 	// Redis에 업데이트된 캐릭터 정보 저장 (에러 처리 추가)
 	try {
-		await updateCharacterFromRoom(roomId, targetUser.id, targetUser.character);
+		await updateCharacterFromRoom(roomId, targetUser.id, character);
 		console.log(
-			`[119 호출] ${targetUser.nickname}의 체력이 ${previousHp} → ${targetUser.character.hp}로 회복되었습니다. (최대: ${maxHp})`,
+			`[119 호출] ${targetUser.nickname}의 체력이 ${previousHp} → ${character.hp}로 회복되었습니다. (최대: ${maxHp})`,
 		);
 	} catch (error) {
 		console.error(`[119 호출] Redis 업데이트 실패:`, error);
