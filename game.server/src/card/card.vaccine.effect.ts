@@ -1,6 +1,6 @@
-// cardType = 4
-import { CharacterType } from '../generated/common/enums.js';
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
+import { CharacterType } from "../generated/common/enums";
+import { getUserFromRoom, updateCharacterFromRoom } from "../utils/redis.util";
+
 
 // 캐릭터 타입별 최대 체력 정의
 const getMaxHp = (characterType: CharacterType): number => {
