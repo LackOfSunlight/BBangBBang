@@ -12,7 +12,7 @@ import { CardType, GlobalFailCode } from "../../generated/common/enums.js";
 
 import { applyCardEffect } from "../../utils/applyCardEffect.js";
 import { User } from "../../models/user.model";
-import { getUserInfoFromRoom } from "../../utils/redis.util.js";
+import { getRoom, getUserInfoFromRoom } from "../../utils/redis.util.js";
  
 
 const useCardRequestHandler = async (socket:GameSocket, gamePacket:GamePacket) => {
@@ -40,9 +40,14 @@ const useCardRequestHandler = async (socket:GameSocket, gamePacket:GamePacket) =
     if(!socket.roomId || !socket.userId || !req.targetUserId) return; 
     
     // 카드 효과 적용
-    applyCardEffect(socket.roomId, req.cardType, socket.userId, req.targetUserId);
+    await applyCardEffect(socket.roomId, req.cardType, socket.userId, req.targetUserId);
     // 카드 효과 적용 후 유저 정보 가져오기
     const userData = await getUserInfoFromRoom(socket.roomId, socket.userId);
+
+    const room = await getRoom(socket.roomId);
+    if(!room) return;
+
+    const users = room.users;
 
     // 카드 사용 고지
     await useCardResponseHandler(socket, 
@@ -52,7 +57,7 @@ const useCardRequestHandler = async (socket:GameSocket, gamePacket:GamePacket) =
         setUseCardNotification(req.cardType, socket.userId!, req.targetUserId),
     );
     await userUpdateNotificationHandler(socket,  
-       setUserUpdateNotification( userData ) 
+       setUserUpdateNotification( users ) 
     );
     //}catch (error) {}
 };

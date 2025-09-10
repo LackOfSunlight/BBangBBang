@@ -5,95 +5,95 @@
 	},
 	{
 		"type": "BBANG",
-		"count": 20
+		"count": 0
 	},
 	{
 		"type": "BIG_BBANG",
-		"count": 1
+		"count": 20
 	},
 	{
 		"type": "SHIELD",
-		"count": 10
+		"count": 20
 	},
 	{
 		"type": "VACCINE",
-		"count": 6
+		"count": 0
 	},
 	{
 		"type": "CALL_119",
-		"count": 2
+		"count": 0
 	},
 	{
 		"type": "DEATH_MATCH",
-		"count": 4
+		"count": 0
 	},
 	{
 		"type": "GUERRILLA",
-		"count": 1
+		"count": 20
 	},
 	{
 		"type": "ABSORB",
-		"count": 4
+		"count": 0
 	},
 	{
 		"type": "HALLUCINATION",
-		"count": 4
+		"count": 0
 	},
 	{
 		"type": "FLEA_MARKET",
-		"count": 3
+		"count": 0
 	},
 	{
 		"type": "MATURED_SAVINGS",
-		"count": 2
+		"count": 0
 	},
 	{
 		"type": "WIN_LOTTERY",
-		"count": 1
+		"count": 0
 	},
 	{
 		"type": "SNIPER_GUN",
-		"count": 1
+		"count": 0
 	},
 	{
 		"type": "HAND_GUN",
-		"count": 2
+		"count": 0
 	},
 	{
 		"type": "DESERT_EAGLE",
-		"count": 3
+		"count": 0
 	},
 
 	{
 		"type": "AUTO_RIFLE",
-		"count": 2
+		"count": 0
 	},
 	{
 		"type": "LASER_POINTER",
-		"count": 1
+		"count": 0
 	},
 	{
 		"type": "RADAR",
-		"count": 1
+		"count": 0
 	},
 	{
 		"type": "AUTO_SHIELD",
-		"count": 2
+		"count": 0
 	},
 	{
 		"type": "STEALTH_SUIT",
-		"count": 2
+		"count": 0
 	},
 	{
 		"type": "CONTAINMENT_UNIT",
-		"count": 3
+		"count": 0
 	},
 	{
 		"type": "SATELLITE_TARGET",
-		"count": 1
+		"count": 0
 	},
 	{
 		"type": "BOMB",
-		"count": 1
+		"count": 0
 	}
 ]

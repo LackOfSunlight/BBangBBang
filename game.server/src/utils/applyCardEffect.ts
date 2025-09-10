@@ -24,14 +24,14 @@ import cardVaccineEffect from "../card/card.vaccine.effect.js";
 import cardWinLotteryEffect from "../card/card.win_lottery.effect.js";
 
 // 카드 효과 적용 함수
-export function applyCardEffect(roomId:number, CardType: number, userId: string, targetUserId: string) {
-
+export async function applyCardEffect(roomId:number, CardType: number, userId: string, targetUserId: string) {
+  
   switch (CardType) {
     case 1: //'Bbang':
       cardBbangEffect(roomId, userId, targetUserId);
       break;
     case 2: //'BIGBANG':
-      cardBigBbangEffect(roomId, userId, targetUserId);
+      await cardBigBbangEffect(roomId, userId, targetUserId);
       break;
     case 3: //'SHIELD':
       cardShieldEffect(roomId, userId, targetUserId);
@@ -46,7 +46,7 @@ export function applyCardEffect(roomId:number, CardType: number, userId: string,
       cardDeathMatchEffect(roomId, userId, targetUserId);
       break;
     case 7: // 'GUIRRILLA':
-      cardGuerrillaEffect(roomId, userId, targetUserId);
+      await cardGuerrillaEffect(roomId, userId, targetUserId);
       break;
     case 8: // 'ABSORB':
       cardAbsorbEffect(roomId, userId, targetUserId);
