@@ -10,6 +10,8 @@ const cardHandGunEffect = async (roomId:number, userId:string, targetUserId:stri
     // 핸드건 카드 효과: 하루에 사용할 수 있는 빵야!가 두 개로 증가
     // 무기 카드이므로 자신에게만 적용 (targetUserId 무시)
     
+    user.character.weapon = 14;
+
     if (user.character.bbangCount >= 2) {
         return;
     }
