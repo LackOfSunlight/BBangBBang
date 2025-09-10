@@ -1,4 +1,5 @@
-//import { getUserFromRoom, updateCharacterFromRoom } from "./redis.util.js";
+import { getUserFromRoom } from "./redis.util.js";
+
 import cardAbsorbEffect from "../card/card.absorb.effect.js";
 import cardAutoRifleEffect from "../card/card.auto_rifle.effect.js";
 import cardAutoShieldEffect from "../card/card.auto_shield.effect.js";
@@ -24,8 +25,20 @@ import cardVaccineEffect from "../card/card.vaccine.effect.js";
 import cardWinLotteryEffect from "../card/card.win_lottery.effect.js";
 
 // 카드 효과 적용 함수
-export function applyCardEffect(roomId:number, CardType: number, userId: string, targetUserId: string) {
+export async function applyCardEffect(roomId:number, CardType: number, userId: string, targetUserId: string) {
 
+  const user = await getUserFromRoom(roomId, userId);
+  const target = await getUserFromRoom(roomId, targetUserId);
+  // 유효성 검증
+  if (!user || !target || !user.character || !target.character) return; 
+
+  // 가장 앞 순서에 있는 카드 제거
+  const cardIndex = user.character.handCards.findIndex(c => c.type === CardType);
+  if (cardIndex !== -1) 
+      user.character.handCards.splice(cardIndex, 1); 
+  else return; // cardIndex = -1 일 경우 ; 아무 변화 없이 종료
+
+  // 소지한 카드 제거 후 효과 적용  
   switch (CardType) {
     case 1: //'BBANG':
       cardBbangEffect(roomId, userId, targetUserId);
@@ -63,6 +76,8 @@ export function applyCardEffect(roomId:number, CardType: number, userId: string,
     case 12: // 'WIN_LOTTERY':
       cardWinLotteryEffect(roomId, userId, targetUserId);
       break;
+
+    // 무기 카드  
     case 13: // 'SNIPER_GUN':
       cardSniperGunEffect(roomId, userId, targetUserId);
       break;
@@ -75,6 +90,8 @@ export function applyCardEffect(roomId:number, CardType: number, userId: string,
     case 16: // 'AUTO_RIFLE':
       cardAutoRifleEffect(roomId, userId, targetUserId);
       break;
+
+    // 장비 카드
     case 17: // 'LASER_POINTER':
       cardLaserPointerEffect(roomId, userId, targetUserId);
       break;
@@ -87,6 +104,8 @@ export function applyCardEffect(roomId:number, CardType: number, userId: string,
     case 20: // 'STEATLH_SUIT':
       cardStealthSuitEffect(roomId, userId, targetUserId);
       break;
+
+    // 디버프 카드  
     case 21: // 'CONTAINMENT_UNIT':
       cardContainmentUnitEffect(roomId, userId, targetUserId);
       break;
