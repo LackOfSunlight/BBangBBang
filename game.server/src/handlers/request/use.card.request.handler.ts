@@ -11,7 +11,7 @@ import userUpdateNotificationHandler from "../notification/user.update.notificat
 
 import { CardType, GlobalFailCode } from "../../generated/common/enums.js";
 
-import { applyCardEffect } from "../../utils/applyCardEffect.js";
+import { applyCardEffect } from "../../utils/apply.card.effect.js";
 import { User } from "../../models/user.model";
 import { getUserInfoFromRoom } from "../../utils/redis.util.js";
  
