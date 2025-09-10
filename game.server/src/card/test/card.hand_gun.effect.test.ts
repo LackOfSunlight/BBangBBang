@@ -40,152 +40,90 @@ describe('cardHandGunEffect', () => {
       expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
     });
 
-    it('대상 사용자의 캐릭터가 없으면 경고 로그를 출력하고 함수가 종료된다', async () => {
-      const user = {
-        id: userId,
-        nickname: 'user1',
-        character: {
-          characterType: CharacterType.RED,
-          roleType: RoleType.TARGET,
-          hp: 3,
-          weapon: 0,
-          equips: [],
-          debuffs: [],
-          handCards: [],
-          bbangCount: 0,
-          handCardsCount: 0,
-        },
-      };
-      const target = { id: targetUserId, nickname: 'user2' };
-
-      mockGetUserFromRoom
-        .mockResolvedValueOnce(user)
-        .mockResolvedValueOnce(target);
-
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+    it('사용자의 캐릭터가 없으면 함수가 종료된다', async () => {
+      const user = { id: userId, nickname: 'testUser' };
+      mockGetUserFromRoom.mockResolvedValue(user);
 
       await cardHandGunEffect(roomId, userId, targetUserId);
 
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '[핸드건] 대상 유저 user2의 캐릭터 정보가 없습니다.'
-      );
+      expect(mockGetUserFromRoom).toHaveBeenCalledWith(roomId, userId);
       expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
     });
   });
 
-  describe('무기 장착 로직', () => {
-    const createMockCharacter = (weapon: number) => ({
+  describe('빵야! 횟수 증가 로직', () => {
+    const createMockCharacter = (bbangCount: number) => ({
       characterType: CharacterType.RED,
       roleType: RoleType.TARGET,
       hp: 3,
-      weapon,
+      weapon: 0,
       equips: [],
       debuffs: [],
       handCards: [],
-      bbangCount: 0,
+      bbangCount,
       handCardsCount: 0,
     });
 
-    it('자신에게 핸드건을 장착한다 (targetUserId가 빈 문자열인 경우)', async () => {
+    it('자신의 빵야! 횟수를 2로 설정한다 (targetUserId 무시)', async () => {
       const user = {
         id: userId,
         nickname: 'user1',
-        character: createMockCharacter(0), // 무기 없음
+        character: createMockCharacter(1), // 기본 빵야! 횟수
       };
 
       mockGetUserFromRoom.mockResolvedValue(user);
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-
-      await cardHandGunEffect(roomId, userId, '');
+      await cardHandGunEffect(roomId, userId, targetUserId); // targetUserId는 무시됨
 
       expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
         ...user.character,
-        weapon: 14, // 핸드건 ID
+        bbangCount: 2, // 2로 고정 설정
       });
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '[핸드건] user1이 핸드건을 장착했습니다. (이전 무기: 0)'
-      );
-
-      consoleSpy.mockRestore();
     });
 
-    it('다른 플레이어에게 핸드건을 장착한다', async () => {
+    it('이미 핸드건 효과를 받은 경우 설정하지 않는다 (bbangCount >= 2)', async () => {
       const user = {
         id: userId,
         nickname: 'user1',
-        character: createMockCharacter(0),
-      };
-      const target = {
-        id: targetUserId,
-        nickname: 'user2',
-        character: createMockCharacter(1), // 다른 무기 장착 중
-      };
-
-      mockGetUserFromRoom
-        .mockResolvedValueOnce(user)
-        .mockResolvedValueOnce(target);
-
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-
-      await cardHandGunEffect(roomId, userId, targetUserId);
-
-      expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, targetUserId, {
-        ...target.character,
-        weapon: 14, // 핸드건 ID
-      });
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '[핸드건] user2이 핸드건을 장착했습니다. (이전 무기: 1)'
-      );
-
-      consoleSpy.mockRestore();
-    });
-
-    it('이미 핸드건을 장착한 경우 장착하지 않는다', async () => {
-      const user = {
-        id: userId,
-        nickname: 'user1',
-        character: createMockCharacter(14), // 이미 핸드건 장착
+        character: createMockCharacter(2), // 이미 핸드건 효과 적용됨
       };
 
       mockGetUserFromRoom.mockResolvedValue(user);
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-
       await cardHandGunEffect(roomId, userId, '');
 
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '[핸드건] user1은 이미 핸드건을 장착하고 있습니다.'
-      );
       expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
     });
 
-    it('다른 무기를 핸드건으로 교체한다', async () => {
+    it('빵야! 횟수가 3 이상인 경우 설정하지 않는다', async () => {
       const user = {
         id: userId,
         nickname: 'user1',
-        character: createMockCharacter(13), // 스나이퍼 건 장착 중
+        character: createMockCharacter(3), // 빵야! 횟수 3
       };
 
       mockGetUserFromRoom.mockResolvedValue(user);
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      await cardHandGunEffect(roomId, userId, '');
+
+      expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
+    });
+
+    it('빵야! 횟수가 0인 경우 2로 설정한다', async () => {
+      const user = {
+        id: userId,
+        nickname: 'user1',
+        character: createMockCharacter(0), // 빵야! 횟수 0
+      };
+
+      mockGetUserFromRoom.mockResolvedValue(user);
 
       await cardHandGunEffect(roomId, userId, '');
 
       expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
         ...user.character,
-        weapon: 14, // 핸드건으로 교체
+        bbangCount: 2, // 2로 고정 설정
       });
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '[핸드건] user1이 핸드건을 장착했습니다. (이전 무기: 13)'
-      );
-
-      consoleSpy.mockRestore();
     });
   });
 
@@ -202,7 +140,7 @@ describe('cardHandGunEffect', () => {
           equips: [],
           debuffs: [],
           handCards: [],
-          bbangCount: 0,
+          bbangCount: 1,
           handCardsCount: 0,
         },
       };
@@ -210,7 +148,6 @@ describe('cardHandGunEffect', () => {
       mockGetUserFromRoom.mockResolvedValue(user);
       mockUpdateCharacterFromRoom.mockRejectedValue(new Error('Redis error'));
 
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
       // 에러가 발생해도 함수가 정상적으로 처리되는지 확인
@@ -222,7 +159,6 @@ describe('cardHandGunEffect', () => {
         expect.any(Error)
       );
 
-      consoleSpy.mockRestore();
       consoleErrorSpy.mockRestore();
     });
   });
