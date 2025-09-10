@@ -6,13 +6,14 @@ import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.j
 
 import useCardResponseHandler from '../response/use.card.response.handler.js';
 import useCardNotificationHandler from "../notification/use.card.notification.handler.js";
+import equipCardNotificationHandler from "../notification/equip.card.notification.handler.js";
 import userUpdateNotificationHandler from "../notification/user.update.notification.handler.js";
 
 import { CardType, GlobalFailCode } from "../../generated/common/enums.js";
 
-import { applyCardEffect } from "../../utils/applyCardEffect.js";
+import { applyCardEffect } from "../../utils/apply.card.effect.js";
 import { User } from "../../models/user.model";
-import { getRoom, getUserInfoFromRoom } from "../../utils/redis.util.js";
+import { getUserInfoFromRoom } from "../../utils/redis.util.js";
  
 
 const useCardRequestHandler = async (socket:GameSocket, gamePacket:GamePacket) => {
@@ -40,14 +41,9 @@ const useCardRequestHandler = async (socket:GameSocket, gamePacket:GamePacket) =
     if(!socket.roomId || !socket.userId || !req.targetUserId) return; 
     
     // 카드 효과 적용
-    await applyCardEffect(socket.roomId, req.cardType, socket.userId, req.targetUserId);
+    applyCardEffect(socket.roomId, req.cardType, socket.userId, req.targetUserId);
     // 카드 효과 적용 후 유저 정보 가져오기
     const userData = await getUserInfoFromRoom(socket.roomId, socket.userId);
-
-    const room = await getRoom(socket.roomId);
-    if(!room) return;
-
-    const users = room.users;
 
     // 카드 사용 고지
     await useCardResponseHandler(socket, 
@@ -56,13 +52,19 @@ const useCardRequestHandler = async (socket:GameSocket, gamePacket:GamePacket) =
     await useCardNotificationHandler(socket,
         setUseCardNotification(req.cardType, socket.userId!, req.targetUserId),
     );
-    await userUpdateNotificationHandler(socket,  
-       setUserUpdateNotification( users ) 
-    );
+
+    if(req.cardType >= 13 && req.cardType <= 20) // 무기 및 장비 카드 사용시 -> 장착
+        await userUpdateNotificationHandler(socket,  
+            setEquipCardNotification( req.cardType, socket.userId! ) 
+        );
+    else // 일반 카드 사용시 -> 효과 발동
+        await userUpdateNotificationHandler(socket,  
+            setUserUpdateNotification( userData ) 
+        );
     //}catch (error) {}
 };
 
-
+/** 패킷 세팅 */
 
 export const setUseCardResponse = (
     success: boolean,
@@ -108,6 +110,23 @@ export const setUserUpdateNotification = (
             oneofKind: GamePacketType.userUpdateNotification,
             userUpdateNotification: {
                 user: user
+            }
+        }
+    }
+
+    return NotificationPacket;
+};
+
+export const setEquipCardNotification = (
+    cardType: CardType,
+    userId: string,
+) : GamePacket => {
+    const NotificationPacket: GamePacket = {
+        payload: {
+            oneofKind: GamePacketType.equipCardNotification,
+            equipCardNotification: {
+                cardType: cardType,
+                userId: userId,
             }
         }
     }

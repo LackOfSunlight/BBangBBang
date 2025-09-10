@@ -1,8 +1,10 @@
 // cardType = 19
 import { getUserFromRoom, updateCharacterFromRoom } from "../utils/redis.util.js";
 
-const cardAutoShieldEffect = async (roomId:number, userId:string, targetUserId:string) =>{
-
+const cardAutoShieldEffect = async (roomId:number, userId:string) =>{
+    const user = await getUserFromRoom(roomId, userId);
+    // 유효성 검증
+    if (!user || !user.character) return; 
 }
 
 

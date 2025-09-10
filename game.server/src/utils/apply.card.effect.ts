@@ -1,4 +1,5 @@
-//import { getUserFromRoom, updateCharacterFromRoom } from "./redis.util.js";
+import { getUserFromRoom } from "./redis.util.js";
+
 import cardAbsorbEffect from "../card/card.absorb.effect.js";
 import cardAutoRifleEffect from "../card/card.auto_rifle.effect.js";
 import cardAutoShieldEffect from "../card/card.auto_shield.effect.js";
@@ -25,13 +26,25 @@ import cardWinLotteryEffect from "../card/card.win_lottery.effect.js";
 
 // 카드 효과 적용 함수
 export async function applyCardEffect(roomId:number, CardType: number, userId: string, targetUserId: string) {
-  
+
+  const user = await getUserFromRoom(roomId, userId);
+  const target = await getUserFromRoom(roomId, targetUserId);
+  // 유효성 검증
+  if (!user || !target || !user.character || !target.character) return; 
+
+  // 가장 앞 순서에 있는 카드 제거
+  const cardIndex = user.character.handCards.findIndex(c => c.type === CardType);
+  if (cardIndex !== -1) 
+      user.character.handCards.splice(cardIndex, 1); 
+  else return; // cardIndex = -1 일 경우 ; 아무 변화 없이 종료
+
+  // 소지한 카드 제거 후 효과 적용  
   switch (CardType) {
-    case 1: //'Bbang':
+    case 1: //'BBANG':
       cardBbangEffect(roomId, userId, targetUserId);
       break;
-    case 2: //'BIGBANG':
-      await cardBigBbangEffect(roomId, userId, targetUserId);
+    case 2: //'BIGBBANG':
+      cardBigBbangEffect(roomId, userId, targetUserId);
       break;
     case 3: //'SHIELD':
       cardShieldEffect(roomId, userId, targetUserId);
@@ -46,7 +59,7 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
       cardDeathMatchEffect(roomId, userId, targetUserId);
       break;
     case 7: // 'GUIRRILLA':
-      await cardGuerrillaEffect(roomId, userId, targetUserId);
+      cardGuerrillaEffect(roomId, userId, targetUserId);
       break;
     case 8: // 'ABSORB':
       cardAbsorbEffect(roomId, userId, targetUserId);
@@ -63,30 +76,36 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
     case 12: // 'WIN_LOTTERY':
       cardWinLotteryEffect(roomId, userId, targetUserId);
       break;
+
+    // 무기 카드  
     case 13: // 'SNIPER_GUN':
-      cardSniperGunEffect(roomId, userId, targetUserId);
+      cardSniperGunEffect(roomId, userId);
       break;
     case 14: // 'HAND_GUN':
-      cardHandGunEffect(roomId, userId, targetUserId);
+      cardHandGunEffect(roomId, userId);
       break;
     case 15: // 'DESERT_EAGLE':
-      cardDesertEagleEffect(roomId, userId, targetUserId);
+      cardDesertEagleEffect(roomId, userId);
       break;
     case 16: // 'AUTO_RIFLE':
-      cardAutoRifleEffect(roomId, userId, targetUserId);
+      cardAutoRifleEffect(roomId, userId);
       break;
+
+    // 장비 카드
     case 17: // 'LASER_POINTER':
-      cardLaserPointerEffect(roomId, userId, targetUserId);
+      cardLaserPointerEffect(roomId, userId);
       break;
     case 18: // 'RADER':
-      cardRaderEffect(roomId, userId, targetUserId);
+      cardRaderEffect(roomId, userId);
       break;
     case 19: // 'AUTO_SHIELD':
-      cardAutoShieldEffect(roomId, userId, targetUserId);
+      cardAutoShieldEffect(roomId, userId);
       break;
     case 20: // 'STEATLH_SUIT':
-      cardStealthSuitEffect(roomId, userId, targetUserId);
+      cardStealthSuitEffect(roomId, userId);
       break;
+
+    // 디버프 카드  
     case 21: // 'CONTAINMENT_UNIT':
       cardContainmentUnitEffect(roomId, userId, targetUserId);
       break;
