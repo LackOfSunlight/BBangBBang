@@ -76,6 +76,8 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
     case 12: // 'WIN_LOTTERY':
       cardWinLotteryEffect(roomId, userId, targetUserId);
       break;
+
+    // 무기 카드  
     case 13: // 'SNIPER_GUN':
       cardSniperGunEffect(roomId, userId, targetUserId);
       break;
@@ -88,6 +90,8 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
     case 16: // 'AUTO_RIFLE':
       cardAutoRifleEffect(roomId, userId, targetUserId);
       break;
+
+    // 장비 카드
     case 17: // 'LASER_POINTER':
       cardLaserPointerEffect(roomId, userId, targetUserId);
       break;
@@ -100,6 +104,8 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
     case 20: // 'STEATLH_SUIT':
       cardStealthSuitEffect(roomId, userId, targetUserId);
       break;
+
+    // 디버프 카드  
     case 21: // 'CONTAINMENT_UNIT':
       cardContainmentUnitEffect(roomId, userId, targetUserId);
       break;
