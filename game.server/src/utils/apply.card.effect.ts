@@ -79,30 +79,30 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
 
     // 무기 카드  
     case 13: // 'SNIPER_GUN':
-      cardSniperGunEffect(roomId, userId, targetUserId);
+      cardSniperGunEffect(roomId, userId);
       break;
     case 14: // 'HAND_GUN':
-      cardHandGunEffect(roomId, userId, targetUserId);
+      cardHandGunEffect(roomId, userId);
       break;
     case 15: // 'DESERT_EAGLE':
-      cardDesertEagleEffect(roomId, userId, targetUserId);
+      cardDesertEagleEffect(roomId, userId);
       break;
     case 16: // 'AUTO_RIFLE':
-      cardAutoRifleEffect(roomId, userId, targetUserId);
+      cardAutoRifleEffect(roomId, userId);
       break;
 
     // 장비 카드
     case 17: // 'LASER_POINTER':
-      cardLaserPointerEffect(roomId, userId, targetUserId);
+      cardLaserPointerEffect(roomId, userId);
       break;
     case 18: // 'RADER':
-      cardRaderEffect(roomId, userId, targetUserId);
+      cardRaderEffect(roomId, userId);
       break;
     case 19: // 'AUTO_SHIELD':
-      cardAutoShieldEffect(roomId, userId, targetUserId);
+      cardAutoShieldEffect(roomId, userId);
       break;
     case 20: // 'STEATLH_SUIT':
-      cardStealthSuitEffect(roomId, userId, targetUserId);
+      cardStealthSuitEffect(roomId, userId);
       break;
 
     // 디버프 카드  
