@@ -46,6 +46,7 @@ const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
                     user.character.stateInfo.nextStateAt = '0';
                     user.character.stateInfo.stateTargetUserId = '0';
 					room = await CheckBigBbangService(room);
+					break;
 				case CharacterStateType.GUERRILLA_TARGET:
 					user.character.hp -= 1;
                     user.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
