@@ -27,10 +27,10 @@ import cardWinLotteryEffect from "../card/card.win_lottery.effect.js";
 export function applyCardEffect(roomId:number, CardType: number, userId: string, targetUserId: string) {
 
   switch (CardType) {
-    case 1: //'Bbang':
+    case 1: //'BBANG':
       cardBbangEffect(roomId, userId, targetUserId);
       break;
-    case 2: //'BIGBANG':
+    case 2: //'BIGBBANG':
       cardBigBbangEffect(roomId, userId, targetUserId);
       break;
     case 3: //'SHIELD':
