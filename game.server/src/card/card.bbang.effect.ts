@@ -27,8 +27,8 @@ const cardBbangEffect = async (roomId:number, userId:string, targetUserId:string
     // 2. 방어 카드 없으면 HP 감소
     target.character.hp -= damage; 
 
+    // 수정 정보 갱신
     await updateCharacterFromRoom(roomId, targetUserId, target.character);
-
     
 }
 
