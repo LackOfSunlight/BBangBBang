@@ -6,6 +6,7 @@ import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.j
 
 import useCardResponseHandler from '../response/use.card.response.handler.js';
 import useCardNotificationHandler from "../notification/use.card.notification.handler.js";
+import equipCardNotificationHandler from "../notification/equip.card.notification.handler.js";
 import userUpdateNotificationHandler from "../notification/user.update.notification.handler.js";
 
 import { CardType, GlobalFailCode } from "../../generated/common/enums.js";
@@ -51,13 +52,19 @@ const useCardRequestHandler = async (socket:GameSocket, gamePacket:GamePacket) =
     await useCardNotificationHandler(socket,
         setUseCardNotification(req.cardType, socket.userId!, req.targetUserId),
     );
-    await userUpdateNotificationHandler(socket,  
-       setUserUpdateNotification( userData ) 
-    );
+
+    if(req.cardType >= 13 && req.cardType <= 20) // 무기 및 장비 카드 사용시 -> 장착
+        await userUpdateNotificationHandler(socket,  
+            setEquipCardNotification( req.cardType, socket.userId! ) 
+        );
+    else // 일반 카드 사용시 -> 효과 발동
+        await userUpdateNotificationHandler(socket,  
+            setUserUpdateNotification( userData ) 
+        );
     //}catch (error) {}
 };
 
-
+/** 패킷 세팅 */
 
 export const setUseCardResponse = (
     success: boolean,
@@ -103,6 +110,23 @@ export const setUserUpdateNotification = (
             oneofKind: GamePacketType.userUpdateNotification,
             userUpdateNotification: {
                 user: user
+            }
+        }
+    }
+
+    return NotificationPacket;
+};
+
+export const setEquipCardNotification = (
+    cardType: CardType,
+    userId: string,
+) : GamePacket => {
+    const NotificationPacket: GamePacket = {
+        payload: {
+            oneofKind: GamePacketType.equipCardNotification,
+            equipCardNotification: {
+                cardType: cardType,
+                userId: userId,
             }
         }
     }
