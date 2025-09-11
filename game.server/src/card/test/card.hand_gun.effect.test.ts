@@ -24,7 +24,7 @@ describe('cardHandGunEffect', () => {
     it('사용자가 없으면 함수가 종료된다', async () => {
       mockGetUserFromRoom.mockResolvedValue(null);
 
-      await cardHandGunEffect(roomId, userId, targetUserId);
+      await cardHandGunEffect(roomId, userId);
 
       expect(mockGetUserFromRoom).toHaveBeenCalledWith(roomId, userId);
       expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
@@ -34,7 +34,7 @@ describe('cardHandGunEffect', () => {
       const user = { id: userId, nickname: 'testUser' };
       mockGetUserFromRoom.mockResolvedValue(user);
 
-      await cardHandGunEffect(roomId, userId, targetUserId);
+      await cardHandGunEffect(roomId, userId);
 
       expect(mockGetUserFromRoom).toHaveBeenCalledWith(roomId, userId);
       expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
@@ -44,7 +44,7 @@ describe('cardHandGunEffect', () => {
       const user = { id: userId, nickname: 'testUser' };
       mockGetUserFromRoom.mockResolvedValue(user);
 
-      await cardHandGunEffect(roomId, userId, targetUserId);
+      await cardHandGunEffect(roomId, userId);
 
       expect(mockGetUserFromRoom).toHaveBeenCalledWith(roomId, userId);
       expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
@@ -73,7 +73,7 @@ describe('cardHandGunEffect', () => {
 
       mockGetUserFromRoom.mockResolvedValue(user);
 
-      await cardHandGunEffect(roomId, userId, targetUserId); // targetUserId는 무시됨
+      await cardHandGunEffect(roomId, userId); // targetUserId는 무시됨
 
       expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
         ...user.character,
@@ -90,7 +90,7 @@ describe('cardHandGunEffect', () => {
 
       mockGetUserFromRoom.mockResolvedValue(user);
 
-      await cardHandGunEffect(roomId, userId, '');
+      await cardHandGunEffect(roomId, userId,);
 
       expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
     });
@@ -104,7 +104,7 @@ describe('cardHandGunEffect', () => {
 
       mockGetUserFromRoom.mockResolvedValue(user);
 
-      await cardHandGunEffect(roomId, userId, '');
+      await cardHandGunEffect(roomId, userId);
 
       expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
     });
@@ -118,7 +118,7 @@ describe('cardHandGunEffect', () => {
 
       mockGetUserFromRoom.mockResolvedValue(user);
 
-      await cardHandGunEffect(roomId, userId, '');
+      await cardHandGunEffect(roomId, userId);
 
       expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
         ...user.character,
@@ -151,7 +151,7 @@ describe('cardHandGunEffect', () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
       // 에러가 발생해도 함수가 정상적으로 처리되는지 확인
-      await expect(cardHandGunEffect(roomId, userId, '')).resolves.not.toThrow();
+      await expect(cardHandGunEffect(roomId, userId)).resolves.not.toThrow();
 
       // 에러 로그가 출력되는지 확인
       expect(consoleErrorSpy).toHaveBeenCalledWith(
