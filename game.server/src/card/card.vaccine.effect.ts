@@ -21,13 +21,13 @@ const getMaxHp = (characterType: CharacterType): number => {
 	}
 };
 
-const cardVaccineEffect = async (roomId: number, userId: string, targetUserId: string) => {
+const cardVaccineEffect = async (roomId: number, userId: string) => {
 	const user = await getUserFromRoom(roomId, userId);
-	const target = await getUserFromRoom(roomId, targetUserId);
+	
 	// 유효성 검증
-	if (!user || !target) return;
+	if (!user) return;
 
-	const maxHp = getMaxHp(user.character!.hp);
+	const maxHp = getMaxHp(user.character!.characterType);
 	if (user.character!.hp >= maxHp) {
 		console.log(`체력이 최대치(${maxHp})에 도달하여 더이상 회복 할 수 없습니다.`);
 		return;

@@ -1,6 +1,6 @@
 // cardType = 1
 import { getUserFromRoom, updateCharacterFromRoom } from "../utils/redis.util.js";
-import { applyWeaponDamageEffect } from "../utils/weapon.util.js";
+import { WeaponDamageEffect } from "../utils/weapon.util.js";
 
 const cardBbangEffect = async (roomId:number, userId:string, targetUserId:string) =>{
     const user = await getUserFromRoom(roomId, userId);
@@ -22,7 +22,7 @@ const cardBbangEffect = async (roomId:number, userId:string, targetUserId:string
     else return; // BbangIndex = -1 일 경우 ; 아무 변화 없이 종료
 
     // 기본 데미지에 무기 효과 적용
-    const damage = applyWeaponDamageEffect(1, user.character);
+    const damage = WeaponDamageEffect(1, user.character);
 
     // 2. 방어 카드 없으면 HP 감소
     target.character.hp -= damage; 
