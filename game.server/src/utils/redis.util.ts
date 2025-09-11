@@ -1,8 +1,8 @@
-import { Room } from "../models/room.model";
-import { User } from "../models/user.model";
-import { Character } from "../models/character.model.js";
-import redis from "../redis/redis";
-import { CharacterData } from "../generated/common/types";
+import { Room } from '../models/room.model';
+import { User } from '../models/user.model';
+import { Character } from '../models/character.model.js';
+import redis from '../redis/redis';
+import { CharacterData } from '../generated/common/types';
 
 // 방 저장
 export async function saveRoom(room: Room): Promise<void> {
@@ -17,18 +17,17 @@ export async function getRoom(roomId: number): Promise<Room | null> {
 
 // 유저를 방에 추가
 export async function addUserToRoom(roomId: number, user: User): Promise<Room | null> {
-  const room = await getRoom(roomId);
-  if (!room) throw new Error("Room not found");
+	const room = await getRoom(roomId);
+	if (!room) throw new Error('Room not found');
 
 	if (room.users.length >= room.maxUserNum) {
 		throw new Error('Room is full');
 	}
 
-  room.users.push(user);
-  await saveRoom(room);
+	room.users.push(user);
+	await saveRoom(room);
 
-  return room;
-
+	return room;
 }
 
 // 유저를 방에서 제거
@@ -63,7 +62,7 @@ const updated = await updateUserFromRoom(1, 1001, {character: charaterData });
 export const updateCharacterFromRoom = async (
 	roomId: number,
 	userId: string,
-	updateData: CharacterData, // 업데이트할 필드만 넘길 수 있도록 Partial<User>
+	updateData: Partial<CharacterData>, // 업데이트할 필드만 넘길 수 있도록 Partial<User>
 ): Promise<void> => {
 	const data = await getRoom(roomId);
 	if (!data) return;
@@ -76,7 +75,7 @@ export const updateCharacterFromRoom = async (
 	const user = data.users[userIndex];
 
 	// 업데이트 (얕은 병합)
-	const updatedUser = { ...user, ...updateData };
+	const updatedUser = { ...user, character: { ...user.character, ...updateData } as CharacterData };
 
 	// 배열에 반영
 	data.users[userIndex] = updatedUser;
@@ -105,23 +104,21 @@ export const deleteRoom = async (roomId: number): Promise<void> => {
 	await redis.del(`room:${roomId}`);
 };
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // 방에서 특정 유저의 정보(아이디 제외한 속성값들) 배열로 가져오기
 export const getUserInfoFromRoom = async (roomId: number, socketId: string): Promise<any[]> => {
-  const data = await getRoom(roomId);
-  if (!data) return [];
+	const data = await getRoom(roomId);
+	if (!data) return [];
 
-  // socket.id와 일치하는 유저 찾기
-  const user = data.users.find((u) => u.id === socketId);
-  if (!user) return [];
+	// socket.id와 일치하는 유저 찾기
+	const user = data.users.find((u) => u.id === socketId);
+	if (!user) return [];
 
-  // 속성값을 배열로 추출
-  const userValues = Object.entries(user)
-    //.filter(([key]) => key !== 'id') // id 제외
-    .map(([_, value]) => value);     // 값만 배열로 저장
+	// 속성값을 배열로 추출
+	const userValues = Object.entries(user)
+		//.filter(([key]) => key !== 'id') // id 제외
+		.map(([_, value]) => value); // 값만 배열로 저장
 
-  return userValues;
+	return userValues;
 };
-
