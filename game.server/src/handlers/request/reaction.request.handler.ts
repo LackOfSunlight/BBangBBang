@@ -38,22 +38,8 @@ const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
         console.log(`유저id:${user?.id}`);
 		if (user != null) {
 			switch (user.character?.stateInfo?.state) {
-				case CharacterStateType.BBANG_TARGET:
-					// 자동 쉴드 방어 로직
-					if (user.character.equips.includes(CardType.AUTO_SHIELD)) {
-						if (Math.random() < 0.25) { // 25% 확률로 방어
-							// 방어에 성공했으므로 여기서 함수를 종료합니다.
-							// 만약 방어 성공 시 카드를 버려야 한다면, 여기서 equips 배열에서 제거하는 로직을 추가해야 합니다.
-							user.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
-
-							user.character.stateInfo.nextStateAt = '0'; 
-							user.character.stateInfo.stateTargetUserId = '0';
-							
-						}
-					}
-					else { 
-						user.character.hp -=1; 
-					}            
+				case CharacterStateType.BBANG_TARGET:					
+					user.character.hp -=1; 					            
 					break;
 				case CharacterStateType.BIG_BBANG_TARGET:
 					user.character.hp -= 1;
