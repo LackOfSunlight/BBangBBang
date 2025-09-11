@@ -6,15 +6,13 @@ import { GlobalFailCode } from '../../generated/common/enums.js';
 import { getGamePacketType } from '../../utils/type.converter.js';
 
 const loginResponseHandler = (socket: GameSocket, gamePacket: GamePacket) => {
-      const payload = getGamePacketType(gamePacket, gamePackTypeSelect.loginResponse);
-      if(!payload) return;
-      const res = payload.loginResponse;
+	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.loginResponse);
+	if (!payload) return;
+	const res = payload.loginResponse;
 
-      if(res.success)
-      console.log('로그인에 성공하였습니다.');
-      else
-      console.log(res.message);
-      sendData(socket, gamePacket, GamePacketType.loginResponse);
+	if (res.success) console.log('로그인에 성공하였습니다.');
+	else console.log(res.message);
+	sendData(socket, gamePacket, GamePacketType.loginResponse);
 };
 
 export default loginResponseHandler;

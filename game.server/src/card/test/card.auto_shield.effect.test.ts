@@ -1,10 +1,21 @@
 import cardAutoShieldEffect from '../card.auto_shield.effect';
 import reactionRequestHandler from '../../handlers/request/reaction.request.handler';
-import { getRoom, getUserFromRoom, saveRoom, updateCharacterFromRoom } from '../../utils/redis.util';
+import {
+	getRoom,
+	getUserFromRoom,
+	saveRoom,
+	updateCharacterFromRoom,
+} from '../../utils/redis.util';
 import { User } from '../../models/user.model';
 import { Character } from '../../models/character.model';
 import { Room } from '../../models/room.model';
-import { CharacterType, RoleType, CardType, CharacterStateType, ReactionType } from '../../generated/common/enums';
+import {
+	CharacterType,
+	RoleType,
+	CardType,
+	CharacterStateType,
+	ReactionType,
+} from '../../generated/common/enums';
 import { CardData, CharacterStateInfoData } from '../../generated/common/types';
 import { GameSocket } from '../../type/game.socket';
 import { GamePacket } from '../../generated/gamePacket';
@@ -35,7 +46,17 @@ describe('cardAutoShieldEffect (장착 테스트)', () => {
 
 		user = new User(userId, 'socket1');
 		const card: CardData = { type: CardType.AUTO_SHIELD, count: 1 };
-		user.character = new Character(CharacterType.RED, RoleType.NONE_ROLE, 4, 0, [], [], [card], 1, 1);
+		user.character = new Character(
+			CharacterType.RED,
+			RoleType.NONE_ROLE,
+			4,
+			0,
+			[],
+			[],
+			[card],
+			1,
+			1,
+		);
 
 		(getUserFromRoom as jest.Mock).mockResolvedValue(user);
 	});
@@ -64,8 +85,23 @@ describe('자동 쉴드 방어 효과 테스트 (리액션 시)', () => {
 		originalRandom = Math.random;
 
 		target = new User(targetId, 'socket_target');
-		const stateInfo: CharacterStateInfoData = { state: CharacterStateType.BBANG_TARGET, nextState: 0, nextStateAt: '0', stateTargetUserId: '0' };
-		target.character = new Character(CharacterType.FROGGY, RoleType.NONE_ROLE, 4, 0, [CardType.AUTO_SHIELD], [], [], 1, 0);
+		const stateInfo: CharacterStateInfoData = {
+			state: CharacterStateType.BBANG_TARGET,
+			nextState: 0,
+			nextStateAt: '0',
+			stateTargetUserId: '0',
+		};
+		target.character = new Character(
+			CharacterType.FROGGY,
+			RoleType.NONE_ROLE,
+			4,
+			0,
+			[CardType.AUTO_SHIELD],
+			[],
+			[],
+			1,
+			0,
+		);
 		target.character.stateInfo = stateInfo;
 
 		room = new Room(roomId, 'test', 'owner', 8, 0, [target]);
@@ -96,7 +132,7 @@ describe('자동 쉴드 방어 효과 테스트 (리액션 시)', () => {
 		// saveRoom은 호출되지만, hp는 그대로여야 함
 		expect(saveRoom).toHaveBeenCalledTimes(1);
 		const savedRoom = (saveRoom as jest.Mock).mock.calls[0][0] as Room;
-		expect(savedRoom.users.find(u => u.id === targetId)!.character!.hp).toBe(4);
+		expect(savedRoom.users.find((u) => u.id === targetId)!.character!.hp).toBe(4);
 	});
 
 	test('75% 확률로 방어에 실패하고 데미지를 입어야 합니다.', async () => {
@@ -110,6 +146,6 @@ describe('자동 쉴드 방어 효과 테스트 (리액션 시)', () => {
 		// saveRoom이 호출되고, hp가 3으로 저장되어야 함
 		expect(saveRoom).toHaveBeenCalledTimes(1);
 		const savedRoom = (saveRoom as jest.Mock).mock.calls[0][0] as Room;
-		expect(savedRoom.users.find(u => u.id === targetId)!.character!.hp).toBe(3);
+		expect(savedRoom.users.find((u) => u.id === targetId)!.character!.hp).toBe(3);
 	});
 });

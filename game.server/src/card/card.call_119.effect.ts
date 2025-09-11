@@ -30,7 +30,7 @@ const cardCall119Effect = async (roomId: number, userId: string, targetUserId: s
 
 	// 119 호출 카드 효과: 자신의 체력을 1 회복하거나, 나머지의 체력을 1 회복
 	// targetUserId가 있으면 자신의 체력 회복, 없으면 나머지 플레이어들의 체력 회복
-	
+
 	if (targetUserId) {
 		// 자신의 체력 회복
 		await healCharacter(roomId, user, user.character);
@@ -49,7 +49,11 @@ const cardCall119Effect = async (roomId: number, userId: string, targetUserId: s
 };
 
 // 체력 회복 로직을 별도 함수로 분리
-const healCharacter = async (roomId: number, targetUser: { id: string; nickname: string }, character: CharacterData) => {
+const healCharacter = async (
+	roomId: number,
+	targetUser: { id: string; nickname: string },
+	character: CharacterData,
+) => {
 	// 최대 체력 확인
 	const maxHp = getMaxHp(character.characterType);
 

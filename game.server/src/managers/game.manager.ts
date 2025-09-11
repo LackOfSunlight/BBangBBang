@@ -61,7 +61,7 @@ class GameManager {
 					if (user.character != null) {
 						//카드 삭제
 						if (user.character.handCardsCount > user.character.hp) {
-                            removedCard(room, user);
+							removedCard(room, user);
 						} else {
 							const drawCards = drawDeck(room.id, 2);
 							drawCards.forEach((type) => {
@@ -134,9 +134,8 @@ class GameManager {
 	}
 }
 
-const removedCard = (room:Room ,user:User) => {
-
-    if(!user || !user.character) return;
+const removedCard = (room: Room, user: User) => {
+	if (!user || !user.character) return;
 
 	const excess = user.character.handCardsCount - user.character.hp;
 	let toRemove = excess;

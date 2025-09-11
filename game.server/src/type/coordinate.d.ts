@@ -1,6 +1,5 @@
-
-interface Coordinate{
-    id: number;
-    x: number;
-    y: number;
+interface Coordinate {
+	id: number;
+	x: number;
+	y: number;
 }
