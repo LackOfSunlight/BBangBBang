@@ -10,6 +10,7 @@ import { setUserUpdateNotification } from './use.card.request.handler.js';
 import { getSocketByUserId } from '../../managers/socket.manger.js';
 import { CheckBigBbangService } from '../../services/bigbbang.check.service.js';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service.js';
+import { CardType } from "../../generated/common/enums.js";
 
 const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.reactionRequest);

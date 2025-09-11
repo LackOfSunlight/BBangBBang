@@ -1,4 +1,4 @@
-import { getUserFromRoom } from "./redis.util.js";
+import { getUserFromRoom, updateCharacterFromRoom } from "./redis.util.js";
 
 import cardAbsorbEffect from "../card/card.absorb.effect.js";
 import cardAutoRifleEffect from "../card/card.auto_rifle.effect.js";
@@ -24,7 +24,6 @@ import cardStealthSuitEffect from "../card/card.stealth_suit.effect.js";
 import cardVaccineEffect from "../card/card.vaccine.effect.js";
 import cardWinLotteryEffect from "../card/card.win_lottery.effect.js";
 import { repeatDeck } from "../managers/card.manager.js";
-import { CardType } from "../generated/common/enums.js";
 
 // 카드 효과 적용 함수
 export async function applyCardEffect(roomId:number, CardType: number, userId: string, targetUserId: string) {
@@ -34,12 +33,19 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
   // 유효성 검증
   if (!user || !target || !user.character || !target.character) return; 
 
-  // 가장 앞 순서에 있는 카드 제거
-  const cardIndex = user.character.handCards.findIndex(c => c.type === CardType);
-  repeatDeck(roomId,[CardType as CardType]);
-  if (cardIndex !== -1) 
-      user.character.handCards.splice(cardIndex, 1); 
-  else return; // cardIndex = -1 일 경우 ; 아무 변화 없이 종료
+  const usedCard = user.character.handCards.find(c => c.type === CardType);
+  if(usedCard != undefined){
+      usedCard.count -=1;
+      repeatDeck(roomId, [CardType]);
+
+      if(usedCard.count <= 0){
+        user.character.handCards = user.character.handCards.filter(c => c.count > 0);
+      }
+
+      await updateCharacterFromRoom(roomId, user.id, user.character);
+  } else{
+    console.log('해당 카드를 소유하고 있지 않습니다.');
+  }
 
   // 소지한 카드 제거 후 효과 적용  
   switch (CardType) {
@@ -77,7 +83,7 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
       cardMaturedSavingsEffect(roomId, userId, targetUserId);
       break;
     case 12: // 'WIN_LOTTERY':
-      cardWinLotteryEffect(roomId, userId, targetUserId);
+      cardWinLotteryEffect(roomId, userId);
       break;
 
     // 무기 카드  
@@ -85,27 +91,27 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
       await cardSniperGunEffect(roomId, userId);
       break;
     case 14: // 'HAND_GUN':
-      cardHandGunEffect(roomId, userId);
+      await cardHandGunEffect(roomId, userId);
       break;
     case 15: // 'DESERT_EAGLE':
-      cardDesertEagleEffect(roomId, userId);
+      await cardDesertEagleEffect(roomId, userId);
       break;
     case 16: // 'AUTO_RIFLE':
-      cardAutoRifleEffect(roomId, userId);
+      await cardAutoRifleEffect(roomId, userId);
       break;
 
     // 장비 카드
     case 17: // 'LASER_POINTER':
-      cardLaserPointerEffect(roomId, userId);
+      await cardLaserPointerEffect(roomId, userId);
       break;
     case 18: // 'RADER':
-      cardRaderEffect(roomId, userId);
+      await cardRaderEffect(roomId, userId);
       break;
     case 19: // 'AUTO_SHIELD':
-      cardAutoShieldEffect(roomId, userId);
+      await cardAutoShieldEffect(roomId, userId);
       break;
     case 20: // 'STEATLH_SUIT':
-      cardStealthSuitEffect(roomId, userId);
+      await cardStealthSuitEffect(roomId, userId);
       break;
 
     // 디버프 카드  

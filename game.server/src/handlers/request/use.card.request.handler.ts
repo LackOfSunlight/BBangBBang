@@ -123,21 +123,4 @@ export const setUserUpdateNotification = (
     return NotificationPacket;
 };
 
-export const setEquipCardNotification = (
-    cardType: CardType,
-    userId: string,
-) : GamePacket => {
-    const NotificationPacket: GamePacket = {
-        payload: {
-            oneofKind: GamePacketType.equipCardNotification,
-            equipCardNotification: {
-                cardType: cardType,
-                userId: userId,
-            }
-        }
-    }
-
-    return NotificationPacket;
-};
-
 export default  useCardRequestHandler;
