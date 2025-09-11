@@ -1,5 +1,4 @@
 import { GameSocket } from "../../type/game.socket.js";
-import { S2CUseCardNotification } from "../../generated/packet/notifications.js";
 import { GamePacket } from "../../generated/gamePacket.js";
 import { getGamePacketType } from '../../utils/type.converter.js';
 import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.js';
@@ -25,7 +24,7 @@ const useCardNotificationHandler = async (socket:GameSocket, gamePacket:GamePack
     broadcastDataToRoom(
             roomData.users,
             gamePacket,
-            GamePacketType.userUpdateNotification,
+            GamePacketType.useCardNotification,
             socket
     );
 }

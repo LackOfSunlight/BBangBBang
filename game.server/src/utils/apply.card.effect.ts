@@ -44,7 +44,7 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
       cardBbangEffect(roomId, userId, targetUserId);
       break;
     case 2: //'BIGBBANG':
-      cardBigBbangEffect(roomId, userId, targetUserId);
+      await cardBigBbangEffect(roomId, userId, targetUserId);
       break;
     case 3: //'SHIELD':
       cardShieldEffect(roomId, userId, targetUserId);
@@ -59,7 +59,7 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
       cardDeathMatchEffect(roomId, userId, targetUserId);
       break;
     case 7: // 'GUIRRILLA':
-      cardGuerrillaEffect(roomId, userId, targetUserId);
+      await cardGuerrillaEffect(roomId, userId, targetUserId);
       break;
     case 8: // 'ABSORB':
       cardAbsorbEffect(roomId, userId, targetUserId);

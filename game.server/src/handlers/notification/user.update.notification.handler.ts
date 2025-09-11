@@ -15,7 +15,6 @@ const userUpdateNotificationHandler = async (socket:GameSocket, gamePacket:GameP
             roomData.users,
             gamePacket,
             GamePacketType.userUpdateNotification,
-            socket
     );
 }
 
