@@ -53,7 +53,7 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
       await cardShieldEffect(roomId, userId, targetUserId);
       break;
     case 4: // 'VACCINE':
-      cardVaccineEffect(roomId, userId, targetUserId);
+      cardVaccineEffect(roomId, userId);
       break;
     case 5: // 'CALL_119':
       cardCall119Effect(roomId, userId, targetUserId);
