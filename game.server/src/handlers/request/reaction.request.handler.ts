@@ -10,6 +10,7 @@ import { setUserUpdateNotification } from './use.card.request.handler.js';
 import { getSocketByUserId } from '../../managers/socket.manger.js';
 import { CheckBigBbangService } from '../../services/bigbbang.check.service.js';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service.js';
+import { WeaponDamageEffect } from '../../utils/weapon.util.js';
 
 const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.reactionRequest);
@@ -35,8 +36,8 @@ const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 	if (req.reactionType === ReactionType.NONE_REACTION) {
 		const user = room.users.find((u) => u.id === socket.userId);
         console.log(`유저id:${user?.id}`);
-		if (user != null) {
-			switch (user.character?.stateInfo?.state) {
+		if (user != null && user.character && user.character.stateInfo) {
+			switch (user.character.stateInfo.state) {
 				case CharacterStateType.BBANG_TARGET:
                     // 자동 쉴드 방어 로직
                     if (user.character.equips.includes(CardType.AUTO_SHIELD)) {
@@ -45,7 +46,16 @@ const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
                             break;
                         }
                     }
-                    user.character.hp -=1;
+
+					// 공격자 정보 확인 및 데미지 계산
+					const attackerId = user.character.stateInfo.stateTargetUserId;
+					const attacker = room.users.find((u) => u.id === attackerId);
+					let damage = 1; // 기본 데미지
+					if (attacker && attacker.character) {
+						damage = WeaponDamageEffect(damage, attacker.character);
+					}
+
+                    user.character.hp -= damage;
 					break;
 				case CharacterStateType.BIG_BBANG_TARGET:
 					user.character.hp -= 1;
