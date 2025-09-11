@@ -74,7 +74,7 @@
 	},
 	{
 		"type": "RADAR",
-		"count": 100
+		"count": 1
 	},
 	{
 		"type": "AUTO_SHIELD",
