@@ -7,7 +7,7 @@ import { CardType } from '../generated/common/enums';
  * @param character 공격하는 유저의 캐릭터 정보
  * @returns 무기 효과가 적용된 최종 데미지
  */
-export const WeaponDamageEffect = (damage: number, character: CharacterData): number => {
+export const weaponDamageEffect = (damage: number, character: CharacterData): number => {
 	const weaponType = character.weapon;
 
 	switch (weaponType) {
