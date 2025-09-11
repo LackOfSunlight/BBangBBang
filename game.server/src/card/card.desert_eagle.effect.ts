@@ -6,8 +6,7 @@ const cardDesertEagleEffect = async (roomId: number, userId: string) => {
 	// 유효성 검증
 	if (!user || !user.character) return;
 
-	}
-	user.character.handCards.splice(cardIndex, 1);
+
 	// 데저트 이글 장착 (기존 무기는 덮어쓰기로 교체)
 	user.character.weapon = CardType.DESERT_EAGLE;
 
