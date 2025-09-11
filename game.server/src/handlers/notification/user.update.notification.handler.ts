@@ -1,17 +1,12 @@
 import { GameSocket } from "../../type/game.socket.js";
-import { S2CUserUpdateNotification } from "../../generated/packet/notifications.js";
+//import { S2CUserUpdateNotification } from "../../generated/packet/notifications.js";
 import { GamePacket } from "../../generated/gamePacket.js";
-import { getGamePacketType } from '../../utils/type.converter.js';
-import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.js';
-//import { CardType, GlobalFailCode } from "../../generated/common/enums.js";
+import { GamePacketType } from '../../enums/gamePacketType.js';
 import { broadcastDataToRoom } from "../../utils/notification.util.js";
 import { Room } from "../../models/room.model";
 import {getRoom } from "../../utils/redis.util.js";
 
 const userUpdateNotificationHandler = async (socket:GameSocket, gamePacket:GamePacket) =>{
-    const payload = getGamePacketType(gamePacket, gamePackTypeSelect.userUpdateNotification);
-    if(!payload) return;
-    const noti = payload.userUpdateNotification;
 
     if(!socket.roomId) return;
     const roomData:Room|null = await getRoom(socket.roomId);
@@ -20,7 +15,6 @@ const userUpdateNotificationHandler = async (socket:GameSocket, gamePacket:GameP
             roomData.users,
             gamePacket,
             GamePacketType.userUpdateNotification,
-            socket
     );
 }
 
