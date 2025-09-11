@@ -2,7 +2,7 @@ import { GameSocket } from '../../type/game.socket.js';
 import { GamePacket } from '../../generated/gamePacket.js';
 import { getGamePacketType } from '../../utils/type.converter.js';
 import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.js';
-import { CharacterStateType, GlobalFailCode, ReactionType } from '../../generated/common/enums.js';
+import { CharacterStateType, GlobalFailCode, ReactionType, CardType } from '../../generated/common/enums.js';
 import reactionResponseHandler from '../response/reaction.response.handler.js';
 import { getRoom, saveRoom, updateCharacterFromRoom } from '../../utils/redis.util.js';
 import userUpdateNotificationHandler from '../notification/user.update.notification.handler.js';
@@ -38,6 +38,13 @@ const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 		if (user != null) {
 			switch (user.character?.stateInfo?.state) {
 				case CharacterStateType.BBANG_TARGET:
+                    // 자동 쉴드 방어 로직
+                    if (user.character.equips.includes(CardType.AUTO_SHIELD)) {
+                        if (Math.random() < 0.25) { // 25% 확률로 방어
+                            // 방어에 성공했으므로 HP 감소 없이 종료
+                            break;
+                        }
+                    }
                     user.character.hp -=1;
 					break;
 				case CharacterStateType.BIG_BBANG_TARGET:
