@@ -2,6 +2,7 @@
 import { getUserFromRoom, updateCharacterFromRoom } from "../utils/redis.util.js";
 import { CharacterStateType } from "../generated/common/enums.js";
 import { getRoom } from "../utils/redis.util.js";
+import { CardType } from "../generated/common/enums.js";
 
 const cardBbangEffect = async (roomId:number, userId:string, targetUserId:string) =>{
     // 정보값 가져오기

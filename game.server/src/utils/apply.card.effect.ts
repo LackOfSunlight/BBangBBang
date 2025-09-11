@@ -40,8 +40,9 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
 
       if(usedCard.count <= 0){
         user.character.handCards = user.character.handCards.filter(c => c.count > 0);
+        user.character.handCardsCount = user.character.handCards.reduce((sum, card) => sum +card.count, 0);
       }
-
+      
       await updateCharacterFromRoom(roomId, user.id, user.character);
   } else{
     console.log('해당 카드를 소유하고 있지 않습니다.');
