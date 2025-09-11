@@ -33,12 +33,12 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
   // 유효성 검증
   if (!user || !target || !user.character || !target.character) return; 
 
-  const userCard = user.character.handCards.find(c => c.type === CardType);
-  if(userCard != undefined){
-      userCard.count -=1;
+  const usedCard = user.character.handCards.find(c => c.type === CardType);
+  if(usedCard != undefined){
+      usedCard.count -=1;
       repeatDeck(roomId, [CardType]);
 
-      if(userCard.count <= 0){
+      if(usedCard.count <= 0){
         user.character.handCards = user.character.handCards.filter(c => c.count > 0);
       }
 
