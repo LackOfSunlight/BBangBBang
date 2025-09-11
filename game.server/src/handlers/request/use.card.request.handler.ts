@@ -55,7 +55,8 @@ const useCardRequestHandler = async (socket:GameSocket, gamePacket:GamePacket) =
     // notification : 카드 사용 공지 
     if(req.cardType >= 13 && req.cardType <= 20) // 무기 및 장비 카드 사용시 -> 장착
         await equipCardNotificationHandler(socket,  
-            setEquipCardNotification( req.cardType, socket.userId! ) 
+            // setEquipCardNotification( req.cardType, socket.userId! )
+            setUseCardNotification(req.cardType, socket.userId!, req.targetUserId)
         );
     else // 일반 카드 사용시 -> 효과 발동
         await useCardNotificationHandler(socket,

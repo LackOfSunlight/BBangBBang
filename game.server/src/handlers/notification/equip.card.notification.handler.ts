@@ -14,7 +14,7 @@ const equipCardNotificationHandler = async (socket:GameSocket, gamePacket:GamePa
     broadcastDataToRoom(
             roomData.users,
             gamePacket,
-            GamePacketType.equipCardNotification,
+            GamePacketType.useCardNotification,
             socket
     );
 }
