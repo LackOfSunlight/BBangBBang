@@ -40,7 +40,6 @@ const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 				case CharacterStateType.BBANG_TARGET:
 					// 방어 카드 보유 확인을 위한 정보 가져오기
 					const haveShieldCard = user.character.handCards.find(c => c.type === CardType.SHIELD);
-					if(!haveShieldCard) break;
 
 					// 발사자 의 장비확인을 위한 발사자 정보 가져오기
 					const shooterId = user.character.stateInfo.stateTargetUserId;
@@ -55,8 +54,8 @@ const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
                         }
                     }
 					
-					// 방어 카드를 보유하고 있는지
-					if(haveShieldCard.count > 0){
+					// 방어 카드를 보유하고 있는지에 따라 결과 다르게 처리
+					if(haveShieldCard && haveShieldCard.count > 0){
 						if(shooter.character.equips.includes(CardType.LASER_POINTER) && haveShieldCard.count > 1){
 							// 실드 요구 개수 2개 로 증가
 							haveShieldCard.count -= 2; 
