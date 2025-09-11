@@ -7,10 +7,10 @@ const cardAutoShieldEffect = async (roomId: number, userId: string) => {
 	// 유효성 검증
 	if (!user || !user.character) return;
 
-	// 이미 장착하고 있다면 중복 장착 방지
-	if (user.character.equips.includes(CardType.AUTO_SHIELD)) {
-		return;
-	}
+	// 이미 장착하고 있다면 중복 장착 방지 => 클라이언트 로직에서 중복시 새로운걸 장착하고 원래있던걸 월드덱으로 반환해서 해당 로직 주석 처리
+	// if (user.character.equips.includes(CardType.AUTO_SHIELD)) {
+	// 	return;
+	// }
 
 	// 손에서 자동 쉴드 카드 찾아서 제거
 	const cardIndex = user.character.handCards.findIndex((card) => card.type === CardType.AUTO_SHIELD);
