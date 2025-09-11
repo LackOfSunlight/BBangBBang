@@ -40,7 +40,7 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
 
       if(usedCard.count <= 0){
         user.character.handCards = user.character.handCards.filter(c => c.count > 0);
-        user.character.handCardsCount = user.character.handCards.length;
+        user.character.handCardsCount = user.character.handCards.reduce((sum, card) => sum +card.count, 0);
       }
       
       await updateCharacterFromRoom(roomId, user.id, user.character);
@@ -84,7 +84,7 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
       cardMaturedSavingsEffect(roomId, userId, targetUserId);
       break;
     case 12: // 'WIN_LOTTERY':
-      cardWinLotteryEffect(roomId, userId, targetUserId);
+      cardWinLotteryEffect(roomId, userId);
       break;
 
     // 무기 카드  

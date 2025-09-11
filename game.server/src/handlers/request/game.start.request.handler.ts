@@ -51,7 +51,7 @@ const gameStartRequestHandler = async (socket: GameSocket, gamePacket: GamePacke
 
 	// 다음 스테이지 시간 설정
 	const now = Date.now();
-	const duration = 180000; // 3분 -> 180000ms
+	const duration = 10000; // 3분 -> 180000ms
 	const nextPhaseAt = now + duration;
 	const gameState: GameStateData = {
 		phaseType: PhaseType.DAY,
@@ -75,7 +75,7 @@ const gameStartRequestHandler = async (socket: GameSocket, gamePacket: GamePacke
 			});
 
             character.bbangCount = character.characterType === CharacterType.RED? 99:1;
-            character.handCardsCount = drawCards.length;
+            character.handCardsCount = character.handCards.reduce((sum, card)=> sum + card.count, 0);
 		}
 	}
 
