@@ -12,7 +12,9 @@ const cardDesertEagleEffect = async (roomId: number, userId: string) => {
 	}
 
 	// 손에서 데저트 이글 카드 찾아서 제거
-	const cardIndex = user.character.handCards.findIndex((card) => card.type === CardType.DESERT_EAGLE);
+	const cardIndex = user.character.handCards.findIndex(
+		(card) => card.type === CardType.DESERT_EAGLE,
+	);
 	if (cardIndex === -1) {
 		// 카드 없으면 로직 중단
 		return;

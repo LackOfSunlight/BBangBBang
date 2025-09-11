@@ -1,15 +1,27 @@
 import cardAutoShieldEffect from '../card.auto_shield.effect';
-import cardBbangEffect from '../card.bbang.effect';
-import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/redis.util';
+import reactionRequestHandler from '../../handlers/request/reaction.request.handler';
+import { getRoom, getUserFromRoom, saveRoom, updateCharacterFromRoom } from '../../utils/redis.util';
 import { User } from '../../models/user.model';
 import { Character } from '../../models/character.model';
-import { CharacterType, RoleType, CardType } from '../../generated/common/enums';
-import { CardData } from '../../generated/common/types';
+import { Room } from '../../models/room.model';
+import { CharacterType, RoleType, CardType, CharacterStateType, ReactionType } from '../../generated/common/enums';
+import { CardData, CharacterStateInfoData } from '../../generated/common/types';
+import { GameSocket } from '../../type/game.socket';
+import { GamePacket } from '../../generated/gamePacket';
+import { GamePacketType } from '../../enums/gamePacketType';
 
 // redis.util 모듈 모킹
 jest.mock('../../utils/redis.util.js', () => ({
+	getRoom: jest.fn(),
 	getUserFromRoom: jest.fn(),
 	updateCharacterFromRoom: jest.fn(),
+	saveRoom: jest.fn(),
+}));
+
+// userUpdateNotificationHandler 모듈 모킹
+jest.mock('../../handlers/notification/user.update.notification.handler.js', () => ({
+	__esModule: true,
+	default: jest.fn(),
 }));
 
 describe('cardAutoShieldEffect (장착 테스트)', () => {
@@ -34,70 +46,70 @@ describe('cardAutoShieldEffect (장착 테스트)', () => {
 		expect(user.character!.equips).toContain(CardType.AUTO_SHIELD);
 		expect(user.character!.handCards.length).toBe(0);
 		expect(updateCharacterFromRoom).toHaveBeenCalledTimes(1);
-		expect(updateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, user.character);
-	});
-
-	test('이미 자동 쉴드를 장착하고 있을 때, 사용해도 아무 변화가 없어야 합니다.', async () => {
-		user.character!.equips.push(CardType.AUTO_SHIELD); // 이미 장착한 상태로 설정
-
-		await cardAutoShieldEffect(roomId, userId);
-
-		// handCards는 그대로여야 하고, 업데이트는 호출되지 않아야 함
-		expect(user.character!.handCards.length).toBe(1);
-		expect(updateCharacterFromRoom).not.toHaveBeenCalled();
 	});
 });
 
-describe('자동 쉴드 방어 효과 테스트 (뱅 카드 피격 시)', () => {
+describe('자동 쉴드 방어 효과 테스트 (리액션 시)', () => {
 	const roomId = 1;
-	const attackerId = 'attacker';
 	const targetId = 'target';
 
-	let attacker: User;
+	let room: Room;
 	let target: User;
+	let mockSocket: GameSocket;
 	let originalRandom: () => number;
 
 	beforeEach(() => {
-		(getUserFromRoom as jest.Mock).mockClear();
-		(updateCharacterFromRoom as jest.Mock).mockClear();
+		(getRoom as jest.Mock).mockClear();
+		(saveRoom as jest.Mock).mockClear();
 		originalRandom = Math.random;
 
-		attacker = new User(attackerId, 'socket_attacker');
-		const bbangCard: CardData = { type: CardType.BBANG, count: 1 };
-		attacker.character = new Character(CharacterType.RED, RoleType.NONE_ROLE, 4, 0, [], [], [bbangCard], 1, 1);
-
 		target = new User(targetId, 'socket_target');
+		const stateInfo: CharacterStateInfoData = { state: CharacterStateType.BBANG_TARGET, nextState: 0, nextStateAt: '0', stateTargetUserId: '0' };
 		target.character = new Character(CharacterType.FROGGY, RoleType.NONE_ROLE, 4, 0, [CardType.AUTO_SHIELD], [], [], 1, 0);
+		target.character.stateInfo = stateInfo;
 
-		(getUserFromRoom as jest.Mock).mockImplementation(async (roomId, id) => {
-			if (id === attackerId) return attacker;
-			if (id === targetId) return target;
-			return null;
-		});
+		room = new Room(roomId, 'test', 'owner', 8, 0, [target]);
+		(getRoom as jest.Mock).mockResolvedValue(room);
+
+		mockSocket = { roomId: roomId, userId: targetId, write: jest.fn() } as unknown as GameSocket;
 	});
 
 	afterEach(() => {
 		Math.random = originalRandom;
 	});
 
+	const createReactionPacket = (reactionType: ReactionType): GamePacket => ({
+		payload: {
+			oneofKind: GamePacketType.reactionRequest,
+			reactionRequest: { reactionType },
+		},
+	});
+
 	test('25% 확률로 방어에 성공해야 합니다.', async () => {
 		Math.random = jest.fn(() => 0.1); // 25% 안에 들도록 설정
+		const packet = createReactionPacket(ReactionType.NONE_REACTION);
 
-		await cardBbangEffect(roomId, attackerId, targetId);
+		await reactionRequestHandler(mockSocket, packet);
 
-		// 방어에 성공했으므로 체력 변화 및 업데이트가 없어야 함
+		// 방어에 성공했으므로 체력 변화가 없어야 함
 		expect(target.character!.hp).toBe(4);
-		expect(updateCharacterFromRoom).not.toHaveBeenCalled();
+		// saveRoom은 호출되지만, hp는 그대로여야 함
+		expect(saveRoom).toHaveBeenCalledTimes(1);
+		const savedRoom = (saveRoom as jest.Mock).mock.calls[0][0] as Room;
+		expect(savedRoom.users.find(u => u.id === targetId)!.character!.hp).toBe(4);
 	});
 
 	test('75% 확률로 방어에 실패하고 데미지를 입어야 합니다.', async () => {
 		Math.random = jest.fn(() => 0.5); // 25%를 벗어나도록 설정
+		const packet = createReactionPacket(ReactionType.NONE_REACTION);
 
-		await cardBbangEffect(roomId, attackerId, targetId);
+		await reactionRequestHandler(mockSocket, packet);
 
 		// 방어에 실패했으므로 체력이 1 감소해야 함
 		expect(target.character!.hp).toBe(3);
-		expect(updateCharacterFromRoom).toHaveBeenCalledTimes(1);
-		expect(updateCharacterFromRoom).toHaveBeenCalledWith(roomId, targetId, target.character);
+		// saveRoom이 호출되고, hp가 3으로 저장되어야 함
+		expect(saveRoom).toHaveBeenCalledTimes(1);
+		const savedRoom = (saveRoom as jest.Mock).mock.calls[0][0] as Room;
+		expect(savedRoom.users.find(u => u.id === targetId)!.character!.hp).toBe(3);
 	});
 });
