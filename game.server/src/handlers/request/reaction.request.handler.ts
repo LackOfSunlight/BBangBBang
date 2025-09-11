@@ -39,8 +39,37 @@ const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 		if (user != null) {
 			switch (user.character?.stateInfo?.state) {
 				case CharacterStateType.BBANG_TARGET:					
-					user.character.hp -=1; 					            
+					// 방어 카드 보유 확인을 위한 정보 가져오기
+					const haveShieldCard = user.character.handCards.find(c => c.type === CardType.SHIELD);
+					if(!haveShieldCard) return;
+
+					// 발사자 의 장비확인을 위한 발사자 정보 가져오기
+					const shooterId = user.character.stateInfo.stateTargetUserId;
+					const shooter = room.users.find((u) => u.id === shooterId);
+					if(!shooter || !shooter.character || !shooter.character.stateInfo ) return;
+					
+					// 방어 카드를 보유하고 있는지
+					if(haveShieldCard.count > 0){
+						if(CardType.LASER_POINTER in shooter.character.equips && haveShieldCard.count > 1){
+							// 실드 요구 개수 2개 로 증가
+							haveShieldCard.count -= 2; 
+						}
+						else haveShieldCard.count -= 1;
+						
+					}
+					else user.character.hp -=1; 
+
+					// 처리후 상태 복구
+					user.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE; 
+					user.character.stateInfo.nextStateAt = '0'; 
+					user.character.stateInfo.stateTargetUserId = '0'; 
+
+					shooter.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE; 
+					shooter.character.stateInfo.nextStateAt = '0'; 
+					shooter.character.stateInfo.stateTargetUserId = '0';
+					
 					break;
+
 				case CharacterStateType.BIG_BBANG_TARGET:
 					user.character.hp -= 1;
                     user.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
