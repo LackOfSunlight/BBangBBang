@@ -1,12 +1,22 @@
 // cardType = 1
 import { getUserFromRoom, updateCharacterFromRoom } from "../utils/redis.util.js";
 import { WeaponDamageEffect } from "../utils/weapon.util.js";
+import { CardType } from "../generated/common/enums.js";
 
 const cardBbangEffect = async (roomId:number, userId:string, targetUserId:string) =>{
     const user = await getUserFromRoom(roomId, userId);
     const target = await getUserFromRoom(roomId, targetUserId);
     // 유효성 검증
     if (!user || !target || !user.character || !target.character) return; 
+
+    // 자동 쉴드 방어 로직
+    if (target.character.equips.includes(CardType.AUTO_SHIELD)) {
+        if (Math.random() < 0.25) { // 25% 확률로 방어
+            // 방어에 성공했으므로 여기서 함수를 종료합니다.
+            // 만약 방어 성공 시 카드를 버려야 한다면, 여기서 equips 배열에서 제거하는 로직을 추가해야 합니다.
+            return;
+        }
+    }
 
     // 1. 방어 카드 확인 (C# 코드 참고)
     // const defCardIndex = target.character.handCards.findIndex(c => c.rcode === "Shield"); 
