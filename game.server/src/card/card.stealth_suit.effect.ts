@@ -2,7 +2,7 @@
 import { getUserFromRoom, updateCharacterFromRoom } from "../utils/redis.util.js";
 import { CardType } from "../generated/common/enums.js";
 
-const cardStealthSuitEffect = async (roomId: number, userId: string, targetUserId: string) => {
+const cardStealthSuitEffect = async (roomId: number, userId: string) => {
     const user = await getUserFromRoom(roomId, userId);
 
     // 유효성 검증
