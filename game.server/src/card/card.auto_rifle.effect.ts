@@ -21,7 +21,11 @@ const cardAutoRifleEffect = async (roomId:number, userId:string) =>{
     //// 손에 Bbang 카드가 추가될 경우
 
     // 수정 정보 갱신
+    try {
     await updateCharacterFromRoom(roomId, userId, user.character);
+    } catch (error) {
+        console.error('[저장 실패]:', error);
+    }
 }
 
 
