@@ -1,5 +1,6 @@
 // cardType = 16
 import { getUserFromRoom, updateCharacterFromRoom } from "../utils/redis.util.js";
+import { CardType } from "../generated/common/enums.js"
 
 const cardAutoRifleEffect = async (roomId:number, userId:string) =>{
     // 정보값 가져오기
@@ -7,8 +8,8 @@ const cardAutoRifleEffect = async (roomId:number, userId:string) =>{
     // 유효성 검증
     if (!user  || !user.character || !user.character.stateInfo ) return;
 
-    // 무기 장착 처리 & 소지 카드에서의 제거는 호출함수에서 처리
-    user.character.weapon = 16; // 16;AUTO_RIFLE 장착
+    // 소지 카드에서의 제거는 호출함수에서 처리
+    user.character.weapon = CardType.AUTO_RIFLE; // 16;AUTO_RIFLE 장착
 
     /** 보류 */
     // // BbangCount 초기화 : 기존 무기의 강화점 초기화
@@ -29,6 +30,5 @@ const cardAutoRifleEffect = async (roomId:number, userId:string) =>{
         console.error('[저장 실패]:', error);
     }
 }
-
 
 export default cardAutoRifleEffect;
