@@ -117,7 +117,7 @@ const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 	}
 	await saveRoom(room);
 
-	reactionResponseHandler(socket, setReactionResponse(true, GlobalFailCode.NONE_FAILCODE));
+	await reactionResponseHandler(socket, setReactionResponse(true, GlobalFailCode.NONE_FAILCODE));
 	await userUpdateNotificationHandler(socket, setUserUpdateNotification(room.users));
 };
 
