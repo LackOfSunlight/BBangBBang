@@ -13,6 +13,7 @@ import { saveRoom } from '../utils/redis.util';
 import { GamePacket } from '../generated/gamePacket';
 import { GamePacketType } from '../enums/gamePacketType';
 import { broadcastDataToRoom } from '../utils/notification.util';
+import { User } from '../models/user.model';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 
@@ -39,8 +40,8 @@ class GameManager {
 
 	private scheduleNextPhase(room: Room, roomId: string) {
 		this.clearTimer(roomId);
-		const dayInterval = 10000; // 3분
-		const eveningInterval = 10000; //30초
+		const dayInterval = 180000; // 3분
+		const eveningInterval = 30000; //30초
 
 		let nextPhase: PhaseType;
 		let interval: number;
@@ -60,34 +61,7 @@ class GameManager {
 					if (user.character != null) {
 						//카드 삭제
 						if (user.character.handCardsCount > user.character.hp) {
-							console.log(
-								`계산 전 userId:${user.id}, handCard:${user.character.handCardsCount}, hp:${user.character.hp}`,
-							);
-							const excess = user.character.handCardsCount - user.character.hp;
-							let toRemove = excess;
-
-							const removedCards: { type: CardType; count: number }[] = [];
-
-							for (let i = 0; i < user.character.handCards.length && toRemove > 0; i++) {
-								const card = user.character.handCards[i];
-
-								if (card.count <= toRemove) {
-									removedCards.push({ type: card.type, count: card.count });
-									toRemove -= card.count;
-									card.count = 0;
-								} else {
-									removedCards.push({ type: card.type, count: toRemove });
-									card.count -= toRemove;
-									toRemove = 0;
-								}
-							}
-
-							user.character.handCards = user.character.handCards.filter((c) => c.count > 0);
-							removedCards.forEach((c) => {
-								for (let i = 0; i < c.count; i++) {
-									repeatDeck(room.id, [c.type]);
-								}
-							});
+                            removedCard(room, user);
 						} else {
 							const drawCards = drawDeck(room.id, 2);
 							drawCards.forEach((type) => {
@@ -104,10 +78,6 @@ class GameManager {
 							(sum, card) => sum + card.count,
 							0,
 						);
-
-						console.log(
-							`계산 후 userId:${user.id}, handCard:${user.character.handCardsCount}, hp:${user.character.hp}`,
-						);
 					}
 				}
 			}
@@ -116,12 +86,13 @@ class GameManager {
 
 			const characterPosition = shuffle(spawnPositions);
 
+			const newInterval = nextPhase === PhaseType.DAY ? dayInterval : eveningInterval;
 			const phaseGamePacket: GamePacket = {
 				payload: {
 					oneofKind: GamePacketType.phaseUpdateNotification,
 					phaseUpdateNotification: {
 						phaseType: this.roomPhase.get(roomId) as PhaseType,
-						nextPhaseAt: `${Date.now() + interval}`,
+						nextPhaseAt: `${Date.now() + newInterval}`,
 						characterPositions: characterPosition,
 					},
 				},
@@ -162,5 +133,36 @@ class GameManager {
 		}
 	}
 }
+
+const removedCard = (room:Room ,user:User) => {
+
+    if(!user || !user.character) return;
+
+	const excess = user.character.handCardsCount - user.character.hp;
+	let toRemove = excess;
+
+	const removedCards: { type: CardType; count: number }[] = [];
+
+	for (let i = 0; i < user.character.handCards.length && toRemove > 0; i++) {
+		const card = user.character.handCards[i];
+
+		if (card.count <= toRemove) {
+			removedCards.push({ type: card.type, count: card.count });
+			toRemove -= card.count;
+			card.count = 0;
+		} else {
+			removedCards.push({ type: card.type, count: toRemove });
+			card.count -= toRemove;
+			toRemove = 0;
+		}
+	}
+
+	user.character.handCards = user.character.handCards.filter((c) => c.count > 0);
+	removedCards.forEach((c) => {
+		for (let i = 0; i < c.count; i++) {
+			repeatDeck(room.id, [c.type]);
+		}
+	});
+};
 
 export default GameManager.getInstance();
