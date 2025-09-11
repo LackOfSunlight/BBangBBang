@@ -83,7 +83,7 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
       cardMaturedSavingsEffect(roomId, userId, targetUserId);
       break;
     case 12: // 'WIN_LOTTERY':
-      cardWinLotteryEffect(roomId, userId, targetUserId);
+      cardWinLotteryEffect(roomId, userId);
       break;
 
     // 무기 카드  
