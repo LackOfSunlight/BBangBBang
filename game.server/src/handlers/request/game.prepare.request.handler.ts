@@ -3,7 +3,7 @@ import { C2SGamePrepareRequest } from "../../generated/packet/game_actions.js";
 import { GamePacket } from "../../generated/gamePacket.js";
 import { getGamePacketType } from "../../utils/type.converter.js";
 import { GamePacketType, gamePackTypeSelect } from "../../enums/gamePacketType.js";
-import { CharacterType, GlobalFailCode, RoleType } from "../../generated/common/enums.js";
+import { CharacterStateType, CharacterType, GlobalFailCode, RoleType } from "../../generated/common/enums.js";
 import gamePrepareResponseHandler from "../response/game.prepare.response.handler.js";
 import { getRoom, saveRoom } from "../../utils/redis.util.js";
 import { Room } from "../../models/room.model.js";
@@ -56,12 +56,18 @@ const gamePrepareRequestHandler = async (socket:GameSocket, gamePacket:GamePacke
         characterType: characterList[randomCharacterIndex].characterType,
         roleType: role[randomRoleIndex],
         hp: characterList[randomCharacterIndex].hp,
+        stateInfo:{
+            state: CharacterStateType.NONE_CHARACTER_STATE,
+            nextState: CharacterStateType.NONE_CHARACTER_STATE,
+            nextStateAt: '0',
+            stateTargetUserId: '0',
+        } ,
         weapon: 0,
         equips:[],
         debuffs:[],
         handCards:[],
         bbangCount: 0,
-        handCardsCount: 0
+        handCardsCount: 0,
        }
 
        user.character = characterData;
