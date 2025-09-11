@@ -10,6 +10,7 @@ import { setUserUpdateNotification } from './use.card.request.handler.js';
 import { getSocketByUserId } from '../../managers/socket.manger.js';
 import { CheckBigBbangService } from '../../services/bigbbang.check.service.js';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service.js';
+import { CardType } from "../../generated/common/enums.js";
 
 const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.reactionRequest);
@@ -37,8 +38,8 @@ const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
         console.log(`유저id:${user?.id}`);
 		if (user != null) {
 			switch (user.character?.stateInfo?.state) {
-				case CharacterStateType.BBANG_TARGET:
-                    user.character.hp -=1;
+				case CharacterStateType.BBANG_TARGET:					
+					user.character.hp -=1; 					            
 					break;
 				case CharacterStateType.BIG_BBANG_TARGET:
 					user.character.hp -= 1;
