@@ -5,7 +5,7 @@
 	},
 	{
 		"type": "BBANG",
-		"count": 20
+		"count": 50
 	},
 	{
 		"type": "BIG_BBANG",
@@ -13,7 +13,7 @@
 	},
 	{
 		"type": "SHIELD",
-		"count": 10
+		"count": 20
 	},
 	{
 		"type": "VACCINE",
@@ -53,7 +53,7 @@
 	},
 	{
 		"type": "SNIPER_GUN",
-		"count": 1
+		"count": 50
 	},
 	{
 		"type": "HAND_GUN",

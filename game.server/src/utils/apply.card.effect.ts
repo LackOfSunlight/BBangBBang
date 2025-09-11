@@ -23,6 +23,8 @@ import cardSniperGunEffect from "../card/card.sniper_gun.effect.js";
 import cardStealthSuitEffect from "../card/card.stealth_suit.effect.js";
 import cardVaccineEffect from "../card/card.vaccine.effect.js";
 import cardWinLotteryEffect from "../card/card.win_lottery.effect.js";
+import { repeatDeck } from "../managers/card.manager.js";
+import { CardType } from "../generated/common/enums.js";
 
 // 카드 효과 적용 함수
 export async function applyCardEffect(roomId:number, CardType: number, userId: string, targetUserId: string) {
@@ -34,6 +36,7 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
 
   // 가장 앞 순서에 있는 카드 제거
   const cardIndex = user.character.handCards.findIndex(c => c.type === CardType);
+  repeatDeck(roomId,[CardType as CardType]);
   if (cardIndex !== -1) 
       user.character.handCards.splice(cardIndex, 1); 
   else return; // cardIndex = -1 일 경우 ; 아무 변화 없이 종료
@@ -47,7 +50,7 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
       await cardBigBbangEffect(roomId, userId, targetUserId);
       break;
     case 3: //'SHIELD':
-      cardShieldEffect(roomId, userId, targetUserId);
+      await cardShieldEffect(roomId, userId, targetUserId);
       break;
     case 4: // 'VACCINE':
       cardVaccineEffect(roomId, userId, targetUserId);
@@ -79,7 +82,7 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
 
     // 무기 카드  
     case 13: // 'SNIPER_GUN':
-      cardSniperGunEffect(roomId, userId);
+      await cardSniperGunEffect(roomId, userId);
       break;
     case 14: // 'HAND_GUN':
       cardHandGunEffect(roomId, userId);
