@@ -19,6 +19,8 @@ import { Room } from '../../models/room.model.js';
 import { CharacterPositionData, GameStateData } from '../../generated/common/types.js';
 import { User } from '../../models/user.model.js';
 import { drawDeck, initializeDeck } from '../../managers/card.manager.js';
+import { shuffle } from '../../utils/shuffle.util.js';
+import gameManager from '../../managers/game.manager.js';
 
 const gameStartRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.gameStartRequest);
@@ -49,7 +51,7 @@ const gameStartRequestHandler = async (socket: GameSocket, gamePacket: GamePacke
 
 	// 다음 스테이지 시간 설정
 	const now = Date.now();
-	const duration = (3 * 60 + 30) * 1000; // 3분 30초 -> 210000ms
+	const duration = 180000; // 3분 -> 180000ms
 	const nextPhaseAt = now + duration;
 	const gameState: GameStateData = {
 		phaseType: PhaseType.DAY,
@@ -80,6 +82,8 @@ const gameStartRequestHandler = async (socket: GameSocket, gamePacket: GamePacke
 	room.state = RoomStateType.INGAME;
 	await saveRoom(room);
 
+	gameManager.startGame(room);
+
 	gameStartResponseHandler(socket, setGameStartResponse(true, GlobalFailCode.NONE_FAILCODE));
 	gameStartNotificationHandler(
 		socket,
@@ -99,17 +103,6 @@ const setGameStartResponse = (success: boolean, failCode: GlobalFailCode): GameP
 	};
 
 	return newGamePacket;
-};
-
-const shuffle = <T>(array: T[]): T[] => {
-	const result = [...array];
-
-	for (let i = result.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[result[i], result[j]] = [result[j], result[i]];
-	}
-
-	return result;
 };
 
 export default gameStartRequestHandler;
