@@ -39,6 +39,7 @@ const cardBbangEffect = async (roomId:number, userId:string, targetUserId:string
     user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
     user.character.stateInfo.nextStateAt = `${Date.now()  + 10000}`; //ms
     user.character.stateInfo.stateTargetUserId = targetUserId; // 빵야 카드 사용자는 targetId에 대상자 ID를 기록
+    user.character.bbangCount -= 1; // 빵야 횟수 감소
 
     target.character.stateInfo.state = 2; // 빵야 카드 대상자는 BBANG_TARGET 상태가 됩니다
     target.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
