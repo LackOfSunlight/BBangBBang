@@ -1,5 +1,6 @@
 // cardType = 22
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util';
+import { CardType } from '../generated/common/enums';
 
 const cardSatelliteTargetEffect = async (roomId: number, userId: string, targetUserId: string) => {
 	const target = await getUserFromRoom(roomId, targetUserId);
@@ -23,7 +24,7 @@ const cardSatelliteTargetEffect = async (roomId: number, userId: string, targetU
 			if (!room || !room.users) return;
 
 			// 1. 현재 타겟의 디버프 제거
-			const debuffIndex = target.character.debuffs.indexOf(22);
+			const debuffIndex = target.character.debuffs.indexOf(CardType.SATELLITE_TARGET);
 			if (debuffIndex > -1) {
 				target.character.debuffs.splice(debuffIndex, 1);
 			}
@@ -40,8 +41,8 @@ const cardSatelliteTargetEffect = async (roomId: number, userId: string, targetU
 			if (!nextUser || !nextUser.character) return;
 
 			// 3. 다음 유저에게 디버프 추가
-			if (!nextUser.character.debuffs.includes(22)) {
-				nextUser.character.debuffs.push(22);
+			if (!nextUser.character.debuffs.includes(CardType.SATELLITE_TARGET)) {
+				nextUser.character.debuffs.push(CardType.SATELLITE_TARGET);
 			}
 			await updateCharacterFromRoom(roomId, nextUserId, nextUser.character);
 
