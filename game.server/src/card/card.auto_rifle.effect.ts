@@ -21,9 +21,9 @@ const cardAutoRifleEffect = async (roomId: number, userId: string) => {
 	//
 	//// 손에 Bbang 카드가 추가될 경우
 
-	// 클라이언트 코드 기준 max값
-	// user.character.bbangCount = 99;
-	user.character.bbangCount = bbangLimit(user.character); // 99
+    // 클라이언트 코드 기준 max값
+    // user.character.bbangCount = 99;
+    // user.character.bbangCount = bbangLimit(user.character); // 99
 
 	// 수정 정보 갱신
 	try {

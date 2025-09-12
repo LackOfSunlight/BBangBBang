@@ -74,8 +74,8 @@ const gameStartRequestHandler = async (socket: GameSocket, gamePacket: GamePacke
 				}
 			});
 
-			character.bbangCount = character.characterType === CharacterType.RED ? 99 : 1;
-			character.handCardsCount = character.handCards.reduce((sum, card) => sum + card.count, 0);
+            character.bbangCount = 0;
+            character.handCardsCount = character.handCards.reduce((sum, card)=> sum + card.count, 0);
 		}
 	}
 
