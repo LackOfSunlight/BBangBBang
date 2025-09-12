@@ -5,7 +5,7 @@
 	},
 	{
 		"type": "BBANG",
-		"count": 30
+		"count": 10
 	},
 	{
 		"type": "BIG_BBANG",
@@ -13,7 +13,7 @@
 	},
 	{
 		"type": "SHIELD",
-		"count": 0
+		"count": 10
 	},
 	{
 		"type": "VACCINE",
@@ -33,7 +33,7 @@
 	},
 	{
 		"type": "ABSORB",
-		"count": 50
+		"count": 0
 	},
 	{
 		"type": "HALLUCINATION",
@@ -70,7 +70,7 @@
 	},
 	{
 		"type": "LASER_POINTER",
-		"count": 0
+		"count": 50
 	},
 	{
 		"type": "RADAR",
