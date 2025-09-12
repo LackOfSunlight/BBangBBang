@@ -9,7 +9,7 @@ import characterSpawnPosition from '../data/character.spawn.position.json';
 import { CharacterPositionData } from '../generated/common/types';
 import { shuffle } from '../utils/shuffle.util';
 import { GameSocket } from '../type/game.socket';
-import { saveRoom } from '../utils/redis.util';
+import { getRoom, saveRoom, updateCharacterFromRoom } from '../utils/redis.util';
 import { GamePacket } from '../generated/gamePacket';
 import { GamePacketType } from '../enums/gamePacketType';
 import { broadcastDataToRoom } from '../utils/notification.util';
@@ -35,17 +35,19 @@ class GameManager {
 		const phase = PhaseType.DAY;
 		this.roomPhase.set(roomId, phase);
 
-		this.scheduleNextPhase(room, roomId);
+		this.scheduleNextPhase(room.id, roomId);
 	}
 
-	private scheduleNextPhase(room: Room, roomId: string) {
-		this.clearTimer(roomId);
-		const dayInterval = 180000; // 3분
+	private scheduleNextPhase(roomId: number, roomTimerMapId: string) {
+		this.clearTimer(roomTimerMapId);
+		const dayInterval = 10000; // 3분
 		const eveningInterval = 30000; //30초
+
+
 
 		let nextPhase: PhaseType;
 		let interval: number;
-		if (this.roomPhase.get(roomId) === PhaseType.DAY) {
+		if (this.roomPhase.get(roomTimerMapId) === PhaseType.DAY) {
 			nextPhase = PhaseType.END;
 			interval = dayInterval;
 		} else {
@@ -54,7 +56,9 @@ class GameManager {
 		}
 
 		const timer = setTimeout(async () => {
-			this.roomPhase.set(roomId, nextPhase);
+			this.roomPhase.set(roomTimerMapId, nextPhase);
+			const room = await getRoom(roomId);
+			if(!room) return;
 
 			if (nextPhase === PhaseType.DAY) {
 				for (const user of room.users) {
@@ -78,6 +82,7 @@ class GameManager {
 							(sum, card) => sum + card.count,
 							0,
 						);
+
 					}
 				}
 			}
@@ -91,7 +96,7 @@ class GameManager {
 				payload: {
 					oneofKind: GamePacketType.phaseUpdateNotification,
 					phaseUpdateNotification: {
-						phaseType: this.roomPhase.get(roomId) as PhaseType,
+						phaseType: nextPhase,
 						nextPhaseAt: `${Date.now() + newInterval}`,
 						characterPositions: characterPosition,
 					},
@@ -110,10 +115,10 @@ class GameManager {
 			broadcastDataToRoom(room.users, phaseGamePacket, GamePacketType.phaseUpdateNotification);
 			broadcastDataToRoom(room.users, userGamePacket, GamePacketType.userUpdateNotification);
 
-			this.scheduleNextPhase(room, roomId);
+			this.scheduleNextPhase(room.id, roomTimerMapId);
 		}, interval);
 
-		this.roomTimers.set(roomId, timer);
+		this.roomTimers.set(roomTimerMapId, timer);
 	}
 
 	public endGame(room: Room) {
