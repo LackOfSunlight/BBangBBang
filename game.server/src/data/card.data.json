@@ -5,7 +5,7 @@
 	},
 	{
 		"type": "BBANG",
-		"count": 100
+		"count": 50
 	},
 	{
 		"type": "BIG_BBANG",
@@ -21,11 +21,11 @@
 	},
 	{
 		"type": "CALL_119",
-		"count": 100
+		"count": 0
 	},
 	{
 		"type": "DEATH_MATCH",
-		"count": 0
+		"count": 50
 	},
 	{
 		"type": "GUERRILLA",
