@@ -59,7 +59,6 @@ const cardBbangEffect = async (roomId: number, userId: string, targetUserId: str
 		target.character.stateInfo.stateTargetUserId = userId;
 	} else if(user.character.stateInfo.state === CharacterStateType.GUERRILLA_TARGET){
 
-		console.log('-----------------------------------------------------------------------게릴라 방어 성공');
 		user.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
 		user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 		user.character.stateInfo.nextStateAt = '0'; //ms

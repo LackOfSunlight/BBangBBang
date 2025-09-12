@@ -1,20 +1,22 @@
-import { GameSocket } from '../../type/game.socket.js';
-import { GamePacket } from '../../generated/gamePacket.js';
-import { getGamePacketType } from '../../utils/type.converter.js';
-import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.js';
+import { GameSocket } from '../../type/game.socket';
+import { GamePacket } from '../../generated/gamePacket';
+import { getGamePacketType } from '../../utils/type.converter';
+import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType';
 import {
 	CharacterStateType,
 	GlobalFailCode,
 	ReactionType,
 	CardType,
-} from '../../generated/common/enums.js';
-import reactionResponseHandler from '../response/reaction.response.handler.js';
-import { getRoom, saveRoom, updateCharacterFromRoom } from '../../utils/redis.util.js';
-import userUpdateNotificationHandler from '../notification/user.update.notification.handler.js';
-import { setUserUpdateNotification } from './use.card.request.handler.js';
-import { CheckBigBbangService } from '../../services/bigbbang.check.service.js';
-import { CheckGuerrillaService } from '../../services/guerrilla.check.service.js';
-import { weaponDamageEffect } from '../../utils/weapon.util.js';
+	AnimationType,
+} from '../../generated/common/enums';
+import reactionResponseHandler from '../response/reaction.response.handler';
+import { getRoom, saveRoom, updateCharacterFromRoom } from '../../utils/redis.util';
+import userUpdateNotificationHandler from '../notification/user.update.notification.handler';
+import { setUserUpdateNotification } from './use.card.request.handler';
+import { CheckBigBbangService } from '../../services/bigbbang.check.service';
+import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
+import { weaponDamageEffect } from '../../utils/weapon.util';
+import { sendAnimationNotification } from '../notification/animation.notification.handler';
 
 const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.reactionRequest);
@@ -51,23 +53,12 @@ const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 					let isDefended = false;
 
 					// 1. 자동 쉴드 방어 시도 (공격자가 레이저 포인터를 사용하지 않았을 때만)
-					const shooterHasLaser = shooter.character.equips.includes(CardType.LASER_POINTER);
-					if (!shooterHasLaser && user.character.equips.includes(CardType.AUTO_SHIELD)) {
+					if (user.character.equips.includes(CardType.AUTO_SHIELD)) {
 						if (Math.random() < 0.25) {
 							isDefended = true; // 25% 확률로 방어 성공
+							sendAnimationNotification(room.users, user.id, AnimationType.SHIELD_ANIMATION);
 						}
 					}
-
-					// 2. 쉴드 카드 방어 시도 (아직 방어하지 못했다면)
-					// if (!isDefended) {
-					// 	const haveShieldCard = user.character.handCards.find((c) => c.type === CardType.SHIELD);
-					// 	const requiredShields = shooterHasLaser ? 2 : 1;
-
-					// 	if (haveShieldCard && haveShieldCard.count >= requiredShields) {
-					// 		haveShieldCard.count -= requiredShields; // 쉴드 카드로 방어 성공
-					// 		isDefended = true;
-					// 	}
-					// }
 
 					// 3. 방어 최종 실패 시 데미지 적용
 					if (!isDefended) {
