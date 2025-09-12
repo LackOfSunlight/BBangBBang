@@ -21,8 +21,7 @@ const mockUpdateCharacterFromRoom = updateCharacterFromRoom as jest.MockedFuncti
 
 /**
  * 테스트용 캐릭터 데이터 생성 헬퍼 함수
- * @param hasBbang 빵야 카드 보유 여부
- * @returns CharacterData 객체
+ * hasBbang: 빵야 카드 보유 여부
  */
 function makeCharacter(hasBbang: boolean): CharacterData {
   return {
@@ -251,7 +250,7 @@ describe('cardDeathMatchEffect', () => {
       // 콘솔 에러 스파이 설정
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
-      // When: 현피 카드 효과 실행
+      // When: 현피 카드 효과 실행x
       await cardDeathMatchEffect(roomId, userId, targetUserId);
 
       // Then: 에러 로그가 출력되어야 함
