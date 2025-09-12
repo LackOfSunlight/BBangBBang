@@ -7,8 +7,8 @@ import leaveRoomResponseHandler from '../../response/leave.room.response.handler
 import leaveRoomNotificationHandler from '../../notification/leave.room.notification.handler';
 import { getGamePacketType } from '../../../utils/type.converter';
 import { Room } from '../../../models/room.model';
-import { User } from '../../../models/user.model';
-import { GamePacketType, gamePackTypeSelect } from '../../../enums/gamePacketType';
+import { GamePacketType } from '../../../enums/gamePacketType';
+import { broadcastDataToRoom } from '../../../utils/notification.util';
 
 // redis.util 모킹
 jest.mock('../../../utils/redis.util', () => ({
@@ -30,6 +30,12 @@ jest.mock('../../notification/leave.room.notification.handler', () => ({
 	default: jest.fn(),
 }));
 
+// notification.util 모킹
+jest.mock('../../../utils/notification.util', () => ({
+	__esModule: true,
+	broadcastDataToRoom: jest.fn(),
+}));
+
 // 유틸 함수 모킹
 jest.mock('../../../utils/type.converter');
 
@@ -45,6 +51,7 @@ describe('leaveRoomRequestHandler', () => {
 	const mockLeaveRoomNotificationHandler = leaveRoomNotificationHandler as jest.Mock;
 	const mockGetGamePacketType = getGamePacketType as jest.Mock;
 	const mockRemoveUserFromRoom = removeUserFromRoom as jest.Mock;
+	const mockBroadcastDataToRoom = broadcastDataToRoom as jest.Mock;
 
 	beforeEach(() => {
 		socket = {
@@ -107,7 +114,7 @@ describe('leaveRoomRequestHandler', () => {
 	});
 
 	// 방장이 나가는 경우 (남은 유저가 있을 때)의 테스트 케이스
-	it('방장이 방을 나갈 때, 남은 유저에게 방장 권한이 위임되고 saveRoom이 호출되어야 한다', async () => {
+	it('방장이 방을 나갈 때, 남은 유저가 있어도 방이 삭제되어야 한다', async () => {
 		// 테스트를 위한 초기 방 및 유저 데이터
 		const users = [
 			{ id: 'user123', nickname: 'owner' },
@@ -123,53 +130,33 @@ describe('leaveRoomRequestHandler', () => {
 		};
 
 		mockGetRoom.mockResolvedValue(initialRoom);
-		const randomSpy = jest.spyOn(Math, 'random').mockReturnValue(0); // 첫 번째 남은 유저(user456)가 새 방장이 되도록 모킹
+		mockRemoveUserFromRoom.mockResolvedValue(true);
 
 		// 실행
 		await leaveRoomRequestHandler(socket, gamePacket);
 
 		// 검증
 		expect(mockGetRoom).toHaveBeenCalledWith(1);
-		expect(mockSaveRoom).toHaveBeenCalledWith(
-			expect.objectContaining({
-				id: 1,
-				ownerId: 'user456',
-				users: [{ id: 'user456', nickname: 'user2' }],
-			}),
-		);
-		expect(mockLeaveRoomResponseHandler).toHaveBeenCalledWith(
-			socket,
-			setLeaveRoomResponse(true, GlobalFailCode.NONE_FAILCODE),
-		);
-		expect(mockLeaveRoomNotificationHandler).toHaveBeenCalledWith(socket, gamePacket);
-		randomSpy.mockRestore();
-	});
 
-	// 방장이 나가는 경우 (남은 유저가 없을 때)의 테스트 케이스
-	it('방장이 방을 나갈 때, 남은 유저가 없으면 방이 삭제되어야 한다', async () => {
-		// 테스트를 위한 초기 방 및 유저 데이터
-		const users = [{ id: 'user123', nickname: 'owner' }];
-		const initialRoom: Room = {
-			id: 1,
-			ownerId: 'user123',
-			name: 'Test Room',
-			maxUserNum: 4,
-			state: RoomStateType.WAIT,
-			users: users,
-		};
-		// getRoom mock 함수가 초기 방 데이터를 반환하도록 설정
-		mockGetRoom.mockResolvedValue(initialRoom);
+		// 모든 유저가 방에서 제거되는지 확인
+		expect(mockRemoveUserFromRoom).toHaveBeenCalledTimes(users.length);
+		for (const user of users) {
+			expect(mockRemoveUserFromRoom).toHaveBeenCalledWith(initialRoom.id, user.id);
+		}
 
-		// 실행
-		await leaveRoomRequestHandler(socket, gamePacket);
-
-		// 각 mock 함수가 예상대로 호출되었는지 검증
-		expect(mockGetRoom).toHaveBeenCalledWith(1);
 		expect(mockDeleteRoom).toHaveBeenCalledWith(1);
-		expect(mockLeaveRoomResponseHandler).toHaveBeenCalledWith(
-			socket,
-			setLeaveRoomResponse(true, GlobalFailCode.NONE_FAILCODE),
+		expect(mockSaveRoom).not.toHaveBeenCalled();
+
+		// 모든 유저에게 방 삭제 응답이 broadcast 되는지 확인
+		const expectedPacket = setLeaveRoomResponse(true, GlobalFailCode.NONE_FAILCODE);
+		expect(mockBroadcastDataToRoom).toHaveBeenCalledWith(
+			users,
+			expectedPacket,
+			GamePacketType.leaveRoomResponse,
 		);
+
+		// 개별 응답/알림 핸들러는 호출되지 않아야 함
+		expect(mockLeaveRoomResponseHandler).not.toHaveBeenCalled();
 		expect(mockLeaveRoomNotificationHandler).not.toHaveBeenCalled();
 	});
 
