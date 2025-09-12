@@ -17,10 +17,18 @@ const cardAbsorbEffect = async (roomId: number, userId: string, targetUserId: st
 
 	// 대상의 손에서 무작위로 카드 한 장을 선택하여 훔침
 	const randomIndex = Math.floor(Math.random() * targetHand.length);
-	const stolenCard = targetHand.splice(randomIndex, 1)[0];
+	const stolenCard = targetHand[randomIndex];
 
-	// 훔친 카드를 시전자의 손에 추가
-	user.character.handCards.push(stolenCard);
+	if (stolenCard.count > 1) {
+		// 여러 장 있으면 1장만 빼오기
+		stolenCard.count -= 1;
+		// 시전자 손패에 추가
+		user.character.handCards.push({ type: stolenCard.type, count: 1 });
+	} else {
+		// 1장뿐이면 배열에서 제거
+		const removed = targetHand.splice(randomIndex, 1)[0];
+		user.character.handCards.push(removed);
+	}
 
 	// 변경된 두 유저의 정보를 Redis에 업데이트
 	try {

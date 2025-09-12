@@ -1,6 +1,7 @@
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
 import { CharacterStateType } from '../generated/common/enums';
+import { updateCharacterFromRoom } from '../utils/redis.util';
 
 export const CheckGuerrillaService = async (room: Room): Promise<Room> => {
 	const users: User[] = room.users;
@@ -14,6 +15,7 @@ export const CheckGuerrillaService = async (room: Room): Promise<Room> => {
 		if (nextStateAt && Number(nextStateAt) > now) return true; // 아직 유효
 		return false;
 	});
+
 
 	console.log(`체크들어옴 ${hasValidTarget}`);
 
@@ -39,6 +41,8 @@ export const CheckGuerrillaService = async (room: Room): Promise<Room> => {
 				u.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 				u.character.stateInfo.nextStateAt = '0';
 				u.character.stateInfo.stateTargetUserId = '0';
+
+				await updateCharacterFromRoom(room.id, u.id, u.character);
 			}
 		}
 	}
