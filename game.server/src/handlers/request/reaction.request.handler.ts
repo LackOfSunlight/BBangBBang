@@ -51,23 +51,11 @@ const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 					let isDefended = false;
 
 					// 1. 자동 쉴드 방어 시도 (공격자가 레이저 포인터를 사용하지 않았을 때만)
-					const shooterHasLaser = shooter.character.equips.includes(CardType.LASER_POINTER);
-					if (!shooterHasLaser && user.character.equips.includes(CardType.AUTO_SHIELD)) {
+					if (user.character.equips.includes(CardType.AUTO_SHIELD)) {
 						if (Math.random() < 0.25) {
 							isDefended = true; // 25% 확률로 방어 성공
 						}
 					}
-
-					// 2. 쉴드 카드 방어 시도 (아직 방어하지 못했다면)
-					// if (!isDefended) {
-					// 	const haveShieldCard = user.character.handCards.find((c) => c.type === CardType.SHIELD);
-					// 	const requiredShields = shooterHasLaser ? 2 : 1;
-
-					// 	if (haveShieldCard && haveShieldCard.count >= requiredShields) {
-					// 		haveShieldCard.count -= requiredShields; // 쉴드 카드로 방어 성공
-					// 		isDefended = true;
-					// 	}
-					// }
 
 					// 3. 방어 최종 실패 시 데미지 적용
 					if (!isDefended) {

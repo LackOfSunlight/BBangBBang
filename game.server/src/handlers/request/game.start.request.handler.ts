@@ -21,6 +21,7 @@ import { User } from '../../models/user.model.js';
 import { drawDeck, initializeDeck } from '../../managers/card.manager.js';
 import { shuffle } from '../../utils/shuffle.util.js';
 import gameManager from '../../managers/game.manager.js';
+import { testCard } from '../../init/test.card.js';
 
 const gameStartRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.gameStartRequest);
@@ -74,7 +75,6 @@ const gameStartRequestHandler = async (socket: GameSocket, gamePacket: GamePacke
 				}
 			});
 
-            character.bbangCount = 0;
             character.handCardsCount = character.handCards.reduce((sum, card)=> sum + card.count, 0);
 		}
 	}
