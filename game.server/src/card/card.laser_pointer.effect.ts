@@ -23,7 +23,7 @@ const cardLaserPointerEffect = async (roomId: number, userId: string) => {
 
 	// 수정 정보 갱신
 	try{
-		await updateCharacterFromRoom(roomId, userId, user.character)
+		await updateCharacterFromRoom(roomId, userId, user.character);
 		//console.log('로그 저장에 성공하였습니다');
 	} catch(error){
 		console.error(`로그 저장에 실패하였습니다:[${error}]`);

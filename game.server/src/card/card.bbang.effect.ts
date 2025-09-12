@@ -49,7 +49,7 @@ const cardBbangEffect = async (roomId: number, userId: string, targetUserId: str
 
     // 수정 정보 갱신
 	try{
-		await updateCharacterFromRoom(roomId, userId, user.character)
+		await updateCharacterFromRoom(roomId, userId, user.character);
 		await updateCharacterFromRoom(roomId, targetUserId, target.character);
 		//console.log('로그 저장에 성공하였습니다');
 	} catch(error){
