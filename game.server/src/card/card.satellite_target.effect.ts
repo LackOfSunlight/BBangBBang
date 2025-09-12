@@ -1,6 +1,7 @@
 // cardType = 22
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util';
-import { CardType } from '../generated/common/enums';
+import { CardType, AnimationType } from '../generated/common/enums';
+import { sendAnimationNotification } from '../handlers/notification/animation.notification.handler';
 
 const cardSatelliteTargetEffect = async (roomId: number, userId: string, targetUserId: string) => {
 	const target = await getUserFromRoom(roomId, targetUserId);
@@ -9,13 +10,31 @@ const cardSatelliteTargetEffect = async (roomId: number, userId: string, targetU
 
 	const isEffectTriggered = Math.random() < 0.03;
 	if (isEffectTriggered) {
-		// 효과 발동: 대상의 HP 3 감소
+		// 효과 발동: 애니메이션 재생 후 HP 3 감소
 		console.log(`위성 타겟 효과 발동: ${target.nickname}의 HP 3 감소`);
+		
+		// 1. 방 정보 가져오기
+		const room = await getRoom(roomId);
+		if (!room || !room.users) {
+			console.warn(`[SatelliteTarget] 방을 찾을 수 없습니다: roomId=${roomId}`);
+			return;
+		}
+		
+		// 2. 위성 타겟 애니메이션 전송
+		sendAnimationNotification(room.users, targetUserId, AnimationType.SATELLITE_TARGET_ANIMATION);
+		console.log(`[SatelliteTarget] 위성 타겟 애니메이션 전송: ${target.nickname}`);
+		
+		// 3. 애니메이션 재생 시간 대기 (2초)
+		await new Promise(resolve => setTimeout(resolve, 2000));
+		
+		// 4. 실제 효과 적용
 		target.character.hp -= 3;
 		if (target.character.hp < 0) {
 			target.character.hp = 0;
 		}
 		await updateCharacterFromRoom(roomId, targetUserId, target.character);
+		
+		console.log(`[SatelliteTarget] 위성 타겟 효과 완료: ${target.nickname}의 HP ${target.character.hp}`);
 	} else {
 		// 효과 미발동: 다음 유저에게 디버프 이전
 		console.log('위성 타겟 효과 미발동. 다음 유저에게 디버프를 넘깁니다.');
