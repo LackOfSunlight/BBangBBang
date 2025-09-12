@@ -28,8 +28,9 @@ const cardAutoRifleEffect = async (roomId: number, userId: string) => {
 	// 수정 정보 갱신
 	try {
 		await updateCharacterFromRoom(roomId, userId, user.character);
-	} catch (error) {
-		console.error('[저장 실패]:', error);
+	//console.log('로그 저장에 성공하였습니다');
+	} catch(error){
+		console.error(`로그 저장에 실패하였습니다:[${error}]`);
 	}
 };
 
