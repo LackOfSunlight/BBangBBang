@@ -5,7 +5,7 @@
 	},
 	{
 		"type": "BBANG",
-		"count": 50
+		"count": 30
 	},
 	{
 		"type": "BIG_BBANG",
@@ -25,7 +25,7 @@
 	},
 	{
 		"type": "DEATH_MATCH",
-		"count": 50
+		"count": 0
 	},
 	{
 		"type": "GUERRILLA",
@@ -33,7 +33,7 @@
 	},
 	{
 		"type": "ABSORB",
-		"count": 0
+		"count": 50
 	},
 	{
 		"type": "HALLUCINATION",
