@@ -13,7 +13,7 @@
 	},
 	{
 		"type": "SHIELD",
-		"count": 100
+		"count": 0
 	},
 	{
 		"type": "VACCINE",
@@ -21,7 +21,7 @@
 	},
 	{
 		"type": "CALL_119",
-		"count": 0
+		"count": 100
 	},
 	{
 		"type": "DEATH_MATCH",
