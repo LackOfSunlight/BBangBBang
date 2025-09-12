@@ -34,13 +34,6 @@ const cardBbangEffect = async (roomId: number, userId: string, targetUserId: str
 	}
 	if (!user || !target || !user.character || !target.character) return;
 
-	// 1. 방어 카드 확인 (C# 코드 참고)
-	// const defCardIndex = target.character.handCards.findIndex(c => c.rcode === "Shield");
-	// if (defCardIndex !== -1) {
-	//     const removedCard = target.character.handCards.splice(defCardIndex, 1)[0].rcode;
-	//     return { success: true, removedCard, hpChange: 0 };
-	// }
-
 	// 상태 설정
 	user.character.stateInfo.state = CharacterStateType.BBANG_SHOOTER; // 빵야 카드 사용자는 BBANG_SHOOTER 상태가 되고
 	user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
@@ -55,10 +48,13 @@ const cardBbangEffect = async (roomId: number, userId: string, targetUserId: str
     console.log(`빵 카드 사용 됨`);
 
     // 수정 정보 갱신
-    await updateCharacterFromRoom(roomId, userId, user.character)
-    await updateCharacterFromRoom(roomId, targetUserId, target.character);
-    
-}
-
+	try{
+		await updateCharacterFromRoom(roomId, userId, user.character)
+		await updateCharacterFromRoom(roomId, targetUserId, target.character);
+		//console.log('로그 저장에 성공하였습니다');
+	} catch(error){
+		console.error(`로그 저장에 실패하였습니다:[${error}]`);
+	}
+};
 
 export default  cardBbangEffect;

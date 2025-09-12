@@ -39,7 +39,7 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
   if (!user || !user.character) return;
   
   // target이 필요한 카드들의 경우 target 검증
-  const needsTarget = [1, 2, 3, 6, 7, 8, 9, 10, 11, 21, 22, 23]; // target이 필요한 카드들
+  const needsTarget = [1, 2, 3, 6, 7, 8, 9, 10, 21, 22, 23]; // target이 필요한 카드들
   if (needsTarget.includes(CardType)) {
     if (!target || !target.character) return;
   }
@@ -92,7 +92,7 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
       await cardFleaMarketEffect(roomId, userId, targetUserId);
       break;
     case 11: // 'MATURED_SAVINGS':
-      await cardMaturedSavingsEffect(roomId, userId, targetUserId);
+      await cardMaturedSavingsEffect(roomId, userId);
       break;
     case 12: // 'WIN_LOTTERY':
       await cardWinLotteryEffect(roomId, userId);
