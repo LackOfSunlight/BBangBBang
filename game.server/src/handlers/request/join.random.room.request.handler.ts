@@ -24,30 +24,29 @@ const joinRandomRoomRequestHandler = async (socket: GameSocket, gamePacket: Game
 	if (!userInfo) return;
 
 	const rooms: Room[] = await getRooms();
-	let selectedRoom:Room | null = null;
+	let selectedRoom: Room | null = null;
 
-    const availableRooms = rooms.filter(room => room.users.length < room.maxUserNum);
-
+	const availableRooms = rooms.filter((room) => room.users.length < room.maxUserNum);
 
 	let roomId: number | null = null;
-    let selectUser:User | null = null; 
+	let selectUser: User | null = null;
 
-    if(availableRooms.length > 0){
-        const randomIndex = Math.floor(Math.random()*availableRooms.length);
-        const room = availableRooms[randomIndex];
+	if (availableRooms.length > 0) {
+		const randomIndex = Math.floor(Math.random() * availableRooms.length);
+		const room = availableRooms[randomIndex];
 
-        const user = new User(socket.userId, userInfo.nickname);
-        selectUser = user;
-        roomId = room.id;
+		const user = new User(socket.userId, userInfo.nickname);
+		selectUser = user;
+		roomId = room.id;
 
-        socket.roomId = roomId;
-        selectedRoom = await addUserToRoom(room.id, user);
-
-
-    } else{
-        return joinRandomRoomResponseHandler(socket, setJoinRandomRoomResponse(false, GlobalFailCode.JOIN_ROOM_FAILED));
-    }
-
+		socket.roomId = roomId;
+		selectedRoom = await addUserToRoom(room.id, user);
+	} else {
+		return joinRandomRoomResponseHandler(
+			socket,
+			setJoinRandomRoomResponse(false, GlobalFailCode.JOIN_ROOM_FAILED),
+		);
+	}
 
 	if (selectedRoom != null) {
 		joinRandomRoomResponseHandler(
@@ -55,7 +54,7 @@ const joinRandomRoomRequestHandler = async (socket: GameSocket, gamePacket: Game
 			setJoinRandomRoomResponse(true, GlobalFailCode.NONE_FAILCODE, selectedRoom),
 		);
 
-        joinRoomNotificationHandler(socket,setJoinRoomNotification(selectUser));
+		joinRoomNotificationHandler(socket, setJoinRoomNotification(selectUser));
 	}
 };
 

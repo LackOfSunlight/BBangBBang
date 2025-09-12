@@ -10,7 +10,7 @@ const cardAbsorbEffect = async (roomId: number, userId: string, targetUserId: st
 	// 대상의 손에 카드가 있는지 확인
 	const targetHand = target.character.handCards;
 	if (targetHand.length === 0) {
-        console.log(`[흡수 실패] ${target.character}이 카드를 가지고 있지 않음:`);
+		console.log(`[흡수 실패] ${target.character}이 카드를 가지고 있지 않음:`);
 		// 대상이 카드를 가지고 있지 않으면 효과가 발동하지 않음
 		return;
 	}

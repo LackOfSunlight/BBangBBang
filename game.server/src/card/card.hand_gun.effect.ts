@@ -1,5 +1,5 @@
 // cardType = 14
-import { getUserFromRoom, updateCharacterFromRoom } from "../utils/redis.util.js";
+import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
 
 const cardHandGunEffect = async (roomId:number, userId:string) =>{
     const user = await getUserFromRoom(roomId, userId);
@@ -20,6 +20,5 @@ const cardHandGunEffect = async (roomId:number, userId:string) =>{
         // 에러가 발생해도 함수는 정상적으로 완료됨
     }
 }
-
 
 export default cardHandGunEffect;

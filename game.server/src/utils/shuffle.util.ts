@@ -1,5 +1,3 @@
-
-
 export const shuffle = <T>(array: T[]): T[] => {
 	const result = [...array];
 

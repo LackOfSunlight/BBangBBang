@@ -1,24 +1,22 @@
 {
-  "compilerOptions": {
-    "rootDir": "./game.server/src",
-    "outDir": "./game.server/dist",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "target": "esnext",
-    "types": ["node", "jest"],
-    "sourceMap": false,
-    "declaration": true,
-    "declarationMap": true,
-    "strict": true,
-    "jsx": "react-jsx",
-    "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force",
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-  },
-  "include": [
-    "game.server/src/**/*.ts"
-, "game.server/src/utils/test/redis.util.test.test"  ]
+	"compilerOptions": {
+		"rootDir": "./game.server/src",
+		"outDir": "./game.server/dist",
+		"module": "esnext",
+		"moduleResolution": "node",
+		"target": "esnext",
+		"types": ["node", "jest"],
+		"sourceMap": false,
+		"declaration": true,
+		"declarationMap": true,
+		"strict": true,
+		"jsx": "react-jsx",
+		"isolatedModules": true,
+		"noUncheckedSideEffectImports": true,
+		"moduleDetection": "force",
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+		"esModuleInterop": true
+	},
+	"include": ["game.server/src/**/*.ts", "game.server/src/utils/test/redis.util.test.test"]
 }

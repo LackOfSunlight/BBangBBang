@@ -34,10 +34,30 @@ describe('cardSatelliteTargetEffect', () => {
 
 		// 테스트용 유저 생성
 		target = new User(targetId, 'socket2');
-		target.character = new Character(CharacterType.RED, RoleType.NONE_ROLE, 4, 0, [], [CardType.SATELLITE_TARGET], [], 1, 0);
+		target.character = new Character(
+			CharacterType.RED,
+			RoleType.NONE_ROLE,
+			4,
+			0,
+			[],
+			[CardType.SATELLITE_TARGET],
+			[],
+			1,
+			0,
+		);
 
 		nextTarget = new User(nextTargetId, 'socket3');
-		nextTarget.character = new Character(CharacterType.FROGGY, RoleType.NONE_ROLE, 4, 0, [], [], [], 1, 0);
+		nextTarget.character = new Character(
+			CharacterType.FROGGY,
+			RoleType.NONE_ROLE,
+			4,
+			0,
+			[],
+			[],
+			[],
+			1,
+			0,
+		);
 
 		// 테스트용 룸 생성
 		const user1 = new User(userId, 'socket1');
@@ -85,6 +105,10 @@ describe('cardSatelliteTargetEffect', () => {
 		// 3. 두 유저의 정보가 모두 업데이트되었는지 확인
 		expect(updateCharacterFromRoom).toHaveBeenCalledTimes(2);
 		expect(updateCharacterFromRoom).toHaveBeenCalledWith(roomId, targetId, target.character);
-		expect(updateCharacterFromRoom).toHaveBeenCalledWith(roomId, nextTargetId, nextTarget.character);
+		expect(updateCharacterFromRoom).toHaveBeenCalledWith(
+			roomId,
+			nextTargetId,
+			nextTarget.character,
+		);
 	});
 });
