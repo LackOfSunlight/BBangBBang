@@ -43,8 +43,6 @@ class GameManager {
 		const dayInterval = 10000; // 3분
 		const eveningInterval = 30000; //30초
 
-
-
 		let nextPhase: PhaseType;
 		let interval: number;
 		if (this.roomPhase.get(roomTimerMapId) === PhaseType.DAY) {
@@ -58,7 +56,7 @@ class GameManager {
 		const timer = setTimeout(async () => {
 			this.roomPhase.set(roomTimerMapId, nextPhase);
 			const room = await getRoom(roomId);
-			if(!room) return;
+			if (!room) return;
 
 			if (nextPhase === PhaseType.DAY) {
 				for (const user of room.users) {
@@ -82,9 +80,19 @@ class GameManager {
 							(sum, card) => sum + card.count,
 							0,
 						);
-
 					}
 				}
+
+				const userGamePacket: GamePacket = {
+					payload: {
+						oneofKind: GamePacketType.userUpdateNotification,
+						userUpdateNotification: {
+							user: room.users,
+						},
+					},
+				};
+				
+				broadcastDataToRoom(room.users, userGamePacket, GamePacketType.userUpdateNotification);
 			}
 
 			await saveRoom(room);
@@ -103,17 +111,7 @@ class GameManager {
 				},
 			};
 
-			const userGamePacket: GamePacket = {
-				payload: {
-					oneofKind: GamePacketType.userUpdateNotification,
-					userUpdateNotification: {
-						user: room.users,
-					},
-				},
-			};
-
 			broadcastDataToRoom(room.users, phaseGamePacket, GamePacketType.phaseUpdateNotification);
-			broadcastDataToRoom(room.users, userGamePacket, GamePacketType.userUpdateNotification);
 
 			this.scheduleNextPhase(room.id, roomTimerMapId);
 		}, interval);
