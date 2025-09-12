@@ -81,7 +81,7 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
       await cardFleaMarketEffect(roomId, userId, targetUserId);
       break;
     case 11: // 'MATURED_SAVINGS':
-      await cardMaturedSavingsEffect(roomId, userId, targetUserId);
+      await cardMaturedSavingsEffect(roomId, userId);
       break;
     case 12: // 'WIN_LOTTERY':
       await cardWinLotteryEffect(roomId, userId);
