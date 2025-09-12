@@ -59,11 +59,11 @@ class GameManager {
 			if (!room) return;
 
 			if (nextPhase === PhaseType.DAY) {
-				for (const user of room.users) {
+				for (let user of room.users) {
 					if (user.character != null) {
 						//카드 삭제
 						if (user.character.handCardsCount > user.character.hp) {
-							removedCard(room, user);
+							user = removedCard(room, user);
 						} else {
 							const drawCards = drawDeck(room.id, 2);
 							drawCards.forEach((type) => {
@@ -76,10 +76,12 @@ class GameManager {
 							});
 						}
 
-						user.character.handCardsCount = user.character.handCards.reduce(
+						user.character!.handCardsCount = user.character!.handCards.reduce(
 							(sum, card) => sum + card.count,
 							0,
 						);
+
+						user.character!.bbangCount = 0;
 					}
 				}
 
@@ -94,8 +96,6 @@ class GameManager {
 
 				broadcastDataToRoom(room.users, userGamePacket, GamePacketType.userUpdateNotification);
 			}
-
-			await saveRoom(room);
 
 			const characterPosition = shuffle(spawnPositions);
 
@@ -112,6 +112,8 @@ class GameManager {
 			};
 
 			broadcastDataToRoom(room.users, phaseGamePacket, GamePacketType.phaseUpdateNotification);
+
+			await saveRoom(room);
 
 			this.scheduleNextPhase(room.id, roomTimerMapId);
 		}, interval);
@@ -137,8 +139,8 @@ class GameManager {
 	}
 }
 
-const removedCard = (room: Room, user: User) => {
-	if (!user || !user.character) return;
+const removedCard = (room: Room, user: User): User => {
+	if (!user || !user.character) return user;
 
 	const excess = user.character.handCardsCount - user.character.hp;
 	let toRemove = excess;
@@ -165,6 +167,8 @@ const removedCard = (room: Room, user: User) => {
 			repeatDeck(room.id, [c.type]);
 		}
 	});
+
+	return user;
 };
 
 export default GameManager.getInstance();
