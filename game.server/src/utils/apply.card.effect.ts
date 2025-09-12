@@ -29,20 +29,9 @@ import { repeatDeck } from "../managers/card.manager.js";
 export async function applyCardEffect(roomId:number, CardType: number, userId: string, targetUserId: string) {
   const user = await getUserFromRoom(roomId, userId);
   
-  // 119 카드는 target이 없어도 정상 작동해야 함
-  let target = null;
-  if (targetUserId && targetUserId !== "0") {
-    target = await getUserFromRoom(roomId, targetUserId);
-  }
-  
   // 유효성 검증 (119 카드 예외 처리)
   if (!user || !user.character) return;
   
-  // target이 필요한 카드들의 경우 target 검증
-  const needsTarget = [1, 2, 3, 6, 7, 8, 9, 10, 21, 22, 23]; // target이 필요한 카드들
-  if (needsTarget.includes(CardType)) {
-    if (!target || !target.character) return;
-  }
   
   const usedCard = user.character.handCards.find(c => c.type === CardType);
   if(usedCard != undefined){

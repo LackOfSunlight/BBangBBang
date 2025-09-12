@@ -9,12 +9,12 @@ describe('Redis Utility Functions', () => {
 		// 예시:
 
 		const user: User = {
-			id: '육근무',
+			id: '000',
 			nickname: 'qwer1234',
 			character: undefined,
 		};
 		const user2: User = {
-			id: '김양훈',
+			id: '111',
 			nickname: 'dkdkdk',
 			character: undefined,
 		};

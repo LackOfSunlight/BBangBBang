@@ -1,6 +1,6 @@
 // cardType = 6
 import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
-import { CharacterStateType } from '../generated/common/enums.js';
+import { CardType, CharacterStateType } from '../generated/common/enums.js';
 
 const cardDeathMatchEffect = async (roomId: number, userId: string, targetUserId: string) => {
 	const user = await getUserFromRoom(roomId, userId);
@@ -12,6 +12,13 @@ const cardDeathMatchEffect = async (roomId: number, userId: string, targetUserId
 
 	// 유효성 검증
 	if (!target || !target.character) return;
+
+	const isBbangCard: boolean = user.character.handCards.some(c => c.type === CardType.BBANG);
+
+	if(!isBbangCard) {
+		console.log("빵야 카드가 없습니다");
+		return;
+	}
 
 	// 현피 카드 효과: 현피 상태 설정
 	// 사용자: DEATH_MATCH_TURN_STATE (현피 차례)

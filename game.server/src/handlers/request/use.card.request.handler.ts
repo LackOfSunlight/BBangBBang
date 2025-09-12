@@ -38,7 +38,6 @@ const useCardRequestHandler = async (socket: GameSocket, gamePacket: GamePacket)
 	// 카드 효과 적용
 	await applyCardEffect(socket.roomId, req.cardType, socket.userId, req.targetUserId);
 	// 카드 효과 적용 후 유저 정보 가져오기
-	const userData = await getUserInfoFromRoom(socket.roomId, socket.userId);
 	const room = await getRoom(socket.roomId);
 	if (!room) return;
 
@@ -91,7 +90,7 @@ export const setUseCardNotification = (
 			useCardNotification: {
 				cardType: cardType,
 				userId: userId,
-				targetUserId: targetUserId,
+				targetUserId: targetUserId !== '0' ? targetUserId:"0",
 			},
 		},
 	};
