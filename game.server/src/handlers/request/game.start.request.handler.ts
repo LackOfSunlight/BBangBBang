@@ -75,8 +75,6 @@ const gameStartRequestHandler = async (socket: GameSocket, gamePacket: GamePacke
 				}
 			});
 
-			character.handCards = testCard;
-            character.bbangCount = 0;
             character.handCardsCount = character.handCards.reduce((sum, card)=> sum + card.count, 0);
 		}
 	}
