@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../game.server/src/generated/prisma"
@@ -11,46 +5,44 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = .env
+  url      = env("DATABASE_URL")
 }
-
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
-  nickname String @unique
-  createdAt DateTime @default(now())
-
-  roomsOwned Room[]       @relation("RoomOwner")     // 내가 만든 방들
-  rooms      UserData[]   @relation("UserRooms")     // 내가 참가한 방들
+  id         Int        @id @default(autoincrement())
+  email      String     @unique
+  password   String
+  nickname   String     @unique
+  createdAt  DateTime   @default(now())
+  roomsOwned Room[]     @relation("RoomOwner")
+  rooms      UserData[] @relation("UserRooms")
 }
 
-model Room{
-  id Int @id  @default(autoincrement())
-  ownerId Int
-  name String
-  mazUserNum Int
-  state RoomStateType
-  createdAt DateTime @default(now())
+model Room {
+  id         Int           @id @default(autoincrement())
+  ownerId    Int
+  name       String
+  state      RoomStateType
+  createdAt  DateTime      @default(now())
+  maxUserNum Int
+  owner      User          @relation("RoomOwner", fields: [ownerId], references: [id])
+  users      UserData[]    @relation("RoomUsers")
 
-  owner   User       @relation("RoomOwner", fields: [ownerId], references: [id])
-  users   UserData[] @relation("RoomUsers")
+  @@index([ownerId], map: "Room_ownerId_fkey")
 }
 
-model UserData{
+model UserData {
   userId Int
   roomId Int
+  room   Room @relation("RoomUsers", fields: [roomId], references: [id])
+  user   User @relation("UserRooms", fields: [userId], references: [id])
 
-  user User @relation("UserRooms", fields: [userId], references: [id])
-  room Room @relation("RoomUsers", fields: [roomId], references: [id])
-
-  @@id([userId, roomId]) // 복합 PK: 같은 유저가 같은 방에 중복 참가 불가
+  @@id([userId, roomId])
+  @@index([roomId], map: "UserData_roomId_fkey")
 }
 
 enum RoomStateType {
-  
-    WAIT
-    PREPARE
-    INGAME
+  WAIT
+  PREPARE
+  INGAME
 }
