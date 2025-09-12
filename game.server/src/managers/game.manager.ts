@@ -1,4 +1,4 @@
-import { CardType, PhaseType } from '../generated/common/enums';
+import { CardType, CharacterStateType, PhaseType } from '../generated/common/enums';
 import phaseUpdateNotificationHandler, {
 	setPhaseUpdateNotification,
 } from '../handlers/notification/phase.update.notification.handler';
@@ -84,6 +84,10 @@ class GameManager {
 						);
 
 						user.character!.bbangCount = 0;
+						user.character!.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
+						user.character!.stateInfo!.nextState = CharacterStateType.NONE_CHARACTER_STATE;
+						user.character!.stateInfo!.nextStateAt = '0';
+						user.character!.stateInfo!.stateTargetUserId = '0';
 					}
 
 					debuffContainmentUnitEffect(room.id, user.id);
