@@ -59,15 +59,15 @@ const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 					}
 
 					// 2. 쉴드 카드 방어 시도 (아직 방어하지 못했다면)
-					if (!isDefended) {
-						const haveShieldCard = user.character.handCards.find((c) => c.type === CardType.SHIELD);
-						const requiredShields = shooterHasLaser ? 2 : 1;
+					// if (!isDefended) {
+					// 	const haveShieldCard = user.character.handCards.find((c) => c.type === CardType.SHIELD);
+					// 	const requiredShields = shooterHasLaser ? 2 : 1;
 
-						if (haveShieldCard && haveShieldCard.count >= requiredShields) {
-							haveShieldCard.count -= requiredShields; // 쉴드 카드로 방어 성공
-							isDefended = true;
-						}
-					}
+					// 	if (haveShieldCard && haveShieldCard.count >= requiredShields) {
+					// 		haveShieldCard.count -= requiredShields; // 쉴드 카드로 방어 성공
+					// 		isDefended = true;
+					// 	}
+					// }
 
 					// 3. 방어 최종 실패 시 데미지 적용
 					if (!isDefended) {
@@ -86,6 +86,7 @@ const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 						shooter.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
 						shooter.character.stateInfo.nextStateAt = '0';
 						shooter.character.stateInfo.stateTargetUserId = '0';
+						shooter.character.bbangCount +=1;
 					}
 
 					break;

@@ -51,7 +51,7 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
   // 소지한 카드 제거 후 효과 적용  
   switch (CardType) {
     case 1: //'BBANG':
-      cardBbangEffect(roomId, userId, targetUserId);
+      await cardBbangEffect(roomId, userId, targetUserId);
       break;
     case 2: //'BIGBBANG':
       await cardBigBbangEffect(roomId, userId, targetUserId);
@@ -60,31 +60,31 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
       await cardShieldEffect(roomId, userId, targetUserId);
       break;
     case 4: // 'VACCINE':
-      cardVaccineEffect(roomId, userId);
+      await cardVaccineEffect(roomId, userId);
       break;
     case 5: // 'CALL_119':
-      cardCall119Effect(roomId, userId, targetUserId);
+      await cardCall119Effect(roomId, userId, targetUserId);
       break;
     case 6: // 'DEATH_MATCH':
-      cardDeathMatchEffect(roomId, userId, targetUserId);
+      await cardDeathMatchEffect(roomId, userId, targetUserId);
       break;
     case 7: // 'GUIRRILLA':
       await cardGuerrillaEffect(roomId, userId, targetUserId);
       break;
     case 8: // 'ABSORB':
-      cardAbsorbEffect(roomId, userId, targetUserId);
+      await cardAbsorbEffect(roomId, userId, targetUserId);
       break;
     case 9: // 'HALLUCINATION':
-      cardHallucinationEffect(roomId, userId, targetUserId);
+      await cardHallucinationEffect(roomId, userId, targetUserId);
       break;
     case 10: // 'FLEA_MARKET':
-      cardFleaMarketEffect(roomId, userId, targetUserId);
+      await cardFleaMarketEffect(roomId, userId, targetUserId);
       break;
     case 11: // 'MATURED_SAVINGS':
-      cardMaturedSavingsEffect(roomId, userId, targetUserId);
+      await cardMaturedSavingsEffect(roomId, userId, targetUserId);
       break;
     case 12: // 'WIN_LOTTERY':
-      cardWinLotteryEffect(roomId, userId);
+      await cardWinLotteryEffect(roomId, userId);
       break;
 
     // 무기 카드  
