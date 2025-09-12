@@ -3,6 +3,7 @@ import { getUserFromRoom, saveRoom, updateCharacterFromRoom } from '../utils/red
 import { CharacterStateType } from '../generated/common/enums.js';
 import { getRoom } from '../utils/redis.util.js';
 import { CardType } from '../generated/common/enums.js';
+import { CheckGuerrillaService } from '../services/guerrilla.check.service.js';
 
 const cardBbangEffect = async (roomId: number, userId: string, targetUserId: string) => {
 	// 정보값 가져오기
@@ -56,6 +57,18 @@ const cardBbangEffect = async (roomId: number, userId: string, targetUserId: str
 		target.character.stateInfo.nextState = CharacterStateType.DEATH_MATCH_STATE;
 		target.character.stateInfo.nextStateAt = `${Date.now() + 10000}`; //ms
 		target.character.stateInfo.stateTargetUserId = userId;
+	} else if(user.character.stateInfo.state === CharacterStateType.GUERRILLA_TARGET){
+
+		console.log('-----------------------------------------------------------------------게릴라 방어 성공');
+		user.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
+		user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
+		user.character.stateInfo.nextStateAt = '0'; //ms
+		user.character.stateInfo.stateTargetUserId = '0';
+
+		await updateCharacterFromRoom(roomId, userId, user.character);
+		const updatedRoom = await getRoom(roomId);
+		if(updatedRoom) await CheckGuerrillaService(updatedRoom);
+		return;
 	}
 
 	// 수정 정보 갱신
