@@ -1,4 +1,5 @@
 // cardType = 3
+import { setDefaultHighWaterMark } from 'stream';
 import { CharacterStateType } from '../generated/common/enums.js';
 import { CheckBigBbangService } from '../services/bigbbang.check.service.js';
 import { getRoom, saveRoom } from '../utils/redis.util.js';
@@ -26,6 +27,7 @@ const cardShieldEffect = async (roomId: number, userId: string, targetUserId: st
                 shooter.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
                 shooter.character.stateInfo.nextStateAt = '0';
                 shooter.character.stateInfo.stateTargetUserId = '0';
+                shooter.character.bbangCount +=1;
             }
 
 		} else {
