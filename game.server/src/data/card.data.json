@@ -5,7 +5,7 @@
 	},
 	{
 		"type": "BBANG",
-		"count": 0
+		"count": 30
 	},
 	{
 		"type": "BIG_BBANG",
@@ -29,11 +29,11 @@
 	},
 	{
 		"type": "GUERRILLA",
-		"count": 50
+		"count": 0
 	},
 	{
 		"type": "ABSORB",
-		"count": 0
+		"count": 50
 	},
 	{
 		"type": "HALLUCINATION",
