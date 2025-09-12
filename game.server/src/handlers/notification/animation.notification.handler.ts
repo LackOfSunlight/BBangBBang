@@ -13,15 +13,15 @@ export const sendAnimationNotification = (
 ) => {
 	const newGamePacket: GamePacket = {
 		payload: {
-			oneofKind: GamePacketType.s2cAnimationNotification,
-			s2cAnimationNotification: {
+			oneofKind: GamePacketType.animationNotification,
+			animationNotification: {
 				userId: userId,
 				animationType: animationType,
 			},
 		},
 	};
 
-	broadcastDataToRoom(users, newGamePacket, GamePacketType.s2cAnimationNotification);
+	broadcastDataToRoom(users, newGamePacket, GamePacketType.animationNotification);
 };
 
 const animationNotificationHandler = (socket: GameSocket, gamePacket: GamePacket) => {};
