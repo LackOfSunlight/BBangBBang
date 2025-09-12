@@ -7,8 +7,8 @@ import leaveRoomResponseHandler from '../../response/leave.room.response.handler
 import leaveRoomNotificationHandler from '../../notification/leave.room.notification.handler';
 import { getGamePacketType } from '../../../utils/type.converter';
 import { Room } from '../../../models/room.model';
-import { User } from '../../../models/user.model';
-import { GamePacketType, gamePackTypeSelect } from '../../../enums/gamePacketType';
+import { GamePacketType } from '../../../enums/gamePacketType';
+import { broadcastDataToRoom } from '../../../utils/notification.util';
 
 // redis.util 모킹
 jest.mock('../../../utils/redis.util', () => ({
@@ -30,6 +30,12 @@ jest.mock('../../notification/leave.room.notification.handler', () => ({
 	default: jest.fn(),
 }));
 
+// notification.util 모킹
+jest.mock('../../../utils/notification.util', () => ({
+	__esModule: true,
+	broadcastDataToRoom: jest.fn(),
+}));
+
 // 유틸 함수 모킹
 jest.mock('../../../utils/type.converter');
 
@@ -45,6 +51,7 @@ describe('leaveRoomRequestHandler', () => {
 	const mockLeaveRoomNotificationHandler = leaveRoomNotificationHandler as jest.Mock;
 	const mockGetGamePacketType = getGamePacketType as jest.Mock;
 	const mockRemoveUserFromRoom = removeUserFromRoom as jest.Mock;
+	const mockBroadcastDataToRoom = broadcastDataToRoom as jest.Mock;
 
 	beforeEach(() => {
 		socket = {
@@ -139,11 +146,18 @@ describe('leaveRoomRequestHandler', () => {
 
 		expect(mockDeleteRoom).toHaveBeenCalledWith(1);
 		expect(mockSaveRoom).not.toHaveBeenCalled();
-		expect(mockLeaveRoomResponseHandler).toHaveBeenCalledWith(
-			socket,
-			setLeaveRoomResponse(true, GlobalFailCode.NONE_FAILCODE),
+
+		// 모든 유저에게 방 삭제 응답이 broadcast 되는지 확인
+		const expectedPacket = setLeaveRoomResponse(true, GlobalFailCode.NONE_FAILCODE);
+		expect(mockBroadcastDataToRoom).toHaveBeenCalledWith(
+			users,
+			expectedPacket,
+			GamePacketType.leaveRoomResponse,
 		);
-		expect(mockLeaveRoomNotificationHandler).toHaveBeenCalledWith(socket, gamePacket);
+
+		// 개별 응답/알림 핸들러는 호출되지 않아야 함
+		expect(mockLeaveRoomResponseHandler).not.toHaveBeenCalled();
+		expect(mockLeaveRoomNotificationHandler).not.toHaveBeenCalled();
 	});
 
 	// 소켓에 유저ID 또는 방ID가 없는 경우의 테스트 케이스
