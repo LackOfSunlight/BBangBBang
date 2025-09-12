@@ -43,7 +43,7 @@ describe('cardMaturedSavingsEffect', () => {
 
 
 
-  it('덱에 카드가 부족하면 종료', async () => {
+  it('덱에 뽑을 카드가 부족하면 종료', async () => {
     mockGetUserFromRoom.mockResolvedValueOnce({
       id: userId,
       character: { handCards: [], handCardsCount: 0 },
@@ -58,7 +58,7 @@ describe('cardMaturedSavingsEffect', () => {
 
 
 
-  it('카드를 2장 뽑고 보유 카드에 추가', async () => {
+  it('카드를 2장 뽑고, 뽑은 카드를 보유 카드에 추가', async () => {
     const user = {
       id: userId,
       character: { handCards: [], handCardsCount: 0 },
@@ -81,7 +81,7 @@ describe('cardMaturedSavingsEffect', () => {
 
 
 
-  it('이미 있는 카드를 뽑으면 count가 증가', async () => {
+  it('이미 있는 카드를 뽑으면 해당 카드의 count가 증가', async () => {
     const user = {
       id: userId,
       character: {
