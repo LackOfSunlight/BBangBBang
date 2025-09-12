@@ -30,7 +30,17 @@ describe('cardAbsorbEffect', () => {
 
 		target = new User(targetId, 'socket2');
 		const targetCard: CardData = { type: CardType.BBANG, count: 1 };
-		target.character = new Character(CharacterType.FROGGY, RoleType.NONE_ROLE, 4, 0, [], [], [targetCard], 1, 1);
+		target.character = new Character(
+			CharacterType.FROGGY,
+			RoleType.NONE_ROLE,
+			4,
+			0,
+			[],
+			[],
+			[targetCard],
+			1,
+			1,
+		);
 
 		// getUserFromRoom 모킹
 		(getUserFromRoom as jest.Mock).mockImplementation(async (roomId, id) => {

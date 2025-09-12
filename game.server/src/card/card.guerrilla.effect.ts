@@ -17,14 +17,14 @@ const cardGuerrillaEffect = async (roomId: number, userId: string, targetUserId:
 		if (user.character?.stateInfo?.state != null) {
 			if (user.id === userId) {
 				user.character.stateInfo.state = CharacterStateType.GUERRILLA_SHOOTER;
-                user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-                user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
-                user.character.stateInfo.stateTargetUserId = targetUserId;
+				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
+				user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
+				user.character.stateInfo.stateTargetUserId = targetUserId;
 			} else {
 				user.character.stateInfo.state = CharacterStateType.GUERRILLA_TARGET;
-                user.character.stateInfo.nextState =CharacterStateType.NONE_CHARACTER_STATE;
-                user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
-                user.character.stateInfo.stateTargetUserId = userId;
+				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
+				user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
+				user.character.stateInfo.stateTargetUserId = userId;
 			}
 		}
 	}

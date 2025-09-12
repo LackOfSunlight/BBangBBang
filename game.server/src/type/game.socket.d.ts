@@ -1,6 +1,6 @@
-import { Socket } from "net";
+import { Socket } from 'net';
 
-export interface GameSocket extends Socket{
-    userId?:string;
-    roomId?:number;
+export interface GameSocket extends Socket {
+	userId?: string;
+	roomId?: number;
 }

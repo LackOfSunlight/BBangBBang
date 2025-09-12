@@ -24,7 +24,7 @@ describe('cardDesertEagleEffect', () => {
 
 		// 테스트용 기본 사용자 객체 설정
 		user = new User(userId, 'test-socket');
-        const card:CardData = { type: 15 , count: 1};
+		const card: CardData = { type: 15, count: 1 };
 		user.character = new Character(
 			CharacterType.RED,
 			RoleType.HITMAN,

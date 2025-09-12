@@ -18,5 +18,5 @@
 //         this.nestStateAt = nestStateAt;
 //         this.stateTargetUserId = stateTargetUserId;
 //     }
-    
+
 // }

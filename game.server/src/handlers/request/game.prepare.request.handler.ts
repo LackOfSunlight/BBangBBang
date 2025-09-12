@@ -28,12 +28,14 @@ const gamePrepareRequestHandler = async (socket:GameSocket, gamePacket:GamePacke
         return gamePrepareResponseHandler(socket, setGamePrepareResponse(false, GlobalFailCode.ROOM_NOT_FOUND));
     }
 
-    if(room.maxUserNum > room.users.length){
-        console.log('인원수가 적습니다.');
-        return gamePrepareResponseHandler(socket, setGamePrepareResponse(false, GlobalFailCode.INVALID_REQUEST));
-    }
+    // if(room.maxUserNum > room.users.length){
+    //     console.log('인원수가 적습니다.');
+    //     return gamePrepareResponseHandler(socket, setGamePrepareResponse(false, GlobalFailCode.INVALID_REQUEST));
+    // }
 
     const roles: Record<number, RoleType[]> = {
+        2: [RoleType.TARGET, RoleType.HITMAN],
+        3: [RoleType.TARGET, RoleType.PSYCHOPATH, RoleType.HITMAN],
         4: [RoleType.TARGET, RoleType.PSYCHOPATH, RoleType.HITMAN, RoleType.HITMAN],
         5: [RoleType.TARGET, RoleType.PSYCHOPATH, RoleType.HITMAN, RoleType.HITMAN, RoleType.BODYGUARD],
         6: [RoleType.TARGET, RoleType.PSYCHOPATH, RoleType.HITMAN, RoleType.HITMAN, RoleType.HITMAN, RoleType.BODYGUARD],
@@ -46,7 +48,7 @@ const gamePrepareRequestHandler = async (socket:GameSocket, gamePacket:GamePacke
         characterType: CharacterType[char.characterType as keyof typeof CharacterType]
     }));
 
-    const role = roles[room.maxUserNum];
+    const role = roles[room.users.length];
 
     room.users.forEach((user)=>{
        const randomRoleIndex = Math.floor(Math.random()*role.length);

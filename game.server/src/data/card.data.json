@@ -21,7 +21,7 @@
 	},
 	{
 		"type": "CALL_119",
-		"count": 0
+		"count": 100
 	},
 	{
 		"type": "DEATH_MATCH",
@@ -53,20 +53,20 @@
 	},
 	{
 		"type": "SNIPER_GUN",
-		"count": 30
+		"count": 0
 	},
 	{
 		"type": "HAND_GUN",
-		"count": 30
+		"count": 0
 	},
 	{
 		"type": "DESERT_EAGLE",
-		"count": 30
+		"count": 0
 	},
 
 	{
 		"type": "AUTO_RIFLE",
-		"count": 30
+		"count": 0
 	},
 	{
 		"type": "LASER_POINTER",

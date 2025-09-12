@@ -15,18 +15,18 @@ const cardBigBbangEffect = async (roomId: number, userId: string, targetUserId: 
 		if (user.character?.stateInfo?.state != null) {
 			if (user.id === userId) {
 				user.character.stateInfo.state = CharacterStateType.BIG_BBANG_SHOOTER;
-                user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-                user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
-                user.character.stateInfo.stateTargetUserId = targetUserId;
+				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
+				user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
+				user.character.stateInfo.stateTargetUserId = targetUserId;
 
 				continue;
 			}
 
 			if (user.character && user.character.hp > 0) {
 				user.character.stateInfo.state = CharacterStateType.BIG_BBANG_TARGET;
-                user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-                user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
-                user.character.stateInfo.stateTargetUserId = userId;
+				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
+				user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
+				user.character.stateInfo.stateTargetUserId = userId;
 			}
 		}
 	}

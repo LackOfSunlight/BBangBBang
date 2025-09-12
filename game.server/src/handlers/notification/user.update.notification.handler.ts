@@ -1,22 +1,16 @@
-import { GameSocket } from "../../type/game.socket.js";
+import { GameSocket } from '../../type/game.socket.js';
 //import { S2CUserUpdateNotification } from "../../generated/packet/notifications.js";
-import { GamePacket } from "../../generated/gamePacket.js";
+import { GamePacket } from '../../generated/gamePacket.js';
 import { GamePacketType } from '../../enums/gamePacketType.js';
-import { broadcastDataToRoom } from "../../utils/notification.util.js";
-import { Room } from "../../models/room.model";
-import {getRoom } from "../../utils/redis.util.js";
+import { broadcastDataToRoom } from '../../utils/notification.util.js';
+import { Room } from '../../models/room.model';
+import { getRoom } from '../../utils/redis.util.js';
 
-const userUpdateNotificationHandler = async (socket:GameSocket, gamePacket:GamePacket) =>{
+const userUpdateNotificationHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
+	if (!socket.roomId) return;
+	const roomData: Room | null = await getRoom(socket.roomId);
+	if (!roomData) return;
+	broadcastDataToRoom(roomData.users, gamePacket, GamePacketType.userUpdateNotification);
+};
 
-    if(!socket.roomId) return;
-    const roomData:Room|null = await getRoom(socket.roomId);
-    if(!roomData) return;
-    broadcastDataToRoom(
-            roomData.users,
-            gamePacket,
-            GamePacketType.userUpdateNotification,
-    );
-}
-
-
-export default  userUpdateNotificationHandler;
+export default userUpdateNotificationHandler;

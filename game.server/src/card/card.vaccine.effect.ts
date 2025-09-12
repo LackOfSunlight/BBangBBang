@@ -1,6 +1,5 @@
-import { CharacterType } from "../generated/common/enums";
-import { getUserFromRoom, updateCharacterFromRoom } from "../utils/redis.util";
-
+import { CharacterType } from '../generated/common/enums';
+import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util';
 
 // 캐릭터 타입별 최대 체력 정의
 const getMaxHp = (characterType: CharacterType): number => {
@@ -23,7 +22,7 @@ const getMaxHp = (characterType: CharacterType): number => {
 
 const cardVaccineEffect = async (roomId: number, userId: string) => {
 	const user = await getUserFromRoom(roomId, userId);
-	
+
 	// 유효성 검증
 	if (!user) return;
 

@@ -32,7 +32,7 @@ describe('cardVaccineEffect', () => {
 			[],
 			[],
 			1,
-			0
+			0,
 		);
 		// cardVaccineEffect는 target도 필요하므로, 동일한 유저로 설정
 		(getUserFromRoom as jest.Mock).mockImplementation((roomId, id) => {

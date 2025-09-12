@@ -1,50 +1,54 @@
 {
-  "name": "bbangbbang",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "start": "node dist/app.js",
-    "build": "prisma generate && tsc && node scripts/add-js-extensions.js && copyfiles -u 3 \"game.server/src/generated/prisma/**/*\" game.server/dist/generated",
-    "dev": "tsx game.server/src/app.ts",
-    "copy-assets": "copyfiles --up 1 \"assets/**/*\" dist ",
-    "protoc": "protoc --ts_out game.server/src/generated --ts_opt long_type_string --proto_path game.server/src/proto game.server/src/proto/common/enums.proto game.server/src/proto/common/types.proto game.server/src/proto/packet/auth.proto game.server/src/proto/packet/game_actions.proto game.server/src/proto/packet/notifications.proto game.server/src/proto/packet/room_actions.proto game.server/src/proto/gamePacket.proto",
-    "test": "jest"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/LackOfSunlight/BBangBBang.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/LackOfSunlight/BBangBBang/issues"
-  },
-  "homepage": "https://github.com/LackOfSunlight/BBangBBang#readme",
-  "devDependencies": {
-    "@types/bcrypt": "^6.0.0",
-    "@types/jest": "^30.0.0",
-    "@types/node": "^24.3.1",
-    "copyfiles": "^2.4.1",
-    "glob": "^11.0.3",
-    "jest": "^30.1.3",
-    "prettier": "^3.6.2",
-    "ts-jest": "^29.4.1",
-    "ts-node": "^10.9.2",
-    "tsx": "^4.20.5",
-    "typescript": "^5.9.2"
-  },
-  "dependencies": {
-    "@prisma/client": "^6.15.0",
-    "@protobuf-ts/plugin": "^2.11.1",
-    "@protobuf-ts/runtime": "^2.11.1",
-    "bcrypt": "^6.0.0",
-    "dotenv": "^17.2.2",
-    "ioredis": "^5.7.0",
-    "prisma": "^6.15.0",
-    "protobufjs": "^7.5.4",
-    "uuid": "^12.0.0"
-  }
+	"name": "bbangbbang",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"start": "node dist/app.js",
+		"build": "prisma generate && tsc && node scripts/add-js-extensions.js && copyfiles -u 3 \"game.server/src/generated/prisma/**/*\" game.server/dist/generated",
+		"dev": "tsx game.server/src/app.ts",
+		"copy-assets": "copyfiles --up 1 \"assets/**/*\" dist ",
+		"protoc": "protoc --ts_out game.server/src/generated --ts_opt long_type_string --proto_path game.server/src/proto game.server/src/proto/common/enums.proto game.server/src/proto/common/types.proto game.server/src/proto/packet/auth.proto game.server/src/proto/packet/game_actions.proto game.server/src/proto/packet/notifications.proto game.server/src/proto/packet/room_actions.proto game.server/src/proto/gamePacket.proto",
+		"test": "jest",
+		"prepare": "husky",
+		"postinstall": "husky install",
+		"format": "prettier --cache --write ."
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/LackOfSunlight/BBangBBang.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/LackOfSunlight/BBangBBang/issues"
+	},
+	"homepage": "https://github.com/LackOfSunlight/BBangBBang#readme",
+	"devDependencies": {
+		"@types/bcrypt": "^6.0.0",
+		"@types/jest": "^30.0.0",
+		"@types/node": "^24.3.1",
+		"copyfiles": "^2.4.1",
+		"glob": "^11.0.3",
+		"husky": "^9.1.7",
+		"jest": "^30.1.3",
+		"prettier": "^3.6.2",
+		"ts-jest": "^29.4.1",
+		"ts-node": "^10.9.2",
+		"tsx": "^4.20.5",
+		"typescript": "^5.9.2"
+	},
+	"dependencies": {
+		"@prisma/client": "^6.15.0",
+		"@protobuf-ts/plugin": "^2.11.1",
+		"@protobuf-ts/runtime": "^2.11.1",
+		"bcrypt": "^6.0.0",
+		"dotenv": "^17.2.2",
+		"ioredis": "^5.7.0",
+		"prisma": "^6.15.0",
+		"protobufjs": "^7.5.4",
+		"uuid": "^12.0.0"
+	}
 }

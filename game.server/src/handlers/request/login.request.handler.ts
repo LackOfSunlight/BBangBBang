@@ -47,9 +47,7 @@ const loginRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) =
 		socket,
 		setLoginResponse(true, '로그인 성공', userinfo.email, GlobalFailCode.NONE_FAILCODE, user),
 	);
-
-}
-
+};
 
 const setLoginResponse = (
 	success: boolean,

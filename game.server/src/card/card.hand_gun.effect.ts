@@ -1,5 +1,5 @@
 // cardType = 14
-import { getUserFromRoom, updateCharacterFromRoom } from "../utils/redis.util.js";
+import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
 
 const cardHandGunEffect = async (roomId:number, userId:string) =>{
     const user = await getUserFromRoom(roomId, userId);
@@ -11,13 +11,6 @@ const cardHandGunEffect = async (roomId:number, userId:string) =>{
     // 무기 카드이므로 자신에게만 적용 (targetUserId 무시)
     
     user.character.weapon = 14;
-
-    if (user.character.bbangCount >= 2) {
-        return;
-    }
-    
-    // 빵야! 횟수를 2개로 증가 (기본 1 → 2)
-    user.character.bbangCount = 2;
     
     // Redis에 업데이트된 캐릭터 정보 저장
     try {
@@ -27,6 +20,5 @@ const cardHandGunEffect = async (roomId:number, userId:string) =>{
         // 에러가 발생해도 함수는 정상적으로 완료됨
     }
 }
-
 
 export default cardHandGunEffect;

@@ -1,10 +1,7 @@
-import { GameSocket } from "../../type/game.socket.js";
-import { S2CFleaMarketNotification } from "../../generated/packet/notifications.js";
-import { GamePacket } from "../../generated/gamePacket.js";
+import { GameSocket } from '../../type/game.socket.js';
+import { S2CFleaMarketNotification } from '../../generated/packet/notifications.js';
+import { GamePacket } from '../../generated/gamePacket.js';
 
-const fleaMarketNotificationHandler = (socket:GameSocket, gamePacket:GamePacket) =>{
+const fleaMarketNotificationHandler = (socket: GameSocket, gamePacket: GamePacket) => {};
 
-}
-
-
-export default  fleaMarketNotificationHandler;
+export default fleaMarketNotificationHandler;

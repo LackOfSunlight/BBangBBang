@@ -4,7 +4,7 @@ import { getGamePacketType } from '../../utils/type.converter.js';
 import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.js';
 import { GlobalFailCode } from '../../generated/common/enums.js';
 import { Room } from '../../models/room.model.js';
-import { addUserToRoom, getRoom, saveRoom} from '../../utils/redis.util.js';
+import { addUserToRoom, getRoom, saveRoom } from '../../utils/redis.util.js';
 import { User } from '../../models/user.model.js';
 import { prisma } from '../../utils/db.js';
 import joinRoomResponseHandler from '../response/join.room.response.handler.js';
@@ -56,10 +56,7 @@ const joinRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 	socket.roomId = room.id;
 
 	// 성공 응답 및 알림
-	joinRoomResponseHandler(
-		socket,
-		setJoinRoomResponse(true, GlobalFailCode.NONE_FAILCODE, room),
-	);
+	joinRoomResponseHandler(socket, setJoinRoomResponse(true, GlobalFailCode.NONE_FAILCODE, room));
 	joinRoomNotificationHandler(socket, setJoinRoomNotification(user));
 };
 
