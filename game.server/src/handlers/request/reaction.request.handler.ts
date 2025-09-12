@@ -1,20 +1,22 @@
-import { GameSocket } from '../../type/game.socket.js';
-import { GamePacket } from '../../generated/gamePacket.js';
-import { getGamePacketType } from '../../utils/type.converter.js';
-import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.js';
+import { GameSocket } from '../../type/game.socket';
+import { GamePacket } from '../../generated/gamePacket';
+import { getGamePacketType } from '../../utils/type.converter';
+import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType';
 import {
 	CharacterStateType,
 	GlobalFailCode,
 	ReactionType,
 	CardType,
-} from '../../generated/common/enums.js';
-import reactionResponseHandler from '../response/reaction.response.handler.js';
-import { getRoom, saveRoom, updateCharacterFromRoom } from '../../utils/redis.util.js';
-import userUpdateNotificationHandler from '../notification/user.update.notification.handler.js';
-import { setUserUpdateNotification } from './use.card.request.handler.js';
-import { CheckBigBbangService } from '../../services/bigbbang.check.service.js';
-import { CheckGuerrillaService } from '../../services/guerrilla.check.service.js';
-import { weaponDamageEffect } from '../../utils/weapon.util.js';
+	AnimationType,
+} from '../../generated/common/enums';
+import reactionResponseHandler from '../response/reaction.response.handler';
+import { getRoom, saveRoom, updateCharacterFromRoom } from '../../utils/redis.util';
+import userUpdateNotificationHandler from '../notification/user.update.notification.handler';
+import { setUserUpdateNotification } from './use.card.request.handler';
+import { CheckBigBbangService } from '../../services/bigbbang.check.service';
+import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
+import { weaponDamageEffect } from '../../utils/weapon.util';
+import { sendAnimationNotification } from '../notification/animation.notification.handler';
 
 const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.reactionRequest);
@@ -54,6 +56,7 @@ const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 					if (user.character.equips.includes(CardType.AUTO_SHIELD)) {
 						if (Math.random() < 0.25) {
 							isDefended = true; // 25% 확률로 방어 성공
+							sendAnimationNotification(room.users, user.id, AnimationType.SHIELD_ANIMATION);
 						}
 					}
 

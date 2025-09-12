@@ -36,6 +36,12 @@ const leaveRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacke
 		if (room.ownerId === userId) {
 			// 방장이 나가는 경우, 방 삭제
 			const allUserInRoom = [...room.users];
+
+			// 모든 유저의 상태에서 roomId 제거
+			for (const user of allUserInRoom) {
+				await removeUserFromRoom(roomId, user.id);
+			}
+
 			await deleteRoom(roomId);
 
 			const responsePacket = setLeaveRoomResponse(true, GlobalFailCode.NONE_FAILCODE);
