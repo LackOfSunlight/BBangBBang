@@ -15,6 +15,8 @@ import { GamePacketType } from '../enums/gamePacketType';
 import { broadcastDataToRoom } from '../utils/notification.util';
 import { User } from '../models/user.model';
 
+import { debuffContainmentUnitEffect } from '../card/card.containment_unit.effect';
+
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 
 class GameManager {
@@ -81,6 +83,8 @@ class GameManager {
 							0,
 						);
 					}
+
+					debuffContainmentUnitEffect(room.id, user.id);
 				}
 
 				const userGamePacket: GamePacket = {
