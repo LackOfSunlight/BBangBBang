@@ -4,15 +4,15 @@ import { CardData } from "../generated/common/types";
 
 export const testCard:CardData[] = [
     {
-        type: CardType.LASER_POINTER,
-        count:1,
+        type: CardType.CALL_119,
+        count:4,
+    },
+    {
+        type: CardType.MATURED_SAVINGS,
+        count: 4,
     },
     {
         type: CardType.BBANG,
-        count: 3,
-    },
-    {
-        type: CardType.SHIELD,
-        count:4
+        count: 4
     }
 ];
