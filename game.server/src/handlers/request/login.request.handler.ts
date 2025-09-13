@@ -5,9 +5,11 @@ import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.j
 import loginResponseHandler from '../response/login.response.handler.js';
 import { GlobalFailCode } from '../../generated/common/enums.js';
 import { UserData } from '../../generated/common/types.js';
-import { prisma } from '../../utils/db.js';
 import * as bcrypt from 'bcrypt';
 import { addSocket } from '../../managers/socket.manger.js';
+import getUserData from '../../services/login.request.handler/get.user.data.js';
+import checkUserPassword from '../../services/login.request.handler/check.user.password.js';
+import setTokenService from '../../services/login.request.handler/set.token.service.js';
 
 const loginRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.loginRequest);
@@ -15,37 +17,42 @@ const loginRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) =
 
 	const req = payload.loginRequest;
 
-	const userinfo = await prisma.user.findUnique({
-		where: { email: req.email },
-	});
+	const userInfo = await getUserData(req);
 
-	if (!userinfo) {
+	if (!userInfo) {
 		return loginResponseHandler(
 			socket,
-			setLoginResponse(false, '가입되지 않은 회원입니다.', '', GlobalFailCode.REGISTER_FAILED),
+			setLoginResponse(false, '해당 유저는 존재하지 않습니다.', '', GlobalFailCode.INVALID_REQUEST),
 		);
 	}
 
-	const passwordCheck = await bcrypt.compare(req.password, userinfo.password);
-
-	if (!passwordCheck) {
+	if (userInfo?.token) {
 		return loginResponseHandler(
 			socket,
-			setLoginResponse(false, '비밀번호가 일치하지 않습니다.', '', GlobalFailCode.UNKNOWN_ERROR),
+			setLoginResponse(false, '로그인 상태 입니다.', '', GlobalFailCode.INVALID_REQUEST),
 		);
 	}
 
-	socket.userId = userinfo.id.toString();
+	if (!(await checkUserPassword(req, userInfo.password))) {
+		return loginResponseHandler(
+			socket,
+			setLoginResponse(false, '비밀번호가 일치하지 않습니다.', '', GlobalFailCode.INVALID_REQUEST),
+		);
+	}
+
+	const token = await setTokenService(userInfo.id, userInfo.email);
+
+	socket.userId = userInfo.id.toString();
 	addSocket(socket);
 
 	const user: UserData = {
-		id: userinfo.id.toString(),
-		nickname: userinfo.nickname,
+		id: userInfo.id.toString(),
+		nickname: userInfo.nickname,
 	};
 
 	loginResponseHandler(
 		socket,
-		setLoginResponse(true, '로그인 성공', userinfo.email, GlobalFailCode.NONE_FAILCODE, user),
+		setLoginResponse(true, '로그인 성공', token, GlobalFailCode.NONE_FAILCODE, user),
 	);
 };
 

@@ -9,6 +9,7 @@ import { Room } from '../../models/room.model.js';
 import { prisma } from '../../utils/db.js';
 import { RoomStateType } from '../../generated/prisma/index.js';
 import { User } from '../../models/user.model.js';
+import { createRoomDB, getUserDB } from '../../services/prisma.service.js';
 
 const createRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.createRoomRequest);
@@ -27,18 +28,16 @@ const createRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePack
 		);
 	}
 
-	const roomDB = await prisma.room.create({
-		data: {
-			ownerId: Number(socket.userId),
-			name: req.name,
-			maxUserNum: req.maxUserNum,
-			state: RoomStateType.WAIT,
-		},
-	});
+	const roomDB = await createRoomDB(socket, req);
 
-	const userInfo = await prisma.user.findUnique({
-		where: { id: Number(socket.userId) },
-	});
+	if (!roomDB) {
+		return createRoomResponseHandler(
+			socket,
+			setCreateResponse(false, GlobalFailCode.CREATE_ROOM_FAILED),
+		);
+	}
+
+	const userInfo = await getUserDB(Number(socket.userId));
 
 	if (!userInfo)
 		return createRoomResponseHandler(

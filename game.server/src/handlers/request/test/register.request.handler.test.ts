@@ -6,17 +6,17 @@ import { GlobalFailCode } from '../../../generated/common/enums';
 import registerResponseHandler from '../../response/register.response.handler';
 import inputFieldCheckService from '../../../services/register.request.handler/input.field.check.service';
 import checkUserDbService from '../../../services/register.request.handler/check.user.db.service';
-import setUserDbService from '../../../services/register.request.handler/set.user.db.service';
 import { validateInput } from '../../../utils/validation';
 import { handleError } from '../../handleError';
 import { getGamePacketType } from '../../../utils/type.converter';
+import { createUserDB } from '../../../services/prisma.service';
 
 // Mock dependencies
 jest.mock('../../../utils/type.converter');
 jest.mock('../../response/register.response.handler');
 jest.mock('../../../services/register.request.handler/input.field.check.service');
 jest.mock('../../../services/register.request.handler/check.user.db.service');
-jest.mock('../../../services/register.request.handler/set.user.db.service');
+jest.mock('../../../services/prisma.service');
 jest.mock('../../../utils/validation');
 jest.mock('../../handleError');
 
@@ -24,9 +24,8 @@ const mockGetGamePacketType = getGamePacketType as jest.Mock;
 const mockRegisterResponseHandler = registerResponseHandler as jest.Mock;
 const mockInputFieldCheckService = inputFieldCheckService as jest.Mock;
 const mockCheckUserDbService = checkUserDbService as jest.Mock;
-const mockSetUserDbService = setUserDbService as jest.Mock;
+const mockCreateUserDB = createUserDB as jest.Mock;
 const mockValidateInput = validateInput as jest.Mocked<typeof validateInput>;
-const mockHandleError = handleError as jest.Mock;
 
 describe('registerRequestHandler', () => {
   let mockSocket: Partial<GameSocket>;
@@ -67,7 +66,7 @@ describe('registerRequestHandler', () => {
     expect(mockValidateInput.nickName).toHaveBeenCalledWith(mockReq.nickname);
     expect(mockValidateInput.password).toHaveBeenCalledWith(mockReq.password);
     expect(mockCheckUserDbService).toHaveBeenCalledWith(mockReq);
-    expect(mockSetUserDbService).toHaveBeenCalledWith(mockReq);
+    expect(mockCreateUserDB).toHaveBeenCalledWith(mockReq);
     expect(mockRegisterResponseHandler).toHaveBeenCalledWith(
       mockSocket,
       expect.objectContaining({
@@ -122,7 +121,7 @@ describe('registerRequestHandler', () => {
         },
       }),
     );
-    expect(mockSetUserDbService).not.toHaveBeenCalled();
+    expect(mockCreateUserDB).not.toHaveBeenCalled();
   });
 
   it('이메일 형식이 다르면 실패', async () => {
