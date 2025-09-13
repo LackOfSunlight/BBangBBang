@@ -11,6 +11,7 @@ import { handleError } from '../handleError.js';
 import inputFieldCheckService from '../../services/register.request.handler/input.field.check.service.js';
 import checkUserDbService from '../../services/register.request.handler/check.user.db.service.js';
 import setUserDbService from '../../services/register.request.handler/set.user.db.service.js';
+import { createUserDB } from '../../services/prisma.service.js';
 
 const registerRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.registerRequest);
@@ -28,6 +29,7 @@ const registerRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 				GlobalFailCode.REGISTER_FAILED,
 			),
 		);
+		
 	}
 
 	if (!validateInput.email(req.email)) {
@@ -73,7 +75,7 @@ const registerRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 		}
 
 		// DB에 회원가입 저장
-		await setUserDbService(req);
+		await createUserDB(req);
 
 		// 성공 응답
 		registerResponseHandler(
