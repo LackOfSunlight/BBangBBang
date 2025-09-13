@@ -51,12 +51,10 @@ const gameStartRequestHandler = async (socket: GameSocket, gamePacket: GamePacke
 	const characterPositionsData = shuffle(spawnPositions);
 
 	// 다음 스테이지 시간 설정
-	const now = Date.now();
-	const duration = 180000; // 3분 -> 180000ms
-	const nextPhaseAt = now + duration;
+	const duration = 60000; // 3분 -> 180000ms
 	const gameState: GameStateData = {
 		phaseType: PhaseType.DAY,
-		nextPhaseAt: `${nextPhaseAt}`,
+		nextPhaseAt: `${duration}`,
 	};
 
 	initializeDeck(room.id);

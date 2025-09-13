@@ -57,14 +57,15 @@ class GameManager {
 		}
 
 		const timer = setTimeout(async () => {
+			const timerExecutionTime = Date.now();
 			this.roomPhase.set(roomTimerMapId, nextPhase);
 			let room = await getRoom(roomId); // debuff 효과 적용후 게임임상태 재갱신 고려해서 let 사용
 			if (!room) return;
 
 			if (nextPhase === PhaseType.DAY) {
 				// 1. 위성 타겟 디버프 효과 체크 (하루 시작 시)
-				room = await checkSatelliteTargetEffect(room.id) || room; // room 상태 변수 재갱신
-				
+				room = (await checkSatelliteTargetEffect(room.id)) || room; // room 상태 변수 재갱신
+
 				// 2. 카드 처리
 				for (let user of room.users) {
 					if (user.character != null) {
@@ -115,12 +116,14 @@ class GameManager {
 			const characterPosition = shuffle(spawnPositions);
 
 			const newInterval = nextPhase === PhaseType.DAY ? dayInterval : eveningInterval;
+			const elapsed = Date.now() - timerExecutionTime;
+			const remainingTime = newInterval - elapsed;
 			const phaseGamePacket: GamePacket = {
 				payload: {
 					oneofKind: GamePacketType.phaseUpdateNotification,
 					phaseUpdateNotification: {
 						phaseType: nextPhase,
-						nextPhaseAt: `${Date.now() + newInterval}`,
+						nextPhaseAt: `${remainingTime > 0 ? remainingTime : 0}`,
 						characterPositions: characterPosition,
 					},
 				},
