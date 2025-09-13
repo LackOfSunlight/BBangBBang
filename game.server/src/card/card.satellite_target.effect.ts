@@ -2,6 +2,7 @@
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util';
 import { CardType, AnimationType } from '../generated/common/enums';
 import { sendAnimationNotification } from '../handlers/notification/animation.notification.handler';
+import { checkAndEndGameIfNeeded } from '../utils/game.end.util.js';
 
 // 위성 타겟 카드 사용 시 디버프 추가
 const cardSatelliteTargetEffect = async (roomId: number, userId: string, targetUserId: string) => {
@@ -89,6 +90,9 @@ const processSatelliteTargetEffect = async (roomId: number, userId: string, allU
 		try {
 			await updateCharacterFromRoom(roomId, userId, target.character);
 			console.log(`[SatelliteTarget] 위성 타겟 효과 완료: ${target.nickname}의 HP ${target.character.hp}`);
+			
+			// 게임 종료 조건 검사
+			await checkAndEndGameIfNeeded(roomId);
 		} catch (error) {
 			console.error(`[SatelliteTarget] Redis 업데이트 중 오류 발생: ${error}`);
 		}
