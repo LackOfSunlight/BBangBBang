@@ -64,18 +64,7 @@ export const debuffContainmentUnitEffect = async (roomId:number, userId: string)
 	const escapeProb = 99; // 탈출 확률
 	
 	if(user.character.debuffs.includes(CardType.CONTAINMENT_UNIT)){
-		// if(user.character.stateInfo!.state === CharacterStateType.NONE_CHARACTER_STATE){
-		// 	user.character.stateInfo!.state = CharacterStateType.CONTAINED;
-		// }
-		// else if(user.character.stateInfo!.state === CharacterStateType.CONTAINED){
-		// 	const yourProb = Math.random()*100;
-		// 	if(yourProb < escapeProb){ // 탈출에 성공하면 디버프 상태 해제
-		// 		user.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
-		// 		const yourDebuffIndex = user.character.debuffs.findIndex(c => c === CardType.CONTAINMENT_UNIT );
-		// 		user.character.debuffs.splice(yourDebuffIndex, 1);
-		// 		console.log(`${user.nickname} 유저가 감금 상태에서 탈출에 성공했습니다`);
-		// 	} 
-		// }
+
 
 		console.log(`[debuffContainmentUnit] (${user.nickname}) : 디버프 카드 등록 상태 인지 성공`);
 
@@ -121,14 +110,6 @@ export const debuffContainmentUnitEffect = async (roomId:number, userId: string)
 		}
 
 		console.log(`[debuffContainmentUnit] (${user.nickname}) : 로직 종료 : ${CharacterStateType[user.character.stateInfo!.state]}`);
-
-		// 수정 정보 갱신
-		// try{
-		// 	await updateCharacterFromRoom(roomId, userId, user.character);
-		// 	console.log(`[debuffContainmentUnit] (${user.nickname}) :  로그 저장에 성공하였습니다`);
-		// } catch(error){
-		// 	console.error(`로그 저장에 실패하였습니다:[${error}]`);
-		// }
 	}
 
 	return user;
