@@ -6,8 +6,8 @@ import onError from './on.error.js';
 const onConnection = (socket: Socket) => {
 	socket.on('data', (chunk: Buffer) => onData(socket, chunk));
 	socket.on('end', () => {
+		onEnd(socket)();
 		cleanupSocketBuffer(socket);
-		onEnd(socket);
 	});
 	socket.on('error', (error) => {
 		cleanupSocketBuffer(socket);
@@ -18,9 +18,6 @@ const onConnection = (socket: Socket) => {
 			code: (error as any).code || 'SOCKET_ERROR',
 		};
 		onError(socket)(customError);
-	});
-	socket.on('close', () => {
-		cleanupSocketBuffer(socket);
 	});
 };
 
