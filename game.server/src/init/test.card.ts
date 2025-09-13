@@ -5,7 +5,7 @@ import { CardData } from "../generated/common/types";
 export const testCard:CardData[] = [
     {
         type: CardType.DEATH_MATCH,
-        count:4,
+        count: 4,
     },
     {
         type: CardType.MATURED_SAVINGS,
