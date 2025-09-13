@@ -11,6 +11,12 @@ const cardContainmentUnitEffect = async (roomId: number, userId: string, targetU
 	// 유효성 검증
 	if (!user || !target || !target.character) return;
 
+	// 이미 해당 디버프 상태일 경우 ; 중복 검증
+	if (target.character.debuffs.includes(CardType.CONTAINMENT_UNIT)) {
+		console.log(`이미 ${target.nickname} 유저는 감금 장치에 맞았습니다. `);
+		return;
+	}
+
 	target.character.debuffs.push(CardType.CONTAINMENT_UNIT);
 	//console.log(`유저 ${targetUserId}가 감금장치 카드에 맞았습니다.\n다음 차례부터 감금장치에 영향을 받습니다.`);
 
@@ -40,7 +46,6 @@ export const debuffContainmentUnitEffect = async (roomId:number, userId: string)
 				user.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
 				const yourDebuffIndex = user.character.debuffs.findIndex(c => c === CardType.CONTAINMENT_UNIT );
 				user.character.debuffs.splice(yourDebuffIndex, 1);
-				return ;
 			} 
 		}
 	}

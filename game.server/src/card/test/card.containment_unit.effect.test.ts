@@ -52,6 +52,19 @@ describe('CardContainmentUnitCardEffects', () => {
 
       expect(updateCharacterFromRoom).not.toHaveBeenCalled();
     });
+
+
+    it('대상 유저가 이미 디버프 상태라면 시전이 중단되는지', async () => {
+      const target = mockUser({
+        debuffs: [CardType.CONTAINMENT_UNIT],
+      });
+
+      (getUserFromRoom as jest.Mock).mockResolvedValue(target);
+
+      await cardContainmentUnitEffect(1, 'user1', 'user2');
+      
+      expect(updateCharacterFromRoom).not.toHaveBeenCalled();
+    });
   });
 
 
@@ -88,7 +101,9 @@ describe('CardContainmentUnitCardEffects', () => {
       expect(target.character.debuffs).not.toContain(CardType.CONTAINMENT_UNIT);
       expect(target.character.stateInfo!.state).toBe(CharacterStateType.NONE_CHARACTER_STATE);
       // escape 시 updateCharacterFromRoom 호출 안 하는 부분도 체크 가능
-      expect(updateCharacterFromRoom).not.toHaveBeenCalled();
+      expect(updateCharacterFromRoom).toHaveBeenCalledWith(1, 'user1', expect.objectContaining({
+        stateInfo: { state: CharacterStateType.NONE_CHARACTER_STATE }, // 디버프 해제
+      }));
 
       jest.spyOn(global.Math, 'random').mockRestore();
     });
