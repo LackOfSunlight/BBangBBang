@@ -120,7 +120,7 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
       cardContainmentUnitEffect(roomId, userId, targetUserId);
       break;
     case 22: // 'SATELLITE_TARGET':
-      cardSatelliteTargetEffect(roomId, userId, targetUserId);
+      await cardSatelliteTargetEffect(roomId, userId, targetUserId);
       break;
     case 23: // 'BOMB':
       cardBombEffect(roomId, userId, targetUserId);
