@@ -67,7 +67,7 @@ class GameManager {
 						if (user.character.handCardsCount > user.character.hp) {
 							user = removedCard(room, user);
 						}
-						
+
 						const drawCards = drawDeck(room.id, 2);
 						drawCards.forEach((type) => {
 							const existCard = user.character?.handCards.find((card) => card.type === type);
@@ -84,13 +84,15 @@ class GameManager {
 						);
 
 						user.character!.bbangCount = 0;
-						user.character!.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
-						user.character!.stateInfo!.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-						user.character!.stateInfo!.nextStateAt = '0';
-						user.character!.stateInfo!.stateTargetUserId = '0';
+						if (user.character?.stateInfo?.state != CharacterStateType.CONTAINED) {
+							user.character!.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
+							user.character!.stateInfo!.nextState = CharacterStateType.NONE_CHARACTER_STATE;
+							user.character!.stateInfo!.nextStateAt = '0';
+							user.character!.stateInfo!.stateTargetUserId = '0';
+						}
 					}
 
-					debuffContainmentUnitEffect(room.id, user.id);
+					await debuffContainmentUnitEffect(room.id, user.id);
 				}
 
 				const userGamePacket: GamePacket = {
