@@ -66,17 +66,17 @@ class GameManager {
 						//카드 삭제
 						if (user.character.handCardsCount > user.character.hp) {
 							user = removedCard(room, user);
-						} else {
-							const drawCards = drawDeck(room.id, 2);
-							drawCards.forEach((type) => {
-								const existCard = user.character?.handCards.find((card) => card.type === type);
-								if (existCard) {
-									existCard.count += 1;
-								} else {
-									user.character?.handCards.push({ type, count: 1 });
-								}
-							});
 						}
+						
+						const drawCards = drawDeck(room.id, 2);
+						drawCards.forEach((type) => {
+							const existCard = user.character?.handCards.find((card) => card.type === type);
+							if (existCard) {
+								existCard.count += 1;
+							} else {
+								user.character?.handCards.push({ type, count: 1 });
+							}
+						});
 
 						user.character!.handCardsCount = user.character!.handCards.reduce(
 							(sum, card) => sum + card.count,
