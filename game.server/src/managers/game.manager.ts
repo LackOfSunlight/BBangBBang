@@ -14,6 +14,7 @@ import { GamePacket } from '../generated/gamePacket';
 import { GamePacketType } from '../enums/gamePacketType';
 import { broadcastDataToRoom } from '../utils/notification.util';
 import { User } from '../models/user.model';
+import { checkSatelliteTargetEffect } from '../card/card.satellite_target.effect';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 
@@ -55,10 +56,15 @@ class GameManager {
 
 		const timer = setTimeout(async () => {
 			this.roomPhase.set(roomTimerMapId, nextPhase);
-			const room = await getRoom(roomId);
+			let room = await getRoom(roomId); // debuff 효과 적용후 게임임상태 재갱신 고려해서 let 사용
 			if (!room) return;
 
 			if (nextPhase === PhaseType.DAY) {
+				// 1. 위성 타겟 디버프 효과 체크 (하루 시작 시)
+				console.log(`[GameManager] 하루 시작 - 위성 타겟 디버프 효과 체크 시작`);
+				room = await checkSatelliteTargetEffect(room.id) || room; // room 상태 변수 재갱신
+				
+				// 2. 카드 처리
 				for (const user of room.users) {
 					if (user.character != null) {
 						//카드 삭제
