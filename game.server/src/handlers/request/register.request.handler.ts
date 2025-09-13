@@ -8,6 +8,9 @@ import { GlobalFailCode } from '../../generated/common/enums.js';
 import { validateInput } from '../../utils/validation.js';
 import * as bcrypt from 'bcrypt';
 import { handleError } from '../handleError.js';
+import inputFieldCheckService from '../../services/register.request.handler/input.field.check.service.js';
+import checkUserDbService from '../../services/register.request.handler/check.user.db.service.js';
+import setUserDbService from '../../services/register.request.handler/set.user.db.service.js';
 
 const registerRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.registerRequest);
@@ -16,7 +19,7 @@ const registerRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 	const req = payload.registerRequest;
 
 	// 초기 검증
-	if (!req.email || !req.nickname || !req.password) {
+	if (!inputFieldCheckService(req)) {
 		return registerResponseHandler(
 			socket,
 			setRegisterResponse(
@@ -39,7 +42,7 @@ const registerRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 			socket,
 			setRegisterResponse(
 				false,
-				'4-20자의 영문, 숫자, 언더스코어만 사용 가능합니다.',
+				'4-20자의 한글, 영문, 숫자, 언더스코어만 사용 가능합니다.',
 				GlobalFailCode.REGISTER_FAILED,
 			),
 		);
@@ -58,13 +61,7 @@ const registerRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 
 	try {
 		// 이미 가입된 이메일/닉네임 확인
-		const existingUser = await prisma.user.findFirst({
-			where: {
-				OR: [{ email: req.email }, { nickname: req.nickname }],
-			},
-		});
-
-		if (existingUser) {
+		if (!(await checkUserDbService(req))) {
 			return registerResponseHandler(
 				socket,
 				setRegisterResponse(
@@ -75,17 +72,8 @@ const registerRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 			);
 		}
 
-		// 비밀번호 해시
-		const hashedPassword = await bcrypt.hash(req.password, 12);
-
-		// DB에 유저 생성
-		await prisma.user.create({
-			data: {
-				email: req.email,
-				nickname: req.nickname,
-				password: hashedPassword,
-			},
-		});
+		// DB에 회원가입 저장
+		await setUserDbService(req);
 
 		// 성공 응답
 		registerResponseHandler(
