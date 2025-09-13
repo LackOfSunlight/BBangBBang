@@ -1,4 +1,4 @@
-import { CardType, PhaseType } from '../generated/common/enums';
+import { CardType, CharacterStateType, PhaseType } from '../generated/common/enums';
 import phaseUpdateNotificationHandler, {
 	setPhaseUpdateNotification,
 } from '../handlers/notification/phase.update.notification.handler';
@@ -61,27 +61,33 @@ class GameManager {
 			if (!room) return;
 
 			if (nextPhase === PhaseType.DAY) {
-				for (const user of room.users) {
+				for (let user of room.users) {
 					if (user.character != null) {
 						//카드 삭제
 						if (user.character.handCardsCount > user.character.hp) {
-							removedCard(room, user);
-						} else {
-							const drawCards = drawDeck(room.id, 2);
-							drawCards.forEach((type) => {
-								const existCard = user.character?.handCards.find((card) => card.type === type);
-								if (existCard) {
-									existCard.count += 1;
-								} else {
-									user.character?.handCards.push({ type, count: 1 });
-								}
-							});
+							user = removedCard(room, user);
 						}
+						
+						const drawCards = drawDeck(room.id, 2);
+						drawCards.forEach((type) => {
+							const existCard = user.character?.handCards.find((card) => card.type === type);
+							if (existCard) {
+								existCard.count += 1;
+							} else {
+								user.character?.handCards.push({ type, count: 1 });
+							}
+						});
 
-						user.character.handCardsCount = user.character.handCards.reduce(
+						user.character!.handCardsCount = user.character!.handCards.reduce(
 							(sum, card) => sum + card.count,
 							0,
 						);
+
+						user.character!.bbangCount = 0;
+						user.character!.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
+						user.character!.stateInfo!.nextState = CharacterStateType.NONE_CHARACTER_STATE;
+						user.character!.stateInfo!.nextStateAt = '0';
+						user.character!.stateInfo!.stateTargetUserId = '0';
 					}
 
 					debuffContainmentUnitEffect(room.id, user.id);
@@ -99,8 +105,6 @@ class GameManager {
 				broadcastDataToRoom(room.users, userGamePacket, GamePacketType.userUpdateNotification);
 			}
 
-			await saveRoom(room);
-
 			const characterPosition = shuffle(spawnPositions);
 
 			const newInterval = nextPhase === PhaseType.DAY ? dayInterval : eveningInterval;
@@ -116,6 +120,8 @@ class GameManager {
 			};
 
 			broadcastDataToRoom(room.users, phaseGamePacket, GamePacketType.phaseUpdateNotification);
+
+			await saveRoom(room);
 
 			this.scheduleNextPhase(room.id, roomTimerMapId);
 		}, interval);
@@ -141,8 +147,8 @@ class GameManager {
 	}
 }
 
-const removedCard = (room: Room, user: User) => {
-	if (!user || !user.character) return;
+const removedCard = (room: Room, user: User): User => {
+	if (!user || !user.character) return user;
 
 	const excess = user.character.handCardsCount - user.character.hp;
 	let toRemove = excess;
@@ -169,6 +175,8 @@ const removedCard = (room: Room, user: User) => {
 			repeatDeck(room.id, [c.type]);
 		}
 	});
+
+	return user;
 };
 
 export default GameManager.getInstance();
