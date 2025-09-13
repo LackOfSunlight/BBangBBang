@@ -17,6 +17,7 @@ import { CheckBigBbangService } from '../../services/bigbbang.check.service';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
 import { weaponDamageEffect } from '../../utils/weapon.util';
 import { sendAnimationNotification } from '../notification/animation.notification.handler';
+import { checkAndEndGameIfNeeded } from '../../utils/game.end.util.js';
 
 const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.reactionRequest);
@@ -111,6 +112,9 @@ const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 
 	await reactionResponseHandler(socket, setReactionResponse(true, GlobalFailCode.NONE_FAILCODE));
 	await userUpdateNotificationHandler(socket, setUserUpdateNotification(room.users));
+	
+	// 게임 종료 조건 검사
+	await checkAndEndGameIfNeeded(room.id);
 };
 
 const setReactionResponse = (success: boolean, failCode: GlobalFailCode): GamePacket => {
