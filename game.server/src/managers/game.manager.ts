@@ -1,4 +1,4 @@
-import { CardType, PhaseType } from '../generated/common/enums';
+import { CardType, CharacterStateType, PhaseType } from '../generated/common/enums';
 import phaseUpdateNotificationHandler, {
 	setPhaseUpdateNotification,
 } from '../handlers/notification/phase.update.notification.handler';
@@ -14,6 +14,9 @@ import { GamePacket } from '../generated/gamePacket';
 import { GamePacketType } from '../enums/gamePacketType';
 import { broadcastDataToRoom } from '../utils/notification.util';
 import { User } from '../models/user.model';
+import { checkSatelliteTargetEffect } from '../card/card.satellite_target.effect';
+
+import { debuffContainmentUnitEffect } from '../card/card.containment_unit.effect';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 
@@ -40,7 +43,7 @@ class GameManager {
 
 	private scheduleNextPhase(roomId: number, roomTimerMapId: string) {
 		this.clearTimer(roomTimerMapId);
-		const dayInterval = 10000; // 3분
+		const dayInterval = 30000; // 3분
 		const eveningInterval = 30000; //30초
 
 		let nextPhase: PhaseType;
@@ -55,32 +58,44 @@ class GameManager {
 
 		const timer = setTimeout(async () => {
 			this.roomPhase.set(roomTimerMapId, nextPhase);
-			const room = await getRoom(roomId);
+			let room = await getRoom(roomId); // debuff 효과 적용후 게임임상태 재갱신 고려해서 let 사용
 			if (!room) return;
 
 			if (nextPhase === PhaseType.DAY) {
-				for (const user of room.users) {
+				// 1. 위성 타겟 디버프 효과 체크 (하루 시작 시)
+				room = await checkSatelliteTargetEffect(room.id) || room; // room 상태 변수 재갱신
+				
+				// 2. 카드 처리
+				for (let user of room.users) {
 					if (user.character != null) {
 						//카드 삭제
 						if (user.character.handCardsCount > user.character.hp) {
-							removedCard(room, user);
-						} else {
-							const drawCards = drawDeck(room.id, 2);
-							drawCards.forEach((type) => {
-								const existCard = user.character?.handCards.find((card) => card.type === type);
-								if (existCard) {
-									existCard.count += 1;
-								} else {
-									user.character?.handCards.push({ type, count: 1 });
-								}
-							});
+							user = removedCard(room, user);
 						}
+						
+						const drawCards = drawDeck(room.id, 2);
+						drawCards.forEach((type) => {
+							const existCard = user.character?.handCards.find((card) => card.type === type);
+							if (existCard) {
+								existCard.count += 1;
+							} else {
+								user.character?.handCards.push({ type, count: 1 });
+							}
+						});
 
-						user.character.handCardsCount = user.character.handCards.reduce(
+						user.character!.handCardsCount = user.character!.handCards.reduce(
 							(sum, card) => sum + card.count,
 							0,
 						);
+
+						user.character!.bbangCount = 0;
+						user.character!.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
+						user.character!.stateInfo!.nextState = CharacterStateType.NONE_CHARACTER_STATE;
+						user.character!.stateInfo!.nextStateAt = '0';
+						user.character!.stateInfo!.stateTargetUserId = '0';
 					}
+
+					debuffContainmentUnitEffect(room.id, user.id);
 				}
 
 				const userGamePacket: GamePacket = {
@@ -91,11 +106,9 @@ class GameManager {
 						},
 					},
 				};
-				
+
 				broadcastDataToRoom(room.users, userGamePacket, GamePacketType.userUpdateNotification);
 			}
-
-			await saveRoom(room);
 
 			const characterPosition = shuffle(spawnPositions);
 
@@ -112,6 +125,8 @@ class GameManager {
 			};
 
 			broadcastDataToRoom(room.users, phaseGamePacket, GamePacketType.phaseUpdateNotification);
+
+			await saveRoom(room);
 
 			this.scheduleNextPhase(room.id, roomTimerMapId);
 		}, interval);
@@ -137,8 +152,8 @@ class GameManager {
 	}
 }
 
-const removedCard = (room: Room, user: User) => {
-	if (!user || !user.character) return;
+const removedCard = (room: Room, user: User): User => {
+	if (!user || !user.character) return user;
 
 	const excess = user.character.handCardsCount - user.character.hp;
 	let toRemove = excess;
@@ -165,6 +180,8 @@ const removedCard = (room: Room, user: User) => {
 			repeatDeck(room.id, [c.type]);
 		}
 	});
+
+	return user;
 };
 
 export default GameManager.getInstance();
