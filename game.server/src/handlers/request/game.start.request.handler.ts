@@ -20,7 +20,7 @@ import { CharacterPositionData, GameStateData } from '../../generated/common/typ
 import { User } from '../../models/user.model.js';
 import { drawDeck, initializeDeck } from '../../managers/card.manager.js';
 import { shuffle } from '../../utils/shuffle.util.js';
-import gameManager, { characterPosition } from '../../managers/game.manager.js';
+import gameManager, { notificationCharacterPosition } from '../../managers/game.manager.js';
 import { testCard } from '../../init/test.card.js';
 
 const gameStartRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
@@ -59,13 +59,13 @@ const gameStartRequestHandler = async (socket: GameSocket, gamePacket: GamePacke
 
 	initializeDeck(room.id);
 
-	if(!characterPosition.has(room.id)){
-		characterPosition.set(room.id, new Map);
+	if(!notificationCharacterPosition.has(room.id)){
+		notificationCharacterPosition.set(room.id, new Map);
 	}
 
 	for (let i = 0; i < room.users.length; i++) {
 		const character = room.users[i].character;
-		const pos = characterPosition.get(room.id);
+		const pos = notificationCharacterPosition.get(room.id);
 	
 		if(pos != undefined) pos.set(room.users[i].id, characterPositionsData[i]); //위치 저장
 

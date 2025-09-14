@@ -7,7 +7,7 @@ import positionUpdateNotificationHandler, {
 	setPositionUpdateNotification,
 } from '../notification/position.update.notification.handler.js';
 import { CharacterPositionData } from '../../generated/common/types.js';
-import { characterPosition } from '../../managers/game.manager.js';
+import { notificationCharacterPosition } from '../../managers/game.manager.js';
 
 /**
  * 포지션 업데이트 요청 핸들러
@@ -39,7 +39,7 @@ const positionUpdateRequestHandler = (socket: GameSocket, gamePacket: GamePacket
 		y: req.y,
 	};
 
-	characterPosition.get(socket.roomId)?.set(socket.userId, pos);
+	notificationCharacterPosition.get(socket.roomId)?.set(socket.userId, pos);
 
 	// 4. 모든 플레이어에게 포지션 업데이트 알림 전송
 	// positionUpdateNotificationHandler(socket, setPositionUpdateNotification([pos]));
