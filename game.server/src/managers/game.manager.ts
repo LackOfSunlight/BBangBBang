@@ -17,8 +17,15 @@ import { User } from '../models/user.model';
 import { checkSatelliteTargetEffect } from '../card/card.satellite_target.effect';
 
 import { debuffContainmentUnitEffect } from '../card/card.containment_unit.effect';
+import { setPositionUpdateNotification } from '../handlers/notification/position.update.notification.handler';
+
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
+
+export const characterPosition = new Map<
+    number, // roomId
+    Map<string, CharacterPositionData> // userId → 위치 배열
+>();
 
 class GameManager {
 	private static instance: GameManager;
@@ -38,6 +45,7 @@ class GameManager {
 		const phase = PhaseType.DAY;
 		this.roomPhase.set(roomId, phase);
 
+		setInterval(() => broadcastPositionUpdates(room),50);
 		this.scheduleNextPhase(room.id, roomId);
 	}
 
@@ -187,6 +195,26 @@ const removedCard = (room: Room, user: User): User => {
 	});
 
 	return user;
+};
+
+export const broadcastPositionUpdates = (room: Room) => {
+    const roomMap = characterPosition.get(room.id);
+    if (!roomMap) return; // 해당 방의 위치 정보가 없으면 종료
+
+    // 방의 유저 위치 배열 생성
+    const characterPositions: CharacterPositionData[] = [];
+
+    for (const [userId, positionData] of roomMap.entries()) {
+        characterPositions.push({ 
+            ...positionData,     // x, y 등 위치 정보
+        });
+    }
+
+    // 위치 업데이트 패킷 생성
+    const gamePacket = setPositionUpdateNotification(characterPositions);
+
+    // 방의 모든 유저에게 전송
+    broadcastDataToRoom(room.users, gamePacket, GamePacketType.positionUpdateNotification);
 };
 
 export default GameManager.getInstance();
