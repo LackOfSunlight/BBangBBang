@@ -4,6 +4,7 @@ import { RoleType, WinType, RoomStateType } from '../generated/common/enums.js';
 import { setGameEndNotification } from '../handlers/notification/game.end.notification.handler.js';
 import { broadcastDataToRoom } from './notification.util.js';
 import { GamePacketType } from '../enums/gamePacketType.js';
+import gameManager from '../managers/game.manager.js';
 
 /**
  * 게임 종료 조건을 검사하고 필요시 게임을 종료하는 함수
@@ -151,6 +152,8 @@ async function endGame(room: Room, gameResult: GameEndResult): Promise<void> {
 
 		// 모든 플레이어에게 게임 종료 알림 전송
 		await broadcastDataToRoom(room.users, gameEndPacket, GamePacketType.gameEndNotification);
+
+		gameManager.endGame(room);
 		
 		console.log(`[GameEnd] 게임 종료 완료: ${room.id}번 방`);
 	} catch (error) {
