@@ -15,9 +15,8 @@ import { GamePacketType } from '../enums/gamePacketType';
 import { broadcastDataToRoom } from '../utils/notification.util';
 import { User } from '../models/user.model';
 import { checkSatelliteTargetEffect } from '../card/card.satellite_target.effect';
-
-import { debuffContainmentUnitEffect } from '../card/card.containment_unit.effect';
 import { setPositionUpdateNotification } from '../handlers/notification/position.update.notification.handler';
+import { checkContainmentUnitTarget } from '../card/card.containment_unit.effect';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 
@@ -72,11 +71,16 @@ class GameManager {
 
 			if (nextPhase === PhaseType.DAY) {
 				// 1. 위성 타겟 디버프 효과 체크 (하루 시작 시)
-				room = (await checkSatelliteTargetEffect(room.id)) || room; // room 상태 변수 재갱신
+				room = await checkSatelliteTargetEffect(room.id) || room; // room 상태 변수 재갱신
 
+				room = await checkContainmentUnitTarget(room.id) || room; 
+				
 				// 2. 카드 처리
 				for (let user of room.users) {
 					if (user.character != null) {
+
+						console.log(`${user.nickname}의 상태1:${CharacterStateType[user.character!.stateInfo!.state]}`);
+						
 						//카드 삭제
 						if (user.character.handCardsCount > user.character.hp) {
 							user = removedCard(room, user);
@@ -98,7 +102,7 @@ class GameManager {
 						);
 
 						user.character!.bbangCount = 0;
-						if (user.character?.stateInfo?.state != CharacterStateType.CONTAINED) {
+						if (user.character!.stateInfo!.state !== CharacterStateType.CONTAINED) {
 							user.character!.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
 							user.character!.stateInfo!.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 							user.character!.stateInfo!.nextStateAt = '0';
@@ -106,7 +110,7 @@ class GameManager {
 						}
 					}
 
-					await debuffContainmentUnitEffect(room.id, user.id);
+					console.log(`${user.nickname}의 상태2:${CharacterStateType[user.character!.stateInfo!.state]}`);
 				}
 
 				const userGamePacket: GamePacket = {
