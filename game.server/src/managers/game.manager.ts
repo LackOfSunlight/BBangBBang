@@ -15,11 +15,16 @@ import { GamePacketType } from '../enums/gamePacketType';
 import { broadcastDataToRoom } from '../utils/notification.util';
 import { User } from '../models/user.model';
 import { checkSatelliteTargetEffect } from '../card/card.satellite_target.effect';
-
+import { setPositionUpdateNotification } from '../handlers/notification/position.update.notification.handler';
 import { checkContainmentUnitTarget } from '../card/card.containment_unit.effect';
-import useCardRequestHandler from '../handlers/request/use.card.request.handler';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
+
+export const notificationCharacterPosition = new Map<
+	number, // roomId
+	Map<string, CharacterPositionData> // userId → 위치 배열
+>();
+
 
 class GameManager {
 	private static instance: GameManager;
@@ -39,6 +44,7 @@ class GameManager {
 		const phase = PhaseType.DAY;
 		this.roomPhase.set(roomId, phase);
 
+		setInterval(() => broadcastPositionUpdates(room, this.roomPhase), 200);
 		this.scheduleNextPhase(room.id, roomId);
 	}
 
@@ -58,6 +64,7 @@ class GameManager {
 		}
 
 		const timer = setTimeout(async () => {
+			const timerExecutionTime = Date.now();
 			this.roomPhase.set(roomTimerMapId, nextPhase);
 			let room = await getRoom(roomId); // debuff 효과 적용후 게임임상태 재갱신 고려해서 let 사용
 			if (!room) return;
@@ -120,13 +127,29 @@ class GameManager {
 
 			const characterPosition = shuffle(spawnPositions);
 
+			const roomMap = notificationCharacterPosition.get(room.id);
+
+			if(roomMap){
+				for(let i=0; i < room.users.length; i++){
+					if(room.users[i].character!.hp <= 0){
+						const pos  = roomMap.get(room.users[i].id);
+						if(pos) characterPosition[i] = pos
+
+						continue;
+					}
+					roomMap.set(room.users[i].id, characterPosition[i]);
+				}
+			}
+
 			const newInterval = nextPhase === PhaseType.DAY ? dayInterval : eveningInterval;
+			const elapsed = Date.now() - timerExecutionTime;
+			const remainingTime = newInterval - elapsed;
 			const phaseGamePacket: GamePacket = {
 				payload: {
 					oneofKind: GamePacketType.phaseUpdateNotification,
 					phaseUpdateNotification: {
 						phaseType: nextPhase,
-						nextPhaseAt: `${Date.now() + newInterval}`,
+						nextPhaseAt: `${remainingTime > 0 ? remainingTime : 0}`,
 						characterPositions: characterPosition,
 					},
 				},
@@ -190,6 +213,30 @@ const removedCard = (room: Room, user: User): User => {
 	});
 
 	return user;
+};
+
+export const broadcastPositionUpdates = (room: Room, roomPhase: Map<string,PhaseType>) => {
+	const roomMap = notificationCharacterPosition.get(room.id);
+	if (!roomMap) return; // 해당 방의 위치 정보가 없으면 종료
+
+	const phase = roomPhase.get(`room:${room.id}`);
+
+	if(phase === PhaseType.END) return;
+	
+	// 방의 유저 위치 배열 생성
+	const characterPositions: CharacterPositionData[] = [];
+
+	for (const [userId, positionData] of roomMap.entries()) {
+		characterPositions.push({
+			...positionData, // x, y 등 위치 정보
+		});
+	}
+
+	// 위치 업데이트 패킷 생성
+	const gamePacket = setPositionUpdateNotification(characterPositions);
+
+	// 방의 모든 유저에게 전송
+	broadcastDataToRoom(room.users, gamePacket, GamePacketType.positionUpdateNotification);
 };
 
 export default GameManager.getInstance();

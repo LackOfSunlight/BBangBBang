@@ -20,7 +20,7 @@ import { CharacterPositionData, GameStateData } from '../../generated/common/typ
 import { User } from '../../models/user.model.js';
 import { drawDeck, initializeDeck } from '../../managers/card.manager.js';
 import { shuffle } from '../../utils/shuffle.util.js';
-import gameManager from '../../managers/game.manager.js';
+import gameManager, { notificationCharacterPosition } from '../../managers/game.manager.js';
 import { testCard } from '../../init/test.card.js';
 
 const gameStartRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
@@ -51,18 +51,23 @@ const gameStartRequestHandler = async (socket: GameSocket, gamePacket: GamePacke
 	const characterPositionsData = shuffle(spawnPositions);
 
 	// 다음 스테이지 시간 설정
-	const now = Date.now();
-	const duration = 180000; // 3분 -> 180000ms
-	const nextPhaseAt = now + duration;
+	const duration = 60000; // 3분 -> 180000ms
 	const gameState: GameStateData = {
 		phaseType: PhaseType.DAY,
-		nextPhaseAt: `${nextPhaseAt}`,
+		nextPhaseAt: `${duration}`,
 	};
 
 	initializeDeck(room.id);
 
-	for (const user of room.users) {
-		const character = user.character;
+	if(!notificationCharacterPosition.has(room.id)){
+		notificationCharacterPosition.set(room.id, new Map);
+	}
+
+	for (let i = 0; i < room.users.length; i++) {
+		const character = room.users[i].character;
+		const pos = notificationCharacterPosition.get(room.id);
+	
+		if(pos != undefined) pos.set(room.users[i].id, characterPositionsData[i]); //위치 저장
 
 		if (character) {
 			const drawCards: CardType[] = drawDeck(room.id, character.hp);
