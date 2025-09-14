@@ -19,12 +19,12 @@ import { setPositionUpdateNotification } from '../handlers/notification/position
 import { checkContainmentUnitTarget } from '../card/card.containment_unit.effect';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
+const positionUpdateIntervals = new Map<number, NodeJS.Timeout>();
 
 export const notificationCharacterPosition = new Map<
 	number, // roomId
 	Map<string, CharacterPositionData> // userId → 위치 배열
 >();
-
 
 class GameManager {
 	private static instance: GameManager;
@@ -44,7 +44,9 @@ class GameManager {
 		const phase = PhaseType.DAY;
 		this.roomPhase.set(roomId, phase);
 
-		setInterval(() => broadcastPositionUpdates(room, this.roomPhase), 200);
+		const intervalId = setInterval(() => broadcastPositionUpdates(room, this.roomPhase), 200);
+
+		positionUpdateIntervals.set(room.id, intervalId);
 		this.scheduleNextPhase(room.id, roomId);
 	}
 
@@ -71,16 +73,17 @@ class GameManager {
 
 			if (nextPhase === PhaseType.DAY) {
 				// 1. 위성 타겟 디버프 효과 체크 (하루 시작 시)
-				room = await checkSatelliteTargetEffect(room.id) || room; // room 상태 변수 재갱신
+				room = (await checkSatelliteTargetEffect(room.id)) || room; // room 상태 변수 재갱신
 
-				room = await checkContainmentUnitTarget(room.id) || room; 
-				
+				room = (await checkContainmentUnitTarget(room.id)) || room;
+
 				// 2. 카드 처리
 				for (let user of room.users) {
 					if (user.character != null) {
+						console.log(
+							`${user.nickname}의 상태1:${CharacterStateType[user.character!.stateInfo!.state]}`,
+						);
 
-						console.log(`${user.nickname}의 상태1:${CharacterStateType[user.character!.stateInfo!.state]}`);
-						
 						//카드 삭제
 						if (user.character.handCardsCount > user.character.hp) {
 							user = removedCard(room, user);
@@ -110,7 +113,9 @@ class GameManager {
 						}
 					}
 
-					console.log(`${user.nickname}의 상태2:${CharacterStateType[user.character!.stateInfo!.state]}`);
+					console.log(
+						`${user.nickname}의 상태2:${CharacterStateType[user.character!.stateInfo!.state]}`,
+					);
 				}
 
 				const userGamePacket: GamePacket = {
@@ -129,11 +134,11 @@ class GameManager {
 
 			const roomMap = notificationCharacterPosition.get(room.id);
 
-			if(roomMap){
-				for(let i=0; i < room.users.length; i++){
-					if(room.users[i].character!.hp <= 0){
-						const pos  = roomMap.get(room.users[i].id);
-						if(pos) characterPosition[i] = pos
+			if (roomMap) {
+				for (let i = 0; i < room.users.length; i++) {
+					if (room.users[i].character!.hp <= 0) {
+						const pos = roomMap.get(room.users[i].id);
+						if (pos) characterPosition[i] = pos;
 
 						continue;
 					}
@@ -170,6 +175,11 @@ class GameManager {
 		// 기존 게임 종료 로직이 있다면 여기에 위치합니다.
 		const roomId = `room:${room.id}`;
 		this.roomPhase.delete(roomId);
+		const intervalId = positionUpdateIntervals.get(room.id);
+		if (intervalId) {
+			clearInterval(intervalId);
+			positionUpdateIntervals.delete(room.id); // Map에서 제거
+		}
 		this.clearTimer(roomId);
 	}
 
@@ -215,14 +225,14 @@ const removedCard = (room: Room, user: User): User => {
 	return user;
 };
 
-export const broadcastPositionUpdates = (room: Room, roomPhase: Map<string,PhaseType>) => {
+export const broadcastPositionUpdates = (room: Room, roomPhase: Map<string, PhaseType>) => {
 	const roomMap = notificationCharacterPosition.get(room.id);
 	if (!roomMap) return; // 해당 방의 위치 정보가 없으면 종료
 
 	const phase = roomPhase.get(`room:${room.id}`);
 
-	if(phase === PhaseType.END) return;
-	
+	if (phase === PhaseType.END) return;
+
 	// 방의 유저 위치 배열 생성
 	const characterPositions: CharacterPositionData[] = [];
 
