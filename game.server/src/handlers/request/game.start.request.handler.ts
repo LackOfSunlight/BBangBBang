@@ -79,7 +79,7 @@ const gameStartRequestHandler = async (socket: GameSocket, gamePacket: GamePacke
 					character.handCards.push({ type, count: 1 });
 				}
 			});
-
+			
             character.handCardsCount = character.handCards.reduce((sum, card)=> sum + card.count, 0);
 		}
 	}
