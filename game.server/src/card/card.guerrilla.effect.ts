@@ -18,11 +18,14 @@ const cardGuerrillaEffect = async (
 
 	if (!room || !shooter) return false;
 
-	const isNonUsers = room.users.every(
-		(s) => s.character?.stateInfo?.state === CharacterStateType.NONE_CHARACTER_STATE,
+	const isBlockedStateUsers = room.users.some(
+		(s) =>
+			s.character &&
+			s.character.stateInfo?.state !== CharacterStateType.NONE_CHARACTER_STATE && // NONE이 아닌데
+			s.character.stateInfo?.state !== CharacterStateType.CONTAINED, // CONTAINED도 아닌 경우
 	);
 
-	if (!isNonUsers) {
+	if (isBlockedStateUsers) {
 		const getCard = drawSpecificCard(room.id, CardType.GUERRILLA);
 
 		if (getCard) {

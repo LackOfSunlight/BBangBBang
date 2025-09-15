@@ -21,11 +21,15 @@ const cardBigBbangEffect = async (
 		return false;
 	}
 
-	const isNonUsers = room.users.every(
-		(s) => s.character?.stateInfo?.state === CharacterStateType.NONE_CHARACTER_STATE,
+	// "카드 사용을 막아야 하는 상태"만 정의
+	const isBlockedStateUsers = room.users.some(
+		(s) =>
+			s.character &&
+			s.character.stateInfo?.state !== CharacterStateType.NONE_CHARACTER_STATE && // NONE이 아닌데
+			s.character.stateInfo?.state !== CharacterStateType.CONTAINED, // CONTAINED도 아닌 경우
 	);
 
-	if (!isNonUsers) {
+	if (isBlockedStateUsers) {
 		const getCard = drawSpecificCard(room.id, CardType.BIG_BBANG);
 
 		if (getCard) {

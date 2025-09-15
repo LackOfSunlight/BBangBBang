@@ -8,7 +8,7 @@ export const testCard:CardData[] = [
         count: 4,
     },
     {
-        type: CardType.GUERRILLA,
+        type: CardType.BIG_BBANG,
         count: 2,
     },
     {
