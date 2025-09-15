@@ -13,14 +13,14 @@ const cardAutoShieldEffect = async (roomId: number, userId: string) => {
 	// }
 
 	// 손에서 자동 쉴드 카드 찾아서 제거
-	const cardIndex = user.character.handCards.findIndex(
-		(card) => card.type === CardType.AUTO_SHIELD,
-	);
-	if (cardIndex === -1) {
-		// 카드 없으면 로직 중단
-		return;
-	}
-	user.character.handCards.splice(cardIndex, 1);
+	// const cardIndex = user.character.handCards.findIndex(
+	// 	(card) => card.type === CardType.AUTO_SHIELD,
+	// );
+	// if (cardIndex === -1) {
+	// 	// 카드 없으면 로직 중단
+	// 	return;
+	// }
+	// user.character.handCards.splice(cardIndex, 1);
 
 	// 자동 쉴드 장착
 	user.character.equips.push(CardType.AUTO_SHIELD);
