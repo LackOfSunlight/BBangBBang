@@ -2,11 +2,11 @@
 import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
 import { CardType } from '../generated/common/enums.js';
 
-const cardStealthSuitEffect = async (roomId: number, userId: string) => {
+const cardStealthSuitEffect = async (roomId: number, userId: string) : Promise<boolean> => {
 	const user = await getUserFromRoom(roomId, userId);
 
 	// 유효성 검증
-	if (!user || !user.character) return;
+	if (!user || !user.character) return false;
 
 	// 스텔스 장치 카드 효과: 장비 착용
 	// 장비 카드이므로 자신에게만 적용 (targetUserId 무시)
@@ -28,8 +28,10 @@ const cardStealthSuitEffect = async (roomId: number, userId: string) => {
 	try {
 		await updateCharacterFromRoom(roomId, user.id, user.character);
 		console.log(`[스텔스 장치] ${user.nickname}이 스텔스 장치를 장착했습니다.`);
+		return true;
 	} catch (error) {
 		console.error(`[스텔스 장치] Redis 업데이트 실패:`, error);
+		return false;
 	}
 };
 

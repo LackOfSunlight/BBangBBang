@@ -20,6 +20,7 @@ const useCardRequestHandler = async (socket: GameSocket, gamePacket: GamePacket)
 	if (!payload) return;
 
 	const req = payload.useCardRequest;
+	let isUseCard: boolean = true;
 
 	// 카드 타입 검증
 	if (req.cardType === CardType.NONE) {
@@ -36,27 +37,31 @@ const useCardRequestHandler = async (socket: GameSocket, gamePacket: GamePacket)
 	if (!socket.roomId || !socket.userId || !req.targetUserId) return;
 
 	// 카드 효과 적용
-	await applyCardEffect(socket.roomId, req.cardType, socket.userId, req.targetUserId);
+	isUseCard = await applyCardEffect(socket.roomId, req.cardType, socket.userId, req.targetUserId);
 	// 카드 효과 적용 후 유저 정보 가져오기
 	const room = await getRoom(socket.roomId);
 	if (!room) return;
 
 	// response : 카드 사용 성공
-	await useCardResponseHandler(socket, setUseCardResponse(true, GlobalFailCode.NONE_FAILCODE));
+	if (isUseCard)
+		await useCardResponseHandler(socket, setUseCardResponse(true, GlobalFailCode.NONE_FAILCODE));
 
 	// notification : 카드 사용 공지
-	if (req.cardType >= 13 && req.cardType <= 20)
-		// 무기 및 장비 카드 사용시 -> 장착
-		await equipCardNotificationHandler(
-			socket,
-			// setEquipCardNotification( req.cardType, socket.userId! )
-			setUseCardNotification(req.cardType, socket.userId!, req.targetUserId),
-		); // 일반 카드 사용시 -> 효과 발동
-	else
-		await useCardNotificationHandler(
-			socket,
-			setUseCardNotification(req.cardType, socket.userId!, req.targetUserId),
-		);
+	if (isUseCard) {
+		if (req.cardType >= 13 && req.cardType <= 20)
+			// 무기 및 장비 카드 사용시 -> 장착
+			await equipCardNotificationHandler(
+				socket,
+				// setEquipCardNotification( req.cardType, socket.userId! )
+				setUseCardNotification(req.cardType, socket.userId!, req.targetUserId),
+			);
+		// 일반 카드 사용시 -> 효과 발동
+		else
+			await useCardNotificationHandler(
+				socket,
+				setUseCardNotification(req.cardType, socket.userId!, req.targetUserId),
+			);
+	}
 
 	// notification : 유저 관련 정보 변동 공지
 	await userUpdateNotificationHandler(socket, setUserUpdateNotification(room.users));
@@ -90,7 +95,7 @@ export const setUseCardNotification = (
 			useCardNotification: {
 				cardType: cardType,
 				userId: userId,
-				targetUserId: targetUserId !== '0' ? targetUserId:"0",
+				targetUserId: targetUserId !== '0' ? targetUserId : '0',
 			},
 		},
 	};
