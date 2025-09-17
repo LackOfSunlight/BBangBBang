@@ -3,7 +3,8 @@ import { C2SRegisterRequest } from '../generated/packet/auth';
 import * as bcrypt from 'bcrypt';
 import { C2SCreateRoomRequest } from '../generated/packet/room_actions';
 import { GameSocket } from '../type/game.socket';
-import { Room, RoomStateType } from '../generated/prisma';
+import { RoomStateType } from '../generated/prisma';
+
 
 // DB에서 유저 가져오기
 export const getUserDB = async (
