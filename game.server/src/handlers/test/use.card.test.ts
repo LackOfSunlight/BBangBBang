@@ -8,13 +8,13 @@ import useCardHandler, {
 import { CardType, GlobalFailCode } from "../../generated/common/enums";
 import { GamePacketType } from "../../enums/gamePacketType";
 
-import { getRoom } from "../../utils/redis.util";
+import { getRoom } from "../../utils/room.utils";
 import { applyCardEffect } from "../../utils/apply.card.effect";
 import { sendData } from "../../utils/send.data";
 import { broadcastDataToRoom } from "../../utils/notification.util";
 
 
-jest.mock("../../utils/redis.util", () => ({
+jest.mock("../../utils/room.utils", () => ({
   getRoom: jest.fn()
 }));
 jest.mock("../../utils/send.data", () => ({
@@ -86,8 +86,8 @@ describe("useCardUseCase", () => {
       cardType: CardType.BBANG,
     });
 
-    expect(result.response.success).toBe(false);
-    expect(result.response.GlobalFailCode).toBe(GlobalFailCode.ROOM_NOT_FOUND);
+    expect(result.useCardResponse.success).toBe(false);
+    expect(result.useCardResponse.GlobalFailCode).toBe(GlobalFailCode.ROOM_NOT_FOUND);
   });
 
   it("cardType이 없다면 실패 처리", async () => {
@@ -99,8 +99,8 @@ describe("useCardUseCase", () => {
       cardType: CardType.NONE,
     });
 
-    expect(result.response.success).toBe(false);
-    expect(result.response.GlobalFailCode).toBe(GlobalFailCode.INVALID_REQUEST);
+    expect(result.useCardResponse.success).toBe(false);
+    expect(result.useCardResponse.GlobalFailCode).toBe(GlobalFailCode.INVALID_REQUEST);
   });
 
   it("성공시 applyCardEffect 함수로 연결", async () => {
@@ -114,8 +114,8 @@ describe("useCardUseCase", () => {
     });
 
     expect(mockedApplyCardEffect).toHaveBeenCalledWith(123, CardType.BBANG, "user1", "user2");
-    expect(result.response.success).toBe(true);
-    expect(result.notification).toEqual({
+    expect(result.useCardResponse.success).toBe(true);
+    expect(result.useCardNotification).toEqual({
       cardType: CardType.BBANG,
       userId: "user1",
       targetUserId: "user2",
