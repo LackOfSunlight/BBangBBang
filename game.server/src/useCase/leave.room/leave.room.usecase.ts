@@ -28,12 +28,6 @@ const createUserLeftNotificationPacket = (payload: S2CLeaveRoomNotification): Ga
 	};
 };
 
-/**
- * 유저가 방을 나가는 유스케이스
- * @param socket - 요청을 보낸 유저의 소켓
- * @param req - C2SLeaveRoomRequest 요청 패킷
- * @returns 요청자에게 보낼 응답 GamePacket
- */
 export const leaveRoomUseCase = async (
 	socket: GameSocket,
 	req: C2SLeaveRoomRequest,
