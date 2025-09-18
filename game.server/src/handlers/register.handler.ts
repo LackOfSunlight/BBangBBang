@@ -2,7 +2,6 @@ import { GameSocket } from '../type/game.socket.js';
 import { GamePacket } from '../generated/gamePacket.js';
 import { getGamePacketType } from '../utils/type.converter.js';
 import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType.js';
-import { GlobalFailCode } from '../generated/common/enums.js';
 import { registerUseCase } from '../useCase/register/register.usecase.js';
 import { sendData } from '../utils/send.data.js';
 
@@ -12,9 +11,9 @@ const registerHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 
 	const req = payload.registerRequest;
 
-    const res = await registerUseCase(req);
+	const res = await registerUseCase(socket, req);
 
-    sendData(socket, res, GamePacketType.registerResponse);
+	sendData(socket, res, GamePacketType.registerResponse);
 };
 
 export default registerHandler;

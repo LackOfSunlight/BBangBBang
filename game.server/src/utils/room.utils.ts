@@ -21,8 +21,9 @@ export function getRoom(roomId: number): Room {
 }
 
 // 유저를 방에 추가
-export function addUserToRoom(roomId: number, user: User): Room | Error {
+export function addUserToRoom(roomId: number, user: User): Room {
 	const room = rooms.get(roomId);
+
 	if (!room) throw new Error('Room not found');
 
 	if (room.users.length >= room.maxUserNum) {
@@ -37,13 +38,14 @@ export function addUserToRoom(roomId: number, user: User): Room | Error {
 // 유저를 방에서 제거
 export function removeUserFromRoom(roomId: number, userId: string): void {
 	const room = rooms.get(roomId);
+
 	if (!room) throw new Error('Room not found');
 
 	room.users = room.users.filter((u) => u.id !== userId);
 }
 
 // 방에서 특정 유저 가져오기
-export function getUserFromRoom(roomId: number, userId: string): User | Error {
+export function getUserFromRoom(roomId: number, userId: string): User {
 	const room = rooms.get(roomId);
 	if (!room) throw new Error('Room not found');
 
