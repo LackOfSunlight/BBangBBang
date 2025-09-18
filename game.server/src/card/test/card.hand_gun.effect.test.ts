@@ -53,69 +53,41 @@ describe('cardHandGunEffect', () => {
 		});
 	});
 
-	describe('빵야! 횟수 증가 로직', () => {
-		const createMockCharacter = (bbangCount: number) => ({
+	describe('무기 설정 로직', () => {
+		const createMockCharacter = (weapon: number) => ({
 			characterType: CharacterType.RED,
 			roleType: RoleType.TARGET,
 			hp: 3,
-			weapon: 0,
+			weapon,
 			equips: [],
 			debuffs: [],
 			handCards: [],
-			bbangCount,
+			bbangCount: 0,
 			handCardsCount: 0,
 		});
 
-		it('자신의 빵야! 횟수를 2로 설정한다 (targetUserId 무시)', async () => {
+		it('자신의 무기를 핸드건(14)으로 설정한다', async () => {
 			const user = {
 				id: userId,
 				nickname: 'user1',
-				character: createMockCharacter(1), // 기본 빵야! 횟수
+				character: createMockCharacter(0), // 기본 무기 없음
 			};
 
 			mockGetUserFromRoom.mockResolvedValue(user);
 
-			await cardHandGunEffect(roomId, userId); // targetUserId는 무시됨
+			await cardHandGunEffect(roomId, userId);
 
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
 				...user.character,
-				bbangCount: 2, // 2로 고정 설정
+				weapon: 14, // 핸드건 무기로 설정
 			});
 		});
 
-		it('이미 핸드건 효과를 받은 경우 설정하지 않는다 (bbangCount >= 2)', async () => {
+		it('이미 핸드건을 장착한 경우에도 다시 설정한다', async () => {
 			const user = {
 				id: userId,
 				nickname: 'user1',
-				character: createMockCharacter(2), // 이미 핸드건 효과 적용됨
-			};
-
-			mockGetUserFromRoom.mockResolvedValue(user);
-
-			await cardHandGunEffect(roomId, userId);
-
-			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
-		});
-
-		it('빵야! 횟수가 3 이상인 경우 설정하지 않는다', async () => {
-			const user = {
-				id: userId,
-				nickname: 'user1',
-				character: createMockCharacter(3), // 빵야! 횟수 3
-			};
-
-			mockGetUserFromRoom.mockResolvedValue(user);
-
-			await cardHandGunEffect(roomId, userId);
-
-			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
-		});
-
-		it('빵야! 횟수가 0인 경우 2로 설정한다', async () => {
-			const user = {
-				id: userId,
-				nickname: 'user1',
-				character: createMockCharacter(0), // 빵야! 횟수 0
+				character: createMockCharacter(14), // 이미 핸드건 장착
 			};
 
 			mockGetUserFromRoom.mockResolvedValue(user);
@@ -124,7 +96,24 @@ describe('cardHandGunEffect', () => {
 
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
 				...user.character,
-				bbangCount: 2, // 2로 고정 설정
+				weapon: 14, // 핸드건 무기로 설정
+			});
+		});
+
+		it('다른 무기를 장착한 경우 핸드건으로 교체한다', async () => {
+			const user = {
+				id: userId,
+				nickname: 'user1',
+				character: createMockCharacter(15), // 다른 무기 장착
+			};
+
+			mockGetUserFromRoom.mockResolvedValue(user);
+
+			await cardHandGunEffect(roomId, userId);
+
+			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
+				...user.character,
+				weapon: 14, // 핸드건 무기로 교체
 			});
 		});
 	});
