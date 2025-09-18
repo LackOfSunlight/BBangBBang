@@ -123,11 +123,18 @@ describe('passDebuffHandler', () => {
 
 		it('잘못된 요청인 경우 실패해야 함', async () => {
 			// Given
-			mockSocket.userId = undefined;
-			mockSocket.roomId = undefined;
+			const invalidGamePacket = {
+				payload: {
+					oneofKind: GamePacketType.loginRequest, // 잘못된 패킷 타입
+					loginRequest: {
+						email: '',
+						password: ''
+					}
+				},
+			} as GamePacket;
 
 			// When
-			await passDebuffHandler(mockSocket, mockGamePacket);
+			await passDebuffHandler(mockSocket, invalidGamePacket);
 
 			// Then
 			expect(mockPassDebuffUseCase).not.toHaveBeenCalled();
@@ -135,14 +142,13 @@ describe('passDebuffHandler', () => {
 	});
 
 	describe('에러 처리', () => {
-		it('UseCase에서 에러가 발생한 경우 적절히 처리되어야 함', async () => {
+		it('UseCase에서 에러가 발생한 경우 에러가 전파되어야 함', async () => {
 			// Given
 			mockPassDebuffUseCase.mockRejectedValue(new Error('Database error'));
 
-			// When
-			await passDebuffHandler(mockSocket, mockGamePacket);
-
-			// Then
+			// When & Then
+			// 에러가 발생하면 테스트가 실패해야 함 (try-catch가 없으므로)
+			await expect(passDebuffHandler(mockSocket, mockGamePacket)).rejects.toThrow('Database error');
 			expect(mockPassDebuffUseCase).toHaveBeenCalled();
 		});
 	});
