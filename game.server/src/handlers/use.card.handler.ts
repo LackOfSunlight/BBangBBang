@@ -12,7 +12,7 @@ import { CardType } from "../generated/common/enums.js";
 import { User } from "../models/user.model.js";
 import { Room } from "../models/room.model.js";
 
-import { getRoom } from "../utils/redis.util.js";
+import { getRoom } from "../utils/room.utils.js";
 
 import { useCardUseCase }  from "../useCase/use.card/use.card.usecase.js";
 
@@ -54,20 +54,20 @@ const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 
 
 	/// 2. 유즈케이스 호출
-	const { response, notification, userUpdateNotification } = await useCardUseCase( {userId, roomId, cardType, targetUserId} );
+	const { useCardResponse, useCardNotification, userUpdateNotification } = await useCardUseCase( {userId, roomId, cardType, targetUserId} );
 
 
 
 	/// 3. 유즈케이스 결과에 따라 응답/알림 전송
-	const responsePacket = createUseCardResponsePacket(response.success, response.GlobalFailCode);
-	sendData(socket, responsePacket, GamePacketType.useCardResponse);
+	const useCardResponsePacket = createUseCardResponsePacket(useCardResponse.success, useCardResponse.GlobalFailCode);
+	sendData(socket, useCardResponsePacket, GamePacketType.useCardResponse);
 
-	if (notification && notification.targetUserId) {
-        const notificationPacket = createUseCardNotificationPacket(notification.cardType, notification.userId, notification.targetUserId);
+	if (useCardNotification && useCardNotification.targetUserId) {
+        const useCardNotificationPacket = createUseCardNotificationPacket(useCardNotification.cardType, useCardNotification.userId, useCardNotification.targetUserId);
 
         // 장착이 가능한가? equipCard : useCard
-        if(notification.cardType >= 13 && notification.cardType <= 20) broadcastDataToRoom(room.users, notificationPacket, GamePacketType.equipCardNotification);
-		else broadcastDataToRoom(room.users, notificationPacket, GamePacketType.useCardNotification);
+        if(useCardNotification.cardType >= 13 && useCardNotification.cardType <= 20) broadcastDataToRoom(room.users, useCardNotificationPacket, GamePacketType.equipCardNotification);
+		else broadcastDataToRoom(room.users, useCardNotificationPacket, GamePacketType.useCardNotification);
         
 	}
 
@@ -79,7 +79,7 @@ const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 };
 
 
-/** 오류코드:잘못된요청 을 일괄 처리하기 위한 함수 */
+/** 오류코드:잘못된요청을 일괄 처리하기 위한 함수 */
 const is_invalid_request = (socket: GameSocket) => {
     const wrongDTO = createUseCardResponsePacket(false, GlobalFailCode.INVALID_REQUEST);
 	sendData(socket, wrongDTO, GamePacketType.useCardResponse);
