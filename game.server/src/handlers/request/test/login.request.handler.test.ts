@@ -5,9 +5,9 @@ import { C2SLoginRequest } from '../../../generated/packet/auth';
 import { GlobalFailCode } from '../../../generated/common/enums';
 import { UserData } from '../../../generated/common/types';
 import loginResponseHandler from '../../response/login.response.handler';
-import getUserData from '../../../services/login.request.handler/get.user.data';
-import checkUserPassword from '../../../services/login.request.handler/check.user.password';
-import setTokenService from '../../../services/login.request.handler/set.token.service';
+import getUserData from '../../../services/login/get.user.data';
+import checkUserPassword from '../../../services/login/check.user.password';
+import setTokenService from '../../../services/login/set.token.service';
 import { addSocket } from '../../../managers/socket.manger';
 import { getGamePacketType } from '../../../utils/type.converter';
 
