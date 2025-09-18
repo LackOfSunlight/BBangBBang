@@ -1,4 +1,4 @@
-import { getRoom } from "../../utils/redis.util";
+import { getRoom } from "../../utils/room.utils"; 
 import { CardType, GlobalFailCode } from "../../generated/common/enums";
 import { User } from "../../models/user.model";
 
@@ -12,11 +12,11 @@ interface UseCardInput {
 }
 
 interface UseCardOutput {
-	response: {
+	useCardResponse: {
         success: boolean;
         GlobalFailCode: GlobalFailCode
     };
-	notification?: {
+	useCardNotification?: {
         cardType: CardType;
         userId: string;
         targetUserId? : string;
@@ -31,13 +31,13 @@ export const useCardUseCase = async ( input: UseCardInput) : Promise<UseCardOutp
 
     const room = await getRoom(roomId);
     if (!room ){
-        return { response: { success: false, GlobalFailCode: GlobalFailCode.ROOM_NOT_FOUND } };
+        return { useCardResponse: { success: false, GlobalFailCode: GlobalFailCode.ROOM_NOT_FOUND } };
     }
 
     // 카드 타입 검증
     if (cardType === CardType.NONE) {
         console.warn(`[useCardHandler] 잘못된 카드 타입 요청: NONE`);
-        return { response: { success: false, GlobalFailCode: GlobalFailCode.INVALID_REQUEST } };
+        return { useCardResponse: { success: false, GlobalFailCode: GlobalFailCode.INVALID_REQUEST } };
     }
 
     console.log(
@@ -47,8 +47,8 @@ export const useCardUseCase = async ( input: UseCardInput) : Promise<UseCardOutp
     await applyCardEffect(roomId, cardType, userId, targetUserId!);
 
     return {
-        response: {success:true, GlobalFailCode: GlobalFailCode.NONE_FAILCODE},
-        notification: {cardType: cardType, userId: userId, targetUserId: targetUserId},
+        useCardResponse: {success:true, GlobalFailCode: GlobalFailCode.NONE_FAILCODE},
+        useCardNotification: {cardType: cardType, userId: userId, targetUserId: targetUserId},
         userUpdateNotification: { user: room.users }
     };
 };
