@@ -16,6 +16,7 @@ export function getRoom(roomId: number): Room {
 	if (!room) {
 		throw new Error('Room not found');
 	}
+
 	return room;
 }
 
