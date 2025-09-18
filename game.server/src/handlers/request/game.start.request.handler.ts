@@ -1,113 +1,113 @@
-import { GameSocket } from '../../type/game.socket.js';
-import { GamePacket } from '../../generated/gamePacket.js';
-import {
-	CardType,
-	CharacterType,
-	GlobalFailCode,
-	PhaseType,
-	RoomStateType,
-} from '../../generated/common/enums.js';
-import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.js';
-import { getGamePacketType } from '../../utils/type.converter.js';
-import gameStartResponseHandler from '../response/game.start.response.handler.js';
-import gameStartNotificationHandler, {
-	setGameStartNotification,
-} from '../notification/game.start.notification.handler.js';
-import characterSpawnPosition from '../../data/character.spawn.position.json';
-import { getRoom, saveRoom } from '../../utils/redis.util.js';
-import { Room } from '../../models/room.model.js';
-import { CharacterPositionData, GameStateData } from '../../generated/common/types.js';
-import { User } from '../../models/user.model.js';
-import { drawDeck, initializeDeck } from '../../managers/card.manager.js';
-import { shuffle } from '../../utils/shuffle.util.js';
-import gameManager, { notificationCharacterPosition } from '../../managers/game.manager.js';
-import { testCard } from '../../init/test.card.js';
+// import { GameSocket } from '../../type/game.socket.js';
+// import { GamePacket } from '../../generated/gamePacket.js';
+// import {
+// 	CardType,
+// 	CharacterType,
+// 	GlobalFailCode,
+// 	PhaseType,
+// 	RoomStateType,
+// } from '../../generated/common/enums.js';
+// import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType.js';
+// import { getGamePacketType } from '../../utils/type.converter.js';
+// import gameStartResponseHandler from '../response/game.start.response.handler.js';
+// import gameStartNotificationHandler, {
+// 	setGameStartNotification,
+// } from '../notification/game.start.notification.handler.js';
+// import characterSpawnPosition from '../../data/character.spawn.position.json';
+// import { getRoom, saveRoom } from '../../utils/redis.util.js';
+// import { Room } from '../../models/room.model.js';
+// import { CharacterPositionData, GameStateData } from '../../generated/common/types.js';
+// import { User } from '../../models/user.model.js';
+// import { drawDeck, initializeDeck } from '../../managers/card.manager.js';
+// import { shuffle } from '../../utils/shuffle.util.js';
+// import gameManager, { notificationCharacterPosition } from '../../managers/game.manager.js';
+// import { testCard } from '../../init/test.card.js';
 
-const gameStartRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
-	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.gameStartRequest);
+// const gameStartRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
+// 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.gameStartRequest);
 
-	if (!payload || !socket.roomId) {
-		return gameStartResponseHandler(
-			socket,
-			setGameStartResponse(false, GlobalFailCode.UNKNOWN_ERROR),
-		);
-	}
+// 	if (!payload || !socket.roomId) {
+// 		return gameStartResponseHandler(
+// 			socket,
+// 			setGameStartResponse(false, GlobalFailCode.UNKNOWN_ERROR),
+// 		);
+// 	}
 
-	// 저장된 스폰위치 정보 로드
-	const spawnPositions = characterSpawnPosition as CharacterPositionData[];
+// 	// 저장된 스폰위치 정보 로드
+// 	const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 
-	const room: Room | null = await getRoom(socket.roomId);
+// 	const room: Room | null = await getRoom(socket.roomId);
 
-	if (!room) {
-		return gameStartResponseHandler(
-			socket,
-			setGameStartResponse(false, GlobalFailCode.ROOM_NOT_FOUND),
-		);
-	}
+// 	if (!room) {
+// 		return gameStartResponseHandler(
+// 			socket,
+// 			setGameStartResponse(false, GlobalFailCode.ROOM_NOT_FOUND),
+// 		);
+// 	}
 
-	const users: User[] = room.users;
+// 	const users: User[] = room.users;
 
-	// 위치 셔플, 이걸 response로 전달
-	const characterPositionsData = shuffle(spawnPositions);
+// 	// 위치 셔플, 이걸 response로 전달
+// 	const characterPositionsData = shuffle(spawnPositions);
 
-	// 다음 스테이지 시간 설정
-	const duration = 60000; // 3분 -> 180000ms
-	const gameState: GameStateData = {
-		phaseType: PhaseType.DAY,
-		nextPhaseAt: `${duration}`,
-	};
+// 	// 다음 스테이지 시간 설정
+// 	const duration = 60000; // 3분 -> 180000ms
+// 	const gameState: GameStateData = {
+// 		phaseType: PhaseType.DAY,
+// 		nextPhaseAt: `${duration}`,
+// 	};
 
-	initializeDeck(room.id);
+// 	initializeDeck(room.id);
 
-	if(!notificationCharacterPosition.has(room.id)){
-		notificationCharacterPosition.set(room.id, new Map);
-	}
+// 	if(!notificationCharacterPosition.has(room.id)){
+// 		notificationCharacterPosition.set(room.id, new Map);
+// 	}
 
-	for (let i = 0; i < room.users.length; i++) {
-		const character = room.users[i].character;
-		const pos = notificationCharacterPosition.get(room.id);
+// 	for (let i = 0; i < room.users.length; i++) {
+// 		const character = room.users[i].character;
+// 		const pos = notificationCharacterPosition.get(room.id);
 	
-		if(pos != undefined) pos.set(room.users[i].id, characterPositionsData[i]); //위치 저장
+// 		if(pos != undefined) pos.set(room.users[i].id, characterPositionsData[i]); //위치 저장
 
-		if (character) {
-			const drawCards: CardType[] = drawDeck(room.id, character.hp);
-			drawCards.forEach((type) => {
-				const existCard = character.handCards.find((card) => card.type === type);
-				if (existCard) {
-					existCard.count += 1;
-				} else {
-					character.handCards.push({ type, count: 1 });
-				}
-			});
+// 		if (character) {
+// 			const drawCards: CardType[] = drawDeck(room.id, character.hp);
+// 			drawCards.forEach((type) => {
+// 				const existCard = character.handCards.find((card) => card.type === type);
+// 				if (existCard) {
+// 					existCard.count += 1;
+// 				} else {
+// 					character.handCards.push({ type, count: 1 });
+// 				}
+// 			});
 
-            character.handCardsCount = character.handCards.reduce((sum, card)=> sum + card.count, 0);
-		}
-	}
+//             character.handCardsCount = character.handCards.reduce((sum, card)=> sum + card.count, 0);
+// 		}
+// 	}
 
-	room.state = RoomStateType.INGAME;
-	await saveRoom(room);
+// 	room.state = RoomStateType.INGAME;
+// 	await saveRoom(room);
 
-	gameManager.startGame(room);
+// 	gameManager.startGame(room);
 
-	gameStartResponseHandler(socket, setGameStartResponse(true, GlobalFailCode.NONE_FAILCODE));
-	gameStartNotificationHandler(
-		socket,
-		setGameStartNotification(gameState, users, characterPositionsData),
-	);
-};
+// 	gameStartResponseHandler(socket, setGameStartResponse(true, GlobalFailCode.NONE_FAILCODE));
+// 	gameStartNotificationHandler(
+// 		socket,
+// 		setGameStartNotification(gameState, users, characterPositionsData),
+// 	);
+// };
 
-const setGameStartResponse = (success: boolean, failCode: GlobalFailCode): GamePacket => {
-	const newGamePacket: GamePacket = {
-		payload: {
-			oneofKind: GamePacketType.gameStartResponse,
-			gameStartResponse: {
-				success,
-				failCode,
-			},
-		},
-	};
+// const setGameStartResponse = (success: boolean, failCode: GlobalFailCode): GamePacket => {
+// 	const newGamePacket: GamePacket = {
+// 		payload: {
+// 			oneofKind: GamePacketType.gameStartResponse,
+// 			gameStartResponse: {
+// 				success,
+// 				failCode,
+// 			},
+// 		},
+// 	};
 
-	return newGamePacket;
-};
+// 	return newGamePacket;
+// };
 
-export default gameStartRequestHandler;
+// export default gameStartRequestHandler;
