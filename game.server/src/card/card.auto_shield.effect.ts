@@ -2,10 +2,10 @@
 import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
 import { CardType } from '../generated/common/enums';
 
-const cardAutoShieldEffect = async (roomId: number, userId: string) => {
+const cardAutoShieldEffect = async (roomId: number, userId: string): Promise<boolean> => {
 	const user = await getUserFromRoom(roomId, userId);
 	// 유효성 검증
-	if (!user || !user.character) return;
+	if (!user || !user.character) return false;
 
 	// 이미 장착하고 있다면 중복 장착 방지 => 클라이언트 로직에서 중복시 새로운걸 장착하고 원래있던걸 월드덱으로 반환해서 해당 로직 주석 처리
 	// if (user.character.equips.includes(CardType.AUTO_SHIELD)) {
@@ -23,10 +23,15 @@ const cardAutoShieldEffect = async (roomId: number, userId: string) => {
 	// user.character.handCards.splice(cardIndex, 1);
 
 	// 자동 쉴드 장착
-	user.character.equips.push(CardType.AUTO_SHIELD);
+	if (!user.character.equips.includes(CardType.AUTO_SHIELD)) {
+		user.character.equips.push(CardType.AUTO_SHIELD);
+	} else {
+		return false;
+	}
 
 	// 정보 업데이트
 	await updateCharacterFromRoom(roomId, userId, user.character);
+	return true;
 };
 
 export default cardAutoShieldEffect;
