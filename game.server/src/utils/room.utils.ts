@@ -11,16 +11,17 @@ export function saveRoom(room: Room): void {
 }
 
 // 방 불러오기
-export function getRoom(roomId: number): Room | Error {
+export function getRoom(roomId: number): Room {
 	const room = rooms.get(roomId);
 	if (!room) {
 		throw new Error('Room not found');
 	}
+
 	return room;
 }
 
 // 유저를 방에 추가
-export  function addUserToRoom(roomId: number, user: User): Room | Error {
+export function addUserToRoom(roomId: number, user: User): Room | Error {
 	const room = rooms.get(roomId);
 	if (!room) throw new Error('Room not found');
 
@@ -39,19 +40,18 @@ export function removeUserFromRoom(roomId: number, userId: string): void {
 	if (!room) throw new Error('Room not found');
 
 	room.users = room.users.filter((u) => u.id !== userId);
-
 }
 
 // 방에서 특정 유저 가져오기
-export function getUserFromRoom (roomId: number, userId: string): User | Error{
+export function getUserFromRoom(roomId: number, userId: string): User | Error {
 	const room = rooms.get(roomId);
 	if (!room) throw new Error('Room not found');
 
 	// 유저 찾기
 	const user = room.users.find((u) => u.id === userId);
-    if(!user) throw new Error('User not found');
+	if (!user) throw new Error('User not found');
 	return user;
-};
+}
 
 /* 방에서 특정 유저 정보 업데이트
 사용 예시
@@ -62,7 +62,7 @@ const updated = await updateUserFromRoom(1, 1001, {character: charaterData });
   console.log("유저를 찾을 수 없음");
   }
 */
-export function updateCharacterFromRoom (
+export function updateCharacterFromRoom(
 	roomId: number,
 	userId: string,
 	updateData: Partial<CharacterData>, // 업데이트할 필드만 넘길 수 있도록 Partial<User>
@@ -82,11 +82,11 @@ export function updateCharacterFromRoom (
 
 	// 배열에 반영
 	room.users[userIndex] = updatedUser;
-};
+}
 
 // 전체 방 불러오기
 export const getRooms = (): Room[] => {
-  return Array.from(rooms.values());
+	return Array.from(rooms.values());
 };
 
 // 방 삭제
