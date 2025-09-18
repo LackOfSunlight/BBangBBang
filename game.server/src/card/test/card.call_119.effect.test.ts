@@ -64,7 +64,7 @@ describe('cardCall119Effect', () => {
 			mockGetUserFromRoom.mockResolvedValue(user);
 			mockGetRoom.mockResolvedValue(null);
 
-			await cardCall119Effect(roomId, userId, ''); // 나머지 플레이어 회복 시도
+			await cardCall119Effect(roomId, userId, '0'); // 나머지 플레이어 회복 시도
 
 			expect(mockGetRoom).toHaveBeenCalledWith(roomId);
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
@@ -84,7 +84,7 @@ describe('cardCall119Effect', () => {
 			handCardsCount: 0,
 		});
 
-		it('자신의 체력을 1 회복한다 (targetUserId가 있는 경우)', async () => {
+		it('자신의 체력을 1 회복한다 (targetUserId가 "0"이 아닌 경우)', async () => {
 			const user = {
 				id: userId,
 				nickname: 'user1',
@@ -95,7 +95,7 @@ describe('cardCall119Effect', () => {
 
 			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-			await cardCall119Effect(roomId, userId, 'self'); // targetUserId가 있으면 자신 회복
+			await cardCall119Effect(roomId, userId, 'user2'); // targetUserId != "0"이므로 자신 회복
 
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
 				...user.character,
@@ -108,7 +108,7 @@ describe('cardCall119Effect', () => {
 			consoleSpy.mockRestore();
 		});
 
-		it('나머지 플레이어들의 체력을 1 회복한다 (targetUserId가 없는 경우)', async () => {
+		it('나머지 플레이어들의 체력을 1 회복한다 (targetUserId가 "0"인 경우)', async () => {
 			const user = {
 				id: userId,
 				nickname: 'user1',
@@ -140,7 +140,7 @@ describe('cardCall119Effect', () => {
 
 			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-			await cardCall119Effect(roomId, userId, ''); // targetUserId가 없으면 나머지 회복
+			await cardCall119Effect(roomId, userId, '0'); // targetUserId가 "0"이면 나머지 회복
 
 			// user2와 user3의 체력이 회복되어야 함 (user1은 제외)
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledTimes(2);
@@ -167,7 +167,7 @@ describe('cardCall119Effect', () => {
 
 			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-			await cardCall119Effect(roomId, userId, 'self'); // 자신 회복
+			await cardCall119Effect(roomId, userId, 'user2'); // 자신 회복
 
 			expect(consoleSpy).toHaveBeenCalledWith('[119 호출] user1의 체력이 이미 최대치(4)입니다.');
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
@@ -186,7 +186,7 @@ describe('cardCall119Effect', () => {
 
 			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-			await cardCall119Effect(roomId, userId, 'self'); // 자신 회복
+			await cardCall119Effect(roomId, userId, 'user2'); // 자신 회복
 
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
 				...user.character,
@@ -210,7 +210,7 @@ describe('cardCall119Effect', () => {
 
 			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-			await cardCall119Effect(roomId, userId, 'self'); // 자신 회복
+			await cardCall119Effect(roomId, userId, 'user2'); // 자신 회복
 
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
 				...user.character,
@@ -249,7 +249,7 @@ describe('cardCall119Effect', () => {
 			const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
 			// 에러가 발생해도 함수가 정상적으로 처리되는지 확인
-			await expect(cardCall119Effect(roomId, userId, 'self')).resolves.not.toThrow();
+			await expect(cardCall119Effect(roomId, userId, 'user2')).resolves.not.toThrow();
 
 			// 에러 로그가 출력되는지 확인
 			expect(consoleErrorSpy).toHaveBeenCalledWith(
