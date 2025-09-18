@@ -4,42 +4,31 @@ import { GamePacket } from '../../generated/gamePacket';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { CardType, GlobalFailCode } from '../../generated/common/enums';
 import passDebuffUseCase from '../../useCase/pass.debuff/pass.debuff.usecase';
+import { getGamePacketType } from '../../utils/type.converter';
+import { sendData } from '../../utils/send.data';
 
 // Mock 설정
 jest.mock('../../useCase/pass.debuff/pass.debuff.usecase');
 jest.mock('../../utils/send.data');
+jest.mock('../../utils/type.converter');
 
 const mockPassDebuffUseCase = passDebuffUseCase as jest.MockedFunction<typeof passDebuffUseCase>;
+const mockGetGamePacketType = getGamePacketType as unknown as jest.Mock;
+const mockSendData = sendData as unknown as jest.Mock;
 
 describe('passDebuffHandler', () => {
-	let mockSocket: GameSocket;
-	let mockGamePacket: GamePacket;
+    let mockSocket: Partial<GameSocket>;
+    let mockGamePacket: GamePacket;
 
-	beforeEach(() => {
-		// Mock 소켓 설정
-		mockSocket = {
-			id: 'socket-123',
-			userId: 'user-123',
-			roomId: '1',
-			user: {
-				id: 'user-123',
-				nickname: 'testuser',
-				character: {
-					characterType: 1,
-					roleType: 1,
-					hp: 100,
-					weapon: 0,
-					equips: [],
-					debuffs: [CardType.DEATH_MATCH],
-					handCards: [],
-					bbangCount: 0,
-					handCardsCount: 0,
-				},
-			},
-		} as GameSocket;
+    beforeEach(() => {
+        // Mock 소켓 설정 (다른 테스트들과 동일하게 Partial 사용)
+        mockSocket = {
+            userId: 'user-123',
+            roomId: 1,
+        };
 
 		// Mock 패킷 설정
-		mockGamePacket = {
+        mockGamePacket = {
 			payload: {
 				oneofKind: GamePacketType.passDebuffRequest,
 				passDebuffRequest: {
@@ -50,25 +39,27 @@ describe('passDebuffHandler', () => {
 		} as GamePacket;
 
 		jest.clearAllMocks();
+        mockSendData.mockImplementation(() => {});
 	});
 
 	describe('성공 케이스', () => {
 		it('디버프 전달이 성공적으로 처리되어야 함', async () => {
-			// Given
-			const mockUseCaseResult = {
-				payload: {
-					oneofKind: GamePacketType.passDebuffResponse,
-					passDebuffResponse: {
-						success: true,
-						failCode: GlobalFailCode.NONE_FAILCODE,
-					},
+		// Given
+		const mockUseCaseResult = {
+			payload: {
+				oneofKind: 'passDebuffResponse' as const,
+				passDebuffResponse: {
+					success: true,
+					failCode: GlobalFailCode.NONE_FAILCODE,
 				},
-			};
+			},
+		} as GamePacket;
 
 			mockPassDebuffUseCase.mockResolvedValue(mockUseCaseResult);
 
-			// When
-			await passDebuffHandler(mockSocket, mockGamePacket);
+            // When
+            mockGetGamePacketType.mockReturnValue(mockGamePacket.payload);
+            await passDebuffHandler(mockSocket as GameSocket, mockGamePacket);
 
 			// Then
 			expect(mockPassDebuffUseCase).toHaveBeenCalledWith(mockSocket, {
@@ -79,66 +70,61 @@ describe('passDebuffHandler', () => {
 	});
 
 	describe('실패 케이스', () => {
-		it('방을 찾을 수 없는 경우 실패해야 함', async () => {
-			// Given
-			const mockUseCaseResult = {
-				payload: {
-					oneofKind: GamePacketType.passDebuffResponse,
-					passDebuffResponse: {
-						success: false,
-						failCode: GlobalFailCode.ROOM_NOT_FOUND,
-					},
+        it('방을 찾을 수 없는 경우 실패해야 함', async () => {
+		// Given
+		const mockUseCaseResult = {
+			payload: {
+				oneofKind: 'passDebuffResponse' as const,
+				passDebuffResponse: {
+					success: false,
+					failCode: GlobalFailCode.ROOM_NOT_FOUND,
 				},
-			};
+			},
+		} as GamePacket;
 
 			mockPassDebuffUseCase.mockResolvedValue(mockUseCaseResult);
 
 			// When
-			await passDebuffHandler(mockSocket, mockGamePacket);
+            mockGetGamePacketType.mockReturnValue(mockGamePacket.payload);
+            await passDebuffHandler(mockSocket as GameSocket, mockGamePacket);
 
 			// Then
 			expect(mockPassDebuffUseCase).toHaveBeenCalled();
 		});
 
-		it('디버프 카드를 가지고 있지 않은 경우 실패해야 함', async () => {
-			// Given
-			const mockUseCaseResult = {
-				payload: {
-					oneofKind: GamePacketType.passDebuffResponse,
-					passDebuffResponse: {
-						success: false,
-						failCode: GlobalFailCode.CHARACTER_NO_CARD,
-					},
+        it('디버프 카드를 가지고 있지 않은 경우 실패해야 함', async () => {
+		// Given
+		const mockUseCaseResult = {
+			payload: {
+				oneofKind: 'passDebuffResponse' as const,
+				passDebuffResponse: {
+					success: false,
+					failCode: GlobalFailCode.CHARACTER_NO_CARD,
 				},
-			};
+			},
+		} as GamePacket;
 
 			mockPassDebuffUseCase.mockResolvedValue(mockUseCaseResult);
 
 			// When
-			await passDebuffHandler(mockSocket, mockGamePacket);
+            mockGetGamePacketType.mockReturnValue(mockGamePacket.payload);
+            await passDebuffHandler(mockSocket as GameSocket, mockGamePacket);
 
 			// Then
 			expect(mockPassDebuffUseCase).toHaveBeenCalled();
 		});
 
-		it('잘못된 요청인 경우 실패해야 함', async () => {
-			// Given
-			const invalidGamePacket = {
-				payload: {
-					oneofKind: GamePacketType.loginRequest, // 잘못된 패킷 타입
-					loginRequest: {
-						email: '',
-						password: ''
-					}
-				},
-			} as GamePacket;
+        it('payload가 없으면 아무 작업도 수행하지 않아야 함', async () => {
+            // Given
+            mockGetGamePacketType.mockReturnValue(null);
 
-			// When
-			await passDebuffHandler(mockSocket, invalidGamePacket);
+            // When
+            await passDebuffHandler(mockSocket as GameSocket, mockGamePacket);
 
-			// Then
-			expect(mockPassDebuffUseCase).not.toHaveBeenCalled();
-		});
+            // Then
+            expect(mockPassDebuffUseCase).not.toHaveBeenCalled();
+            expect(mockSendData).not.toHaveBeenCalled();
+        });
 	});
 
 	describe('에러 처리', () => {
@@ -148,7 +134,8 @@ describe('passDebuffHandler', () => {
 
 			// When & Then
 			// 에러가 발생하면 테스트가 실패해야 함 (try-catch가 없으므로)
-			await expect(passDebuffHandler(mockSocket, mockGamePacket)).rejects.toThrow('Database error');
+            mockGetGamePacketType.mockReturnValue(mockGamePacket.payload);
+            await expect(passDebuffHandler(mockSocket as GameSocket, mockGamePacket)).rejects.toThrow('Database error');
 			expect(mockPassDebuffUseCase).toHaveBeenCalled();
 		});
 	});
