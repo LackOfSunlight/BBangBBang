@@ -17,6 +17,7 @@ import reactionRequestHandler from '../handlers/request/reaction.request.handler
 import destroyCardRequestHandler from '../handlers/request/destroy.card.request.handler.js';
 import cardSelectRequestHandler from '../handlers/request/card.select.request.handler.js';
 import passDebuffHandler from '../handlers/pass.debuff.handler.js';
+import gameStartHandler from '../handlers/game.start.handler.js';
 
 // Request Handlers
 
@@ -30,7 +31,7 @@ const handlers: Record<RequestPacketType, (socket: Socket, gamePacket: GamePacke
 	[GamePacketType.joinRandomRoomRequest]: joinRoomHandler,
 	[GamePacketType.leaveRoomRequest]: leaveRoomHandler,
 	[GamePacketType.gamePrepareRequest]: gamePrepareHandler,
-	[GamePacketType.gameStartRequest]: gameStartRequestHandler,
+	[GamePacketType.gameStartRequest]: gameStartHandler,
 	[GamePacketType.positionUpdateRequest]: positionUpdateHandler,
 	[GamePacketType.useCardRequest]: useCardHandler,
 	[GamePacketType.fleaMarketPickRequest]: fleaMarketPickRequestHandler,
