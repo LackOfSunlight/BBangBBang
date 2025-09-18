@@ -1,173 +1,108 @@
-// Mock dependencies
-jest.mock('../../useCase/leave.room/leave.room.usecase');
-jest.mock('../../utils/notification.util');
-jest.mock('../../utils/send.data');
-jest.mock('../../utils/redis.util'); // FIX: Mock redis utils to prevent open handles
-
-import { GamePacketType } from '../../enums/gamePacketType';
+import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType';
 import { GlobalFailCode } from '../../generated/common/enums';
 import { GamePacket } from '../../generated/gamePacket';
-import { User } from '../../models/user.model';
+import { C2SLeaveRoomRequest } from '../../generated/packet/room_actions';
 import { GameSocket } from '../../type/game.socket';
 import { leaveRoomUseCase } from '../../useCase/leave.room/leave.room.usecase';
-import { broadcastDataToRoom } from '../../utils/notification.util';
 import { sendData } from '../../utils/send.data';
+import { getGamePacketType } from '../../utils/type.converter';
 import leaveRoomHandler from '../leave.room.handler';
 
-// Mock implementations
-const mockLeaveRoomUseCase = leaveRoomUseCase as jest.Mock;
-const mockBroadcastDataToRoom = broadcastDataToRoom as jest.Mock;
-const mockSendData = sendData as jest.Mock;
+// 의존성 Mock 처리
+jest.mock('../../useCase/leave.room/leave.room.usecase');
+jest.mock('../../utils/send.data');
+jest.mock('../../utils/type.converter');
 
-describe('leaveRoomHandler 테스트', () => {
+// Mock 함수
+const mockLeaveRoomUseCase = leaveRoomUseCase as jest.Mock;
+const mockSendData = sendData as jest.Mock;
+const mockGetGamePacketType = getGamePacketType as jest.Mock;
+
+describe('leaveRoomHandler', () => {
 	let mockSocket: Partial<GameSocket>;
-	const mockGamePacket: GamePacket = { payload: { oneofKind: 'leaveRoomRequest', leaveRoomRequest: {} } };
+	const mockLeaveRoomRequest: C2SLeaveRoomRequest = {}; // 요청 페이로드는 비어있음
+	const mockGamePacket: GamePacket = {
+		payload: {
+			oneofKind: 'leaveRoomRequest',
+			leaveRoomRequest: mockLeaveRoomRequest,
+		},
+	};
 
 	beforeEach(() => {
+		// 각 테스트 전에 모든 Mock을 초기화
 		jest.clearAllMocks();
+
+		// 기본 Mock 소켓 설정
 		mockSocket = {
 			userId: 'user-1',
 			roomId: 1,
 		};
+
+		// getGamePacketType이 항상 페이로드를 반환하도록 설정
+		mockGetGamePacketType.mockReturnValue({ leaveRoomRequest: mockLeaveRoomRequest });
 	});
 
-	it('userId가 없으면 INVALID_REQUEST 실패 응답을 보내야 합니다', async () => {
-		mockSocket.userId = undefined;
-		await leaveRoomHandler(mockSocket as GameSocket, mockGamePacket);
-		expect(mockSendData).toHaveBeenCalledWith(
-			mockSocket,
-			expect.objectContaining({
-				payload: {
-					oneofKind: 'leaveRoomResponse',
-					leaveRoomResponse: { success: false, failCode: GlobalFailCode.INVALID_REQUEST },
-				},
-			}),
-			GamePacketType.leaveRoomResponse,
-		);
-		expect(mockLeaveRoomUseCase).not.toHaveBeenCalled();
-	});
-
-    it('roomId가 없으면 INVALID_REQUEST 실패 응답을 보내야 합니다', async () => {
-		mockSocket.roomId = undefined;
-		await leaveRoomHandler(mockSocket as GameSocket, mockGamePacket);
-		expect(mockSendData).toHaveBeenCalledWith(
-			mockSocket,
-			expect.objectContaining({
-				payload: {
-					oneofKind: 'leaveRoomResponse',
-					leaveRoomResponse: { success: false, failCode: GlobalFailCode.INVALID_REQUEST },
-				},
-			}),
-			GamePacketType.leaveRoomResponse,
-		);
-		expect(mockLeaveRoomUseCase).not.toHaveBeenCalled();
-	});
-
-	it('일반 유저가 나갈 때 다른 유저들에게 알림을 전송해야 합니다', async () => {
-		// Arrange
-		const leavingUserId = 'user-1';
-		const remainingUser = new User('user-2', 'user-2-nick');
-		const roomId = 1;
-        mockSocket.userId = leavingUserId;
-		mockSocket.roomId = roomId;
-
-		mockLeaveRoomUseCase.mockResolvedValue({
-			response: { success: true, failCode: GlobalFailCode.NONE_FAILCODE },
-			notification: {
-				broadcastTargets: [remainingUser],
-				leftUserId: leavingUserId,
-				newOwnerId: remainingUser.id,
-				roomDeleted: false,
+	it('유스케이스를 호출하고 그 결과 패킷을 전송해야 한다', async () => {
+		// Arrange: 유스케이스가 성공 응답 패킷을 반환하도록 설정
+		const mockResponsePacket: GamePacket = {
+			payload: {
+				oneofKind: 'leaveRoomResponse',
+				leaveRoomResponse: { success: true, failCode: GlobalFailCode.NONE_FAILCODE },
 			},
-		});
+		};
+		mockLeaveRoomUseCase.mockResolvedValue(mockResponsePacket);
 
-		// Act
+		// Act: 핸들러 실행
 		await leaveRoomHandler(mockSocket as GameSocket, mockGamePacket);
 
 		// Assert
-		expect(mockLeaveRoomUseCase).toHaveBeenCalledWith({ userId: leavingUserId, roomId: roomId.toString() });
-		
+		// 1. 유스케이스가 올바른 인자와 함께 호출되었는지 검증
+		expect(mockLeaveRoomUseCase).toHaveBeenCalledWith(mockSocket, mockLeaveRoomRequest);
+		expect(mockLeaveRoomUseCase).toHaveBeenCalledTimes(1);
+
+		// 2. sendData가 유스케이스의 반환값으로 호출되었는지 검증
 		expect(mockSendData).toHaveBeenCalledWith(
 			mockSocket,
-			expect.objectContaining({
-				payload: {
-					oneofKind: 'leaveRoomResponse',
-					leaveRoomResponse: { success: true, failCode: GlobalFailCode.NONE_FAILCODE },
-				},
-			}),
+			mockResponsePacket, // 유스케이스가 반환한 패킷과 동일한지 확인
 			GamePacketType.leaveRoomResponse,
 		);
-
-		expect(mockBroadcastDataToRoom).toHaveBeenCalledWith(
-			[remainingUser],
-			expect.objectContaining({
-				payload: {
-					oneofKind: 'leaveRoomNotification',
-					leaveRoomNotification: { userId: leavingUserId },
-				},
-			}),
-			GamePacketType.leaveRoomNotification,
-			mockSocket,
-		);
+		expect(mockSendData).toHaveBeenCalledTimes(1);
 	});
 
-	it('방장이 나갈 때 모든 유저에게 방 삭제 응답을 전송해야 합니다', async () => {
-		// Arrange
-		const ownerId = 'owner-1';
-		const otherUser = new User('user-2', 'user-2-nick');
-		const allUsers = [new User(ownerId, 'owner-1-nick'), otherUser];
-		const roomId = 1;
-        mockSocket.userId = ownerId;
-		mockSocket.roomId = roomId;
-
-		mockLeaveRoomUseCase.mockResolvedValue({
-			response: { success: true, failCode: GlobalFailCode.NONE_FAILCODE },
-			notification: {
-				broadcastTargets: allUsers,
-				leftUserId: ownerId,
-				newOwnerId: null,
-				roomDeleted: true,
+	it('유스케이스로부터 받은 실패 응답도 올바르게 전송해야 한다', async () => {
+		// Arrange: 유스케이스가 실패 응답 패킷을 반환하도록 설정
+		const mockFailurePacket: GamePacket = {
+			payload: {
+				oneofKind: 'leaveRoomResponse',
+				leaveRoomResponse: { success: false, failCode: GlobalFailCode.ROOM_NOT_FOUND },
 			},
-		});
+		};
+		mockLeaveRoomUseCase.mockResolvedValue(mockFailurePacket);
 
-		// Act
+		// Act: 핸들러 실행
 		await leaveRoomHandler(mockSocket as GameSocket, mockGamePacket);
 
 		// Assert
-		expect(mockLeaveRoomUseCase).toHaveBeenCalledWith({ userId: ownerId, roomId: roomId.toString() });
+		// 1. 유스케이스가 호출되었는지 확인
+		expect(mockLeaveRoomUseCase).toHaveBeenCalledWith(mockSocket, mockLeaveRoomRequest);
+
+		// 2. sendData가 실패 패킷으로 호출되었는지 확인
+		expect(mockSendData).toHaveBeenCalledWith(
+			mockSocket,
+			mockFailurePacket,
+			GamePacketType.leaveRoomResponse,
+		);
+	});
+
+	it('요청 패킷이 leaveRoomRequest가 아니면 아무 작업도 하지 않아야 한다', async () => {
+		// Arrange: getGamePacketType이 undefined를 반환하도록 설정 (잘못된 패킷 타입)
+		mockGetGamePacketType.mockReturnValue(undefined);
+
+		// Act: 핸들러 실행
+		await leaveRoomHandler(mockSocket as GameSocket, mockGamePacket);
+
+		// Assert: 유스케이스와 sendData 모두 호출되지 않았는지 검증
+		expect(mockLeaveRoomUseCase).not.toHaveBeenCalled();
 		expect(mockSendData).not.toHaveBeenCalled();
-		expect(mockBroadcastDataToRoom).toHaveBeenCalledWith(
-			allUsers,
-			expect.objectContaining({
-				payload: {
-					oneofKind: 'leaveRoomResponse',
-					leaveRoomResponse: { success: true, failCode: GlobalFailCode.NONE_FAILCODE },
-				},
-			}),
-			GamePacketType.leaveRoomResponse
-		);
-	});
-
-    it('유즈케이스가 실패하면 실패 응답을 보내야 합니다', async () => {
-        const roomId = 1;
-        mockSocket.roomId = roomId;
-		mockLeaveRoomUseCase.mockResolvedValue({
-			response: { success: false, failCode: GlobalFailCode.ROOM_NOT_FOUND },
-            notification: undefined
-		});
-
-		await leaveRoomHandler(mockSocket as GameSocket, mockGamePacket);
-
-		expect(mockSendData).toHaveBeenCalledWith(
-			mockSocket,
-			expect.objectContaining({
-				payload: {
-					oneofKind: 'leaveRoomResponse',
-					leaveRoomResponse: { success: false, failCode: GlobalFailCode.ROOM_NOT_FOUND },
-				},
-			}),
-			GamePacketType.leaveRoomResponse,
-		);
-        expect(mockBroadcastDataToRoom).not.toHaveBeenCalled();
 	});
 });
