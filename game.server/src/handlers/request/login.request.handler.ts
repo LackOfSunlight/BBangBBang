@@ -7,9 +7,9 @@ import { GlobalFailCode } from '../../generated/common/enums.js';
 import { UserData } from '../../generated/common/types.js';
 import * as bcrypt from 'bcrypt';
 import { addSocket } from '../../managers/socket.manger.js';
-import getUserData from '../../services/login.request.handler/get.user.data.js';
-import checkUserPassword from '../../services/login.request.handler/check.user.password.js';
-import setTokenService from '../../services/login.request.handler/set.token.service.js';
+import getUserData from '../../services/login/get.user.data.js';
+import checkUserPassword from '../../services/login/check.user.password.js';
+import setTokenService from '../../services/login/set.token.service.js';
 
 const loginRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.loginRequest);

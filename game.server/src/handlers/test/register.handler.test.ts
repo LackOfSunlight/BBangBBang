@@ -12,6 +12,7 @@ import { handleError } from '../handleError';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { C2SRegisterRequest } from '../../generated/packet/auth';
 import { GlobalFailCode } from '../../generated/common/enums';
+import { execPath } from 'process';
 
 jest.mock('../../utils/type.converter');
 jest.mock('../response/register.response.handler');
@@ -54,7 +55,7 @@ describe('registerRequestHandler', () => {
     jest.clearAllMocks();
   });
 
-  it('should handle successful registration', async () => {
+  it('회원가입 성공', async () => {
     await registerRequestHandler(mockSocket as GameSocket, mockGamePacket);
 
     expect(checkUserDbService).toHaveBeenCalledWith(mockRegisterRequest);
@@ -69,7 +70,7 @@ describe('registerRequestHandler', () => {
     );
   });
 
-  it('should not proceed if payload is missing', async () => {
+  it('모든 필드 값 미입력', async () => {
     (getGamePacketType as jest.Mock).mockReturnValue(null);
     await registerRequestHandler(mockSocket as GameSocket, mockGamePacket);
     expect(registerResponseHandler).not.toHaveBeenCalled();
@@ -91,7 +92,7 @@ describe('registerRequestHandler', () => {
     );
   });
 
-  it('should handle invalid email', async () => {
+  it('이메일 형식 틀림', async () => {
     (validateInput.email as jest.Mock).mockReturnValue(false);
     await registerRequestHandler(mockSocket as GameSocket, mockGamePacket);
     expect(registerResponseHandler).toHaveBeenCalledWith(
@@ -107,7 +108,40 @@ describe('registerRequestHandler', () => {
     );
   });
 
-  it('should handle existing user', async () => {
+    it('닉네임 형식 안 맞음', async () => {
+    (validateInput.nickName as jest.Mock).mockReturnValue(false);
+    await registerRequestHandler(mockSocket as GameSocket, mockGamePacket);
+    expect(registerResponseHandler).toHaveBeenCalledWith(
+      mockSocket,
+      expect.objectContaining({
+        payload: expect.objectContaining({
+            registerResponse: expect.objectContaining({
+            success: false,
+            message: '4-20자의 한글, 영문, 숫자, 언더스코어만 사용 가능합니다.',
+          }),
+        }),
+      }),
+    );
+  });
+
+  
+  it('비밀번호 형식 안 맞음', async () => {
+    (validateInput.password as jest.Mock).mockReturnValue(false);
+    await registerRequestHandler(mockSocket as GameSocket, mockGamePacket);
+    expect(registerResponseHandler).toHaveBeenCalledWith(
+      mockSocket,
+      expect.objectContaining({
+        payload: expect.objectContaining({
+            registerResponse: expect.objectContaining({
+            success: false,
+            message: '비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 포함해야 합니다.',
+          }),
+        }),
+      }),
+    );
+  });
+
+  it('이미 가입된 닉네임', async () => {
     (checkUserDbService as jest.Mock).mockResolvedValue(false);
     await registerRequestHandler(mockSocket as GameSocket, mockGamePacket);
     expect(registerResponseHandler).toHaveBeenCalledWith(
@@ -123,7 +157,9 @@ describe('registerRequestHandler', () => {
     );
   });
 
-  it('should handle errors during registration', async () => {
+
+
+  it('서버 에러', async () => {
     const error = new Error('DB error');
     (createUserDB as jest.Mock).mockRejectedValue(error);
     await registerRequestHandler(mockSocket as GameSocket, mockGamePacket);
