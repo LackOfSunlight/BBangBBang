@@ -1,14 +1,12 @@
-import { C2SLoginRequest } from "../../generated/packet/auth";
-import { prisma } from "../../utils/db";
+import { C2SLoginRequest } from '../../generated/packet/auth';
+import { prisma } from '../../utils/db';
 
+const getUserData = async (req: C2SLoginRequest) => {
+	const userData = await prisma.user.findUnique({
+		where: { email: req.email },
+	});
 
-const getUserData = async (req: C2SLoginRequest) =>{
-
-    const userData = await prisma.user.findUnique({
-        where:{email: req.email}
-    });
-
-    return userData;
-}
+	return userData;
+};
 
 export default getUserData;

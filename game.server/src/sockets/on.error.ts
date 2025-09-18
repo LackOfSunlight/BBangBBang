@@ -8,10 +8,10 @@ import { removeTokenUserDB } from '../services/prisma.service.js';
 const onError = (socket: GameSocket) => async (err: CustomError) => {
 	try {
 		console.error('소켓 오류:', err);
-		
+
 		// 소켓 에러 시에도 토큰 정리
 		removeSocket(socket);
-		
+
 		if (socket.userId) {
 			await removeTokenUserDB(Number(socket.userId));
 		}

@@ -47,7 +47,7 @@ const createRoomUseCase = async (
 		saveRoom(room);
 
 		return setCreateResponse(true, GlobalFailCode.NONE_FAILCODE, room);
-	} else{
+	} else {
 		return setCreateResponse(false, GlobalFailCode.CREATE_ROOM_FAILED);
 	}
 };

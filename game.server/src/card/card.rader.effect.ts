@@ -10,7 +10,7 @@ const cardRaderEffect = async (roomId: number, userId: string): Promise<boolean>
 
 	if (!user.character.equips.includes(CardType.RADAR)) {
 		user.character.equips.push(CardType.RADAR);
-	} else{
+	} else {
 		return false;
 	}
 

@@ -50,7 +50,11 @@ describe('gamePrepareHandler', () => {
 
 		// Assert: 유스케이스와 sendData가 올바른 인자와 함께 호출되었는지 검증
 		expect(mockGamePrepareUseCase).toHaveBeenCalledWith(mockSocket, mockRequest);
-		expect(mockSendData).toHaveBeenCalledWith(mockSocket, successPacket, GamePacketType.gamePrepareResponse);
+		expect(mockSendData).toHaveBeenCalledWith(
+			mockSocket,
+			successPacket,
+			GamePacketType.gamePrepareResponse,
+		);
 	});
 
 	it('유스케이스가 실패 패킷을 반환하면 해당 패킷을 그대로 전송해야 한다', async () => {
@@ -68,7 +72,11 @@ describe('gamePrepareHandler', () => {
 
 		// Assert: 유스케이스와 sendData가 올바른 인자와 함께 호출되었는지 검증
 		expect(mockGamePrepareUseCase).toHaveBeenCalledWith(mockSocket, mockRequest);
-		expect(mockSendData).toHaveBeenCalledWith(mockSocket, failurePacket, GamePacketType.gamePrepareResponse);
+		expect(mockSendData).toHaveBeenCalledWith(
+			mockSocket,
+			failurePacket,
+			GamePacketType.gamePrepareResponse,
+		);
 	});
 
 	it('요청 패킷의 페이로드가 유효하지 않으면 아무 작업도 하지 않아야 한다', async () => {

@@ -58,7 +58,6 @@ export const getDeckSize = (roomId: number): number => {
 	else return 0;
 };
 
-
 export const drawSpecificCard = (roomId: number, cardType: CardType): CardType | null => {
 	const deck = roomDecks.get(roomId);
 	if (!deck) return null;
@@ -70,4 +69,3 @@ export const drawSpecificCard = (roomId: number, cardType: CardType): CardType |
 	// 해당 카드를 덱에서 제거 후 반환
 	return deck.splice(index, 1)[0];
 };
-
