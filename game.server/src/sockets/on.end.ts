@@ -1,10 +1,9 @@
-import { Socket } from 'net';
 import { handleError } from '../handlers/handleError.js';
 import { removeSocket } from '../managers/socket.manger.js';
-import leaveRoomRequestHandler from '../handlers/request/leave.room.request.handler.js';
-import { deleteRoom, getRoom, removeUserFromRoom } from '../utils/redis.util.js';
 import { GameSocket } from '../type/game.socket.js';
 import { removeTokenUserDB } from '../services/prisma.service.js';
+import { deleteRoom, getRoom, removeUserFromRoom } from '../utils/room.utils.js';
+
 
 const onEnd = (socket: GameSocket) => async () => {
 	try {
@@ -16,10 +15,12 @@ const onEnd = (socket: GameSocket) => async () => {
 		}
 		
 		if (socket.roomId) {
-			await removeUserFromRoom(Number(socket.roomId), socket.userId!);
-			const room = await getRoom(Number(socket.roomId));
+			
+			// await removeUserFromRoom();
+			removeUserFromRoom(Number(socket.roomId), socket.userId!);
+			const room = getRoom(Number(socket.roomId));
 			if (room!.users.length <= 0) {
-				await deleteRoom(room!.id);
+				deleteRoom(Number(socket.roomId));
 			}
 		}
 	} catch (error) {

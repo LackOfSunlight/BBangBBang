@@ -11,7 +11,7 @@ import { User } from '../models/user.model';
 import { checkSatelliteTargetEffect } from '../card/card.satellite_target.effect';
 import { setPositionUpdateNotification } from '../handlers/notification/position.update.notification.handler';
 import { checkContainmentUnitTarget } from '../card/card.containment_unit.effect';
-import { deleteRoom, getRoom, saveRoom } from '../utils/room.utils';
+import { deleteRoom, getRoom, roomPhase, roomTimers, saveRoom } from '../utils/room.utils';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 const positionUpdateIntervals = new Map<number, NodeJS.Timeout>();
@@ -23,8 +23,6 @@ export const notificationCharacterPosition = new Map<
 
 class GameManager {
 	private static instance: GameManager;
-	private roomTimers = new Map<string, NodeJS.Timeout>();
-	private roomPhase = new Map<string, PhaseType>();
 
 	public static getInstance(): GameManager {
 		if (!GameManager.instance) {
@@ -37,9 +35,9 @@ class GameManager {
 		console.log(`Starting game in room ${room.id}`);
 		const roomId = `room:${room.id}`;
 		const phase = PhaseType.DAY;
-		this.roomPhase.set(roomId, phase);
+		roomPhase.set(roomId, phase);
 
-		const intervalId = setInterval(() => broadcastPositionUpdates(room, this.roomPhase), 200);
+		const intervalId = setInterval(() => broadcastPositionUpdates(room), 100);
 
 		positionUpdateIntervals.set(room.id, intervalId);
 		this.scheduleNextPhase(room.id, roomId);
@@ -52,7 +50,7 @@ class GameManager {
 
 		let nextPhase: PhaseType;
 		let interval: number;
-		if (this.roomPhase.get(roomTimerMapId) === PhaseType.DAY) {
+		if (roomPhase.get(roomTimerMapId) === PhaseType.DAY) {
 			nextPhase = PhaseType.END;
 			interval = dayInterval;
 		} else {
@@ -62,7 +60,7 @@ class GameManager {
 
 		const timer = setTimeout(async () => {
 			const timerExecutionTime = Date.now();
-			this.roomPhase.set(roomTimerMapId, nextPhase);
+			roomPhase.set(roomTimerMapId, nextPhase);
 			let room = getRoom(roomId);
 			if (!room) return;
 
@@ -162,14 +160,14 @@ class GameManager {
 			this.scheduleNextPhase(room.id, roomTimerMapId);
 		}, interval);
 
-		this.roomTimers.set(roomTimerMapId, timer);
+		roomTimers.set(roomTimerMapId, timer);
 	}
 
 	public async endGame(room: Room) {
 		console.log(`Ending game in room ${room.id}`);
 		// 기존 게임 종료 로직이 있다면 여기에 위치합니다.
 		const roomId = `room:${room.id}`;
-		this.roomPhase.delete(roomId);
+		roomPhase.delete(roomId);
 		const intervalId = positionUpdateIntervals.get(room.id);
 		if (intervalId) {
 			clearInterval(intervalId);
@@ -181,10 +179,10 @@ class GameManager {
 	}
 
 	private clearTimer(roomId: string) {
-		const timer = this.roomTimers.get(roomId);
+		const timer = roomTimers.get(roomId);
 		if (timer) {
 			clearTimeout(timer);
-			this.roomTimers.delete(roomId);
+			roomTimers.delete(roomId);
 			console.log(`[Room ${roomId}] Timer cleared.`);
 		}
 	}
@@ -222,7 +220,7 @@ const removedCard = (room: Room, user: User): User => {
 	return user;
 };
 
-export const broadcastPositionUpdates = (room: Room, roomPhase: Map<string, PhaseType>) => {
+export const broadcastPositionUpdates = (room: Room) => {
 	const roomMap = notificationCharacterPosition.get(room.id);
 	if (!roomMap) return; // 해당 방의 위치 정보가 없으면 종료
 
