@@ -6,7 +6,6 @@ import { getRooms } from '../../utils/room.utils.js';
 import { Room } from '../../models/room.model.js';
 
 const getRoomListUseCase = (socket: GameSocket, req: C2SGetRoomListRequest): GamePacket => {
-
 	const rooms = getRooms();
 
 	return setGetRoomListResponse(rooms);

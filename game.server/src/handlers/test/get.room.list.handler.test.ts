@@ -28,7 +28,10 @@ describe('getRoomListRequestHandler', () => {
 
 		(getGamePacketType as jest.Mock).mockReturnValue(mockGamePacket.payload);
 		(getRoomListUseCase as jest.Mock).mockReturnValue({
-			payload: { oneofKind: GamePacketType.getRoomListResponse, getRoomListResponse: { rooms: [] } },
+			payload: {
+				oneofKind: GamePacketType.getRoomListResponse,
+				getRoomListResponse: { rooms: [] },
+			},
 		});
 		(sendData as jest.Mock).mockImplementation(() => {});
 	});
@@ -38,7 +41,7 @@ describe('getRoomListRequestHandler', () => {
 	});
 
 	it('요청을 성공적으로 처리하고 응답을 전송해야 함', async () => {
-		const req: C2SGetRoomListRequest={}; 
+		const req: C2SGetRoomListRequest = {};
 
 		await getRoomListRequestHandler(mockSocket as GameSocket, mockGamePacket);
 

@@ -70,7 +70,7 @@ describe('leaveRoomUseCase', () => {
 
 	// --- 방장 퇴장 시나리오 --- //
 
-		describe('방장이 방을 나갈 때', () => {
+	describe('방장이 방을 나갈 때', () => {
 		it('성공적으로 방을 삭제하고 모든 유저에게 알림을 보내야 한다', async () => {
 			// Arrange
 			const usersInRoom = [owner, user2, user3];
@@ -133,7 +133,10 @@ describe('leaveRoomUseCase', () => {
 			expect(mockBroadcastDataToRoom).toHaveBeenCalledWith(
 				[owner, user3], // 남은 유저 목록
 				expect.objectContaining({
-					payload: { oneofKind: 'leaveRoomNotification', leaveRoomNotification: { userId: user2.id } },
+					payload: {
+						oneofKind: 'leaveRoomNotification',
+						leaveRoomNotification: { userId: user2.id },
+					},
 				}),
 				GamePacketType.leaveRoomNotification,
 			);

@@ -35,7 +35,7 @@ const joinRoomUseCase = async (
 
 		socket.roomId = req.roomId;
 
-        const notificationPacket = setJoinRoomNotification(user);
+		const notificationPacket = setJoinRoomNotification(user);
 
 		broadcastDataToRoom(room.users, notificationPacket, GamePacketType.joinRoomNotification);
 		return setJoinRoomResponse(true, GlobalFailCode.NONE_FAILCODE, room);

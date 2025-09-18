@@ -4,7 +4,7 @@ import { drawDeck } from '../managers/card.manager.js';
 import { CardData } from '../generated/common/types.js';
 import { CardType } from '../generated/common/enums.js';
 
-const cardWinLotteryEffect = async (roomId: number, userId: string) : Promise<boolean> => {
+const cardWinLotteryEffect = async (roomId: number, userId: string): Promise<boolean> => {
 	const user = await getUserFromRoom(roomId, userId);
 
 	// 유효성 검증

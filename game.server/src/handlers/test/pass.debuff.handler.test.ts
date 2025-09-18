@@ -128,8 +128,8 @@ describe('passDebuffHandler', () => {
 					oneofKind: GamePacketType.loginRequest, // 잘못된 패킷 타입
 					loginRequest: {
 						email: '',
-						password: ''
-					}
+						password: '',
+					},
 				},
 			} as GamePacket;
 

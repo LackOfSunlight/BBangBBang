@@ -112,7 +112,7 @@
 
 // 	await reactionResponseHandler(socket, setReactionResponse(true, GlobalFailCode.NONE_FAILCODE));
 // 	await userUpdateNotificationHandler(socket, setUserUpdateNotification(room.users));
-	
+
 // 	// 게임 종료 조건 검사
 // 	await checkAndEndGameIfNeeded(room.id);
 // };

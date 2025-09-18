@@ -29,7 +29,7 @@
 // 				GlobalFailCode.REGISTER_FAILED,
 // 			),
 // 		);
-		
+
 // 	}
 
 // 	if (!validateInput.email(req.email)) {

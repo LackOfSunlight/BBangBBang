@@ -66,7 +66,7 @@
 // 	for (let i = 0; i < room.users.length; i++) {
 // 		const character = room.users[i].character;
 // 		const pos = notificationCharacterPosition.get(room.id);
-	
+
 // 		if(pos != undefined) pos.set(room.users[i].id, characterPositionsData[i]); //위치 저장
 
 // 		if (character) {

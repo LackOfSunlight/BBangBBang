@@ -12,5 +12,4 @@ const checkUserDbService = async (req: C2SRegisterRequest): Promise<Boolean> => 
 	else return true;
 };
 
-
 export default checkUserDbService;

@@ -20,11 +20,11 @@ const getMaxHp = (characterType: CharacterType): number => {
 	}
 };
 
-const cardVaccineEffect = async (roomId: number, userId: string) : Promise<boolean> => {
+const cardVaccineEffect = async (roomId: number, userId: string): Promise<boolean> => {
 	const user = await getUserFromRoom(roomId, userId);
 
 	// 유효성 검증
-	if (!user)  return false;
+	if (!user) return false;
 
 	const maxHp = getMaxHp(user.character!.characterType);
 	if (user.character!.hp >= maxHp) {

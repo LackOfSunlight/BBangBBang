@@ -10,12 +10,11 @@ const getRoomListRequestHandler = async (socket: GameSocket, gamePacket: GamePac
 
 	if (!payload || !socket.userId) return;
 
-    const req = payload.getRoomListRequest;
+	const req = payload.getRoomListRequest;
 
-	const res = getRoomListUseCase(socket,req);
+	const res = getRoomListUseCase(socket, req);
 
-    sendData(socket, res, GamePacketType.getRoomListResponse);
-
+	sendData(socket, res, GamePacketType.getRoomListResponse);
 };
 
 export default getRoomListRequestHandler;
