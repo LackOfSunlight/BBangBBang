@@ -5,7 +5,7 @@ import { getRoom } from '../utils/redis.util.js';
 import { CardType } from '../generated/common/enums.js';
 import { CheckGuerrillaService } from '../services/guerrilla.check.service.js';
 
-const cardBbangEffect = async (roomId: number, userId: string, targetUserId: string) : Promise<boolean> => {
+const cardBbangEffect = async (roomId: number, userId: string, targetUserId: string) => {
 	// 정보값 가져오기
 	const user = await getUserFromRoom(roomId, userId);
 	const target = await getUserFromRoom(roomId, targetUserId);
@@ -15,25 +15,25 @@ const cardBbangEffect = async (roomId: number, userId: string, targetUserId: str
 
 	if (!room) {
 		console.log('방이 존재하지 않습니다.');
-		return false;
+		return;
 	}
 
 	if (!user || !user.character || !user.character.stateInfo) {
 		console.log('사용자 정보가 존재하지 않습니다');
-		return false;
+		return;
 	}
 
 	if (!target || !target.character || !target.character.stateInfo) {
 		console.log('타깃 유저의 정보가 존재하지 않습니다 ');
-		return false;
+		return;
 	}
 
 	// 타겟 유저가 사망 상태라면 불발 처리
 	if (target.character.hp <= 0) {
 		console.log('타깃 유저의 체력이 이미 0 입니다.');
-		return false;
+		return;
 	}
-	if (!user || !target || !user.character || !target.character) return false;
+	if (!user || !target || !user.character || !target.character) return;
 
 	if (user.character.stateInfo.state === CharacterStateType.NONE_CHARACTER_STATE) {
 		// 상태 설정
@@ -67,18 +67,16 @@ const cardBbangEffect = async (roomId: number, userId: string, targetUserId: str
 		await updateCharacterFromRoom(roomId, userId, user.character);
 		const updatedRoom = await getRoom(roomId);
 		if(updatedRoom) await CheckGuerrillaService(updatedRoom);
-		return true;
+		return;
 	}
 
     // 수정 정보 갱신
 	try{
 		await updateCharacterFromRoom(roomId, userId, user.character);
 		await updateCharacterFromRoom(roomId, targetUserId, target.character);
-		return true;
 		//console.log('로그 저장에 성공하였습니다');
 	} catch(error){
 		console.error(`로그 저장에 실패하였습니다:[${error}]`);
-		return false;
 	}
 };
 

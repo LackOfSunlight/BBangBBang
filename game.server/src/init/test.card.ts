@@ -4,27 +4,15 @@ import { CardData } from "../generated/common/types";
 
 export const testCard:CardData[] = [
     {
-        type: CardType.BBANG,
+        type: CardType.CONTAINMENT_UNIT,
         count: 4,
     },
     {
-        type: CardType.BIG_BBANG,
-        count: 2,
+        type: CardType.MATURED_SAVINGS,
+        count: 4,
     },
     {
-        type: CardType.SHIELD,
-        count: 2
-    },
-        {
-        type: CardType.DESERT_EAGLE,
-        count: 2,
-    },
-    {
-        type: CardType.STEALTH_SUIT,
-        count: 2,
-    },
-    {
-        type: CardType.RADAR,
-        count: 2
+        type: CardType.BBANG,
+        count: 4
     }
 ];

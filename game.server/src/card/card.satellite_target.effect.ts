@@ -5,7 +5,7 @@ import { sendAnimationNotification } from '../handlers/notification/animation.no
 import { checkAndEndGameIfNeeded } from '../utils/game.end.util.js';
 
 // 위성 타겟 카드 사용 시 디버프 추가
-const cardSatelliteTargetEffect = async (roomId: number, userId: string, targetUserId: string) : Promise<boolean> => {
+const cardSatelliteTargetEffect = async (roomId: number, userId: string, targetUserId: string) => {
 	const target = await getUserFromRoom(roomId, targetUserId);
 	if (!target || !target.character) {
 		console.warn(`[SatelliteTarget] 타겟을 찾을 수 없습니다: ${targetUserId}`);

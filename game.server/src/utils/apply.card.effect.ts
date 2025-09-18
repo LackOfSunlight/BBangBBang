@@ -26,11 +26,11 @@ import cardWinLotteryEffect from "../card/card.win_lottery.effect.js";
 import { repeatDeck } from "../managers/card.manager.js";
 
 // 카드 효과 적용 함수
-export async function applyCardEffect(roomId:number, CardType: number, userId: string, targetUserId: string) : Promise<boolean> {
+export async function applyCardEffect(roomId:number, CardType: number, userId: string, targetUserId: string) {
   const user = await getUserFromRoom(roomId, userId);
   
   // 유효성 검증 (119 카드 예외 처리)
-  if (!user || !user.character) return false;
+  if (!user || !user.character) return;
   
   
   const usedCard = user.character.handCards.find(c => c.type === CardType);
@@ -51,60 +51,82 @@ export async function applyCardEffect(roomId:number, CardType: number, userId: s
   // 소지한 카드 제거 후 효과 적용  
   switch (CardType) {
     case 1: //'BBANG':
-      return await cardBbangEffect(roomId, userId, targetUserId);
+      await cardBbangEffect(roomId, userId, targetUserId);
+      break;
     case 2: //'BIGBBANG':
-      return cardBigBbangEffect(roomId, userId, targetUserId);
+      await cardBigBbangEffect(roomId, userId, targetUserId);
+      break;
     case 3: //'SHIELD':
-      return await cardShieldEffect(roomId, userId, targetUserId);
+      await cardShieldEffect(roomId, userId, targetUserId);
+      break;
     case 4: // 'VACCINE':
-      return await cardVaccineEffect(roomId, userId);
+      await cardVaccineEffect(roomId, userId);
+      break;
     case 5: // 'CALL_119':
-      return await cardCall119Effect(roomId, userId, targetUserId);
+      await cardCall119Effect(roomId, userId, targetUserId);
+      break;
     case 6: // 'DEATH_MATCH':
-      return await cardDeathMatchEffect(roomId, userId, targetUserId);
+      await cardDeathMatchEffect(roomId, userId, targetUserId);
+      break;
     case 7: // 'GUIRRILLA':
-      return await cardGuerrillaEffect(roomId, userId, targetUserId);
+      await cardGuerrillaEffect(roomId, userId, targetUserId);
+      break;
     case 8: // 'ABSORB':
-      return await cardAbsorbEffect(roomId, userId, targetUserId);
+      await cardAbsorbEffect(roomId, userId, targetUserId);
+      break;
     case 9: // 'HALLUCINATION':
-      return await cardHallucinationEffect(roomId, userId, targetUserId);
+      await cardHallucinationEffect(roomId, userId, targetUserId);
+      break;
     case 10: // 'FLEA_MARKET':
-      return await cardFleaMarketEffect(roomId, userId, targetUserId);
+      await cardFleaMarketEffect(roomId, userId, targetUserId);
+      break;
     case 11: // 'MATURED_SAVINGS':
-      return await cardMaturedSavingsEffect(roomId, userId);
+      await cardMaturedSavingsEffect(roomId, userId);
+      break;
     case 12: // 'WIN_LOTTERY':
-      return await cardWinLotteryEffect(roomId, userId);
+      await cardWinLotteryEffect(roomId, userId);
+      break;
 
     // 무기 카드  
     case 13: // 'SNIPER_GUN':
-      return await cardSniperGunEffect(roomId, userId);
+      await cardSniperGunEffect(roomId, userId);
+      break;
     case 14: // 'HAND_GUN':
-      return await cardHandGunEffect(roomId, userId);
+      await cardHandGunEffect(roomId, userId);
+      break;
     case 15: // 'DESERT_EAGLE':
-      return await cardDesertEagleEffect(roomId, userId);
+      await cardDesertEagleEffect(roomId, userId);
+      break;
     case 16: // 'AUTO_RIFLE':
-      return await cardAutoRifleEffect(roomId, userId);
+      await cardAutoRifleEffect(roomId, userId);
+      break;
 
     // 장비 카드
     case 17: // 'LASER_POINTER':
-      return await cardLaserPointerEffect(roomId, userId);
+      await cardLaserPointerEffect(roomId, userId);
+      break;
     case 18: // 'RADER':
-      return await cardRaderEffect(roomId, userId);
+      await cardRaderEffect(roomId, userId);
+      break;
     case 19: // 'AUTO_SHIELD':
-      return await cardAutoShieldEffect(roomId, userId);
+      await cardAutoShieldEffect(roomId, userId);
+      break;
     case 20: // 'STEATLH_SUIT':
-      return await cardStealthSuitEffect(roomId, userId);
+      await cardStealthSuitEffect(roomId, userId);
+      break;
 
     // 디버프 카드  
     case 21: // 'CONTAINMENT_UNIT':
-      return await cardContainmentUnitEffect(roomId, userId, targetUserId);
+      cardContainmentUnitEffect(roomId, userId, targetUserId);
+      break;
     case 22: // 'SATELLITE_TARGET':
-      return await cardSatelliteTargetEffect(roomId, userId, targetUserId);
+      await cardSatelliteTargetEffect(roomId, userId, targetUserId);
+      break;
     case 23: // 'BOMB':
-      return cardBombEffect(roomId, userId, targetUserId);
+      cardBombEffect(roomId, userId, targetUserId);
+      break;
     default:
       console.log('Unknown card type');
-      return  false;
   }
 }
 

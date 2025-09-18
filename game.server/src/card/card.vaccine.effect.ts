@@ -20,16 +20,16 @@ const getMaxHp = (characterType: CharacterType): number => {
 	}
 };
 
-const cardVaccineEffect = async (roomId: number, userId: string) : Promise<boolean> => {
+const cardVaccineEffect = async (roomId: number, userId: string) => {
 	const user = await getUserFromRoom(roomId, userId);
 
 	// 유효성 검증
-	if (!user)  return false;
+	if (!user) return;
 
 	const maxHp = getMaxHp(user.character!.characterType);
 	if (user.character!.hp >= maxHp) {
 		console.log(`체력이 최대치(${maxHp})에 도달하여 더이상 회복 할 수 없습니다.`);
-		return false;
+		return;
 	}
 
 	const previousHp = user.character!.hp;
@@ -40,10 +40,8 @@ const cardVaccineEffect = async (roomId: number, userId: string) : Promise<boole
 		console.log(
 			`[백신 사용] ${user.nickname}의 체력이 ${previousHp} → ${user.character!.hp}로 회복되었습니다. (최대: ${maxHp})`,
 		);
-		return true;
 	} catch (error) {
 		console.error(`[백신] Redis 업데이트 실패:`, error);
-		return false;
 	}
 };
 export default cardVaccineEffect;

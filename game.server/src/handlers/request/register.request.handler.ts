@@ -8,9 +8,9 @@ import { GlobalFailCode } from '../../generated/common/enums.js';
 import { validateInput } from '../../utils/validation.js';
 import * as bcrypt from 'bcrypt';
 import { handleError } from '../handleError.js';
-import inputFieldCheckService from '../../services/register/input.field.check.service.js';
-import checkUserDbService from '../../services/register/check.user.db.service.js';
-import setUserDbService from '../../services/register/set.user.db.service.js';
+import inputFieldCheckService from '../../services/register.request.handler/input.field.check.service.js';
+import checkUserDbService from '../../services/register.request.handler/check.user.db.service.js';
+import setUserDbService from '../../services/register.request.handler/set.user.db.service.js';
 import { createUserDB } from '../../services/prisma.service.js';
 
 const registerRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {

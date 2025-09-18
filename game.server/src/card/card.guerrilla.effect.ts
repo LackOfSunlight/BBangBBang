@@ -1,6 +1,6 @@
 // cardType = 7
 import { CardType, CharacterStateType } from '../generated/common/enums.js';
-import { drawSpecificCard, repeatDeck } from '../managers/card.manager.js';
+import { repeatDeck } from '../managers/card.manager.js';
 import {
 	getRoom,
 	getUserFromRoom,
@@ -8,38 +8,10 @@ import {
 	updateCharacterFromRoom,
 } from '../utils/redis.util.js';
 
-const cardGuerrillaEffect = async (
-	roomId: number,
-	userId: string,
-	targetUserId: string,
-): Promise<boolean> => {
+const cardGuerrillaEffect = async (roomId: number, userId: string, targetUserId: string) => {
 	const room = await getRoom(roomId);
-	const shooter = await getUserFromRoom(roomId, userId);
 
-	if (!room || !shooter) return false;
-
-	const isBlockedStateUsers = room.users.some(
-		(s) =>
-			s.character &&
-			s.character.stateInfo?.state !== CharacterStateType.NONE_CHARACTER_STATE && // NONE이 아닌데
-			s.character.stateInfo?.state !== CharacterStateType.CONTAINED, // CONTAINED도 아닌 경우
-	);
-
-	if (isBlockedStateUsers) {
-		const getCard = drawSpecificCard(room.id, CardType.GUERRILLA);
-
-		if (getCard) {
-			const existCard = shooter?.character?.handCards.find((card) => card.type === getCard);
-			if (existCard) {
-				existCard.count += 1;
-			} else {
-				shooter.character?.handCards.push({ type: getCard, count: 1 });
-			}
-
-			await updateCharacterFromRoom(room.id, shooter.id, shooter.character!);
-			return true;
-		}
-	}
+	if (!room) return;
 
 	for (let user of room.users) {
 		if (user.character?.stateInfo?.state != null) {
@@ -58,7 +30,6 @@ const cardGuerrillaEffect = async (
 	}
 
 	await saveRoom(room);
-	return true;
 };
 
 export default cardGuerrillaEffect;

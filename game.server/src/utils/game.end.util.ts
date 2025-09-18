@@ -153,7 +153,7 @@ async function endGame(room: Room, gameResult: GameEndResult): Promise<void> {
 		// 모든 플레이어에게 게임 종료 알림 전송
 		await broadcastDataToRoom(room.users, gameEndPacket, GamePacketType.gameEndNotification);
 
-		await gameManager.endGame(room);
+		gameManager.endGame(room);
 		
 		console.log(`[GameEnd] 게임 종료 완료: ${room.id}번 방`);
 	} catch (error) {

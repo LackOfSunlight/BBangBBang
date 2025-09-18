@@ -4,16 +4,16 @@ import { CardType, CharacterStateType } from '../generated/common/enums.js';
 import { getRoom } from '../utils/redis.util.js';
 
 // 디버프 적용 처리 로직
-const cardContainmentUnitEffect = async (roomId: number, userId: string, targetUserId: string) : Promise<boolean> => {
+const cardContainmentUnitEffect = async (roomId: number, userId: string, targetUserId: string) => {
 	const user = await getUserFromRoom(roomId, userId);
 	const target = await getUserFromRoom(roomId, targetUserId);
 	// 유효성 검증
-	if (!user || !target || !target.character) return false;
+	if (!user || !target || !target.character) return;
 
 	// 이미 해당 디버프 상태일 경우 ; 중복 검증
 	if (target.character.debuffs.includes(CardType.CONTAINMENT_UNIT)) {
 		console.log(`이미 ${target.nickname} 유저는 감금 장치에 맞았습니다. `);
-		return false;
+		return;
 	}
 
 	target.character.debuffs.push(CardType.CONTAINMENT_UNIT);
@@ -23,10 +23,8 @@ const cardContainmentUnitEffect = async (roomId: number, userId: string, targetU
 	try{
 		await updateCharacterFromRoom(roomId, targetUserId, target.character);
 		//console.log('로그 저장에 성공하였습니다');
-		return true;
 	} catch(error){
 		console.error(`로그 저장에 실패하였습니다:[${error}]`);
-		return false;
 	}
 };
 

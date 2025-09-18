@@ -2,22 +2,22 @@
 import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
 import { CardType, CharacterStateType } from '../generated/common/enums.js';
 
-const cardDeathMatchEffect = async (roomId: number, userId: string, targetUserId: string) : Promise<boolean> => {
+const cardDeathMatchEffect = async (roomId: number, userId: string, targetUserId: string) => {
 	const user = await getUserFromRoom(roomId, userId);
 
 	// 유효성 검증
-	if (!user || !user.character) return false;
+	if (!user || !user.character) return;
 
 	const target = await getUserFromRoom(roomId, targetUserId);
 
 	// 유효성 검증
-	if (!target || !target.character) return false;
+	if (!target || !target.character) return;
 
 	const isBbangCard: boolean = user.character.handCards.some(c => c.type === CardType.BBANG);
 
 	if(!isBbangCard) {
 		console.log("빵야 카드가 없습니다");
-		return false;
+		return;
 	}
 
 	// 현피 카드 효과: 현피 상태 설정
@@ -43,10 +43,8 @@ const cardDeathMatchEffect = async (roomId: number, userId: string, targetUserId
 		await updateCharacterFromRoom(roomId, userId, user.character);
 		await updateCharacterFromRoom(roomId, targetUserId, target.character);
 		console.log(`[현피] ${user.nickname}이 ${target.nickname}에게 현피를 걸었습니다.`);
-		return true
 	} catch (error) {
 		console.error(`[현피] Redis 업데이트 실패:`, error);
-		return false;
 	}
 };
 

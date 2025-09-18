@@ -3,12 +3,12 @@ import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js
 import { drawDeck, getDeckSize } from '../managers/card.manager.js';
 import { CardType } from '../generated/common/enums.js';
 
-const cardMaturedSavingsEffect = async (roomId: number, userId: string) : Promise<boolean> => {
+const cardMaturedSavingsEffect = async (roomId: number, userId: string) => {
 	const user = await getUserFromRoom(roomId, userId);
 	// 유효성 검증
 	if ( !user ) {
 		console.log("잘못된 사용자 정보입니다")
-		return false;
+		return;
 	}
 
 	// 뽑을 카드 매수
@@ -18,7 +18,7 @@ const cardMaturedSavingsEffect = async (roomId: number, userId: string) : Promis
 	// 덱 매수 부족할 경우 중단 
 	if (remainCardNumberInDeck < numberOfDraw) {
 		console.log(`덱에서 뽑을 카드가 부족합니다.`);
-		return false;
+		return;
 	}
 
 	// 카드 2장 뽑기(메인 기믹) 공지
@@ -45,10 +45,8 @@ const cardMaturedSavingsEffect = async (roomId: number, userId: string) : Promis
 	try {
 		await updateCharacterFromRoom(roomId, user.id, user.character!);
 		//console.log('로그 저장에 성공하였습니다');
-		return true;
 	} catch (error) {
 		console.error(`로그 저장에 실패하였습니다:[${error}]`);
-		return false;
 	}
 };
 

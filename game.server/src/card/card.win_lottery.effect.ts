@@ -4,11 +4,11 @@ import { drawDeck } from '../managers/card.manager.js';
 import { CardData } from '../generated/common/types.js';
 import { CardType } from '../generated/common/enums.js';
 
-const cardWinLotteryEffect = async (roomId: number, userId: string) : Promise<boolean> => {
+const cardWinLotteryEffect = async (roomId: number, userId: string) => {
 	const user = await getUserFromRoom(roomId, userId);
 
 	// 유효성 검증
-	if (!user || !user.character) return false;
+	if (!user || !user.character) return;
 
 	// 복권방 카드 효과: 새로운 카드 세 장을 획득
 	// useTag: "Lottery"로 복권방 NPC와만 상호작용
@@ -19,7 +19,7 @@ const cardWinLotteryEffect = async (roomId: number, userId: string) : Promise<bo
 
 	if (newCardTypes.length === 0) {
 		console.log(`[복권 당첨] ${user.nickname}: 덱에 카드가 없습니다.`);
-		return false;
+		return;
 	}
 
 	// 게임 로직에 따라 같은 타입의 카드가 있으면 count 증가, 없으면 새로 추가
@@ -48,10 +48,8 @@ const cardWinLotteryEffect = async (roomId: number, userId: string) : Promise<bo
 			`[복권 당첨] ${user.nickname}이 카드 ${newCardTypes.length}장을 획득했습니다:`,
 			newCardTypes.map((type) => CardType[type]).join(', '),
 		);
-		return true;
 	} catch (error) {
 		console.error(`[복권 당첨] Redis 업데이트 실패:`, error);
-		return false;
 	}
 };
 

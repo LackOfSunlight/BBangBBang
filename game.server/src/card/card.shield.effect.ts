@@ -7,16 +7,16 @@ import { User } from '../models/user.model.js';
 
 
 
-const cardShieldEffect = async (roomId: number, userId: string, targetUserId: string) : Promise<boolean> => {
+const cardShieldEffect = async (roomId: number, userId: string, targetUserId: string) => {
 	let room = await getRoom(roomId);
 
-	if (!room) return false;
+	if (!room) return;
 
 	const user = room.users.find((u) => u.id === userId);
 
 	if (!user?.character) {
 		console.log('유저에 캐릭터 정보가 없다');
-		return false;
+		return;
 	}
 	const stateInfo = user?.character?.stateInfo;
 
@@ -59,7 +59,6 @@ const cardShieldEffect = async (roomId: number, userId: string, targetUserId: st
 	room = await CheckBigBbangService(room);
 
 	await saveRoom(room);
-	return true;
 };
 
 const removeShields = (user: User, count: number) => {

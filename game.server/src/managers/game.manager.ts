@@ -9,7 +9,7 @@ import characterSpawnPosition from '../data/character.spawn.position.json';
 import { CharacterPositionData } from '../generated/common/types';
 import { shuffle } from '../utils/shuffle.util';
 import { GameSocket } from '../type/game.socket';
-import { deleteRoom, getRoom, saveRoom, updateCharacterFromRoom } from '../utils/redis.util';
+import { getRoom, saveRoom, updateCharacterFromRoom } from '../utils/redis.util';
 import { GamePacket } from '../generated/gamePacket';
 import { GamePacketType } from '../enums/gamePacketType';
 import { broadcastDataToRoom } from '../utils/notification.util';
@@ -170,7 +170,7 @@ class GameManager {
 		this.roomTimers.set(roomTimerMapId, timer);
 	}
 
-	public async endGame(room: Room) {
+	public endGame(room: Room) {
 		console.log(`Ending game in room ${room.id}`);
 		// 기존 게임 종료 로직이 있다면 여기에 위치합니다.
 		const roomId = `room:${room.id}`;
@@ -181,8 +181,6 @@ class GameManager {
 			positionUpdateIntervals.delete(room.id); // Map에서 제거
 		}
 		this.clearTimer(roomId);
-
-		await deleteRoom(room.id);
 	}
 
 	private clearTimer(roomId: string) {
