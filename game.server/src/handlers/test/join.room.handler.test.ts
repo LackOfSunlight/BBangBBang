@@ -1,4 +1,4 @@
-import joinRoomRequestHandler from '../join.room.handler';
+import joinRoomHandler from '../join.room.handler';
 import { GameSocket } from '../../type/game.socket.js';
 import { GamePacket } from '../../generated/gamePacket.js';
 import { getGamePacketType } from '../../utils/type.converter.js';
@@ -26,7 +26,7 @@ describe('joinRoomRequestHandler', () => {
 		mockSocket = {
 			userId: '1',
 		};
-        
+
 		mockGamePacket = {
 			payload: {
 				oneofKind: GamePacketType.joinRoomRequest,
@@ -48,13 +48,13 @@ describe('joinRoomRequestHandler', () => {
 			name: 'testRoom',
 			maxUserNum: 4,
 			state: RoomStateType.WAIT,
-			users: [new User('1', 'hostUser')],
+			users: [new User('1', 'hostUser'), mockUser],
 		};
 
 		mockReturnGamePacket = {
 			payload: {
-				oneofKind: GamePacketType.joinRandomRoomResponse,
-				joinRandomRoomResponse: {
+				oneofKind: GamePacketType.joinRoomResponse,
+				joinRoomResponse: {
 					success: true,
 					room: mockRoom,
 					failCode: GlobalFailCode.NONE_FAILCODE,
@@ -72,7 +72,7 @@ describe('joinRoomRequestHandler', () => {
 	});
 
 	it('요청을 성공적으로 처리하고 응답을 전송해야 함', async () => {
-		await joinRoomRequestHandler(mockSocket as GameSocket, mockGamePacket);
+		await joinRoomHandler(mockSocket as GameSocket, mockGamePacket);
 
 		expect(getGamePacketType).toHaveBeenCalledWith(mockGamePacket, GamePacketType.joinRoomRequest);
 		expect(joinRoomUseCase).toHaveBeenCalledWith(mockSocket, mockPayloadJoinRoom);
@@ -87,7 +87,7 @@ describe('joinRoomRequestHandler', () => {
 	it('payload가 없으면 아무 작업도 수행하지 않아야 함', async () => {
 		(getGamePacketType as jest.Mock).mockReturnValue(null);
 
-		await joinRoomRequestHandler(mockSocket as GameSocket, mockGamePacket);
+		await joinRoomHandler(mockSocket as GameSocket, mockGamePacket);
 
 		expect(joinRoomUseCase).not.toHaveBeenCalled();
 		expect(sendData).not.toHaveBeenCalled();
@@ -96,7 +96,7 @@ describe('joinRoomRequestHandler', () => {
 	it('socket.userId가 없으면 아무 작업도 수행하지 않아야 함', async () => {
 		mockSocket.userId = undefined;
 
-		await joinRoomRequestHandler(mockSocket as GameSocket, mockGamePacket);
+		await joinRoomHandler(mockSocket as GameSocket, mockGamePacket);
 
 		expect(joinRoomUseCase).not.toHaveBeenCalled();
 		expect(sendData).not.toHaveBeenCalled();

@@ -7,7 +7,7 @@ import { sendData } from '../utils/send.data.js';
 import { broadcastDataToRoom } from '../utils/notification.util.js';
 import { getRoom } from '../utils/room.utils.js';
 
-const joinRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
+const joinRoomHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.joinRoomRequest);
 
 	if (!payload || !socket.userId) return;
@@ -19,4 +19,4 @@ const joinRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 	sendData(socket, res, GamePacketType.joinRoomResponse);
 };
 
-export default joinRoomRequestHandler;
+export default joinRoomHandler;

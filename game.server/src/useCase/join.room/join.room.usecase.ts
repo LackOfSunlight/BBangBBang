@@ -38,7 +38,7 @@ const joinRoomUseCase = async (
         const notificationPacket = setJoinRoomNotification(user);
 
 		broadcastDataToRoom(room.users, notificationPacket, GamePacketType.joinRoomNotification);
-		return setJoinRoomResponse(true, GlobalFailCode.NONE_FAILCODE);
+		return setJoinRoomResponse(true, GlobalFailCode.NONE_FAILCODE, room);
 	} else {
 		return setJoinRoomResponse(false, GlobalFailCode.JOIN_ROOM_FAILED);
 	}
