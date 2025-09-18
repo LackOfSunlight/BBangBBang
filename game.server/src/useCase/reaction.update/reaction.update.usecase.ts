@@ -12,9 +12,7 @@ import { weaponDamageEffect } from "../../utils/weapon.util";
 import { CheckBigBbangService } from "../../services/bigbbang.check.service";
 import { CheckGuerrillaService } from "../../services/guerrilla.check.service";
 
-import { sendAnimationNotification } from "../../handlers/notification/animation.notification.handler";
-//import { broadcastDataToRoom } from "../../utils/notification.util";
-
+import { playAnimationHandler } from "../../handlers/play.animation.handler";
 
 interface ReactionInput {
     socket: GameSocket;
@@ -68,7 +66,7 @@ export const reactionUpdateUseCase = async (input: ReactionInput): Promise<React
                     if (user.character.equips.includes(CardType.AUTO_SHIELD)) {
                         if (Math.random() < 0.25) {
                             isDefended = true; // 25% 확률로 방어 성공
-                            sendAnimationNotification(room.users, user.id, AnimationType.SHIELD_ANIMATION);
+                            playAnimationHandler(room.users, user.id, AnimationType.SHIELD_ANIMATION);
                         }
                     }
 

@@ -1,7 +1,7 @@
 // cardType = 22
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util';
 import { CardType, AnimationType } from '../generated/common/enums';
-import { sendAnimationNotification } from '../handlers/notification/animation.notification.handler';
+import { playAnimationHandler } from "../handlers/play.animation.handler";
 import { checkAndEndGameIfNeeded } from '../utils/game.end.util.js';
 
 // 위성 타겟 카드 사용 시 디버프 추가
@@ -69,7 +69,7 @@ const processSatelliteTargetEffect = async (roomId: number, userId: string, allU
 		console.log(`[SatelliteTarget] 효과 발동: ${target.nickname}의 HP ${damage} 감소`);
 		
 		// 1. 위성 타겟 애니메이션 전송
-		sendAnimationNotification(allUsers, userId, AnimationType.SATELLITE_TARGET_ANIMATION);
+		playAnimationHandler(allUsers, userId, AnimationType.SATELLITE_TARGET_ANIMATION);
 		console.log(`[SatelliteTarget] 위성 타겟 애니메이션 전송: ${target.nickname}`);
 		
 		// 2. 애니메이션 재생 시간 대기 (2초)

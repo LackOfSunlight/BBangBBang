@@ -16,7 +16,7 @@ import { setUserUpdateNotification } from './use.card.request.handler';
 import { CheckBigBbangService } from '../../services/bigbbang.check.service';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
 import { weaponDamageEffect } from '../../utils/weapon.util';
-import { sendAnimationNotification } from '../notification/animation.notification.handler';
+import { playAnimationHandler } from "../../handlers/play.animation.handler";
 import { checkAndEndGameIfNeeded } from '../../utils/game.end.util.js';
 
 const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
@@ -57,7 +57,7 @@ const reactionRequestHandler = async (socket: GameSocket, gamePacket: GamePacket
 					if (user.character.equips.includes(CardType.AUTO_SHIELD)) {
 						if (Math.random() < 0.25) {
 							isDefended = true; // 25% 확률로 방어 성공
-							sendAnimationNotification(room.users, user.id, AnimationType.SHIELD_ANIMATION);
+							playAnimationHandler(room.users, user.id, AnimationType.SHIELD_ANIMATION);
 						}
 					}
 
