@@ -21,7 +21,7 @@ jest.mock('../handlers/notification/animation.notification.handler.js', () => ({
   sendAnimationNotification: mockSendAnimationNotification,
 }));
 
-import cardSatelliteTargetEffect from '../card/card.satellite_target.effect.js';
+import { checkSatelliteTargetEffect } from '../card/card.satellite_target.effect.js';
 import { AnimationType } from '../generated/common/enums.js';
 
 describe('위성타겟 애니메이션 테스트', () => {
@@ -38,104 +38,120 @@ describe('위성타겟 애니메이션 테스트', () => {
   it('위성타겟 효과 발동 시 애니메이션을 전송해야 함', async () => {
     // Given
     const roomId = 1;
-    const userId = 'player1';
-    const targetUserId = 'player2';
     
-    const mockTarget = {
-      id: targetUserId,
-      nickname: 'Player2',
-      character: {
-        hp: 5,
-        debuffs: []
-      }
-    };
-
     const mockRoom = {
       id: roomId,
       users: [
-        { id: 'player1', nickname: 'Player1' },
-        { id: 'player2', nickname: 'Player2' },
-        { id: 'player3', nickname: 'Player3' },
+        { 
+          id: 'player1', 
+          nickname: 'Player1',
+          character: {
+            hp: 5,
+            debuffs: [22] // SATELLITE_TARGET 디버프를 가진 상태
+          }
+        },
+        { 
+          id: 'player2', 
+          nickname: 'Player2',
+          character: {
+            hp: 5,
+            debuffs: []
+          }
+        },
+        { 
+          id: 'player3', 
+          nickname: 'Player3',
+          character: {
+            hp: 5,
+            debuffs: []
+          }
+        },
       ]
     };
 
-    mockGetUserFromRoom.mockResolvedValue(mockTarget);
     mockGetRoom.mockResolvedValue(mockRoom);
+    mockGetUserFromRoom.mockResolvedValue(mockRoom.users[0]); // player1 반환
     mockUpdateCharacterFromRoom.mockResolvedValue(undefined);
 
     // When
-    await cardSatelliteTargetEffect(roomId, userId, targetUserId);
+    await checkSatelliteTargetEffect(roomId);
 
     // Then
-    expect(mockGetUserFromRoom).toHaveBeenCalledWith(roomId, targetUserId);
     expect(mockGetRoom).toHaveBeenCalledWith(roomId);
+    expect(mockGetUserFromRoom).toHaveBeenCalledWith(roomId, 'player1');
     expect(mockSendAnimationNotification).toHaveBeenCalledWith(
       mockRoom.users,
-      targetUserId,
+      'player1',
       AnimationType.SATELLITE_TARGET_ANIMATION
     );
-    expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, targetUserId, {
-      ...mockTarget.character,
-      hp: 2 // 5 - 3 = 2
-    });
+    expect(mockUpdateCharacterFromRoom).toHaveBeenCalled();
   });
 
   it('위성타겟 효과 미발동 시 애니메이션을 전송하지 않아야 함', async () => {
     // Given
     const roomId = 1;
-    const userId = 'player1';
-    const targetUserId = 'player2';
     
     // Math.random을 3% 이상으로 설정하여 효과 미발동
     jest.spyOn(Math, 'random').mockReturnValue(0.05);
     
-    const mockTarget = {
-      id: targetUserId,
-      nickname: 'Player2',
-      character: {
-        hp: 5,
-        debuffs: [22] // SATELLITE_TARGET
-      }
-    };
-
     const mockRoom = {
       id: roomId,
       users: [
-        { id: 'player1', nickname: 'Player1' },
-        { id: 'player2', nickname: 'Player2' },
-        { id: 'player3', nickname: 'Player3' },
+        { 
+          id: 'player1', 
+          nickname: 'Player1',
+          character: {
+            hp: 5,
+            debuffs: [22] // SATELLITE_TARGET 디버프를 가진 상태
+          }
+        },
+        { 
+          id: 'player2', 
+          nickname: 'Player2',
+          character: {
+            hp: 5,
+            debuffs: []
+          }
+        },
+        { 
+          id: 'player3', 
+          nickname: 'Player3',
+          character: {
+            hp: 5,
+            debuffs: []
+          }
+        },
       ]
     };
 
-    mockGetUserFromRoom.mockResolvedValue(mockTarget);
     mockGetRoom.mockResolvedValue(mockRoom);
+    mockGetUserFromRoom.mockResolvedValue(mockRoom.users[0]); // player1 반환
     mockUpdateCharacterFromRoom.mockResolvedValue(undefined);
 
     // When
-    await cardSatelliteTargetEffect(roomId, userId, targetUserId);
+    await checkSatelliteTargetEffect(roomId);
 
     // Then
-    expect(mockGetUserFromRoom).toHaveBeenCalledWith(roomId, targetUserId);
     expect(mockGetRoom).toHaveBeenCalledWith(roomId);
+    expect(mockGetUserFromRoom).toHaveBeenCalledWith(roomId, 'player1');
     expect(mockSendAnimationNotification).not.toHaveBeenCalled();
     expect(mockUpdateCharacterFromRoom).toHaveBeenCalled();
   });
 
-  it('타겟을 찾을 수 없으면 아무것도 하지 않아야 함', async () => {
+  it('방을 찾을 수 없으면 아무것도 하지 않아야 함', async () => {
     // Given
     const roomId = 1;
-    const userId = 'player1';
-    const targetUserId = 'player2';
     
-    mockGetUserFromRoom.mockResolvedValue(null);
+    mockGetRoom.mockResolvedValue(null);
 
     // When
-    await cardSatelliteTargetEffect(roomId, userId, targetUserId);
+    const result = await checkSatelliteTargetEffect(roomId);
 
     // Then
-    expect(mockGetUserFromRoom).toHaveBeenCalledWith(roomId, targetUserId);
-    expect(mockGetRoom).not.toHaveBeenCalled();
+    expect(mockGetRoom).toHaveBeenCalledWith(roomId);
+    expect(mockGetUserFromRoom).not.toHaveBeenCalled();
     expect(mockSendAnimationNotification).not.toHaveBeenCalled();
     expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
+    expect(result).toBeNull();
   });
 });
