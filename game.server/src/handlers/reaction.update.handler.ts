@@ -6,8 +6,7 @@ import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
 import { reactionUpdateUseCase } from '../useCase/reaction.update/reaction.update.usecase';
 
 import { sendData } from '../utils/send.data';
-import { createUserUpdateNotificationPacket } from './use.card.handler';
-import { broadcastDataToRoom } from '../utils/notification.util';
+
 import { checkAndEndGameIfNeeded } from '../utils/game.end.util';
 
 import { Room } from '../models/room.model';
@@ -39,17 +38,13 @@ const reactionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket)
     const reactionType = req.reactionType;
 
     /// 2. 유즈케이스 호출
-    const {reactionResponse, userUpdateNotification} = await reactionUpdateUseCase ({socket, reactionType});
+    const res = await reactionUpdateUseCase (socket, reactionType);
 
 
     /// 3. 유즈케이스 결과에 따라 응답/알림 전송
-    const responsePacket = createReactionResponsePacket(reactionResponse.success, reactionResponse.failcode);
+    const responsePacket = createReactionResponsePacket(res.success, res.failcode);
     sendData(socket, responsePacket, GamePacketType.reactionResponse);
     
-    if(userUpdateNotification){
-    const userUpdateNotificationPacket = createUserUpdateNotificationPacket(room.users);
-    broadcastDataToRoom(room.users, userUpdateNotificationPacket, GamePacketType.userUpdateNotification);
-    }
     
     // 게임 종료 조건 검사
     await checkAndEndGameIfNeeded(room.id);

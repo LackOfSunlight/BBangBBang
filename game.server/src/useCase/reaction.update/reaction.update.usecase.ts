@@ -1,11 +1,12 @@
 import { GameSocket } from "../../type/game.socket";
+
+import { GamePacketType } from "../../enums/gamePacketType";
 import {ReactionType,
         GlobalFailCode,  
         CharacterStateType, 
         CardType, 
-        AnimationType 
+        AnimationType
         } from "../../generated/common/enums";
-import { User } from "../../models/user.model";
 
 import { getRoom, saveRoom, updateCharacterFromRoom } from "../../utils/room.utils";
 import { weaponDamageEffect } from "../../utils/weapon.util";
@@ -14,37 +15,21 @@ import { CheckGuerrillaService } from "../../services/guerrilla.check.service";
 
 import { playAnimationHandler } from "../../handlers/play.animation.handler";
 
-interface ReactionInput {
-    socket: GameSocket;
-    reactionType: ReactionType;
-}
+import { broadcastDataToRoom } from '../../utils/notification.util';
+import { createUserUpdateNotificationPacket } from "../../handlers/use.card.handler";
 
-interface ReactionOutput {
-    reactionResponse:{
-        success : boolean;
-        failcode: GlobalFailCode;
-    },
-    userUpdateNotification?: {
-        user:User[];
-    },
+export const reactionUpdateUseCase = async (socket:GameSocket, reactionType:ReactionType): Promise<{success:boolean, failcode:GlobalFailCode}> =>{
 
-}
-
-
-
-export const reactionUpdateUseCase = async (input: ReactionInput): Promise<ReactionOutput> =>{
-    const {socket, reactionType} = input;
-    
     // 유효성 검증
     const userId = socket.userId;
     const roomId = socket.roomId;
     if(!userId || !roomId){
-        return { reactionResponse: { success: false, failcode: GlobalFailCode.ROOM_NOT_FOUND } };
+        return {  success: false, failcode: GlobalFailCode.ROOM_NOT_FOUND  };
     }
 
     let room = getRoom(roomId);
     if (!room ){
-        return { reactionResponse: {success: false, failcode: GlobalFailCode.ROOM_NOT_FOUND } };
+        return { success: false, failcode: GlobalFailCode.ROOM_NOT_FOUND };
     }
 
 
@@ -119,12 +104,16 @@ export const reactionUpdateUseCase = async (input: ReactionInput): Promise<React
     }
     saveRoom(room);
 
+    const userUpdateNotificationPacket = createUserUpdateNotificationPacket(room.users);
+    broadcastDataToRoom(room.users, userUpdateNotificationPacket, GamePacketType.userUpdateNotification);
+
     return{
-        reactionResponse: {success:true, failcode:GlobalFailCode.NONE_FAILCODE},
-        userUpdateNotification: { user : room.users}
+        success:true, failcode:GlobalFailCode.NONE_FAILCODE
     };
 
 };
+
+
 
 // 현피 실패 처리 (빵야! 카드 없음)
 const handleDeathMatchFailure = async (room: any, user: any) => {
