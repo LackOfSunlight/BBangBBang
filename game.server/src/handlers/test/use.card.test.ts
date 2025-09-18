@@ -3,7 +3,7 @@ import useCardHandler, {
   createUseCardResponsePacket,
   createUseCardNotificationPacket,
   createUserUpdateNotificationPacket,
-} from "../../handlers/use.card.handler";
+} from "../use.card.handler";
 
 import { CardType, GlobalFailCode } from "../../generated/common/enums";
 import { GamePacketType } from "../../enums/gamePacketType";
