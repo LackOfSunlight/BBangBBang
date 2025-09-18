@@ -1,15 +1,9 @@
 import { CardType, CharacterStateType, PhaseType } from '../generated/common/enums';
-import phaseUpdateNotificationHandler, {
-	setPhaseUpdateNotification,
-} from '../handlers/notification/phase.update.notification.handler';
 import { Room } from '../models/room.model';
 import { drawDeck, repeatDeck, shuffleDeck } from './card.manager';
-import { getSocketByUserId } from './socket.manger';
 import characterSpawnPosition from '../data/character.spawn.position.json';
 import { CharacterPositionData } from '../generated/common/types';
 import { shuffle } from '../utils/shuffle.util';
-import { GameSocket } from '../type/game.socket';
-import { deleteRoom, getRoom, saveRoom, updateCharacterFromRoom } from '../utils/redis.util';
 import { GamePacket } from '../generated/gamePacket';
 import { GamePacketType } from '../enums/gamePacketType';
 import { broadcastDataToRoom } from '../utils/notification.util';
@@ -17,6 +11,7 @@ import { User } from '../models/user.model';
 import { checkSatelliteTargetEffect } from '../card/card.satellite_target.effect';
 import { setPositionUpdateNotification } from '../handlers/notification/position.update.notification.handler';
 import { checkContainmentUnitTarget } from '../card/card.containment_unit.effect';
+import { deleteRoom, getRoom, saveRoom } from '../utils/room.utils';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 const positionUpdateIntervals = new Map<number, NodeJS.Timeout>();
@@ -68,7 +63,7 @@ class GameManager {
 		const timer = setTimeout(async () => {
 			const timerExecutionTime = Date.now();
 			this.roomPhase.set(roomTimerMapId, nextPhase);
-			let room = await getRoom(roomId); // debuff 효과 적용후 게임임상태 재갱신 고려해서 let 사용
+			let room = getRoom(roomId);
 			if (!room) return;
 
 			if (nextPhase === PhaseType.DAY) {
@@ -162,7 +157,7 @@ class GameManager {
 
 			broadcastDataToRoom(room.users, phaseGamePacket, GamePacketType.phaseUpdateNotification);
 
-			await saveRoom(room);
+			saveRoom(room);
 
 			this.scheduleNextPhase(room.id, roomTimerMapId);
 		}, interval);
@@ -182,7 +177,7 @@ class GameManager {
 		}
 		this.clearTimer(roomId);
 
-		await deleteRoom(room.id);
+		deleteRoom(room.id);
 	}
 
 	private clearTimer(roomId: string) {

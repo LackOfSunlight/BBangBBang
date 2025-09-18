@@ -181,5 +181,9 @@ export const gamePackTypeSelect = {
 	animationNotification: 'animationNotification',
 } as const;
 
+export type RequestPacketType = {
+	[K in keyof typeof GamePacketType]: K extends `${string}Request` ? (typeof GamePacketType)[K] : never;
+}[keyof typeof GamePacketType];
+
 // literal union 타입 자동 추출
 export type gamePackTypeSelect = (typeof GamePacketType)[keyof typeof GamePacketType];

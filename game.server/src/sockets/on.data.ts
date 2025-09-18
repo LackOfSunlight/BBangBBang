@@ -2,6 +2,7 @@ import { Socket } from 'net';
 import { handleError } from '../handlers/handleError.js';
 import { handleGamePacket } from '../handlers/gamePacketHandler.js';
 import { GamePacket } from '../generated/gamePacket.js';
+import { gamePacketDispatcher } from '../dispatcher/game.packet.dispatcher.js';
 
 interface Packet {
 	payloadType: number;
@@ -52,7 +53,8 @@ export const onData = (socket: Socket, chunk: Buffer) => {
 			console.log(`패킷 수신: type=${packet.payloadType}, seq=${packet.sequence}`);
 
 			const gamePacket = GamePacket.fromBinary(payloadBuf);
-			handleGamePacket(socket, gamePacket);
+			// handleGamePacket(socket, gamePacket);
+			gamePacketDispatcher(socket, gamePacket);
 
 			buffer = buffer.subarray(payloadEnd);
 			socketBuffers.set(socket, buffer);
