@@ -1,9 +1,9 @@
 // cardType = 20
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
+import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 import { CardType } from '../generated/common/enums.js';
 
-const cardStealthSuitEffect = async (roomId: number, userId: string) : Promise<boolean> => {
-	const user = await getUserFromRoom(roomId, userId);
+const cardStealthSuitEffect = (roomId: number, userId: string): boolean => {
+	const user = getUserFromRoom(roomId, userId);
 
 	// 유효성 검증
 	if (!user || !user.character) return false;
@@ -26,7 +26,7 @@ const cardStealthSuitEffect = async (roomId: number, userId: string) : Promise<b
 
 	// Redis에 업데이트된 캐릭터 정보 저장
 	try {
-		await updateCharacterFromRoom(roomId, user.id, user.character);
+		updateCharacterFromRoom(roomId, user.id, user.character);
 		console.log(`[스텔스 장치] ${user.nickname}이 스텔스 장치를 장착했습니다.`);
 		return true;
 	} catch (error) {

@@ -1,13 +1,13 @@
 // cardType = 11
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
+import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 import { drawDeck, getDeckSize } from '../managers/card.manager.js';
 import { CardType } from '../generated/common/enums.js';
 
-const cardMaturedSavingsEffect = async (roomId: number, userId: string) : Promise<boolean> => {
-	const user = await getUserFromRoom(roomId, userId);
+const cardMaturedSavingsEffect = (roomId: number, userId: string): boolean => {
+	const user = getUserFromRoom(roomId, userId);
 	// 유효성 검증
-	if ( !user ) {
-		console.log("잘못된 사용자 정보입니다")
+	if (!user) {
+		console.log('잘못된 사용자 정보입니다');
 		return false;
 	}
 
@@ -15,7 +15,7 @@ const cardMaturedSavingsEffect = async (roomId: number, userId: string) : Promis
 	const numberOfDraw = 2;
 	// 덱에 남은 카드 매수
 	const remainCardNumberInDeck = getDeckSize(roomId);
-	// 덱 매수 부족할 경우 중단 
+	// 덱 매수 부족할 경우 중단
 	if (remainCardNumberInDeck < numberOfDraw) {
 		console.log(`덱에서 뽑을 카드가 부족합니다.`);
 		return false;
@@ -31,19 +31,21 @@ const cardMaturedSavingsEffect = async (roomId: number, userId: string) : Promis
 		// 소지중인 카드와 겹친다면 해당 카드 수에 가산
 		if (cardYouHave) cardYouHave.count += 1;
 		// 없다면 카드를 소지 카드 목록에 추가
-		else user.character!.handCards.push({ type: cardType, count: 1 });	
+		else user.character!.handCards.push({ type: cardType, count: 1 });
 
 		console.log(`[${CardType[cardType]}]`);
 	});
 
-
 	// handCardsCount 업데이트
 	// user.character!.handCardsCount += numberOfDraw;
-	user.character!.handCardsCount = user.character!.handCards.reduce((sum, card) => sum + card.count, 0);
-	
+	user.character!.handCardsCount = user.character!.handCards.reduce(
+		(sum, card) => sum + card.count,
+		0,
+	);
+
 	// 수정 정보 갱신
 	try {
-		await updateCharacterFromRoom(roomId, user.id, user.character!);
+		updateCharacterFromRoom(roomId, user.id, user.character!);
 		//console.log('로그 저장에 성공하였습니다');
 		return true;
 	} catch (error) {

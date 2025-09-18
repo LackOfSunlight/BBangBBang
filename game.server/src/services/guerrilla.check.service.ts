@@ -1,9 +1,9 @@
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
 import { CharacterStateType } from '../generated/common/enums';
-import { updateCharacterFromRoom } from '../utils/redis.util';
+import { updateCharacterFromRoom } from '../utils/room.utils';
 
-export const CheckGuerrillaService = async (room: Room): Promise<Room> => {
+export const CheckGuerrillaService = (room: Room): Room => {
 	const users: User[] = room.users;
 	const now = Date.now(); // 현재 시각 (밀리초)
 
@@ -42,7 +42,7 @@ export const CheckGuerrillaService = async (room: Room): Promise<Room> => {
 				u.character.stateInfo.nextStateAt = '0';
 				u.character.stateInfo.stateTargetUserId = '0';
 
-				await updateCharacterFromRoom(room.id, u.id, u.character);
+				updateCharacterFromRoom(room.id, u.id, u.character);
 			}
 		}
 	}

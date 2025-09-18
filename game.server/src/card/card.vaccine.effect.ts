@@ -1,5 +1,5 @@
 import { CharacterType } from '../generated/common/enums';
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util';
+import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 
 // 캐릭터 타입별 최대 체력 정의
 const getMaxHp = (characterType: CharacterType): number => {
@@ -20,11 +20,11 @@ const getMaxHp = (characterType: CharacterType): number => {
 	}
 };
 
-const cardVaccineEffect = async (roomId: number, userId: string) : Promise<boolean> => {
-	const user = await getUserFromRoom(roomId, userId);
+const cardVaccineEffect = (roomId: number, userId: string): boolean => {
+	const user = getUserFromRoom(roomId, userId);
 
 	// 유효성 검증
-	if (!user)  return false;
+	if (!user) return false;
 
 	const maxHp = getMaxHp(user.character!.characterType);
 	if (user.character!.hp >= maxHp) {
@@ -36,7 +36,7 @@ const cardVaccineEffect = async (roomId: number, userId: string) : Promise<boole
 	user.character!.hp = Math.min(user.character!.hp + 1, maxHp);
 
 	try {
-		await updateCharacterFromRoom(roomId, user.id, user.character!);
+		updateCharacterFromRoom(roomId, user.id, user.character!);
 		console.log(
 			`[백신 사용] ${user.nickname}의 체력이 ${previousHp} → ${user.character!.hp}로 회복되었습니다. (최대: ${maxHp})`,
 		);

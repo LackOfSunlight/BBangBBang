@@ -1,9 +1,9 @@
 // cardType = 9
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
+import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 
-const cardHallucinationEffect = async (roomId: number, userId: string, targetUserId: string) : Promise<boolean> => {
-	const user = await getUserFromRoom(roomId, userId);
-	const target = await getUserFromRoom(roomId, targetUserId);
+const cardHallucinationEffect = (roomId: number, userId: string, targetUserId: string) : boolean => {
+	const user = getUserFromRoom(roomId, userId);
+	const target = getUserFromRoom(roomId, targetUserId);
 	// 유효성 검증
 	if (!user || !target || !target.character) return false;
 
