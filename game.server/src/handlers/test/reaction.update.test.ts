@@ -127,7 +127,7 @@ describe("reactionUpdateHandler + reactionUpdateUseCase", () => {
     expect(user.character.stateInfo.state).toBe(CharacterStateType.NONE_CHARACTER_STATE);
   });
 
-  it("BIG_BBANG_TARGET이면 체력 1 감소하고 CheckBigBbangService을 호출", async () => {
+  it("BIG_BBANG_TARGET이면 체력 1 감소 및 CheckBigBbangService을 호출", async () => {
     const user = mockRoom.users[0];
     user.character.stateInfo.state = CharacterStateType.BIG_BBANG_TARGET;
 
@@ -142,7 +142,7 @@ describe("reactionUpdateHandler + reactionUpdateUseCase", () => {
     expect(checkBigBbangSpy).toHaveBeenCalled();
   });
 
-  it("GUERRILLA_TARGET 이면 체력 1감소 및 CheckGuerrillaService호출", async () => {
+  it("GUERRILLA_TARGET 이면 체력 1 감소 및 CheckGuerrillaService호출", async () => {
     const user = mockRoom.users[0];
     user.character.stateInfo.state = CharacterStateType.GUERRILLA_TARGET;
 
