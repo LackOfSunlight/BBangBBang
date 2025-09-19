@@ -1,8 +1,7 @@
 import { CardType } from '../generated/common/enums';
 import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
-
-const cardDesertEagleEffect = async (roomId: number, userId: string): Promise<boolean> => {
-	const user = await getUserFromRoom(roomId, userId);
+const cardDesertEagleEffect = (roomId: number, userId: string): boolean => {
+	const user = getUserFromRoom(roomId, userId);
 	// 유효성 검증
 	if (!user || !user.character) return false;
 
@@ -10,7 +9,7 @@ const cardDesertEagleEffect = async (roomId: number, userId: string): Promise<bo
 	user.character.weapon = CardType.DESERT_EAGLE;
 
 	try {
-		await updateCharacterFromRoom(roomId, user.id, user.character);
+		updateCharacterFromRoom(roomId, user.id, user.character);
 		return true;
 	} catch (error) {
 		console.error(`[데저트 이글] 업데이트 실패:`, error);

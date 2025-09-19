@@ -1,19 +1,13 @@
 // cardType = 1
-import { getUserFromRoom, saveRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
+import { getUserFromRoom, saveRoom, updateCharacterFromRoom, getRoom } from '../utils/room.utils';
 import { CharacterStateType } from '../generated/common/enums.js';
-import { getRoom } from '../utils/redis.util.js';
-import { CardType } from '../generated/common/enums.js';
 import { CheckGuerrillaService } from '../services/guerrilla.check.service.js';
 
-const cardBbangEffect = async (
-	roomId: number,
-	userId: string,
-	targetUserId: string,
-): Promise<boolean> => {
+const cardBbangEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	// 정보값 가져오기
-	const user = await getUserFromRoom(roomId, userId);
-	const target = await getUserFromRoom(roomId, targetUserId);
-	const room = await getRoom(roomId);
+	const user = getUserFromRoom(roomId, userId);
+	const target = getUserFromRoom(roomId, targetUserId);
+	const room = getRoom(roomId);
 
 	// 유효성 검증
 
@@ -67,16 +61,16 @@ const cardBbangEffect = async (
 		user.character.stateInfo.nextStateAt = '0'; //ms
 		user.character.stateInfo.stateTargetUserId = '0';
 
-		await updateCharacterFromRoom(roomId, userId, user.character);
-		const updatedRoom = await getRoom(roomId);
-		if (updatedRoom) await CheckGuerrillaService(updatedRoom);
+		updateCharacterFromRoom(roomId, userId, user.character);
+		const updatedRoom = getRoom(roomId);
+		if (updatedRoom) CheckGuerrillaService(updatedRoom);
 		return true;
 	}
 
 	// 수정 정보 갱신
 	try {
-		await updateCharacterFromRoom(roomId, userId, user.character);
-		await updateCharacterFromRoom(roomId, targetUserId, target.character);
+		updateCharacterFromRoom(roomId, userId, user.character);
+		updateCharacterFromRoom(roomId, targetUserId, target.character);
 		return true;
 		//console.log('로그 저장에 성공하였습니다');
 	} catch (error) {

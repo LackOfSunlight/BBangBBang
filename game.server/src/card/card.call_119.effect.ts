@@ -1,5 +1,5 @@
 // cardType = 5
-import { getRoom, updateCharacterFromRoom } from '../utils/room.utils.js';
+import { getRoom, updateCharacterFromRoom, getUserFromRoom } from '../utils/room.utils.js';
 import { CharacterType } from '../generated/common/enums.js';
 import { CharacterData } from '../generated/common/types.js';
 
@@ -23,12 +23,12 @@ const getMaxHp = (characterType: CharacterType): number => {
 };
 
 
-const cardCall119Effect = async (
+const cardCall119Effect = (
 	roomId: number,
 	userId: string,
 	targetUserId: string,
-): Promise<boolean> => {
-	const user = await getUserFromRoom(roomId, userId);
+): boolean => {
+	const user = getUserFromRoom(roomId, userId);
 
 	// 유효성 검증
 	if (!user || !user.character) return false;
@@ -38,12 +38,12 @@ const cardCall119Effect = async (
 
 	if (targetUserId != '0') {
 		// 자신의 체력 회복
-		await healCharacter(roomId, user, user.character);
+		healCharacter(roomId, user, user.character);
 		return true;
 	} else {
 		// 나머지 플레이어들의 체력 회복
 		// 방의 모든 사용자 정보를 가져와서 자신을 제외한 나머지 플레이어들을 회복
-		const room = await getRoom(roomId);
+		const room = getRoom(roomId);
 		if (!room) return false;
 
 		if (targetUserId != "0") {
@@ -61,9 +61,6 @@ const cardCall119Effect = async (
 
 			return true;
 		}
-	} catch (error) {
-		console.error(`[119 호출] 방 또는 유저를 찾을 수 없음:`, error);
-		return false;
 	}
 };
 

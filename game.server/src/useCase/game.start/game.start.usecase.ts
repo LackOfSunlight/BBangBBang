@@ -60,7 +60,7 @@ export const gameStartUseCase = async (
 	}
 
 	try {
-		const room: Room | null = await getRoom(socket.roomId);
+		const room: Room | null = getRoom(socket.roomId);
 		if (!room) {
 			return createGameStartResponsePacket({
 				success: false,
@@ -112,7 +112,7 @@ export const gameStartUseCase = async (
 
 		// 방 상태 변경 및 저장
 		room.state = RoomStateType.INGAME;
-		await saveRoom(room);
+		saveRoom(room);
 
 		// 게임 매니저를 통해 게임 시작 (타이머 등)
 		gameManager.startGame(room);

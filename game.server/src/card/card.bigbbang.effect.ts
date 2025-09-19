@@ -5,17 +5,13 @@ import {
 	removeUserFromRoom,
 	saveRoom,
 	updateCharacterFromRoom,
-} from '../utils/redis.util.js';
+} from '../utils/room.utils';
 import { CardType, CharacterStateType } from '../generated/common/enums.js';
 import { drawSpecificCard, repeatDeck } from '../managers/card.manager.js';
 
-const cardBigBbangEffect = async (
-	roomId: number,
-	userId: string,
-	targetUserId: string,
-): Promise<boolean> => {
-	const room = await getRoom(roomId);
-	const shooter = await getUserFromRoom(roomId, userId);
+const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
+	const room = getRoom(roomId);
+	const shooter = getUserFromRoom(roomId, userId);
 
 	if (!room || !shooter) {
 		return false;
@@ -40,7 +36,7 @@ const cardBigBbangEffect = async (
 				shooter.character?.handCards.push({ type: getCard, count: 1 });
 			}
 
-			await updateCharacterFromRoom(room.id, shooter.id, shooter.character!);
+			updateCharacterFromRoom(room.id, shooter.id, shooter.character!);
 			return true;
 		}
 	}
@@ -65,7 +61,7 @@ const cardBigBbangEffect = async (
 		}
 	}
 
-	await saveRoom(room);
+	saveRoom(room);
 
 	return true;
 };

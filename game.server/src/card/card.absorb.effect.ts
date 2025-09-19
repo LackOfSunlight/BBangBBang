@@ -1,17 +1,14 @@
 // cardType = 8
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
 
-const cardAbsorbEffect = async (
-	roomId: number,
-	userId: string,
-	targetUserId: string,
-): Promise<boolean> => {
-	const user = await getUserFromRoom(roomId, userId);
-	const target = await getUserFromRoom(roomId, targetUserId);
+import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
+
+const cardAbsorbEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
+	const user = getUserFromRoom(roomId, userId);
+	const target = getUserFromRoom(roomId, targetUserId);
 	// 유효성 검증
 	if (!user || !user.character || !target || !target.character) return false;
 
-	// 대상의 손에 카드가 있는지 확인
+	// 대상의 손에 카드가 있는지 확인s
 	const targetHand = target.character.handCards;
 	if (targetHand.length === 0) {
 		console.log(`[흡수 실패] ${target.character}이 카드를 가지고 있지 않음:`);
@@ -36,8 +33,8 @@ const cardAbsorbEffect = async (
 
 	// 변경된 두 유저의 정보를 Redis에 업데이트
 	try {
-		await updateCharacterFromRoom(roomId, userId, user.character);
-		await updateCharacterFromRoom(roomId, targetUserId, target.character);
+		updateCharacterFromRoom(roomId, userId, user.character);
+		updateCharacterFromRoom(roomId, targetUserId, target.character);
 		return true;
 	} catch (error) {
 		console.error(`[흡수] Redis 업데이트 실패:`, error);

@@ -2,7 +2,7 @@
 import { getRoom, updateCharacterFromRoom } from '../utils/room.utils.js';
 import { CardType } from '../generated/common/enums.js';
 
-const cardHandGunEffect = async (roomId: number, userId: string): Promise<boolean> => {
+const cardHandGunEffect = (roomId: number, userId: string): boolean => {
 	try {
 		const room = getRoom(roomId);
 

@@ -1,114 +1,135 @@
-// card.bbang.effect.test.ts
+import { CharacterStateType, RoomStateType } from '../../generated/common/enums';
+import { Room } from '../../models/room.model';
+import { User } from '../../models/user.model';
+import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import cardBbangEffect from '../card.bbang.effect';
-import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../utils/redis.util.js';
-import { CharacterStateType } from '../../generated/common/enums.js';
 
-// jest mock
-jest.mock('../../utils/redis.util.js', () => ({
-	getUserFromRoom: jest.fn(),
-	updateCharacterFromRoom: jest.fn(),
-	getRoom: jest.fn(),
-}));
+// Mock dependencies
+jest.mock('../../utils/room.utils');
+jest.mock('../../services/guerrilla.check.service');
+
+// Cast mocks to the correct type
+const mockGetRoom = getRoom as jest.Mock;
+const mockGetUserFromRoom = getUserFromRoom as jest.Mock;
+const mockUpdateCharacterFromRoom = updateCharacterFromRoom as jest.Mock;
+const mockCheckGuerrillaService = CheckGuerrillaService as jest.Mock;
 
 describe('cardBbangEffect', () => {
-	const mockRoomId = 1;
-	const mockUserId = 'user1';
-	const mockTargetId = 'user2';
-
-	let mockUser: any;
-	let mockTarget: any;
+	let mockRoom: Room;
+	let user: User;
+	let target: User;
+	const roomId = 1;
+	const userId = 'user-1';
+	const targetId = 'target-1';
+	let consoleLogSpy: jest.SpyInstance;
+	let consoleErrorSpy: jest.SpyInstance;
 
 	beforeEach(() => {
 		jest.clearAllMocks();
 
-		mockUser = {
-			character: {
-				hp: 10,
-				stateInfo: {
-					state: CharacterStateType.NONE_CHARACTER_STATE,
-					nextState: CharacterStateType.NONE_CHARACTER_STATE,
-					nextStateAt: null,
-					stateTargetUserId: null,
-				},
-			},
-		};
+		const now = Date.now();
+		jest.spyOn(Date, 'now').mockReturnValue(now);
 
-		mockTarget = {
-			character: {
-				hp: 10,
-				stateInfo: {
-					state: CharacterStateType.NONE_CHARACTER_STATE,
-					nextState: CharacterStateType.NONE_CHARACTER_STATE,
-					nextStateAt: null,
-					stateTargetUserId: null,
-				},
-			},
-		};
+		consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+		consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+		user = new User(userId, 'User');
+		user.character = { hp: 4, stateInfo: { state: CharacterStateType.NONE_CHARACTER_STATE } } as any;
+
+		target = new User(targetId, 'Target');
+		target.character = { hp: 4, stateInfo: { state: CharacterStateType.NONE_CHARACTER_STATE } } as any;
+
+		mockRoom = new Room(roomId, userId, 'Test Room', 8, RoomStateType.INGAME, [
+			user,
+			target,
+		]);
+
+		mockGetRoom.mockReturnValue(mockRoom);
+		mockGetUserFromRoom.mockImplementation((_, id) => (id === userId ? user : target));
 	});
 
-	it('방이 존재하지 않으면 중단', async () => {
-		(getRoom as jest.Mock).mockResolvedValue(null);
-
-		await cardBbangEffect(mockRoomId, mockUserId, mockTargetId);
-
-		expect(getRoom).toHaveBeenCalledWith(mockRoomId);
-		expect(updateCharacterFromRoom).not.toHaveBeenCalled();
+	afterEach(() => {
+		consoleLogSpy.mockRestore();
+		consoleErrorSpy.mockRestore();
 	});
 
-	it('사용자 정보가 없으면 중단', async () => {
-		(getRoom as jest.Mock).mockResolvedValue({});
-		(getUserFromRoom as jest.Mock).mockResolvedValueOnce(null);
+	// --- Validation Tests ---
 
-		await cardBbangEffect(mockRoomId, mockUserId, mockTargetId);
+	it('방, 유저, 타겟 정보가 없으면 false를 반환해야 한다', () => {
+		mockGetRoom.mockReturnValueOnce(null);
+		expect(cardBbangEffect(roomId, userId, targetId)).toBe(false);
 
-		expect(updateCharacterFromRoom).not.toHaveBeenCalled();
+		mockGetUserFromRoom.mockImplementationOnce(() => null);
+		expect(cardBbangEffect(roomId, userId, targetId)).toBe(false);
+
+		user.character = undefined;
+		expect(cardBbangEffect(roomId, userId, targetId)).toBe(false);
 	});
 
-	it('타깃 정보가 없으면 중단', async () => {
-		(getRoom as jest.Mock).mockResolvedValue({});
-		(getUserFromRoom as jest.Mock).mockResolvedValueOnce(mockUser).mockResolvedValueOnce(null);
-
-		await cardBbangEffect(mockRoomId, mockUserId, mockTargetId);
-
-		expect(updateCharacterFromRoom).not.toHaveBeenCalled();
+	it('타겟의 HP가 0 이하면 false를 반환해야 한다', () => {
+		target.character!.hp = 0;
+		expect(cardBbangEffect(roomId, userId, targetId)).toBe(false);
+		expect(consoleLogSpy).toHaveBeenCalledWith('타깃 유저의 체력이 이미 0 입니다.');
 	});
 
-	it('타깃이 이미 사망 상태이면 중단', async () => {
-		mockTarget.character.hp = 0;
-		(getRoom as jest.Mock).mockResolvedValue({});
-		(getUserFromRoom as jest.Mock)
-			.mockResolvedValueOnce(mockUser)
-			.mockResolvedValueOnce(mockTarget);
+	// --- State-based Logic Tests ---
 
-		await cardBbangEffect(mockRoomId, mockUserId, mockTargetId);
+	it('일반 상태에서 빵야를 사용하면, BBANG 상태로 변경해야 한다', () => {
+		const now = Date.now();
+		const expectedNextStateAt = `${now + 10000}`;
 
-		expect(updateCharacterFromRoom).not.toHaveBeenCalled();
+		const result = cardBbangEffect(roomId, userId, targetId);
+
+		expect(result).toBe(true);
+		expect(user.character!.stateInfo!.state).toBe(CharacterStateType.BBANG_SHOOTER);
+		expect(user.character!.stateInfo!.stateTargetUserId).toBe(targetId);
+		expect(user.character!.stateInfo!.nextStateAt).toBe(expectedNextStateAt);
+
+		expect(target.character!.stateInfo!.state).toBe(CharacterStateType.BBANG_TARGET);
+		expect(target.character!.stateInfo!.stateTargetUserId).toBe(userId);
+		expect(target.character!.stateInfo!.nextStateAt).toBe(expectedNextStateAt);
+
+		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledTimes(2);
 	});
 
-	it('정상적으로 빵야 효과 처리', async () => {
-		(getRoom as jest.Mock).mockResolvedValue({});
-		(getUserFromRoom as jest.Mock)
-			.mockResolvedValueOnce(mockUser)
-			.mockResolvedValueOnce(mockTarget);
+	it('데스매치 상태에서 빵야를 사용하면, 데스매치 관련 상태로 변경해야 한다', () => {
+		user.character!.stateInfo!.state = CharacterStateType.DEATH_MATCH_TURN_STATE;
 
-		await cardBbangEffect(mockRoomId, mockUserId, mockTargetId);
+		const result = cardBbangEffect(roomId, userId, targetId);
 
-		expect(mockUser.character.stateInfo.state).toBe(CharacterStateType.BBANG_SHOOTER);
-		expect(mockUser.character.stateInfo.stateTargetUserId).toBe(mockTargetId);
+		expect(result).toBe(true);
+		expect(user.character!.stateInfo!.state).toBe(CharacterStateType.DEATH_MATCH_STATE);
+		expect(user.character!.stateInfo!.nextState).toBe(CharacterStateType.DEATH_MATCH_TURN_STATE);
+		expect(target.character!.stateInfo!.state).toBe(CharacterStateType.DEATH_MATCH_TURN_STATE);
+		expect(target.character!.stateInfo!.nextState).toBe(CharacterStateType.DEATH_MATCH_STATE);
+		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledTimes(2);
+	});
 
-		expect(mockTarget.character.stateInfo.state).toBe(2); // BBANG_TARGET
-		expect(mockTarget.character.stateInfo.stateTargetUserId).toBe(mockUserId);
+	it('게릴라 타겟 상태에서 빵야를 사용하면, 상태를 초기화하고 GuerrillaService를 호출해야 한다', () => {
+		user.character!.stateInfo!.state = CharacterStateType.GUERRILLA_TARGET;
 
-		expect(updateCharacterFromRoom).toHaveBeenCalledTimes(2);
-		expect(updateCharacterFromRoom).toHaveBeenCalledWith(
-			mockRoomId,
-			mockUserId,
-			mockUser.character,
-		);
-		expect(updateCharacterFromRoom).toHaveBeenCalledWith(
-			mockRoomId,
-			mockTargetId,
-			mockTarget.character,
-		);
+		const result = cardBbangEffect(roomId, userId, targetId);
+
+		expect(result).toBe(true);
+		expect(user.character!.stateInfo!.state).toBe(CharacterStateType.NONE_CHARACTER_STATE);
+		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, user.character);
+		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledTimes(1); // Only user is updated
+		expect(mockGetRoom).toHaveBeenCalledTimes(2); // Called again inside the logic
+		expect(mockCheckGuerrillaService).toHaveBeenCalledWith(mockRoom);
+	});
+
+	// --- Error Handling Test ---
+
+	it('DB 업데이트 중 에러가 발생하면 false를 반환해야 한다', () => {
+		const dbError = new Error('DB connection failed');
+		mockUpdateCharacterFromRoom.mockImplementation(() => {
+			throw dbError;
+		});
+
+		const result = cardBbangEffect(roomId, userId, targetId);
+
+		expect(result).toBe(false);
+		expect(consoleErrorSpy).toHaveBeenCalledWith(`로그 저장에 실패하였습니다:[${dbError}]`);
 	});
 });
