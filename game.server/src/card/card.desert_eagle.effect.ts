@@ -1,4 +1,3 @@
-// cardType = 15
 import { CardType } from '../generated/common/enums';
 import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 const cardDesertEagleEffect = (roomId: number, userId: string): boolean => {
@@ -13,7 +12,7 @@ const cardDesertEagleEffect = (roomId: number, userId: string): boolean => {
 		updateCharacterFromRoom(roomId, user.id, user.character);
 		return true;
 	} catch (error) {
-		console.error(`[데저트 이글] Redis 업데이트 실패:`, error);
+		console.error(`[데저트 이글] 업데이트 실패:`, error);
 		return false;
 		// 에러가 발생해도 함수는 정상적으로 완료됨
 	}
