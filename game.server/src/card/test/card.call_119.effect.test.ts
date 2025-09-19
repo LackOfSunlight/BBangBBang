@@ -97,7 +97,7 @@ describe('cardCall119Effect', () => {
 		it('자신의 체력을 1 회복한다 (targetUserId가 있는 경우)', async () => {
 			const mockCharacter = createMockCharacter(CharacterType.RED, 2);
 			// @ts-expect-error: 테스트를 위한 모킹
-			mockGetUserFromRoom.mockResolvedValue({
+			mockGetUserFromRoom.mockReturnValue({
 				id: userId,
 				nickname: 'user1',
 				character: mockCharacter,
@@ -124,12 +124,12 @@ describe('cardCall119Effect', () => {
 			const user2Character = createMockCharacter(CharacterType.SHARK, 2);
 			const user3Character = createMockCharacter(CharacterType.DINOSAUR, 1);
 
-			// @ts-expect-error: 테스트를 위한 모킹
-			mockGetUserFromRoom.mockResolvedValue({
-				id: userId,
-				nickname: 'user1',
-				character: userCharacter,
-			});
+		// @ts-expect-error: 테스트를 위한 모킹
+		mockGetUserFromRoom.mockReturnValue({
+			id: userId,
+			nickname: 'user1',
+			character: userCharacter,
+		});
 
 			const mockRoom = {
 				id: roomId,
@@ -182,7 +182,7 @@ describe('cardCall119Effect', () => {
 		it('최대 체력에 도달한 경우 회복하지 않는다', async () => {
 			const mockCharacter = createMockCharacter(CharacterType.RED, 4); // 최대 체력
 			// @ts-expect-error: 테스트를 위한 모킹
-			mockGetUserFromRoom.mockResolvedValue({
+			mockGetUserFromRoom.mockReturnValue({
 				id: userId,
 				nickname: 'user1',
 				character: mockCharacter,
@@ -202,7 +202,7 @@ describe('cardCall119Effect', () => {
 		it('공룡이 캐릭터의 최대 체력(3)을 초과하지 않는다', async () => {
 			const mockCharacter = createMockCharacter(CharacterType.DINOSAUR, 2);
 			// @ts-expect-error: 테스트를 위한 모킹
-			mockGetUserFromRoom.mockResolvedValue({
+			mockGetUserFromRoom.mockReturnValue({
 				id: userId,
 				nickname: 'user1',
 				character: mockCharacter,
@@ -227,7 +227,7 @@ describe('cardCall119Effect', () => {
 		it('핑크슬라임 캐릭터의 최대 체력(3)을 초과하지 않는다', async () => {
 			const mockCharacter = createMockCharacter(CharacterType.PINK_SLIME, 2);
 			// @ts-expect-error: 테스트를 위한 모킹
-			mockGetUserFromRoom.mockResolvedValue({
+			mockGetUserFromRoom.mockReturnValue({
 				id: userId,
 				nickname: 'user1',
 				character: mockCharacter,
@@ -275,7 +275,7 @@ describe('cardCall119Effect', () => {
 			};
 
 			// @ts-expect-error: 테스트를 위한 모킹
-			mockGetUserFromRoom.mockResolvedValue({
+			mockGetUserFromRoom.mockReturnValue({
 				id: userId,
 				nickname: 'user1',
 				character: mockCharacter,

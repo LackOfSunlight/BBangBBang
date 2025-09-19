@@ -1,6 +1,6 @@
 // cardType = 6
 import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
-import { CardType, CharacterStateType } from '../generated/common/enums.js';
+import { CardType, CharacterStateType } from '../generated/common/enums';
 
 const cardDeathMatchEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	const user = getUserFromRoom(roomId, userId);
@@ -16,7 +16,6 @@ const cardDeathMatchEffect = (roomId: number, userId: string, targetUserId: stri
 	const isBbangCard: boolean = user.character.handCards.some((c) => c.type === CardType.BBANG);
 
 	if (!isBbangCard) {
-		console.log('빵야 카드가 없습니다');
 		return false;
 	}
 
@@ -38,14 +37,12 @@ const cardDeathMatchEffect = (roomId: number, userId: string, targetUserId: stri
 		stateTargetUserId: userId,
 	};
 
-	// Redis에 업데이트된 캐릭터 정보 저장
+	// 방에 업데이트된 캐릭터 정보 저장
 	try {
 		updateCharacterFromRoom(roomId, userId, user.character);
 		updateCharacterFromRoom(roomId, targetUserId, target.character);
-		console.log(`[현피] ${user.nickname}이 ${target.nickname}에게 현피를 걸었습니다.`);
 		return true;
 	} catch (error) {
-		console.error(`[현피] Redis 업데이트 실패:`, error);
 		return false;
 	}
 };
