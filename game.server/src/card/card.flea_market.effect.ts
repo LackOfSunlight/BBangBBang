@@ -1,7 +1,11 @@
 // cardType = 10
 import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
 
-const cardFleaMarketEffect = async (roomId: number, userId: string, targetUserId: string) : Promise<boolean> => {
+const cardFleaMarketEffect = async (
+	roomId: number,
+	userId: string,
+	targetUserId: string,
+): Promise<boolean> => {
 	const user = await getUserFromRoom(roomId, userId);
 	const target = await getUserFromRoom(roomId, targetUserId);
 	// 유효성 검증

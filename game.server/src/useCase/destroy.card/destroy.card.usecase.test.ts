@@ -49,7 +49,7 @@ describe('destroyCardUseCase', () => {
 
 		const response = await destroyCardUseCase(mockSocket as GameSocket, req);
 
-		expect(getUserFromRoom).toHaveBeenCalledWith( 1, '1');
+		expect(getUserFromRoom).toHaveBeenCalledWith(1, '1');
 		expect(updateCharacterFromRoom).toHaveBeenCalled();
 		expect(response.payload.oneofKind).toBe(GamePacketType.destroyCardResponse);
 

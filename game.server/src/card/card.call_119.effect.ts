@@ -22,16 +22,29 @@ const getMaxHp = (characterType: CharacterType): number => {
 	}
 };
 
-const cardCall119Effect = async (roomId: number, userId: string, targetUserId: string): Promise<boolean> => {
-	try {
-		const room = getRoom(roomId);
-		
-		// 유저 찾기
-		const user = room.users.find(u => u.id === userId);
-		if (!user || !user.character) return false;
 
-		// 119 호출 카드 효과: 자신의 체력을 1 회복하거나, 나머지의 체력을 1 회복
-		// targetUserId가 있으면 자신의 체력 회복, 없으면 나머지 플레이어들의 체력 회복
+const cardCall119Effect = async (
+	roomId: number,
+	userId: string,
+	targetUserId: string,
+): Promise<boolean> => {
+	const user = await getUserFromRoom(roomId, userId);
+
+	// 유효성 검증
+	if (!user || !user.character) return false;
+
+	// 119 호출 카드 효과: 자신의 체력을 1 회복하거나, 나머지의 체력을 1 회복
+	// targetUserId가 있으면 자신의 체력 회복, 없으면 나머지 플레이어들의 체력 회복
+
+	if (targetUserId != '0') {
+		// 자신의 체력 회복
+		await healCharacter(roomId, user, user.character);
+		return true;
+	} else {
+		// 나머지 플레이어들의 체력 회복
+		// 방의 모든 사용자 정보를 가져와서 자신을 제외한 나머지 플레이어들을 회복
+		const room = await getRoom(roomId);
+		if (!room) return false;
 
 		if (targetUserId != "0") {
 			// 자신의 체력 회복

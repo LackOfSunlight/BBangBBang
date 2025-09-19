@@ -60,7 +60,7 @@
 
 // 			//남은 유저들에게 알림 전송
 // 			await leaveRoomNotificationHandler(socket, gamePacket);
-// 		} 
+// 		}
 // } catch (error) {
 // 		console.error('Error in leaveRoomRequestHandler:', error);
 // 		await leaveRoomResponseHandler(
@@ -69,7 +69,6 @@
 // 		);
 // 	}
 // };
-
 
 // export const setLeaveRoomResponse = (success: boolean, failCode: GlobalFailCode): GamePacket => {
 // 	const newGamePacket: GamePacket = {

@@ -210,10 +210,14 @@ describe('카드 효과: 데저트 이글', () => {
 
 			// 피격자 검증
 			expect(updatedTarget?.character?.hp).toBe(1);
-			expect(updatedTarget?.character?.stateInfo?.state).toBe(CharacterStateType.NONE_CHARACTER_STATE);
+			expect(updatedTarget?.character?.stateInfo?.state).toBe(
+				CharacterStateType.NONE_CHARACTER_STATE,
+			);
 
 			// 공격자 검증
-			expect(updatedAttacker?.character?.stateInfo?.state).toBe(CharacterStateType.NONE_CHARACTER_STATE);
+			expect(updatedAttacker?.character?.stateInfo?.state).toBe(
+				CharacterStateType.NONE_CHARACTER_STATE,
+			);
 			expect(updatedAttacker?.character?.bbangCount).toBe(1);
 
 			// 알림 전송 검증

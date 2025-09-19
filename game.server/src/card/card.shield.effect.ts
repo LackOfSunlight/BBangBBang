@@ -5,9 +5,11 @@ import { CheckBigBbangService } from '../services/bigbbang.check.service.js';
 import { getRoom, saveRoom } from '../utils/redis.util.js';
 import { User } from '../models/user.model.js';
 
-
-
-const cardShieldEffect = async (roomId: number, userId: string, targetUserId: string) : Promise<boolean> => {
+const cardShieldEffect = async (
+	roomId: number,
+	userId: string,
+	targetUserId: string,
+): Promise<boolean> => {
 	let room = await getRoom(roomId);
 
 	if (!room) return false;
