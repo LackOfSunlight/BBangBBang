@@ -16,7 +16,7 @@ import { CheckGuerrillaService } from "../../services/guerrilla.check.service";
 import { playAnimationHandler } from "../../handlers/play.animation.handler";
 
 import { broadcastDataToRoom } from '../../utils/notification.util';
-import { createUserUpdateNotificationPacket } from "../../handlers/use.card.handler";
+import { createUserUpdateNotificationPacket } from "../../useCase/use.card/use.card.usecase";
 
 export const reactionUpdateUseCase = async (socket:GameSocket, reactionType:ReactionType): Promise<{success:boolean, failcode:GlobalFailCode}> =>{
 
