@@ -12,9 +12,7 @@ import leaveRoomHandler from '../handlers/leave.room.handler.js';
 import gamePrepareHandler from '../handlers/game.prepare.handler.js';
 import positionUpdateHandler from '../handlers/position.update.handler.js';
 import useCardHandler from '../handlers/use.card.handler.js';
-import reactionRequestHandler from '../handlers/request/reaction.request.handler.js';
 import passDebuffHandler from '../handlers/pass.debuff.handler.js';
-import { GameStateData } from '../generated/common/types.js';
 import gameStartHandler from '../handlers/game.start.handler.js';
 import fleaMarketPickHandler from '../handlers/fleamarket.pick.handler.js';
 import destroyCardHandler from '../handlers/destroy.card.handler.js';
@@ -48,7 +46,6 @@ const allHandlers = [
 	positionUpdateHandler,
 	useCardHandler,
 	fleaMarketPickHandler,
-	reactionRequestHandler,
 	destroyCardHandler,
 	cardSelectHandler,
 	passDebuffHandler,

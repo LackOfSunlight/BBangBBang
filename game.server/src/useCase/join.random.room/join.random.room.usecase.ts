@@ -19,6 +19,7 @@ const joinRandomRoomUseCase = async (
 	try {
 		userInfo = await getUserByUserId(Number(socket.userId));
 	} catch (err) {
+		console.log(`DB 에러 발생: ${err}`);
 		return setJoinRandomRoomResponse(false, GlobalFailCode.JOIN_ROOM_FAILED);
 	}
 
