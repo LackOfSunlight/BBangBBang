@@ -2,10 +2,10 @@
 import cardContainmentUnitEffect, {
 	debuffContainmentUnitEffect,
 } from '../card.containment_unit.effect';
-import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/redis.util.js';
+import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils.js';
 import { CardType, CharacterStateType } from '../../generated/common/enums.js';
 
-jest.mock('../../utils/redis.util.js', () => ({
+jest.mock('../../utils/room.utils.js', () => ({
 	getUserFromRoom: jest.fn(),
 	updateCharacterFromRoom: jest.fn(),
 }));
@@ -26,48 +26,48 @@ describe('CardContainmentUnitCardEffects', () => {
 	});
 
 	// 카드 효과 처리 로직
-	describe('cardContainmentUnitEffect', () => {
-		it('대상 유저에게 디버프가 적용되는지', async () => {
-			const user = mockUser();
-			const target = mockUser();
+describe('cardContainmentUnitEffect', () => {
+	it('대상 유저에게 디버프가 적용되는지', async () => {
+		const user = mockUser();
+		const target = mockUser();
 
-			(getUserFromRoom as jest.Mock)
-				.mockResolvedValueOnce(user) // 시전자
-				.mockResolvedValueOnce(target); // 대상자
+		(getUserFromRoom as jest.Mock)
+			.mockResolvedValueOnce(user) // 시전자
+			.mockResolvedValueOnce(target); // 대상자
 
-			await cardContainmentUnitEffect(1, 'user1', 'user2');
+		await cardContainmentUnitEffect(1, 'user1', 'user2');
 
-			expect(getUserFromRoom).toHaveBeenCalledWith(1, 'user1');
-			expect(getUserFromRoom).toHaveBeenCalledWith(1, 'user2');
-			expect(updateCharacterFromRoom).toHaveBeenCalledWith(
-				1,
-				'user2',
-				expect.objectContaining({
-					debuffs: [CardType.CONTAINMENT_UNIT], // 디버프 란에 감금 카드 추가
-				}),
-			);
-		});
-
-		it('시전 유저나 대상 유저 정보가 올바르지 않으면 중단되는지', async () => {
-			(getUserFromRoom as jest.Mock).mockResolvedValueOnce(null);
-
-			await cardContainmentUnitEffect(1, 'user1', 'user2');
-
-			expect(updateCharacterFromRoom).not.toHaveBeenCalled();
-		});
-
-		it('대상 유저가 이미 디버프 상태라면 시전이 중단되는지', async () => {
-			const target = mockUser({
-				debuffs: [CardType.CONTAINMENT_UNIT],
-			});
-
-			(getUserFromRoom as jest.Mock).mockResolvedValue(target);
-
-			await cardContainmentUnitEffect(1, 'user1', 'user2');
-
-			expect(updateCharacterFromRoom).not.toHaveBeenCalled();
-		});
+		expect(getUserFromRoom).toHaveBeenCalledWith(1, 'user1');
+		expect(getUserFromRoom).toHaveBeenCalledWith(1, 'user2');
+		expect(updateCharacterFromRoom).toHaveBeenCalledWith(
+			1,
+			'user2',
+			expect.objectContaining({
+				debuffs: [CardType.CONTAINMENT_UNIT], // 디버프 란에 감금 카드 추가
+			}),
+		);
 	});
+
+	it('시전 유저나 대상 유저 정보가 올바르지 않으면 중단되는지', async () => {
+		(getUserFromRoom as jest.Mock).mockResolvedValueOnce(null);
+
+		await cardContainmentUnitEffect(1, 'user1', 'user2');
+
+		expect(updateCharacterFromRoom).not.toHaveBeenCalled();
+	});
+
+	it('대상 유저가 이미 디버프 상태라면 시전이 중단되는지', async () => {
+		const target = mockUser({
+			debuffs: [CardType.CONTAINMENT_UNIT],
+		});
+
+		(getUserFromRoom as jest.Mock).mockResolvedValue(target);
+
+		await cardContainmentUnitEffect(1, 'user1', 'user2');
+
+		expect(updateCharacterFromRoom).not.toHaveBeenCalled();
+	});
+});
 
 	// 디버프 효과 처리 로직
 	describe('debuffContainmentUnitEffect', () => {
