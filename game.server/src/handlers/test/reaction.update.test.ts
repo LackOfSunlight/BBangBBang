@@ -127,7 +127,7 @@ describe("reactionUpdateHandler + reactionUpdateUseCase", () => {
     expect(user.character.stateInfo.state).toBe(CharacterStateType.NONE_CHARACTER_STATE);
   });
 
-  it("BIG_BBANG_TARGET이면 체력 1 감소 및 CheckBigBbangService을 호출", async () => {
+  it("BIG_BBANG_TARGET이면 체력 1 감소 및 CheckBigBbangService 호출", async () => {
     const user = mockRoom.users[0];
     user.character.stateInfo.state = CharacterStateType.BIG_BBANG_TARGET;
 
