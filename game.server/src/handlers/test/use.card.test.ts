@@ -8,13 +8,14 @@ import useCardHandler, {
 import { CardType, GlobalFailCode } from '../../generated/common/enums';
 import { GamePacketType } from '../../enums/gamePacketType';
 
-import { getRoom } from '../../utils/redis.util';
-import { applyCardEffect } from '../../utils/apply.card.effect';
-import { sendData } from '../../utils/send.data';
-import { broadcastDataToRoom } from '../../utils/notification.util';
+import { getRoom } from "../../utils/room.utils";
+import { applyCardEffect } from "../../utils/apply.card.effect";
+import { sendData } from "../../utils/send.data";
+import { broadcastDataToRoom } from "../../utils/notification.util";
 
-jest.mock('../../utils/redis.util', () => ({
-	getRoom: jest.fn(),
+
+jest.mock("../../utils/room.utils", () => ({
+  getRoom: jest.fn()
 }));
 jest.mock('../../utils/send.data', () => ({
 	sendData: jest.fn(),
