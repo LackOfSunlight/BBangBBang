@@ -15,22 +15,18 @@ const cardSatelliteTargetEffect = (
 	try {
 		const target = getUserFromRoom(roomId, targetUserId);
 		if (!target.character) {
-			console.warn(`[SatelliteTarget] 타겟의 캐릭터 정보가 없습니다: ${targetUserId}`);
 			return false;
 		}
 
 		// 이미 디버프가 있는지 확인
 		if (target.character.debuffs.includes(CardType.SATELLITE_TARGET)) {
-			console.log(`[SatelliteTarget] ${target.nickname}은 이미 위성 타겟 디버프를 가지고 있습니다.`);
 			return true;
 		}
 
 		// 디버프 추가
 		target.character.debuffs.push(CardType.SATELLITE_TARGET);
 
-
 		updateCharacterFromRoom(roomId, targetUserId, target.character);
-		console.log(`[SatelliteTarget] ${target.nickname}에게 위성 타겟 디버프가 추가되었습니다.`);
 		return true;
 	} catch (error) {
 		console.error(`[SatelliteTarget] 위성 타겟 적용 중 오류 발생: ${error}`);
@@ -41,10 +37,8 @@ const cardSatelliteTargetEffect = (
 // 위성 타겟 효과 체크 (하루 시작 시 호출)
 export const checkSatelliteTargetEffect = async (roomId: number) => {
 	try {
-
 		const room = getRoom(roomId);
 		if (!room || !room.users) {
-			console.warn(`[SatelliteTarget] 방 또는 유저 정보를 찾을 수 없습니다: roomId=${roomId}`);
 			return room;
 		}
 
@@ -53,8 +47,6 @@ export const checkSatelliteTargetEffect = async (roomId: number) => {
 			(user) => user.character && user.character.debuffs.includes(CardType.SATELLITE_TARGET),
 		);
 
-		console.log(`[SatelliteTarget] 위성 타겟 디버프를 가진 유저 수: ${usersWithDebuff.length}`);
-
 		await Promise.all(
 			usersWithDebuff.map((user) => processSatelliteTargetEffect(roomId, user.id, room.users)),
 		);
@@ -62,7 +54,6 @@ export const checkSatelliteTargetEffect = async (roomId: number) => {
 		// 업데이트된 방 정보 반환
 		return getRoom(roomId);
 	} catch (error) {
-		console.warn(`[SatelliteTarget] 효과 체크 중 방을 찾을 수 없습니다: roomId=${roomId}, error: ${error}`);
 		return null;
 	}
 };
@@ -82,12 +73,9 @@ const processSatelliteTargetEffect = async (roomId: number, userId: string, allU
 
 		if (isEffectTriggered) {
 			// 효과 발동: 애니메이션 재생 후 HP 데미지 감소
-			console.log(`[SatelliteTarget] 효과 발동: ${target.nickname}의 HP ${damage} 감소`);
 
 			// 1. 위성 타겟 애니메이션 전송
-
 			playAnimationHandler(allUsers, userId, AnimationType.SATELLITE_TARGET_ANIMATION);
-			console.log(`[SatelliteTarget] 위성 타겟 애니메이션 전송: ${target.nickname}`);
 
 			// 2. 애니메이션 재생 시간 대기 (2초)
 			await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -106,18 +94,11 @@ const processSatelliteTargetEffect = async (roomId: number, userId: string, allU
 
 
 			updateCharacterFromRoom(roomId, userId, target.character);
-			console.log(
-				`[SatelliteTarget] ${target.nickname}의 위성 타겟 효과 미발동. 다음 유저에게 디버프를 넘깁니다.`,
-			);
-
 
 			// 게임 종료 조건 검사
 			await checkAndEndGameIfNeeded(roomId);
 		} else {
 			// 효과 미발동: 다음 유저에게 디버프 이전
-			console.log(
-				`[SatelliteTarget] ${target.nickname}의 위성 타겟 효과 미발동. 다음 유저에게 디버프를 넘깁니다.`,
-			);
 
 			// 1. 현재 타겟의 디버프 제거
 			const debuffIndex = target.character.debuffs.indexOf(CardType.SATELLITE_TARGET);
@@ -141,11 +122,10 @@ const processSatelliteTargetEffect = async (roomId: number, userId: string, allU
 			if (!nextUser.character.debuffs.includes(CardType.SATELLITE_TARGET)) {
 				nextUser.character.debuffs.push(CardType.SATELLITE_TARGET);
 				updateCharacterFromRoom(roomId, nextUserId, nextUser.character);
-				console.log(`[SatelliteTarget] 위성 타겟 디버프가 ${nextUser.nickname}에게 넘어갔습니다.`);
 			}
 		}
 	} catch (error) {
-		console.error(`[SatelliteTarget] 개별 유저 처리 중 오류 발생: ${error}`);
+		// 에러 처리
 	}
 };
 

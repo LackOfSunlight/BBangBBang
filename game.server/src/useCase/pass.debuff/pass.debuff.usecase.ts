@@ -17,9 +17,15 @@ const passDebuffUseCase = async (
 
 	try {
 		// 1. 방 존재 확인
-		let room;
-		room = getRoom(parseInt(roomId));
+		const room = getRoom(parseInt(roomId));
+	} catch (error) {
+		// 방을 찾을 수 없는 경우
 		return setPassDebuffResponse(false, GlobalFailCode.ROOM_NOT_FOUND);
+	}
+
+	try {
+		// 1. 방 존재 확인 (재시도)
+		const room = getRoom(parseInt(roomId));
 
 		// 2. 요청자와 대상자가 같은 방에 있는지 확인
 		const fromUser = room.users.find((u) => u.id === userId);

@@ -18,8 +18,8 @@ jest.mock('../utils/room.utils', () => ({
 	updateCharacterFromRoom: mockUpdateCharacterFromRoom,
 }));
 
-jest.mock('../handlers/notification/animation.notification.handler', () => ({
-	sendAnimationNotification: mockSendAnimationNotification,
+jest.mock('../handlers/play.animation.handler', () => ({
+	playAnimationHandler: mockSendAnimationNotification,
 }));
 
 jest.mock('../utils/game.end.util', () => ({
@@ -93,9 +93,9 @@ describe('위성타겟 애니메이션 테스트', () => {
 		// @ts-expect-error: 테스트를 위한 모킹
 		mockGetUserFromRoom.mockImplementation((roomId, userId) => {
 			const user = mockRoom.users.find((u) => u.id === userId);
-			return Promise.resolve(user || null);
+			return user || null;
 		});
-		mockGetRoom.mockResolvedValue(mockRoom);
+		mockGetRoom.mockReturnValue(mockRoom);
 		mockUpdateCharacterFromRoom.mockResolvedValue(undefined);
 
 		// When
@@ -155,9 +155,9 @@ describe('위성타겟 애니메이션 테스트', () => {
 		// @ts-expect-error: 테스트를 위한 모킹
 		mockGetUserFromRoom.mockImplementation((roomId, userId) => {
 			const user = mockRoom.users.find((u) => u.id === userId);
-			return Promise.resolve(user || null);
+			return user || null;
 		});
-		mockGetRoom.mockResolvedValue(mockRoom);
+		mockGetRoom.mockReturnValue(mockRoom);
 		mockUpdateCharacterFromRoom.mockResolvedValue(undefined);
 
 		// When
