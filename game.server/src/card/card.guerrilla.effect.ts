@@ -44,7 +44,11 @@ const cardGuerrillaEffect = (roomId: number, userId: string, targetUserId: strin
 				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 				user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
 				user.character.stateInfo.stateTargetUserId = targetUserId;
-			} else {
+
+				continue;
+			}
+
+			if (user.character && user.character.hp > 0) {
 				user.character.stateInfo.state = CharacterStateType.GUERRILLA_TARGET;
 				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 				user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
