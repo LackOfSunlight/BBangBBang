@@ -7,6 +7,7 @@ import {
 	RoleType,
 	CharacterStateType,
 } from '../../generated/common/enums';
+import { CharacterData } from '../../generated/common/types';
 
 // cardDesertEagleEffect 함수의 직접적인 의존성인 room.utils를 모킹합니다.
 jest.mock('../../utils/room.utils', () => ({
@@ -45,16 +46,16 @@ describe('cardDesertEagleEffect', () => {
 				nextStateAt: '0',
 			},
 			bbangCount: 0,
-		};
+		} as CharacterData;
 
-		// 모의 함수의 기본 동작을 설정합니다.
-		mockGetUserFromRoom.mockResolvedValue(mockUser);
-		mockUpdateCharacterFromRoom.mockResolvedValue(true);
+		// 모의 함수의 기본 동작을 동기적으로 설정합니다.
+		mockGetUserFromRoom.mockReturnValue(mockUser);
+		mockUpdateCharacterFromRoom.mockImplementation(() => {}); // void 함수
 	});
 
-	it('성공적으로 데저트 이글을 장착하고 true를 반환해야 합니다', async () => {
+	it('성공적으로 데저트 이글을 장착하고 true를 반환해야 합니다', () => {
 		// Act: 테스트할 함수를 실행합니다.
-		const result = await cardDesertEagleEffect(ROOM_ID, USER_ID);
+		const result = cardDesertEagleEffect(ROOM_ID, USER_ID);
 
 		// Assert: 결과를 검증합니다.
 		expect(result).toBe(true);
@@ -68,13 +69,12 @@ describe('cardDesertEagleEffect', () => {
 		);
 	});
 
-	it('기존에 다른 무기를 가지고 있었다면, 덮어써야 합니다', async () => {
+	it('기존에 다른 무기를 가지고 있었다면, 덮어써야 합니다', () => {
 		// Arrange: 유저가 이미 다른 무기를 가지고 있는 상황을 설정합니다.
 		mockUser.character!.weapon = CardType.HAND_GUN;
-		mockGetUserFromRoom.mockResolvedValue(mockUser);
 
 		// Act
-		const result = await cardDesertEagleEffect(ROOM_ID, USER_ID);
+		const result = cardDesertEagleEffect(ROOM_ID, USER_ID);
 
 		// Assert
 		expect(result).toBe(true);
@@ -87,39 +87,42 @@ describe('cardDesertEagleEffect', () => {
 		);
 	});
 
-	it('유저를 찾을 수 없으면 false를 반환해야 합니다', async () => {
-		// Arrange: 유저를 찾을 수 없는 상황을 설정합니다.
-		mockGetUserFromRoom.mockResolvedValue(null);
+	it('유저를 찾을 수 없으면 false를 반환해야 합니다', () => {
+		// Arrange: 유저를 찾을 수 없는 상황 (에러 발생)을 설정합니다.
+		mockGetUserFromRoom.mockImplementation(() => {
+			throw new Error('User not found');
+		});
 
 		// Act
-		const result = await cardDesertEagleEffect(ROOM_ID, USER_ID);
+		const result = cardDesertEagleEffect(ROOM_ID, USER_ID);
 
 		// Assert
 		expect(result).toBe(false);
 		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled(); // 캐릭터 업데이트 함수가 호출되지 않았는지 확인
 	});
 
-	it('유저의 캐릭터 정보가 없으면 false를 반환해야 합니다', async () => {
+	it('유저의 캐릭터 정보가 없으면 false를 반환해야 합니다', () => {
 		// Arrange: 캐릭터 정보가 없는 상황을 설정합니다.
 		mockUser.character = undefined;
-		mockGetUserFromRoom.mockResolvedValue(mockUser);
 
 		// Act
-		const result = await cardDesertEagleEffect(ROOM_ID, USER_ID);
+		const result = cardDesertEagleEffect(ROOM_ID, USER_ID);
 
 		// Assert
 		expect(result).toBe(false);
 		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 	});
 
-	it('캐릭터 정보 업데이트에 실패하면 false를 반환해야 합니다', async () => {
-		// Arrange: DB 업데이트 실패 상황을 설정합니다.
+	it('캐릭터 정보 업데이트에 실패하면 false를 반환해야 합니다', () => {
+		// Arrange: DB 업데이트 실패 상황 (에러 발생)을 설정합니다.
 		const dbError = new Error('DB update failed');
-		mockUpdateCharacterFromRoom.mockRejectedValue(dbError);
+		mockUpdateCharacterFromRoom.mockImplementation(() => {
+			throw dbError;
+		});
 		const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {}); // 테스트 중 콘솔 에러 출력을 막습니다.
 
 		// Act
-		const result = await cardDesertEagleEffect(ROOM_ID, USER_ID);
+		const result = cardDesertEagleEffect(ROOM_ID, USER_ID);
 
 		// Assert
 		expect(result).toBe(false);

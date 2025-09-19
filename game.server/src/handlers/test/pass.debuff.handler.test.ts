@@ -16,6 +16,15 @@ const mockPassDebuffUseCase = passDebuffUseCase as jest.MockedFunction<typeof pa
 const mockGetGamePacketType = getGamePacketType as unknown as jest.Mock;
 const mockSendData = sendData as unknown as jest.Mock;
 
+// 에러 로그 출력 억제
+beforeAll(() => {
+	jest.spyOn(console, 'error').mockImplementation(() => {});
+});
+
+afterAll(() => {
+	jest.restoreAllMocks();
+});
+
 describe('passDebuffHandler', () => {
     let mockSocket: Partial<GameSocket>;
     let mockGamePacket: GamePacket;
@@ -44,86 +53,90 @@ describe('passDebuffHandler', () => {
 
 	describe('성공 케이스', () => {
 		it('디버프 전달이 성공적으로 처리되어야 함', async () => {
-		// Given
-		const mockUseCaseResult = {
-			payload: {
-				oneofKind: 'passDebuffResponse' as const,
-				passDebuffResponse: {
-					success: true,
-					failCode: GlobalFailCode.NONE_FAILCODE,
+			// Given
+			const mockUseCaseResult = {
+				payload: {
+					oneofKind: 'passDebuffResponse' as const,
+					passDebuffResponse: {
+						success: true,
+						failCode: GlobalFailCode.NONE_FAILCODE,
+					},
 				},
-			},
-		} as GamePacket;
+			} as GamePacket;
 
 			mockPassDebuffUseCase.mockResolvedValue(mockUseCaseResult);
 
-            // When
-            mockGetGamePacketType.mockReturnValue(mockGamePacket.payload);
-            await passDebuffHandler(mockSocket as GameSocket, mockGamePacket);
+			// When
+			mockGetGamePacketType.mockReturnValue(mockGamePacket.payload);
+			await passDebuffHandler(mockSocket as GameSocket, mockGamePacket);
 
 			// Then
 			expect(mockPassDebuffUseCase).toHaveBeenCalledWith(mockSocket, {
 				targetUserId: 'user-456',
 				debuffCardType: CardType.DEATH_MATCH,
 			});
+			expect(mockSendData).toHaveBeenCalledWith(mockSocket, mockUseCaseResult, GamePacketType.passDebuffResponse);
 		});
 	});
 
 	describe('실패 케이스', () => {
-        it('방을 찾을 수 없는 경우 실패해야 함', async () => {
-		// Given
-		const mockUseCaseResult = {
-			payload: {
-				oneofKind: 'passDebuffResponse' as const,
-				passDebuffResponse: {
-					success: false,
-					failCode: GlobalFailCode.ROOM_NOT_FOUND,
+		it('방을 찾을 수 없는 경우 실패해야 함', async () => {
+			// Given
+			const mockUseCaseResult = {
+				payload: {
+					oneofKind: 'passDebuffResponse' as const,
+					passDebuffResponse: {
+						success: false,
+						failCode: GlobalFailCode.ROOM_NOT_FOUND,
+					},
 				},
-			},
-		} as GamePacket;
+			} as GamePacket;
 
 			mockPassDebuffUseCase.mockResolvedValue(mockUseCaseResult);
 
 			// When
-            mockGetGamePacketType.mockReturnValue(mockGamePacket.payload);
-            await passDebuffHandler(mockSocket as GameSocket, mockGamePacket);
+			mockGetGamePacketType.mockReturnValue(mockGamePacket.payload);
+			await passDebuffHandler(mockSocket as GameSocket, mockGamePacket);
 
 			// Then
 			expect(mockPassDebuffUseCase).toHaveBeenCalled();
+			expect(mockSendData).toHaveBeenCalledWith(mockSocket, mockUseCaseResult, GamePacketType.passDebuffResponse);
 		});
 
-        it('디버프 카드를 가지고 있지 않은 경우 실패해야 함', async () => {
-		// Given
-		const mockUseCaseResult = {
-			payload: {
-				oneofKind: 'passDebuffResponse' as const,
-				passDebuffResponse: {
-					success: false,
-					failCode: GlobalFailCode.CHARACTER_NO_CARD,
+		it('디버프 카드를 가지고 있지 않은 경우 실패해야 함', async () => {
+			// Given
+			const mockUseCaseResult = {
+				payload: {
+					oneofKind: 'passDebuffResponse' as const,
+					passDebuffResponse: {
+						success: false,
+						failCode: GlobalFailCode.CHARACTER_NO_CARD,
+					},
 				},
-			},
-		} as GamePacket;
+			} as GamePacket;
 
 			mockPassDebuffUseCase.mockResolvedValue(mockUseCaseResult);
 
 			// When
-            mockGetGamePacketType.mockReturnValue(mockGamePacket.payload);
-            await passDebuffHandler(mockSocket as GameSocket, mockGamePacket);
+			mockGetGamePacketType.mockReturnValue(mockGamePacket.payload);
+			await passDebuffHandler(mockSocket as GameSocket, mockGamePacket);
 
 			// Then
 			expect(mockPassDebuffUseCase).toHaveBeenCalled();
+			expect(mockSendData).toHaveBeenCalledWith(mockSocket, mockUseCaseResult, GamePacketType.passDebuffResponse);
 		});
 
-        it('payload가 없으면 아무 작업도 수행하지 않아야 함', async () => {
-            // Given
-            mockGetGamePacketType.mockReturnValue(null);
-            // When
-            await passDebuffHandler(mockSocket as GameSocket, mockGamePacket);
+		it('payload가 없으면 아무 작업도 수행하지 않아야 함', async () => {
+			// Given
+			mockGetGamePacketType.mockReturnValue(null);
 
-            // Then
-            expect(mockPassDebuffUseCase).not.toHaveBeenCalled();
-            expect(mockSendData).not.toHaveBeenCalled();
-        });
+			// When
+			await passDebuffHandler(mockSocket as GameSocket, mockGamePacket);
+
+			// Then
+			expect(mockPassDebuffUseCase).not.toHaveBeenCalled();
+			expect(mockSendData).not.toHaveBeenCalled();
+		});
 	});
 
 	describe('에러 처리', () => {
@@ -132,9 +145,8 @@ describe('passDebuffHandler', () => {
 			mockPassDebuffUseCase.mockRejectedValue(new Error('Database error'));
 
 			// When & Then
-			// 에러가 발생하면 테스트가 실패해야 함 (try-catch가 없으므로)
-            mockGetGamePacketType.mockReturnValue(mockGamePacket.payload);
-            await expect(passDebuffHandler(mockSocket as GameSocket, mockGamePacket)).rejects.toThrow('Database error');
+			mockGetGamePacketType.mockReturnValue(mockGamePacket.payload);
+			await expect(passDebuffHandler(mockSocket as GameSocket, mockGamePacket)).rejects.toThrow('Database error');
 			expect(mockPassDebuffUseCase).toHaveBeenCalled();
 		});
 	});

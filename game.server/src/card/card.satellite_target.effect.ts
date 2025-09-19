@@ -1,6 +1,7 @@
 // cardType = 22
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 import { CardType, AnimationType } from '../generated/common/enums';
+
 import { playAnimationHandler } from '../handlers/play.animation.handler';
 import { checkAndEndGameIfNeeded } from '../utils/game.end.util.js';
 
@@ -9,6 +10,7 @@ const cardSatelliteTargetEffect = (
 	roomId: number,
 	userId: string,
 	targetUserId: string,
+
 ): boolean => {
 	try {
 		const target = getUserFromRoom(roomId, targetUserId);
@@ -26,6 +28,7 @@ const cardSatelliteTargetEffect = (
 		// 디버프 추가
 		target.character.debuffs.push(CardType.SATELLITE_TARGET);
 
+
 		updateCharacterFromRoom(roomId, targetUserId, target.character);
 		console.log(`[SatelliteTarget] ${target.nickname}에게 위성 타겟 디버프가 추가되었습니다.`);
 		return true;
@@ -34,9 +37,11 @@ const cardSatelliteTargetEffect = (
 		return false;
 	}
 };
+
 // 위성 타겟 효과 체크 (하루 시작 시 호출)
 export const checkSatelliteTargetEffect = async (roomId: number) => {
 	try {
+
 		const room = getRoom(roomId);
 		if (!room || !room.users) {
 			console.warn(`[SatelliteTarget] 방 또는 유저 정보를 찾을 수 없습니다: roomId=${roomId}`);
@@ -65,6 +70,7 @@ export const checkSatelliteTargetEffect = async (roomId: number) => {
 // 개별 유저의 위성 타겟 효과 처리
 const processSatelliteTargetEffect = async (roomId: number, userId: string, allUsers: any[]) => {
 	try {
+
 		const target = getUserFromRoom(roomId, userId);
 		if (!target || !target.character) return;
 
@@ -79,6 +85,7 @@ const processSatelliteTargetEffect = async (roomId: number, userId: string, allU
 			console.log(`[SatelliteTarget] 효과 발동: ${target.nickname}의 HP ${damage} 감소`);
 
 			// 1. 위성 타겟 애니메이션 전송
+
 			playAnimationHandler(allUsers, userId, AnimationType.SATELLITE_TARGET_ANIMATION);
 			console.log(`[SatelliteTarget] 위성 타겟 애니메이션 전송: ${target.nickname}`);
 
@@ -97,10 +104,12 @@ const processSatelliteTargetEffect = async (roomId: number, userId: string, allU
 				target.character.debuffs.splice(debuffIndex, 1);
 			}
 
+
 			updateCharacterFromRoom(roomId, userId, target.character);
 			console.log(
-				`[SatelliteTarget] 위성 타겟 효과 완료: ${target.nickname}의 HP ${target.character.hp}`,
+				`[SatelliteTarget] ${target.nickname}의 위성 타겟 효과 미발동. 다음 유저에게 디버프를 넘깁니다.`,
 			);
+
 
 			// 게임 종료 조건 검사
 			await checkAndEndGameIfNeeded(roomId);
@@ -115,6 +124,7 @@ const processSatelliteTargetEffect = async (roomId: number, userId: string, allU
 			if (debuffIndex > -1) {
 				target.character.debuffs.splice(debuffIndex, 1);
 			}
+
 			updateCharacterFromRoom(roomId, userId, target.character);
 
 			// 2. 다음 차례에 있는 유저 찾기
