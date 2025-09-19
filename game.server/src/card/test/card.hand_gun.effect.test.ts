@@ -81,11 +81,13 @@ describe('cardHandGunEffect', () => {
 			const mockCharacter = createMockCharacter();
 			const mockRoom = {
 				id: roomId,
-				users: [{
-					id: userId,
-					nickname: 'user1',
-					character: mockCharacter,
-				}],
+				users: [
+					{
+						id: userId,
+						nickname: 'user1',
+						character: mockCharacter,
+					},
+				],
 			};
 
 			mockGetRoom.mockReturnValue(mockRoom);
@@ -104,11 +106,13 @@ describe('cardHandGunEffect', () => {
 			const mockCharacter = createMockCharacter();
 			const mockRoom = {
 				id: roomId,
-				users: [{
-					id: userId,
-					nickname: 'user1',
-					character: mockCharacter,
-				}],
+				users: [
+					{
+						id: userId,
+						nickname: 'user1',
+						character: mockCharacter,
+					},
+				],
 			};
 
 			mockGetRoom.mockReturnValue(mockRoom);
@@ -157,11 +161,13 @@ describe('cardHandGunEffect', () => {
 
 			const mockRoom = {
 				id: roomId,
-				users: [{
-					id: userId,
-					nickname: 'user1',
-					character: mockCharacter,
-				}],
+				users: [
+					{
+						id: userId,
+						nickname: 'user1',
+						character: mockCharacter,
+					},
+				],
 			};
 
 			mockGetRoom.mockReturnValue(mockRoom);

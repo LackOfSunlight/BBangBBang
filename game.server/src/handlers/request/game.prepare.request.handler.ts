@@ -13,7 +13,6 @@
 // import gamePrepareNotificationHandler, { setGamePrepareNotification } from "../notification/game.prepare.notification.handler.js";
 // import { RoomStateType } from "../../generated/common/enums.js";
 
-
 // const gamePrepareRequestHandler = async (socket:GameSocket, gamePacket:GamePacket) =>{
 
 //     const payload =  getGamePacketType(gamePacket, gamePackTypeSelect.gamePrepareRequest);
@@ -41,7 +40,6 @@
 //         6: [RoleType.TARGET, RoleType.PSYCHOPATH, RoleType.HITMAN, RoleType.HITMAN, RoleType.HITMAN, RoleType.BODYGUARD],
 //         7: [RoleType.TARGET, RoleType.PSYCHOPATH, RoleType.HITMAN, RoleType.HITMAN, RoleType.HITMAN, RoleType.HITMAN, RoleType.BODYGUARD]
 //     }
-
 
 //     const characterList: CharacterInfo[] = (characterType as any[]).map(char => ({
 //         ...char,
@@ -76,7 +74,7 @@
 
 //        role.splice(randomRoleIndex,1);
 //        characterList.splice(randomCharacterIndex,1);
-       
+
 //     });
 
 //     room.state = RoomStateType.INGAME;
@@ -87,8 +85,6 @@
 //     gamePrepareNotificationHandler(socket, setGamePrepareNotification(room));
 
 // }
-
-
 
 // const setGamePrepareResponse = (success:boolean, failCode: GlobalFailCode) =>{
 //     const newGamePacket:GamePacket = {

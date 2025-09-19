@@ -20,7 +20,7 @@ describe('joinRoomRequestHandler', () => {
 	let mockUser: User;
 	let mockRoom: Room;
 	let mockReturnGamePacket: GamePacket;
-    let mockPayloadJoinRoom: C2SJoinRoomRequest;
+	let mockPayloadJoinRoom: C2SJoinRoomRequest;
 
 	beforeEach(() => {
 		mockSocket = {
@@ -33,9 +33,9 @@ describe('joinRoomRequestHandler', () => {
 				joinRoomRequest: { roomId: 1 },
 			},
 		};
-        mockPayloadJoinRoom = {
-            roomId: 1,
-        }
+		mockPayloadJoinRoom = {
+			roomId: 1,
+		};
 
 		mockUser = {
 			id: '1',

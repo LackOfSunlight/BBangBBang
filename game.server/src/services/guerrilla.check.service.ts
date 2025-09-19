@@ -16,7 +16,6 @@ export const CheckGuerrillaService = (room: Room): Room => {
 		return false;
 	});
 
-
 	console.log(`체크들어옴 ${hasValidTarget}`);
 
 	for (const u of users) {

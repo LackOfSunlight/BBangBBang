@@ -62,7 +62,10 @@ describe('gameStartHandler', () => {
 		await gameStartHandler(mockSocket, gamePacket);
 
 		// Assert: 함수 호출 및 인자 검증
-		expect(mockGetGamePacketType).toHaveBeenCalledWith(gamePacket, gamePackTypeSelect.gameStartRequest);
+		expect(mockGetGamePacketType).toHaveBeenCalledWith(
+			gamePacket,
+			gamePackTypeSelect.gameStartRequest,
+		);
 		expect(mockGameStartUseCase).toHaveBeenCalledWith(mockSocket, request);
 		expect(mockSendData).toHaveBeenCalledWith(
 			mockSocket,
@@ -83,7 +86,10 @@ describe('gameStartHandler', () => {
 		await gameStartHandler(mockSocket, gamePacket);
 
 		// Assert: 특정 함수들이 호출되지 않았는지 검증
-		expect(mockGetGamePacketType).toHaveBeenCalledWith(gamePacket, gamePackTypeSelect.gameStartRequest);
+		expect(mockGetGamePacketType).toHaveBeenCalledWith(
+			gamePacket,
+			gamePackTypeSelect.gameStartRequest,
+		);
 		expect(mockGameStartUseCase).not.toHaveBeenCalled();
 		expect(mockSendData).not.toHaveBeenCalled();
 	});

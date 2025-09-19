@@ -67,10 +67,7 @@ describe('destroyCardRequestHandler', () => {
 			mockGamePacket,
 			GamePacketType.destroyCardRequest,
 		);
-		expect(destroyCardUseCase).toHaveBeenCalledWith(
-			mockSocket,
-			mockPayLoad,
-		);
+		expect(destroyCardUseCase).toHaveBeenCalledWith(mockSocket, mockPayLoad);
 
 		expect(sendData).toHaveBeenCalledWith(
 			mockSocket,

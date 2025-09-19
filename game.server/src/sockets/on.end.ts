@@ -10,10 +10,10 @@ const onEnd = (socket: GameSocket) => async () => {
 		console.log('클라이언트 연결이 종료되었습니다.');
 		removeSocket(socket);
 
-		if(socket.userId){
+		if (socket.userId) {
 			await removeTokenUserDB(Number(socket.userId));
 		}
-		
+
 		if (socket.roomId) {
 			
 			// await removeUserFromRoom();

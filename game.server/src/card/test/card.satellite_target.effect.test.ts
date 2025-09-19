@@ -18,8 +18,12 @@ import { sendAnimationNotification } from '../../handlers/notification/animation
 
 const mockGetRoom = getRoom as jest.MockedFunction<typeof getRoom>;
 const mockGetUserFromRoom = getUserFromRoom as jest.MockedFunction<typeof getUserFromRoom>;
-const mockUpdateCharacterFromRoom = updateCharacterFromRoom as jest.MockedFunction<typeof updateCharacterFromRoom>;
-const mockSendAnimationNotification = sendAnimationNotification as jest.MockedFunction<typeof sendAnimationNotification>;
+const mockUpdateCharacterFromRoom = updateCharacterFromRoom as jest.MockedFunction<
+	typeof updateCharacterFromRoom
+>;
+const mockSendAnimationNotification = sendAnimationNotification as jest.MockedFunction<
+	typeof sendAnimationNotification
+>;
 
 describe('위성 타겟 효과 테스트', () => {
 	// 테스트용 모킹 데이터
@@ -74,7 +78,7 @@ describe('위성 타겟 효과 테스트', () => {
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(
 				mockRoomId,
 				mockTargetUserId,
-				mockTarget.character
+				mockTarget.character,
 			);
 		});
 
@@ -83,7 +87,7 @@ describe('위성 타겟 효과 테스트', () => {
 			const mockTarget = createMockUser(
 				mockTargetUserId,
 				'타겟유저',
-				createMockCharacter(10, [CardType.SATELLITE_TARGET])
+				createMockCharacter(10, [CardType.SATELLITE_TARGET]),
 			);
 			mockGetUserFromRoom.mockResolvedValue(mockTarget);
 
@@ -143,9 +147,12 @@ describe('위성 타겟 효과 테스트', () => {
 			const mockUserWithDebuff = createMockUser(
 				'user1',
 				'유저1',
-				createMockCharacter(10, [CardType.SATELLITE_TARGET])
+				createMockCharacter(10, [CardType.SATELLITE_TARGET]),
 			);
-			const mockRoom = createMockRoom(mockRoomId, [mockUserWithDebuff, createMockUser('user2', '유저2', createMockCharacter(8))]);
+			const mockRoom = createMockRoom(mockRoomId, [
+				mockUserWithDebuff,
+				createMockUser('user2', '유저2', createMockCharacter(8)),
+			]);
 			mockGetRoom.mockResolvedValue(mockRoom);
 			mockGetUserFromRoom.mockResolvedValue(mockUserWithDebuff);
 			mockUpdateCharacterFromRoom.mockResolvedValue(undefined);
@@ -160,7 +167,7 @@ describe('위성 타겟 효과 테스트', () => {
 			expect(mockSendAnimationNotification).toHaveBeenCalledWith(
 				mockRoom.users,
 				'user1',
-				AnimationType.SATELLITE_TARGET_ANIMATION
+				AnimationType.SATELLITE_TARGET_ANIMATION,
 			);
 
 			// 원래 Math.random 복원
@@ -174,7 +181,7 @@ describe('위성 타겟 효과 테스트', () => {
 			const mockTarget = createMockUser(
 				'user1',
 				'유저1',
-				createMockCharacter(10, [CardType.SATELLITE_TARGET])
+				createMockCharacter(10, [CardType.SATELLITE_TARGET]),
 			);
 			const mockRoom = createMockRoom(mockRoomId, [mockTarget]);
 			mockGetRoom.mockResolvedValue(mockRoom);
@@ -193,7 +200,7 @@ describe('위성 타겟 효과 테스트', () => {
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(
 				mockRoomId,
 				'user1',
-				mockTarget.character
+				mockTarget.character,
 			);
 
 			// 원래 Math.random 복원
@@ -205,7 +212,7 @@ describe('위성 타겟 효과 테스트', () => {
 			const mockTarget = createMockUser(
 				'user1',
 				'유저1',
-				createMockCharacter(2, [CardType.SATELLITE_TARGET])
+				createMockCharacter(2, [CardType.SATELLITE_TARGET]),
 			);
 			const mockRoom = createMockRoom(mockRoomId, [mockTarget]);
 			mockGetRoom.mockResolvedValue(mockRoom);
@@ -232,13 +239,13 @@ describe('위성 타겟 효과 테스트', () => {
 			const mockUser1 = createMockUser(
 				'user1',
 				'유저1',
-				createMockCharacter(10, [CardType.SATELLITE_TARGET])
+				createMockCharacter(10, [CardType.SATELLITE_TARGET]),
 			);
 			const mockUser2 = createMockUser('user2', '유저2', createMockCharacter(8));
 			const mockUser3 = createMockUser('user3', '유저3', createMockCharacter(6));
-			
+
 			const mockRoom = createMockRoom(mockRoomId, [mockUser1, mockUser2, mockUser3]);
-			
+
 			mockGetRoom.mockResolvedValue(mockRoom);
 			mockGetUserFromRoom
 				.mockResolvedValueOnce(mockUser1) // 첫 번째 호출: 현재 유저
@@ -254,7 +261,7 @@ describe('위성 타겟 효과 테스트', () => {
 			// Then: 첫 번째 유저의 디버프가 제거되고 두 번째 유저에게 이전됨
 			expect(mockUser1.character.debuffs).not.toContain(CardType.SATELLITE_TARGET);
 			expect(mockUser2.character.debuffs).toContain(CardType.SATELLITE_TARGET);
-			
+
 			// Redis 업데이트가 두 번 호출됨 (현재 유저 제거, 다음 유저 추가)
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledTimes(2);
 
@@ -269,11 +276,11 @@ describe('위성 타겟 효과 테스트', () => {
 			const mockUser3 = createMockUser(
 				'user3',
 				'유저3',
-				createMockCharacter(6, [CardType.SATELLITE_TARGET])
+				createMockCharacter(6, [CardType.SATELLITE_TARGET]),
 			);
-			
+
 			const mockRoom = createMockRoom(mockRoomId, [mockUser1, mockUser2, mockUser3]);
-			
+
 			mockGetRoom.mockResolvedValue(mockRoom);
 			mockGetUserFromRoom
 				.mockResolvedValueOnce(mockUser3) // 첫 번째 호출: 현재 유저 (마지막)
@@ -293,7 +300,6 @@ describe('위성 타겟 효과 테스트', () => {
 			// 원래 Math.random 복원
 			Math.random = originalRandom;
 		});
-
 	});
 
 	describe('에러 처리 시나리오', () => {
@@ -313,10 +319,10 @@ describe('위성 타겟 효과 테스트', () => {
 			const mockUserWithDebuff = createMockUser(
 				'user1',
 				'유저1',
-				createMockCharacter(10, [CardType.SATELLITE_TARGET])
+				createMockCharacter(10, [CardType.SATELLITE_TARGET]),
 			);
 			const mockRoom = createMockRoom(mockRoomId, [mockUserWithDebuff]);
-			
+
 			mockGetRoom.mockResolvedValue(mockRoom);
 			mockGetUserFromRoom.mockResolvedValue(null); // 유저 정보를 가져올 수 없음
 
@@ -333,10 +339,10 @@ describe('위성 타겟 효과 테스트', () => {
 			const mockTarget = createMockUser(
 				'user1',
 				'유저1',
-				createMockCharacter(10, [CardType.SATELLITE_TARGET])
+				createMockCharacter(10, [CardType.SATELLITE_TARGET]),
 			);
 			const mockRoom = createMockRoom(mockRoomId, [mockTarget]);
-			
+
 			mockGetRoom.mockResolvedValue(mockRoom);
 			mockGetUserFromRoom.mockResolvedValue(mockTarget);
 			mockUpdateCharacterFromRoom.mockRejectedValue(new Error('Redis connection failed'));
@@ -352,7 +358,7 @@ describe('위성 타겟 효과 테스트', () => {
 
 			// Then: 에러가 로깅됨
 			expect(consoleSpy).toHaveBeenCalledWith(
-				expect.stringContaining('[SatelliteTarget] Redis 업데이트 중 오류 발생')
+				expect.stringContaining('[SatelliteTarget] Redis 업데이트 중 오류 발생'),
 			);
 
 			// 정리
@@ -367,10 +373,10 @@ describe('위성 타겟 효과 테스트', () => {
 			const mockTarget = createMockUser(
 				'user1',
 				'유저1',
-				createMockCharacter(10, [CardType.SATELLITE_TARGET])
+				createMockCharacter(10, [CardType.SATELLITE_TARGET]),
 			);
 			const mockRoom = createMockRoom(mockRoomId, [mockTarget]);
-			
+
 			mockGetRoom.mockResolvedValue(mockRoom);
 			mockGetUserFromRoom.mockResolvedValue(mockTarget);
 			mockUpdateCharacterFromRoom.mockResolvedValue(undefined);
@@ -385,7 +391,7 @@ describe('위성 타겟 효과 테스트', () => {
 			// 실제로는 0.03보다 작아야 발동되므로 0.029로 테스트
 			Math.random = jest.fn(() => 0.029);
 			await checkSatelliteTargetEffect(mockRoomId);
-			
+
 			expect(mockSendAnimationNotification).toHaveBeenCalled();
 
 			// 원래 Math.random 복원

@@ -18,13 +18,13 @@ export const onData = (socket: Socket, chunk: Buffer) => {
 	try {
 		// 기존 버퍼 가져오기 또는 새로 생성
 		let buffer = socketBuffers.get(socket) || Buffer.alloc(0);
-		
+
 		// 새 청크와 기존 버퍼 합치기
 		buffer = Buffer.concat([buffer, chunk]);
-		
+
 		// 버퍼 업데이트
 		socketBuffers.set(socket, buffer);
-		
+
 		while (buffer.length >= 11) {
 			// 최소 헤더 크기: type(2) + verLen(1) + seq(4) + payloadLen(4)
 			const payloadType = buffer.readUint16BE(0);

@@ -10,7 +10,7 @@ const cardLaserPointerEffect = (roomId: number, userId: string) : boolean => {
 	// 중복 착용 중일 경우
 	if (!user.character.equips.includes(CardType.LASER_POINTER)) {
 		user.character.equips.push(CardType.LASER_POINTER);
-	} else{
+	} else {
 		return false;
 	}
 
@@ -19,7 +19,7 @@ const cardLaserPointerEffect = (roomId: number, userId: string) : boolean => {
 		updateCharacterFromRoom(roomId, userId, user.character);
 		return true;
 		//console.log('로그 저장에 성공하였습니다');
-	} catch(error){
+	} catch (error) {
 		console.error(`로그 저장에 실패하였습니다:[${error}]`);
 		return false;
 	}
