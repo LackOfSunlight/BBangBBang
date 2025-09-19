@@ -51,12 +51,12 @@ const cardCall119Effect = (
 
 		if (targetUserId != '0') {
 			// 자신의 체력 회복
-			await healCharacter(roomId, user, user.character);
+			healCharacter(roomId, user, user.character);
 			return true;
 		} else {
 			// 나머지 플레이어들의 체력 회복
 			// 방의 모든 사용자 정보를 가져와서 자신을 제외한 나머지 플레이어들을 회복
-			const room = await getRoom(roomId);
+			const room = getRoom(roomId);
 			if (!room) return false;
 
 			for (const roomUser of room.users) {
