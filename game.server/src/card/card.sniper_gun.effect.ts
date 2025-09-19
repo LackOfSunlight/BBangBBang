@@ -2,7 +2,7 @@
 import { CardType } from '../generated/common/enums.js';
 import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
 
-const cardSniperGunEffect = async (roomId: number, userId: string) : Promise<boolean> => {
+const cardSniperGunEffect = async (roomId: number, userId: string): Promise<boolean> => {
 	const user = await getUserFromRoom(roomId, userId);
 
 	// 유효성 검증

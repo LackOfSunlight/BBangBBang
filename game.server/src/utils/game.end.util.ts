@@ -25,7 +25,9 @@ export async function checkAndEndGameIfNeeded(roomId: number): Promise<void> {
 		// 게임 종료 조건 검사
 		const gameResult = evaluateGameEndConditions(room);
 		if (gameResult) {
-			console.log(`[GameEnd] 게임 종료 조건 만족: ${gameResult.winType}, 승리자: ${gameResult.winners.join(', ')}`);
+			console.log(
+				`[GameEnd] 게임 종료 조건 만족: ${gameResult.winType}, 승리자: ${gameResult.winners.join(', ')}`,
+			);
 			await endGame(room, gameResult);
 		}
 	} catch (error) {
@@ -38,9 +40,7 @@ export async function checkAndEndGameIfNeeded(roomId: number): Promise<void> {
  */
 function evaluateGameEndConditions(room: Room): GameEndResult | null {
 	const totalUsers = room.users.length;
-	const aliveUsers = room.users.filter(user => 
-		user.character && user.character.hp > 0
-	);
+	const aliveUsers = room.users.filter((user) => user.character && user.character.hp > 0);
 	const aliveCount = aliveUsers.length;
 
 	// 1. 3명 이상이면 승리 불가능
@@ -50,7 +50,7 @@ function evaluateGameEndConditions(room: Room): GameEndResult | null {
 
 	// 2. 역할별로 그룹화 (모든 인원에서 공통)
 	const usersByRole = new Map<RoleType, typeof aliveUsers>();
-	aliveUsers.forEach(user => {
+	aliveUsers.forEach((user) => {
 		if (user.character) {
 			const role = user.character.roleType;
 			if (!usersByRole.has(role)) {
@@ -60,7 +60,7 @@ function evaluateGameEndConditions(room: Room): GameEndResult | null {
 		}
 	});
 
-	// 3. 각 역할별 생존자 수 체크 
+	// 3. 각 역할별 생존자 수 체크
 	const hitmanAlive = usersByRole.get(RoleType.HITMAN)?.length || 0;
 	const psychopathAlive = usersByRole.get(RoleType.PSYCHOPATH)?.length || 0;
 	const targetAlive = usersByRole.get(RoleType.TARGET)?.length || 0;
@@ -71,22 +71,18 @@ function evaluateGameEndConditions(room: Room): GameEndResult | null {
 	if (totalUsers === 2) {
 		if (targetAlive === 0 && hitmanAlive > 0) {
 			// 히트맨 승리
-			const hitman = aliveUsers.filter(user => 
-				user.character?.roleType === RoleType.HITMAN
-			);
+			const hitman = aliveUsers.filter((user) => user.character?.roleType === RoleType.HITMAN);
 			return {
-				winners: hitman.map(user => user.id),
-				winType: WinType.HITMAN_WIN
+				winners: hitman.map((user) => user.id),
+				winType: WinType.HITMAN_WIN,
 			};
 		}
 		if (hitmanAlive === 0 && targetAlive > 0) {
 			// 타겟 승리
-			const target = aliveUsers.filter(user => 
-				user.character?.roleType === RoleType.TARGET
-			);
+			const target = aliveUsers.filter((user) => user.character?.roleType === RoleType.TARGET);
 			return {
-				winners: target.map(user => user.id),
-				winType: WinType.TARGET_AND_BODYGUARD_WIN
+				winners: target.map((user) => user.id),
+				winType: WinType.TARGET_AND_BODYGUARD_WIN,
 			};
 		}
 		// 그 외의 경우는 게임 계속 진행
@@ -96,37 +92,36 @@ function evaluateGameEndConditions(room: Room): GameEndResult | null {
 	// 5. 인원별 승리 조건 검사
 	// 5-1. 히트맨 승리 조건: 타겟이 사망
 	if (targetAlive === 0 && hitmanAlive > 0) {
-		const hitman = aliveUsers.filter(user => 
-			user.character?.roleType === RoleType.HITMAN
-		);
+		const hitman = aliveUsers.filter((user) => user.character?.roleType === RoleType.HITMAN);
 		return {
-			winners: hitman.map(user => user.id),
-			winType: WinType.HITMAN_WIN
+			winners: hitman.map((user) => user.id),
+			winType: WinType.HITMAN_WIN,
 		};
 	}
 
 	// 5-2. 싸이코패스 승리 조건: 자신을 제외한 모든 플레이어가 사망 (1명만 생존)
 	if (aliveCount === 1 && psychopathAlive === 1) {
-		const psychopath = aliveUsers.filter(user => 
-			user.character?.roleType === RoleType.PSYCHOPATH
+		const psychopath = aliveUsers.filter(
+			(user) => user.character?.roleType === RoleType.PSYCHOPATH,
 		);
 		return {
-			winners: psychopath.map(user => user.id),
-			winType: WinType.PSYCHOPATH_WIN
+			winners: psychopath.map((user) => user.id),
+			winType: WinType.PSYCHOPATH_WIN,
 		};
 	}
 
 	// 5-3. 타겟/보디가드 승리 조건: 히트맨과 싸이코패스가 모두 사망
 	if (hitmanAlive === 0 && psychopathAlive === 0) {
-		const targetAndBodyguard = aliveUsers.filter(user => 
-			user.character?.roleType === RoleType.TARGET || 
-			user.character?.roleType === RoleType.BODYGUARD
+		const targetAndBodyguard = aliveUsers.filter(
+			(user) =>
+				user.character?.roleType === RoleType.TARGET ||
+				user.character?.roleType === RoleType.BODYGUARD,
 		);
-		
+
 		if (targetAndBodyguard.length > 0) {
 			return {
-				winners: targetAndBodyguard.map(user => user.id),
-				winType: WinType.TARGET_AND_BODYGUARD_WIN
+				winners: targetAndBodyguard.map((user) => user.id),
+				winType: WinType.TARGET_AND_BODYGUARD_WIN,
 			};
 		}
 	}
@@ -145,16 +140,13 @@ async function endGame(room: Room, gameResult: GameEndResult): Promise<void> {
 		await saveRoom(room);
 
 		// 게임 종료 알림 패킷 생성
-		const gameEndPacket = setGameEndNotification(
-			gameResult.winners,
-			gameResult.winType
-		);
+		const gameEndPacket = setGameEndNotification(gameResult.winners, gameResult.winType);
 
 		// 모든 플레이어에게 게임 종료 알림 전송
 		await broadcastDataToRoom(room.users, gameEndPacket, GamePacketType.gameEndNotification);
 
 		await gameManager.endGame(room);
-		
+
 		console.log(`[GameEnd] 게임 종료 완료: ${room.id}번 방`);
 	} catch (error) {
 		console.error(`[GameEnd] 게임 종료 처리 중 오류 발생:`, error);

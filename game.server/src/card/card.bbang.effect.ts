@@ -5,7 +5,11 @@ import { getRoom } from '../utils/redis.util.js';
 import { CardType } from '../generated/common/enums.js';
 import { CheckGuerrillaService } from '../services/guerrilla.check.service.js';
 
-const cardBbangEffect = async (roomId: number, userId: string, targetUserId: string) : Promise<boolean> => {
+const cardBbangEffect = async (
+	roomId: number,
+	userId: string,
+	targetUserId: string,
+): Promise<boolean> => {
 	// 정보값 가져오기
 	const user = await getUserFromRoom(roomId, userId);
 	const target = await getUserFromRoom(roomId, targetUserId);
@@ -46,8 +50,8 @@ const cardBbangEffect = async (roomId: number, userId: string, targetUserId: str
 		target.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 		target.character.stateInfo.nextStateAt = `${Date.now() + 10000}`; //ms
 		target.character.stateInfo.stateTargetUserId = userId;
-	} else if(user.character.stateInfo.state === CharacterStateType.DEATH_MATCH_TURN_STATE){
-				// 상태 설정
+	} else if (user.character.stateInfo.state === CharacterStateType.DEATH_MATCH_TURN_STATE) {
+		// 상태 설정
 		user.character.stateInfo.state = CharacterStateType.DEATH_MATCH_STATE; // 빵야 카드 사용자는 BBANG_SHOOTER 상태가 되고
 		user.character.stateInfo.nextState = CharacterStateType.DEATH_MATCH_TURN_STATE;
 		user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`; //ms
@@ -57,8 +61,7 @@ const cardBbangEffect = async (roomId: number, userId: string, targetUserId: str
 		target.character.stateInfo.nextState = CharacterStateType.DEATH_MATCH_STATE;
 		target.character.stateInfo.nextStateAt = `${Date.now() + 10000}`; //ms
 		target.character.stateInfo.stateTargetUserId = userId;
-	} else if(user.character.stateInfo.state === CharacterStateType.GUERRILLA_TARGET){
-
+	} else if (user.character.stateInfo.state === CharacterStateType.GUERRILLA_TARGET) {
 		user.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
 		user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 		user.character.stateInfo.nextStateAt = '0'; //ms
@@ -66,17 +69,17 @@ const cardBbangEffect = async (roomId: number, userId: string, targetUserId: str
 
 		await updateCharacterFromRoom(roomId, userId, user.character);
 		const updatedRoom = await getRoom(roomId);
-		if(updatedRoom) await CheckGuerrillaService(updatedRoom);
+		if (updatedRoom) await CheckGuerrillaService(updatedRoom);
 		return true;
 	}
 
-    // 수정 정보 갱신
-	try{
+	// 수정 정보 갱신
+	try {
 		await updateCharacterFromRoom(roomId, userId, user.character);
 		await updateCharacterFromRoom(roomId, targetUserId, target.character);
 		return true;
 		//console.log('로그 저장에 성공하였습니다');
-	} catch(error){
+	} catch (error) {
 		console.error(`로그 저장에 실패하였습니다:[${error}]`);
 		return false;
 	}

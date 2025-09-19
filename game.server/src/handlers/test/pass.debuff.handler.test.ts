@@ -117,7 +117,6 @@ describe('passDebuffHandler', () => {
         it('payload가 없으면 아무 작업도 수행하지 않아야 함', async () => {
             // Given
             mockGetGamePacketType.mockReturnValue(null);
-
             // When
             await passDebuffHandler(mockSocket as GameSocket, mockGamePacket);
 

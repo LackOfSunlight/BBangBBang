@@ -11,9 +11,9 @@ const gamePrepareHandler = async (socket: GameSocket, gamePacket: GamePacket) =>
 
 	const req = payload.gamePrepareRequest;
 
-	const responsePacket = await gamePrepareUseCase(socket, req);
+	const res = await gamePrepareUseCase(socket, req);
 
-	sendData(socket, responsePacket, GamePacketType.gamePrepareResponse);
+	sendData(socket, res, GamePacketType.gamePrepareResponse);
 };
 
 export default gamePrepareHandler;
