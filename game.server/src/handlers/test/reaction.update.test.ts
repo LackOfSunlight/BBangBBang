@@ -72,7 +72,7 @@ describe("reactionUpdateHandler + reactionUpdateUseCase", () => {
           reactionResponse: { success: false, failCode: GlobalFailCode.INVALID_REQUEST },
         }),
       }),
-      GamePacketType.useCardResponse // invalid 시 잘못된 응답 타입
+      GamePacketType.useCardResponse // 잘못된 응답 타입
     );
   });
 
