@@ -1,15 +1,9 @@
 import { CardType, CharacterStateType, PhaseType } from '../generated/common/enums';
-import phaseUpdateNotificationHandler, {
-	setPhaseUpdateNotification,
-} from '../handlers/notification/phase.update.notification.handler';
 import { Room } from '../models/room.model';
 import { drawDeck, repeatDeck, shuffleDeck } from './card.manager';
-import { getSocketByUserId } from './socket.manger';
 import characterSpawnPosition from '../data/character.spawn.position.json';
 import { CharacterPositionData } from '../generated/common/types';
 import { shuffle } from '../utils/shuffle.util';
-import { GameSocket } from '../type/game.socket';
-import { deleteRoom, getRoom, saveRoom, updateCharacterFromRoom } from '../utils/redis.util';
 import { GamePacket } from '../generated/gamePacket';
 import { GamePacketType } from '../enums/gamePacketType';
 import { broadcastDataToRoom } from '../utils/notification.util';
@@ -17,6 +11,7 @@ import { User } from '../models/user.model';
 import { checkSatelliteTargetEffect } from '../card/card.satellite_target.effect';
 import { setPositionUpdateNotification } from '../handlers/notification/position.update.notification.handler';
 import { checkContainmentUnitTarget } from '../card/card.containment_unit.effect';
+import { deleteRoom, getRoom, roomPhase, roomTimers, saveRoom } from '../utils/room.utils';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 const positionUpdateIntervals = new Map<number, NodeJS.Timeout>();
@@ -28,8 +23,6 @@ export const notificationCharacterPosition = new Map<
 
 class GameManager {
 	private static instance: GameManager;
-	private roomTimers = new Map<string, NodeJS.Timeout>();
-	private roomPhase = new Map<string, PhaseType>();
 
 	public static getInstance(): GameManager {
 		if (!GameManager.instance) {
@@ -42,9 +35,9 @@ class GameManager {
 		console.log(`Starting game in room ${room.id}`);
 		const roomId = `room:${room.id}`;
 		const phase = PhaseType.DAY;
-		this.roomPhase.set(roomId, phase);
+		roomPhase.set(roomId, phase);
 
-		const intervalId = setInterval(() => broadcastPositionUpdates(room, this.roomPhase), 200);
+		const intervalId = setInterval(() => broadcastPositionUpdates(room), 100);
 
 		positionUpdateIntervals.set(room.id, intervalId);
 		this.scheduleNextPhase(room.id, roomId);
@@ -57,7 +50,7 @@ class GameManager {
 
 		let nextPhase: PhaseType;
 		let interval: number;
-		if (this.roomPhase.get(roomTimerMapId) === PhaseType.DAY) {
+		if (roomPhase.get(roomTimerMapId) === PhaseType.DAY) {
 			nextPhase = PhaseType.END;
 			interval = dayInterval;
 		} else {
@@ -67,8 +60,8 @@ class GameManager {
 
 		const timer = setTimeout(async () => {
 			const timerExecutionTime = Date.now();
-			this.roomPhase.set(roomTimerMapId, nextPhase);
-			let room = await getRoom(roomId); // debuff 효과 적용후 게임임상태 재갱신 고려해서 let 사용
+			roomPhase.set(roomTimerMapId, nextPhase);
+			let room = getRoom(roomId);
 			if (!room) return;
 
 			if (nextPhase === PhaseType.DAY) {
@@ -162,19 +155,19 @@ class GameManager {
 
 			broadcastDataToRoom(room.users, phaseGamePacket, GamePacketType.phaseUpdateNotification);
 
-			await saveRoom(room);
+			saveRoom(room);
 
 			this.scheduleNextPhase(room.id, roomTimerMapId);
 		}, interval);
 
-		this.roomTimers.set(roomTimerMapId, timer);
+		roomTimers.set(roomTimerMapId, timer);
 	}
 
-	public async endGame(room: Room) {
+	public endGame(room: Room) {
 		console.log(`Ending game in room ${room.id}`);
 		// 기존 게임 종료 로직이 있다면 여기에 위치합니다.
 		const roomId = `room:${room.id}`;
-		this.roomPhase.delete(roomId);
+		roomPhase.delete(roomId);
 		const intervalId = positionUpdateIntervals.get(room.id);
 		if (intervalId) {
 			clearInterval(intervalId);
@@ -182,14 +175,14 @@ class GameManager {
 		}
 		this.clearTimer(roomId);
 
-		await deleteRoom(room.id);
+		deleteRoom(room.id);
 	}
 
 	private clearTimer(roomId: string) {
-		const timer = this.roomTimers.get(roomId);
+		const timer = roomTimers.get(roomId);
 		if (timer) {
 			clearTimeout(timer);
-			this.roomTimers.delete(roomId);
+			roomTimers.delete(roomId);
 			console.log(`[Room ${roomId}] Timer cleared.`);
 		}
 	}
@@ -227,7 +220,7 @@ const removedCard = (room: Room, user: User): User => {
 	return user;
 };
 
-export const broadcastPositionUpdates = (room: Room, roomPhase: Map<string, PhaseType>) => {
+export const broadcastPositionUpdates = (room: Room) => {
 	const roomMap = notificationCharacterPosition.get(room.id);
 	if (!roomMap) return; // 해당 방의 위치 정보가 없으면 종료
 

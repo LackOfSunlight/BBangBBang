@@ -16,7 +16,8 @@ import { CheckGuerrillaService } from "../../services/guerrilla.check.service";
 import { playAnimationHandler } from "../../handlers/play.animation.handler";
 
 import { broadcastDataToRoom } from '../../utils/notification.util';
-import { createUserUpdateNotificationPacket } from "../../useCase/use.card/use.card.usecase";
+import { createUserUpdateNotificationPacket } from '../../useCase/use.card/use.card.usecase';
+import { AutoShieldBlock } from '../../card/card.auto_shield.effect.js';
 
 export const reactionUpdateUseCase = async (socket:GameSocket, reactionType:ReactionType): Promise<{success:boolean, failcode:GlobalFailCode}> =>{
 
@@ -48,11 +49,9 @@ export const reactionUpdateUseCase = async (socket:GameSocket, reactionType:Reac
                     let isDefended = false;
 
                     // 1. 자동 쉴드 방어 시도 (공격자가 레이저 포인터를 사용하지 않았을 때만)
-                    if (user.character.equips.includes(CardType.AUTO_SHIELD)) {
-                        if (Math.random() < 0.25) {
-                            isDefended = true; // 25% 확률로 방어 성공
-                            playAnimationHandler(room.users, user.id, AnimationType.SHIELD_ANIMATION);
-                        }
+                    if (user.character.equips.includes(CardType.AUTO_SHIELD) && AutoShieldBlock()) {
+                        isDefended = true; // 방어 성공
+                        playAnimationHandler(room.users, user.id, AnimationType.SHIELD_ANIMATION);
                     }
 
                     // 3. 방어 최종 실패 시 데미지 적용

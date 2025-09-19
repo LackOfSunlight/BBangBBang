@@ -7,7 +7,7 @@ import { sendData } from '../utils/send.data.js';
 import { getRoom } from '../utils/room.utils.js';
 import { Room } from '../models/room.model.js';
 
-const loginRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
+const loginHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.loginRequest);
 	if (!payload) return;
 
@@ -18,4 +18,4 @@ const loginRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) =
 	sendData(socket, res, GamePacketType.loginResponse);
 };
 
-export default loginRequestHandler;
+export default loginHandler;

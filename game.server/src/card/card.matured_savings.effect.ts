@@ -1,10 +1,10 @@
 // cardType = 11
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
+import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 import { drawDeck, getDeckSize } from '../managers/card.manager.js';
 import { CardType } from '../generated/common/enums.js';
 
-const cardMaturedSavingsEffect = async (roomId: number, userId: string): Promise<boolean> => {
-	const user = await getUserFromRoom(roomId, userId);
+const cardMaturedSavingsEffect = (roomId: number, userId: string): boolean => {
+	const user = getUserFromRoom(roomId, userId);
 	// 유효성 검증
 	if (!user) {
 		console.log('잘못된 사용자 정보입니다');
@@ -45,7 +45,7 @@ const cardMaturedSavingsEffect = async (roomId: number, userId: string): Promise
 
 	// 수정 정보 갱신
 	try {
-		await updateCharacterFromRoom(roomId, user.id, user.character!);
+		updateCharacterFromRoom(roomId, user.id, user.character!);
 		//console.log('로그 저장에 성공하였습니다');
 		return true;
 	} catch (error) {

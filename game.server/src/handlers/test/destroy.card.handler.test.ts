@@ -1,4 +1,4 @@
-import destroyCardRequestHandler from '../destroy.card.handler';
+import destroyCardHandler from '../destroy.card.handler';
 import { GameSocket } from '../../type/game.socket.js';
 import { GamePacket } from '../../generated/gamePacket.js';
 import { getGamePacketType } from '../../utils/type.converter.js';
@@ -61,7 +61,7 @@ describe('destroyCardRequestHandler', () => {
 	});
 
 	it('요청을 성공적으로 처리하고 응답을 전송해야 함', async () => {
-		await destroyCardRequestHandler(mockSocket as GameSocket, mockGamePacket);
+		await destroyCardHandler(mockSocket as GameSocket, mockGamePacket);
 
 		expect(getGamePacketType).toHaveBeenCalledWith(
 			mockGamePacket,
@@ -79,7 +79,7 @@ describe('destroyCardRequestHandler', () => {
 	it('payload가 없으면 아무 작업도 수행하지 않아야 함', async () => {
 		(getGamePacketType as jest.Mock).mockReturnValue(null);
 
-		await destroyCardRequestHandler(mockSocket as GameSocket, mockGamePacket);
+		await destroyCardHandler(mockSocket as GameSocket, mockGamePacket);
 
 		expect(destroyCardUseCase).not.toHaveBeenCalled();
 		expect(sendData).not.toHaveBeenCalled();
@@ -88,7 +88,7 @@ describe('destroyCardRequestHandler', () => {
 	it('socket.userId가 없으면 아무 작업도 수행하지 않아야 함', async () => {
 		mockSocket.userId = undefined;
 
-		await destroyCardRequestHandler(mockSocket as GameSocket, mockGamePacket);
+		await destroyCardHandler(mockSocket as GameSocket, mockGamePacket);
 
 		expect(destroyCardUseCase).not.toHaveBeenCalled();
 		expect(sendData).not.toHaveBeenCalled();
@@ -97,7 +97,7 @@ describe('destroyCardRequestHandler', () => {
 	it('socket.roomId가 없으면 아무 작업도 수행하지 않아야 함', async () => {
 		mockSocket.roomId = undefined;
 
-		await destroyCardRequestHandler(mockSocket as GameSocket, mockGamePacket);
+		await destroyCardHandler(mockSocket as GameSocket, mockGamePacket);
 
 		expect(destroyCardUseCase).not.toHaveBeenCalled();
 		expect(sendData).not.toHaveBeenCalled();

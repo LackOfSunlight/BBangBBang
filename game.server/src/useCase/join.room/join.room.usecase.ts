@@ -21,6 +21,7 @@ const joinRoomUseCase = async (
 		userInfo = await getUserByUserId(Number(socket.userId));
 		room = getRoom(req.roomId);
 	} catch (err) {
+		console.log(`DB 에러 발생: ${err}`);
 		return setJoinRoomResponse(false, GlobalFailCode.JOIN_ROOM_FAILED);
 	}
 

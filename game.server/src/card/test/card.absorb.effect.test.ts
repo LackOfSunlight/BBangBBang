@@ -1,88 +1,120 @@
-import cardAbsorbEffect from '../card.absorb.effect';
-import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/redis.util';
+import { CardType } from '../../generated/common/enums';
 import { User } from '../../models/user.model';
-import { Character } from '../../models/character.model';
-import { CharacterType, RoleType, CardType } from '../../generated/common/enums';
-import { CardData } from '../../generated/common/types';
+import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
+import cardAbsorbEffect from '../card.absorb.effect';
 
-// redis.util 모듈 모킹
-jest.mock('../../utils/redis.util.js', () => ({
-	getUserFromRoom: jest.fn(),
-	updateCharacterFromRoom: jest.fn(),
-}));
+// Mock dependencies
+jest.mock('../../utils/room.utils');
+
+// Cast mocks to the correct type
+const mockGetUserFromRoom = getUserFromRoom as jest.Mock;
+const mockUpdateCharacterFromRoom = updateCharacterFromRoom as jest.Mock;
 
 describe('cardAbsorbEffect', () => {
-	const roomId = 1;
-	const userId = 'user1';
-	const targetId = 'user2';
-
 	let user: User;
 	let target: User;
+	const roomId = 1;
+	const userId = 'user-1';
+	const targetId = 'target-1';
+	let randomMock: jest.SpyInstance;
+	let consoleLogSpy: jest.SpyInstance;
+	let consoleErrorSpy: jest.SpyInstance;
 
 	beforeEach(() => {
-		// 모킹된 함수 초기화
-		(getUserFromRoom as jest.Mock).mockClear();
-		(updateCharacterFromRoom as jest.Mock).mockClear();
+		jest.clearAllMocks();
 
-		// 테스트용 유저 생성
-		user = new User(userId, 'socket1');
-		user.character = new Character(CharacterType.RED, RoleType.NONE_ROLE, 4, 0, [], [], [], 1, 0);
+		// Mock console to prevent logs during tests
+		consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+		consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
-		target = new User(targetId, 'socket2');
-		const targetCard: CardData = { type: CardType.BBANG, count: 1 };
-		target.character = new Character(
-			CharacterType.FROGGY,
-			RoleType.NONE_ROLE,
-			4,
-			0,
-			[],
-			[],
-			[targetCard],
-			1,
-			1,
-		);
+		// Setup default user and target data
+		user = new User(userId, 'User');
+		user.character = { handCards: [] } as any;
 
-		// getUserFromRoom 모킹
-		(getUserFromRoom as jest.Mock).mockImplementation(async (roomId, id) => {
+		target = new User(targetId, 'Target');
+		target.character = {
+			handCards: [
+				{ type: CardType.HAND_GUN, count: 1 },
+				{ type: CardType.SHIELD, count: 3 },
+			],
+		} as any;
+
+		// Default mock implementation
+		mockGetUserFromRoom.mockImplementation((roomId, id) => {
 			if (id === userId) return user;
 			if (id === targetId) return target;
 			return null;
 		});
 	});
 
-	test('대상이 카드를 가지고 있을 때, 카드 한 장을 훔쳐야 합니다.', async () => {
-		const originalTargetCard = { ...target.character!.handCards[0] };
-		const initialUserHandCount = user.character!.handCards.length;
-		const initialTargetHandCount = target.character!.handCards.length;
-
-		await cardAbsorbEffect(roomId, userId, targetId);
-
-		// 시전자의 손에는 카드가 1장 추가되어야 함
-		expect(user.character!.handCards.length).toBe(initialUserHandCount + 1);
-		// 대상의 손에는 카드가 1장 감소해야 함
-		expect(target.character!.handCards.length).toBe(initialTargetHandCount - 1);
-
-		// 훔친 카드가 일치하는지 확인
-		expect(user.character!.handCards[0]).toEqual(originalTargetCard);
-
-		// 두 유저의 정보가 모두 업데이트되었는지 확인
-		expect(updateCharacterFromRoom).toHaveBeenCalledTimes(2);
-		expect(updateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, user.character);
-		expect(updateCharacterFromRoom).toHaveBeenCalledWith(roomId, targetId, target.character);
+	afterEach(() => {
+		// Restore mocks
+		if (randomMock) randomMock.mockRestore();
+		consoleLogSpy.mockRestore();
+		consoleErrorSpy.mockRestore();
 	});
 
-	test('대상이 카드를 가지고 있지 않을 때, 아무 일도 일어나지 않아야 합니다.', async () => {
-		target.character!.handCards = []; // 대상의 손을 비움
+	// --- Validation and Edge Case Tests ---
 
-		const initialUserHandCount = user.character!.handCards.length;
+	it('유저 또는 타겟을 찾을 수 없으면 false를 반환해야 한다', () => {
+		mockGetUserFromRoom.mockReturnValue(null);
+		expect(cardAbsorbEffect(roomId, userId, targetId)).toBe(false);
+	});
 
-		await cardAbsorbEffect(roomId, userId, targetId);
+	it('타겟이 카드를 가지고 있지 않으면 false를 반환해야 한다', () => {
+		target.character!.handCards = [];
+		const result = cardAbsorbEffect(roomId, userId, targetId);
+		expect(result).toBe(false);
+		expect(consoleLogSpy).toHaveBeenCalled();
+		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
+	});
 
-		// 시전자와 대상의 손 카드 개수에 변화가 없어야 함
-		expect(user.character!.handCards.length).toBe(initialUserHandCount);
-		expect(target.character!.handCards.length).toBe(0);
+	// --- Success Scenarios ---
 
-		// 아무런 상호작용이 없어야 함
-		expect(updateCharacterFromRoom).not.toHaveBeenCalled();
+	it('타겟의 카드 1장을 성공적으로 훔쳐야 한다 (count: 1)', () => {
+		// Mock Math.random to always select the first card (HAND_GUN)
+		randomMock = jest.spyOn(Math, 'random').mockReturnValue(0);
+
+		const result = cardAbsorbEffect(roomId, userId, targetId);
+
+		expect(result).toBe(true);
+		// Target should lose the hand gun
+		expect(target.character!.handCards.some((c) => c.type === CardType.HAND_GUN)).toBe(false);
+		// User should gain the hand gun
+		expect(user.character!.handCards).toContainEqual({ type: CardType.HAND_GUN, count: 1 });
+		// Both users should be updated
+		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledTimes(2);
+		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, user.character);
+		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, targetId, target.character);
+	});
+
+	it('타겟의 카드 묶음에서 1장을 성공적으로 훔쳐야 한다 (count > 1)', () => {
+		// Mock Math.random to always select the second card (SHIELD)
+		randomMock = jest.spyOn(Math, 'random').mockReturnValue(0.5);
+
+		const result = cardAbsorbEffect(roomId, userId, targetId);
+
+		expect(result).toBe(true);
+		// Target's shield count should decrease
+		expect(target.character!.handCards.find((c) => c.type === CardType.SHIELD)?.count).toBe(2);
+		// User should gain one shield
+		expect(user.character!.handCards).toContainEqual({ type: CardType.SHIELD, count: 1 });
+		// Both users should be updated
+		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledTimes(2);
+	});
+
+	// --- Failure Scenario ---
+
+	it('DB 업데이트 중 에러가 발생하면 false를 반환해야 한다', () => {
+		randomMock = jest.spyOn(Math, 'random').mockReturnValue(0);
+		const dbError = new Error('Redis connection failed');
+		mockUpdateCharacterFromRoom.mockImplementation(() => {
+			throw dbError;
+		});
+
+		const result = cardAbsorbEffect(roomId, userId, targetId);
+
+		expect(result).toBe(false);
+		expect(consoleErrorSpy).toHaveBeenCalledWith(`[흡수] Redis 업데이트 실패:`, dbError);
 	});
 });

@@ -5,7 +5,7 @@ import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType.js';
 import createRoomUseCase from '../useCase/create.room/create.room.usecase.js';
 import { sendData } from '../utils/send.data.js';
 
-const createRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
+const createRoomHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.createRoomRequest);
 	if (!payload || !socket.userId) return;
 
@@ -16,4 +16,4 @@ const createRoomRequestHandler = async (socket: GameSocket, gamePacket: GamePack
 	sendData(socket, res, GamePacketType.createRoomResponse);
 };
 
-export default createRoomRequestHandler;
+export default createRoomHandler;
