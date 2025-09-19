@@ -30,7 +30,7 @@ describe('cardCall119Effect', () => {
 	});
 
 	describe('유효성 검증', () => {
-		it('방이 없으면 함수가 종료된다', async () => {
+		it('방이 없으면 함수가 종료된다', () => {
 			// @ts-expect-error: 테스트를 위한 모킹
 			mockGetUserFromRoom.mockResolvedValue({
 				id: userId,
@@ -51,30 +51,30 @@ describe('cardCall119Effect', () => {
 				throw new Error('Room not found');
 			});
 
-			const result = await cardCall119Effect(roomId, userId, '0'); // '0'을 사용하여 다른 플레이어 회복 시도
+			const result = cardCall119Effect(roomId, userId, '0'); // '0'을 사용하여 다른 플레이어 회복 시도
 
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 			expect(result).toBe(false);
 		});
 
-		it('사용자가 없으면 함수가 종료된다', async () => {
+		it('사용자가 없으면 함수가 종료된다', () => {
 			// @ts-expect-error: 테스트를 위한 모킹
 			mockGetUserFromRoom.mockResolvedValue(null);
 
-			const result = await cardCall119Effect(roomId, userId, targetUserId);
+			const result = cardCall119Effect(roomId, userId, targetUserId);
 
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 			expect(result).toBe(false);
 		});
 
-		it('사용자의 캐릭터가 없으면 함수가 종료된다', async () => {
+		it('사용자의 캐릭터가 없으면 함수가 종료된다',  () => {
 			// @ts-expect-error: 테스트를 위한 모킹
 			mockGetUserFromRoom.mockResolvedValue({
 				id: userId,
 				nickname: 'testUser',
 			});
 
-			const result = await cardCall119Effect(roomId, userId, targetUserId);
+			const result =  cardCall119Effect(roomId, userId, targetUserId);
 
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 			expect(result).toBe(false);
@@ -94,7 +94,7 @@ describe('cardCall119Effect', () => {
 			handCardsCount: 0,
 		});
 
-		it('자신의 체력을 1 회복한다 (targetUserId가 있는 경우)', async () => {
+		it('자신의 체력을 1 회복한다 (targetUserId가 있는 경우)',  () => {
 			const mockCharacter = createMockCharacter(CharacterType.RED, 2);
 			// @ts-expect-error: 테스트를 위한 모킹
 			mockGetUserFromRoom.mockReturnValue({
@@ -105,7 +105,7 @@ describe('cardCall119Effect', () => {
 
 			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-            const result = await cardCall119Effect(roomId, userId, userId); // targetUserId가 있으면 자신 회복
+            const result =  cardCall119Effect(roomId, userId, userId); // targetUserId가 있으면 자신 회복
 
 			expect(result).toBe(true);
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
@@ -119,7 +119,7 @@ describe('cardCall119Effect', () => {
 			consoleSpy.mockRestore();
 		});
 
-		it('나머지 플레이어들의 체력을 1 회복한다 (targetUserId가 없는 경우)', async () => {
+		it('나머지 플레이어들의 체력을 1 회복한다 (targetUserId가 없는 경우)',  () => {
 			const userCharacter = createMockCharacter(CharacterType.RED, 4);
 			const user2Character = createMockCharacter(CharacterType.SHARK, 2);
 			const user3Character = createMockCharacter(CharacterType.DINOSAUR, 1);
@@ -160,7 +160,7 @@ describe('cardCall119Effect', () => {
 
 			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-			const result = await cardCall119Effect(roomId, userId, '0'); // targetUserId가 "0"이면 나머지 회복
+			const result =  cardCall119Effect(roomId, userId, '0'); // targetUserId가 "0"이면 나머지 회복
 
 			expect(result).toBe(true);
 			expect(mockGetRoom).toHaveBeenCalledWith(roomId);
@@ -179,7 +179,7 @@ describe('cardCall119Effect', () => {
 			consoleSpy.mockRestore();
 		});
 
-		it('최대 체력에 도달한 경우 회복하지 않는다', async () => {
+		it('최대 체력에 도달한 경우 회복하지 않는다',  () => {
 			const mockCharacter = createMockCharacter(CharacterType.RED, 4); // 최대 체력
 			// @ts-expect-error: 테스트를 위한 모킹
 			mockGetUserFromRoom.mockReturnValue({
@@ -190,7 +190,7 @@ describe('cardCall119Effect', () => {
 
 			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-            const result = await cardCall119Effect(roomId, userId, userId); // 자신 회복
+            const result =  cardCall119Effect(roomId, userId, userId); // 자신 회복
 
 			expect(result).toBe(true);
 			expect(consoleSpy).toHaveBeenCalledWith('[119 호출] user1의 체력이 이미 최대치(4)입니다.');
@@ -199,7 +199,7 @@ describe('cardCall119Effect', () => {
 			consoleSpy.mockRestore();
 		});
 
-		it('공룡이 캐릭터의 최대 체력(3)을 초과하지 않는다', async () => {
+		it('공룡이 캐릭터의 최대 체력(3)을 초과하지 않는다',  () => {
 			const mockCharacter = createMockCharacter(CharacterType.DINOSAUR, 2);
 			// @ts-expect-error: 테스트를 위한 모킹
 			mockGetUserFromRoom.mockReturnValue({
@@ -210,7 +210,7 @@ describe('cardCall119Effect', () => {
 
 			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-            const result = await cardCall119Effect(roomId, userId, userId); // 자신 회복
+            const result =  cardCall119Effect(roomId, userId, userId); // 자신 회복
 
 			expect(result).toBe(true);
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
@@ -224,7 +224,7 @@ describe('cardCall119Effect', () => {
 			consoleSpy.mockRestore();
 		});
 
-		it('핑크슬라임 캐릭터의 최대 체력(3)을 초과하지 않는다', async () => {
+		it('핑크슬라임 캐릭터의 최대 체력(3)을 초과하지 않는다',  () => {
 			const mockCharacter = createMockCharacter(CharacterType.PINK_SLIME, 2);
 			// @ts-expect-error: 테스트를 위한 모킹
 			mockGetUserFromRoom.mockReturnValue({
@@ -235,7 +235,7 @@ describe('cardCall119Effect', () => {
 
 			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-            const result = await cardCall119Effect(roomId, userId, userId); // 자신 회복
+            const result =  cardCall119Effect(roomId, userId, userId); // 자신 회복
 
 			expect(result).toBe(true);
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
@@ -251,17 +251,17 @@ describe('cardCall119Effect', () => {
 	});
 
 	describe('에러 처리', () => {
-		it('방을 찾을 수 없으면 에러가 처리된다', async () => {
+		it('방을 찾을 수 없으면 에러가 처리된다',  () => {
 			mockGetUserFromRoom.mockImplementation(() => {
 				throw new Error('User not found');
 			});
 
-            const result = await cardCall119Effect(roomId, userId, userId);
+            const result =  cardCall119Effect(roomId, userId, userId);
 
 			expect(result).toBe(false);
 		});
 
-		it('updateCharacterFromRoom에서 에러가 발생해도 함수가 정상적으로 처리된다', async () => {
+		it('updateCharacterFromRoom에서 에러가 발생해도 함수가 정상적으로 처리된다',  () => {
 			const mockCharacter = {
 				characterType: CharacterType.RED,
 				roleType: RoleType.TARGET,
@@ -288,7 +288,7 @@ describe('cardCall119Effect', () => {
 			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
 			// 에러가 발생해도 함수가 정상적으로 처리되는지 확인
-            const result = await cardCall119Effect(roomId, userId, userId);
+            const result =  cardCall119Effect(roomId, userId, userId);
 
 			expect(result).toBe(true);
 

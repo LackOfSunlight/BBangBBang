@@ -24,11 +24,11 @@ const getMaxHp = (characterType: CharacterType): number => {
 
 
 
-const cardCall119Effect = async (
+const cardCall119Effect = (
 	roomId: number,
 	userId: string,
 	targetUserId: string,
-): Promise<boolean> => {
+): boolean => {
 	try {
 		const user = getUserFromRoom(roomId, userId);
 
