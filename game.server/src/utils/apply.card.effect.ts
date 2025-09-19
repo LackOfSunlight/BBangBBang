@@ -1,4 +1,4 @@
-import { getUserFromRoom, updateCharacterFromRoom } from './redis.util.js';
+import { getUserFromRoom, updateCharacterFromRoom } from './room.utils';
 
 import cardAbsorbEffect from '../card/card.absorb.effect.js';
 import cardAutoRifleEffect from '../card/card.auto_rifle.effect.js';
@@ -32,7 +32,7 @@ export async function applyCardEffect(
 	userId: string,
 	targetUserId: string,
 ): Promise<boolean> {
-	const user = await getUserFromRoom(roomId, userId);
+	const user = getUserFromRoom(roomId, userId);
 
 	// 유효성 검증 (119 카드 예외 처리)
 	if (!user || !user.character) return false;
@@ -50,7 +50,7 @@ export async function applyCardEffect(
 			);
 		}
 
-		await updateCharacterFromRoom(roomId, user.id, user.character);
+		updateCharacterFromRoom(roomId, user.id, user.character);
 	} else {
 		console.log('해당 카드를 소유하고 있지 않습니다.');
 	}
@@ -58,55 +58,55 @@ export async function applyCardEffect(
 	// 소지한 카드 제거 후 효과 적용
 	switch (CardType) {
 		case 1: //'BBANG':
-			return await cardBbangEffect(roomId, userId, targetUserId);
+			return cardBbangEffect(roomId, userId, targetUserId);
 		case 2: //'BIGBBANG':
 			return cardBigBbangEffect(roomId, userId, targetUserId);
 		case 3: //'SHIELD':
-			return await cardShieldEffect(roomId, userId, targetUserId);
+			return cardShieldEffect(roomId, userId, targetUserId);
 		case 4: // 'VACCINE':
-			return await cardVaccineEffect(roomId, userId);
+			return cardVaccineEffect(roomId, userId);
 		case 5: // 'CALL_119':
-			return await cardCall119Effect(roomId, userId, targetUserId);
+			return cardCall119Effect(roomId, userId, targetUserId);
 		case 6: // 'DEATH_MATCH':
-			return await cardDeathMatchEffect(roomId, userId, targetUserId);
+			return cardDeathMatchEffect(roomId, userId, targetUserId);
 		case 7: // 'GUIRRILLA':
-			return await cardGuerrillaEffect(roomId, userId, targetUserId);
+			return cardGuerrillaEffect(roomId, userId, targetUserId);
 		case 8: // 'ABSORB':
-			return await cardAbsorbEffect(roomId, userId, targetUserId);
+			return cardAbsorbEffect(roomId, userId, targetUserId);
 		case 9: // 'HALLUCINATION':
-			return await cardHallucinationEffect(roomId, userId, targetUserId);
+			return cardHallucinationEffect(roomId, userId, targetUserId);
 		case 10: // 'FLEA_MARKET':
-			return await cardFleaMarketEffect(roomId, userId, targetUserId);
+			return cardFleaMarketEffect(roomId, userId, targetUserId);
 		case 11: // 'MATURED_SAVINGS':
-			return await cardMaturedSavingsEffect(roomId, userId);
+			return cardMaturedSavingsEffect(roomId, userId);
 		case 12: // 'WIN_LOTTERY':
-			return await cardWinLotteryEffect(roomId, userId);
+			return cardWinLotteryEffect(roomId, userId);
 
 		// 무기 카드
 		case 13: // 'SNIPER_GUN':
-			return await cardSniperGunEffect(roomId, userId);
+			return cardSniperGunEffect(roomId, userId);
 		case 14: // 'HAND_GUN':
-			return await cardHandGunEffect(roomId, userId);
+			return cardHandGunEffect(roomId, userId);
 		case 15: // 'DESERT_EAGLE':
-			return await cardDesertEagleEffect(roomId, userId);
+			return cardDesertEagleEffect(roomId, userId);
 		case 16: // 'AUTO_RIFLE':
-			return await cardAutoRifleEffect(roomId, userId);
+			return cardAutoRifleEffect(roomId, userId);
 
 		// 장비 카드
 		case 17: // 'LASER_POINTER':
-			return await cardLaserPointerEffect(roomId, userId);
+			return cardLaserPointerEffect(roomId, userId);
 		case 18: // 'RADER':
-			return await cardRaderEffect(roomId, userId);
+			return cardRaderEffect(roomId, userId);
 		case 19: // 'AUTO_SHIELD':
-			return await cardAutoShieldEffect(roomId, userId);
+			return cardAutoShieldEffect(roomId, userId);
 		case 20: // 'STEATLH_SUIT':
-			return await cardStealthSuitEffect(roomId, userId);
+			return cardStealthSuitEffect(roomId, userId);
 
 		// 디버프 카드
 		case 21: // 'CONTAINMENT_UNIT':
-			return await cardContainmentUnitEffect(roomId, userId, targetUserId);
+			return cardContainmentUnitEffect(roomId, userId, targetUserId);
 		case 22: // 'SATELLITE_TARGET':
-			return await cardSatelliteTargetEffect(roomId, userId, targetUserId);
+			return cardSatelliteTargetEffect(roomId, userId, targetUserId);
 		case 23: // 'BOMB':
 			return cardBombEffect(roomId, userId, targetUserId);
 		default:

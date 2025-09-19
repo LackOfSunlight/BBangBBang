@@ -1,16 +1,16 @@
 // cardType = 22
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 import { CardType, AnimationType } from '../generated/common/enums';
 import { playAnimationHandler } from "../handlers/play.animation.handler";
 import { checkAndEndGameIfNeeded } from '../utils/game.end.util.js';
 
 // 위성 타겟 카드 사용 시 디버프 추가
-const cardSatelliteTargetEffect = async (
+const cardSatelliteTargetEffect = (
 	roomId: number,
 	userId: string,
 	targetUserId: string,
-): Promise<boolean> => {
-	const target = await getUserFromRoom(roomId, targetUserId);
+): boolean => {
+	const target = getUserFromRoom(roomId, targetUserId);
 	if (!target || !target.character) {
 		console.warn(`[SatelliteTarget] 타겟을 찾을 수 없습니다: ${targetUserId}`);
 		return false;
@@ -26,7 +26,7 @@ const cardSatelliteTargetEffect = async (
 	target.character.debuffs.push(CardType.SATELLITE_TARGET);
 
 	try {
-		await updateCharacterFromRoom(roomId, targetUserId, target.character);
+		updateCharacterFromRoom(roomId, targetUserId, target.character);
 		console.log(`[SatelliteTarget] ${target.nickname}에게 위성 타겟 디버프가 추가되었습니다.`);
 		return true;
 	} catch (error) {
@@ -36,7 +36,7 @@ const cardSatelliteTargetEffect = async (
 };
 // 위성 타겟 효과 체크 (하루 시작 시 호출)
 export const checkSatelliteTargetEffect = async (roomId: number) => {
-	const room = await getRoom(roomId);
+	const room = getRoom(roomId);
 	if (!room || !room.users) {
 		console.warn(`[SatelliteTarget] 방을 찾을 수 없습니다: roomId=${roomId}`);
 		return room;
@@ -50,16 +50,16 @@ export const checkSatelliteTargetEffect = async (roomId: number) => {
 	console.log(`[SatelliteTarget] 위성 타겟 디버프를 가진 유저 수: ${usersWithDebuff.length}`);
 
 	for (const user of usersWithDebuff) {
-		await processSatelliteTargetEffect(roomId, user.id, room.users);
+		processSatelliteTargetEffect(roomId, user.id, room.users);
 	}
 
 	// 업데이트된 방 정보 반환
-	return await getRoom(roomId);
+	return getRoom(roomId);
 };
 
 // 개별 유저의 위성 타겟 효과 처리
 const processSatelliteTargetEffect = async (roomId: number, userId: string, allUsers: any[]) => {
-	const target = await getUserFromRoom(roomId, userId);
+	const target = getUserFromRoom(roomId, userId);
 	if (!target || !target.character) return;
 
 	const probability = 0.03; // 대낮에 번개 맞을 확률
@@ -92,7 +92,7 @@ const processSatelliteTargetEffect = async (roomId: number, userId: string, allU
 		}
 
 		try {
-			await updateCharacterFromRoom(roomId, userId, target.character);
+			updateCharacterFromRoom(roomId, userId, target.character);
 			console.log(
 				`[SatelliteTarget] 위성 타겟 효과 완료: ${target.nickname}의 HP ${target.character.hp}`,
 			);
@@ -115,7 +115,7 @@ const processSatelliteTargetEffect = async (roomId: number, userId: string, allU
 		}
 
 		try {
-			await updateCharacterFromRoom(roomId, userId, target.character);
+			updateCharacterFromRoom(roomId, userId, target.character);
 		} catch (error) {
 			console.error(`[SatelliteTarget] 현재 유저 Redis 업데이트 중 오류 발생: ${error}`);
 		}
@@ -126,7 +126,7 @@ const processSatelliteTargetEffect = async (roomId: number, userId: string, allU
 
 		const nextUserIndex = (currentUserIndex + 1) % allUsers.length;
 		const nextUserId = allUsers[nextUserIndex].id;
-		const nextUser = await getUserFromRoom(roomId, nextUserId);
+		const nextUser = getUserFromRoom(roomId, nextUserId);
 
 		if (!nextUser || !nextUser.character) return;
 
@@ -134,7 +134,7 @@ const processSatelliteTargetEffect = async (roomId: number, userId: string, allU
 		if (!nextUser.character.debuffs.includes(CardType.SATELLITE_TARGET)) {
 			nextUser.character.debuffs.push(CardType.SATELLITE_TARGET);
 			try {
-				await updateCharacterFromRoom(roomId, nextUserId, nextUser.character);
+				updateCharacterFromRoom(roomId, nextUserId, nextUser.character);
 				console.log(`[SatelliteTarget] 위성 타겟 디버프가 ${nextUser.nickname}에게 넘어갔습니다.`);
 			} catch (error) {
 				console.error(`[SatelliteTarget] 다음 유저 Redis 업데이트 중 오류 발생: ${error}`);

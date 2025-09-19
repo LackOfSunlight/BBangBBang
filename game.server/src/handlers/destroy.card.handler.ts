@@ -5,7 +5,7 @@ import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType.js';
 import destroyCardUseCase from '../useCase/destroy.card/destroy.card.usecase';
 import { sendData } from '../utils/send.data.js';
 
-const destroyCardRequestHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
+const destroyCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.destroyCardRequest);
 
 	if (!payload || !socket.userId || !socket.roomId) {
@@ -20,4 +20,4 @@ const destroyCardRequestHandler = async (socket: GameSocket, gamePacket: GamePac
 	sendData(socket, res, GamePacketType.destroyCardResponse);
 };
 
-export default destroyCardRequestHandler;
+export default destroyCardHandler;

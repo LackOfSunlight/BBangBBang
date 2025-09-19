@@ -1,17 +1,16 @@
 // cardType = 21
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
+import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../utils/room.utils';
 import { CardType, CharacterStateType } from '../generated/common/enums.js';
-import { getRoom } from '../utils/redis.util.js';
 
 // 디버프 적용 처리 로직
-const cardContainmentUnitEffect = async (
+const cardContainmentUnitEffect = (
 	roomId: number,
 	userId: string,
 	targetUserId: string,
-): Promise<boolean> => {
-	const user = await getUserFromRoom(roomId, userId);
-	const target = await getUserFromRoom(roomId, targetUserId);
-	// 유효성 검증
+): boolean => {
+	const user = getUserFromRoom(roomId, userId);
+	const target = getUserFromRoom(roomId, targetUserId);
+	// 유효성 검증s
 	if (!user || !target || !target.character) return false;
 
 	// 이미 해당 디버프 상태일 경우 ; 중복 검증
@@ -25,7 +24,7 @@ const cardContainmentUnitEffect = async (
 
 	// 수정 정보 갱신
 	try {
-		await updateCharacterFromRoom(roomId, targetUserId, target.character);
+		updateCharacterFromRoom(roomId, targetUserId, target.character);
 		//console.log('로그 저장에 성공하였습니다');
 		return true;
 	} catch (error) {
@@ -35,8 +34,8 @@ const cardContainmentUnitEffect = async (
 };
 
 // 효과 대상자 체크
-export const checkContainmentUnitTarget = async (roomId: number) => {
-	const room = await getRoom(roomId);
+export const checkContainmentUnitTarget = (roomId: number) => {
+	const room = getRoom(roomId);
 	if (!room || !room.users) {
 		console.warn(`[ContainmentUnitTarget] 방을 찾을 수 없습니다: roomId=${roomId}`);
 		return room;
@@ -50,17 +49,17 @@ export const checkContainmentUnitTarget = async (roomId: number) => {
 	// console.log(`[ContainmentUnitTarget] 디버프를 가진 유저 수: ${usersWithDebuff.length}`);
 
 	for (const user of usersWithDebuff) {
-		await debuffContainmentUnitEffect(roomId, user.id);
+		debuffContainmentUnitEffect(roomId, user.id);
 	}
 
 	// 업데이트된 방 정보 반환
-	return await getRoom(roomId);
+	return getRoom(roomId);
 };
 
 // 디버프 효과 처리 로직
-export const debuffContainmentUnitEffect = async (roomId: number, userId: string) => {
+export const debuffContainmentUnitEffect = (roomId: number, userId: string) => {
 	// 이름은 user지만 일단은 debuff targetUser의 정보
-	const user = await getUserFromRoom(roomId, userId);
+	const user = getUserFromRoom(roomId, userId);
 	if (!user || !user.character) return;
 
 	console.log(`[debuffContainmentUnit] (${user.nickname}) : 유저정보식별 성공`);
@@ -84,7 +83,7 @@ export const debuffContainmentUnitEffect = async (roomId: number, userId: string
 				);
 
 				try {
-					await updateCharacterFromRoom(roomId, userId, user.character);
+					updateCharacterFromRoom(roomId, userId, user.character);
 					console.log(`[debuffContainmentUnit] (${user.nickname}) :  로그 저장에 성공하였습니다`);
 				} catch (error) {
 					console.error(`로그 저장에 실패하였습니다:[${error}]`);
@@ -109,7 +108,7 @@ export const debuffContainmentUnitEffect = async (roomId: number, userId: string
 					console.log(`${user.nickname} 유저가 감금 상태에서 탈출에 성공했습니다`);
 
 					try {
-						await updateCharacterFromRoom(roomId, userId, user.character);
+						updateCharacterFromRoom(roomId, userId, user.character);
 						console.log(`[debuffContainmentUnit] (${user.nickname}) :  로그 저장에 성공하였습니다`);
 					} catch (error) {
 						console.error(`로그 저장에 실패하였습니다:[${error}]`);

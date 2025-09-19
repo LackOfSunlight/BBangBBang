@@ -1,11 +1,11 @@
 // cardType = 16
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
-import { CardType } from '../generated/common/enums.js';
-import { bbangLimit } from '../utils/weapon.util';
 
-const cardAutoRifleEffect = async (roomId: number, userId: string): Promise<boolean> => {
+import { CardType } from '../generated/common/enums.js';
+import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils.js';
+
+const cardAutoRifleEffect = (roomId: number, userId: string): boolean => {
 	// 정보값 가져오기
-	const user = await getUserFromRoom(roomId, userId);
+	const user = getUserFromRoom(roomId, userId);
 	// 유효성 검증
 	if (!user || !user.character || !user.character.stateInfo) return false;
 
@@ -18,7 +18,7 @@ const cardAutoRifleEffect = async (roomId: number, userId: string): Promise<bool
 
 	// 수정 정보 갱신
 	try {
-		await updateCharacterFromRoom(roomId, userId, user.character);
+		updateCharacterFromRoom(roomId, userId, user.character);
 		return true;
 		//console.log('로그 저장에 성공하였습니다');
 	} catch (error) {

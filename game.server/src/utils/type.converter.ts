@@ -1,4 +1,3 @@
-import { GamePacketType } from '../enums/gamePacketType.js';
 import { GamePacket } from '../generated/gamePacket.js';
 
 export function getGamePacketType<T extends GamePacket['payload']['oneofKind']>(

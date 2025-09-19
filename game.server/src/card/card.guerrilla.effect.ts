@@ -6,15 +6,11 @@ import {
 	getUserFromRoom,
 	saveRoom,
 	updateCharacterFromRoom,
-} from '../utils/redis.util.js';
+} from '../utils/room.utils.js';
 
-const cardGuerrillaEffect = async (
-	roomId: number,
-	userId: string,
-	targetUserId: string,
-): Promise<boolean> => {
-	const room = await getRoom(roomId);
-	const shooter = await getUserFromRoom(roomId, userId);
+const cardGuerrillaEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
+	const room = getRoom(roomId);
+	const shooter = getUserFromRoom(roomId, userId);
 
 	if (!room || !shooter) return false;
 
@@ -36,7 +32,7 @@ const cardGuerrillaEffect = async (
 				shooter.character?.handCards.push({ type: getCard, count: 1 });
 			}
 
-			await updateCharacterFromRoom(room.id, shooter.id, shooter.character!);
+			updateCharacterFromRoom(room.id, shooter.id, shooter.character!);
 			return true;
 		}
 	}
@@ -48,7 +44,11 @@ const cardGuerrillaEffect = async (
 				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 				user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
 				user.character.stateInfo.stateTargetUserId = targetUserId;
-			} else {
+
+				continue;
+			}
+
+			if (user.character && user.character.hp > 0) {
 				user.character.stateInfo.state = CharacterStateType.GUERRILLA_TARGET;
 				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 				user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
@@ -57,7 +57,7 @@ const cardGuerrillaEffect = async (
 		}
 	}
 
-	await saveRoom(room);
+	saveRoom(room);
 	return true;
 };
 

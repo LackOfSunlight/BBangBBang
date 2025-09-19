@@ -1,7 +1,7 @@
 import { CardType } from '../../generated/common/enums';
 import { User } from '../../models/user.model';
 import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import cardAutoShieldEffect from '../card.auto_shield.effect';
+import cardSniperGunEffect from '../card.sniper_gun.effect';
 
 // Mock dependencies
 jest.mock('../../utils/room.utils');
@@ -10,7 +10,7 @@ jest.mock('../../utils/room.utils');
 const mockGetUserFromRoom = getUserFromRoom as jest.Mock;
 const mockUpdateCharacterFromRoom = updateCharacterFromRoom as jest.Mock;
 
-describe('cardAutoShieldEffect', () => {
+describe('cardSniperGunEffect', () => {
 	let mockUser: User;
 	const roomId = 1;
 	const userId = 'user-1';
@@ -23,6 +23,7 @@ describe('cardAutoShieldEffect', () => {
 		mockUser = new User(userId, 'Test User');
 		mockUser.character = {
 			hp: 4,
+			weapon: CardType.HAND_GUN, // Initially has a hand gun
 			equips: [],
 			handCards: [],
 		} as any;
@@ -35,50 +36,46 @@ describe('cardAutoShieldEffect', () => {
 
 	it('유저를 찾을 수 없으면 false를 반환해야 한다', () => {
 		mockGetUserFromRoom.mockReturnValue(null);
-		const result = cardAutoShieldEffect(roomId, userId);
+		const result = cardSniperGunEffect(roomId, userId);
 		expect(result).toBe(false);
 		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 	});
 
 	it('유저에게 캐릭터 정보가 없으면 false를 반환해야 한다', () => {
 		mockUser.character = undefined;
-		const result = cardAutoShieldEffect(roomId, userId);
+		const result = cardSniperGunEffect(roomId, userId);
 		expect(result).toBe(false);
 		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 	});
 
 	// --- Success Scenario ---
 
-	it('자동 방패를 장착하고 있지 않으면, equips에 추가하고 true를 반환해야 한다', () => {
-		const result = cardAutoShieldEffect(roomId, userId);
+	it('유저의 무기를 스나이퍼 건으로 변경하고 true를 반환해야 한다', () => {
+		const result = cardSniperGunEffect(roomId, userId);
 
 		expect(result).toBe(true);
-		expect(mockUser.character!.equips).toContain(CardType.AUTO_SHIELD);
+		expect(mockUser.character!.weapon).toBe(CardType.SNIPER_GUN);
 		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, mockUser.character);
 	});
 
-	// --- Failure Scenarios ---
+	// --- Failure Scenario ---
 
-	it('이미 자동 방패를 장착하고 있으면, false를 반환해야 한다', () => {
-		// Pre-equip the auto shield
-		mockUser.character!.equips.push(CardType.AUTO_SHIELD);
-
-		const result = cardAutoShieldEffect(roomId, userId);
-
-		expect(result).toBe(false);
-		// The character should not be updated again
-		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
-	});
-
-	it('updateCharacterFromRoom에서 에러가 발생하면, 해당 에러를 그대로 발생시켜야 한다', () => {
+	it('updateCharacterFromRoom에서 에러가 발생하면, false를 반환하고 콘솔에 에러를 기록해야 한다', () => {
 		const dbError = new Error('Redis connection failed');
 		mockUpdateCharacterFromRoom.mockImplementation(() => {
 			throw dbError;
 		});
 
-		// Expect the function to throw the error
-		expect(() => {
-			cardAutoShieldEffect(roomId, userId);
-		}).toThrow(dbError);
+		// Spy on console.error to check if it's called
+		const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+		const result = cardSniperGunEffect(roomId, userId);
+
+		expect(result).toBe(false);
+		// Check if console.error was called with the expected message
+		expect(consoleErrorSpy).toHaveBeenCalledWith(`[스나이퍼] Redis 업데이트 실패:`, dbError);
+
+		// Restore original console.error
+		consoleErrorSpy.mockRestore();
 	});
 });
