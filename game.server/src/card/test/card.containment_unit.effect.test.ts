@@ -23,9 +23,9 @@ describe('CardContainmentUnitCardEffects', () => {
 
 	beforeEach(() => {
 		jest.clearAllMocks();
-	});
+});
 
-	// 카드 효과 처리 로직
+// 카드 효과 처리 로직
 describe('cardContainmentUnitEffect', () => {
 	it('대상 유저에게 디버프가 적용되는지', async () => {
 		const user = mockUser();
@@ -35,7 +35,7 @@ describe('cardContainmentUnitEffect', () => {
 			.mockResolvedValueOnce(user) // 시전자
 			.mockResolvedValueOnce(target); // 대상자
 
-		await cardContainmentUnitEffect(1, 'user1', 'user2');
+		cardContainmentUnitEffect(1, 'user1', 'user2');
 
 		expect(getUserFromRoom).toHaveBeenCalledWith(1, 'user1');
 		expect(getUserFromRoom).toHaveBeenCalledWith(1, 'user2');
@@ -51,7 +51,7 @@ describe('cardContainmentUnitEffect', () => {
 	it('시전 유저나 대상 유저 정보가 올바르지 않으면 중단되는지', async () => {
 		(getUserFromRoom as jest.Mock).mockResolvedValueOnce(null);
 
-		await cardContainmentUnitEffect(1, 'user1', 'user2');
+		cardContainmentUnitEffect(1, 'user1', 'user2');
 
 		expect(updateCharacterFromRoom).not.toHaveBeenCalled();
 	});
@@ -63,7 +63,7 @@ describe('cardContainmentUnitEffect', () => {
 
 		(getUserFromRoom as jest.Mock).mockResolvedValue(target);
 
-		await cardContainmentUnitEffect(1, 'user1', 'user2');
+		cardContainmentUnitEffect(1, 'user1', 'user2');
 
 		expect(updateCharacterFromRoom).not.toHaveBeenCalled();
 	});
@@ -79,7 +79,7 @@ describe('cardContainmentUnitEffect', () => {
 
 			(getUserFromRoom as jest.Mock).mockResolvedValue(target);
 
-			await debuffContainmentUnitEffect(1, 'user1');
+			debuffContainmentUnitEffect(1, 'user1');
 
 			expect(updateCharacterFromRoom).toHaveBeenCalledWith(
 				1,
@@ -99,7 +99,7 @@ describe('cardContainmentUnitEffect', () => {
 
 			(getUserFromRoom as jest.Mock).mockResolvedValue(target);
 
-			await debuffContainmentUnitEffect(1, 'user1');
+			debuffContainmentUnitEffect(1, 'user1');
 
 			expect(target.character.debuffs).not.toContain(CardType.CONTAINMENT_UNIT);
 			expect(target.character.stateInfo!.state).toBe(CharacterStateType.NONE_CHARACTER_STATE);
@@ -124,7 +124,7 @@ describe('cardContainmentUnitEffect', () => {
 
 			(getUserFromRoom as jest.Mock).mockResolvedValue(target);
 
-			await debuffContainmentUnitEffect(1, 'user1');
+			debuffContainmentUnitEffect(1, 'user1');
 
 			expect(target.character.debuffs).toContain(CardType.CONTAINMENT_UNIT);
 			expect(target.character.stateInfo!.state).toBe(CharacterStateType.CONTAINED);
@@ -136,7 +136,7 @@ describe('cardContainmentUnitEffect', () => {
 		it('대상 유저가 없다면 아무 일도 발생하지 않는지', async () => {
 			(getUserFromRoom as jest.Mock).mockResolvedValue(null);
 
-			await debuffContainmentUnitEffect(1, 'user1');
+			debuffContainmentUnitEffect(1, 'user1');
 
 			expect(updateCharacterFromRoom).not.toHaveBeenCalled();
 		});
