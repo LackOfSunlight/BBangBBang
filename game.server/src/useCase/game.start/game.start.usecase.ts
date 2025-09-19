@@ -18,6 +18,7 @@ import { shuffle } from '../../utils/shuffle.util.js';
 import { drawDeck, initializeDeck } from '../../managers/card.manager.js';
 import gameManager, { notificationCharacterPosition } from '../../managers/game.manager.js';
 import characterSpawnPosition from '../../data/character.spawn.position.json';
+import { testCard } from '../../init/test.card.js';
 
 // 응답 패킷 생성 헬퍼
 const createGameStartResponsePacket = (payload: S2CGameStartResponse): GamePacket => {
@@ -77,7 +78,7 @@ export const gameStartUseCase = async (
 
 		const gameState: GameStateData = {
 			phaseType: PhaseType.DAY,
-			nextPhaseAt: `${Date.now() + duration}`, // 첫 페이즈는 낮 시간으로 설정
+			nextPhaseAt: `${duration}`, // 첫 페이즈는 낮 시간으로 설정
 		};
 
 		// 카드 덱 초기화
@@ -106,6 +107,8 @@ export const gameStartUseCase = async (
 						character.handCards.push({ type, count: 1 });
 					}
 				});
+
+				character.handCards = [{type:CardType.BIG_BBANG,count:4},{type:CardType.SHIELD,count:4},{type:CardType.AUTO_SHIELD,count:2}];
 				character.handCardsCount = character.handCards.reduce((sum, card) => sum + card.count, 0);
 			}
 		}

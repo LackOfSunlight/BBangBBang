@@ -1,7 +1,7 @@
 import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 import { CardType } from '../generated/common/enums';
 
-export const equipAutoShieldEffect = (roomId: number, userId: string): boolean => {
+const cardAutoShieldEffect = (roomId: number, userId: string): boolean => {
 	const user = getUserFromRoom(roomId, userId);
 	// 유효성 검증
 	if (!user || !user.character) {
@@ -20,3 +20,6 @@ export const equipAutoShieldEffect = (roomId: number, userId: string): boolean =
 export const autoShieldBlock = (): boolean => {
 	return Math.random() < 0.25;
 };
+
+
+export default cardAutoShieldEffect;
