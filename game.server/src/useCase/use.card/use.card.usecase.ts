@@ -27,7 +27,8 @@ export const useCardUseCase = async (userId:string, roomId:number, cardType:Card
 	);
 
 	// 메인 로직
-	await applyCardEffect(roomId, cardType, userId, targetUserId!);
+	const isSuccess = await applyCardEffect(roomId, cardType, userId, targetUserId!);
+	if(!isSuccess){ return {success: false, failcode: GlobalFailCode.INVALID_REQUEST } }
 
 	// useCardNotification 패킷 전달
 	const useCardNotificationPacket = createUseCardNotificationPacket(
