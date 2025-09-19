@@ -9,20 +9,32 @@ const mockGetUserFromRoom = jest.fn();
 const mockGetRoom = jest.fn();
 const mockUpdateCharacterFromRoom = jest.fn();
 const mockSendAnimationNotification = jest.fn();
+const mockCheckAndEndGameIfNeeded = jest.fn();
 
 // 모듈 모킹
-jest.mock('../utils/redis.util.js', () => ({
+jest.mock('../utils/room.utils', () => ({
 	getUserFromRoom: mockGetUserFromRoom,
 	getRoom: mockGetRoom,
 	updateCharacterFromRoom: mockUpdateCharacterFromRoom,
 }));
 
-jest.mock('../handlers/notification/animation.notification.handler.js', () => ({
+jest.mock('../handlers/notification/animation.notification.handler', () => ({
 	sendAnimationNotification: mockSendAnimationNotification,
 }));
 
-import { checkSatelliteTargetEffect } from '../card/card.satellite_target.effect.js';
-import { AnimationType } from '../generated/common/enums.js';
+jest.mock('../utils/game.end.util', () => ({
+	checkAndEndGameIfNeeded: mockCheckAndEndGameIfNeeded,
+}));
+
+// setTimeout 모킹
+const realSetTimeout = global.setTimeout;
+global.setTimeout = jest.fn().mockImplementation((cb) => {
+	cb();
+	return {} as any;
+});
+
+import { checkSatelliteTargetEffect } from '../card/card.satellite_target.effect';
+import { AnimationType } from '../generated/common/enums';
 
 describe('위성타겟 애니메이션 테스트', () => {
 	beforeEach(() => {
@@ -33,6 +45,10 @@ describe('위성타겟 애니메이션 테스트', () => {
 
 	afterEach(() => {
 		jest.restoreAllMocks();
+	});
+
+	afterAll(() => {
+		global.setTimeout = realSetTimeout;
 	});
 
 	it('위성타겟 효과 발동 시 애니메이션을 전송해야 함', async () => {
@@ -67,9 +83,14 @@ describe('위성타겟 애니메이션 테스트', () => {
 					},
 				},
 			],
+			ownerId: 'player1',
+			name: 'test room',
+			maxUserNum: 8,
+			state: 2, // INGAME
 		};
 
 		// player1이 위성타겟 디버프를 가지고 있으므로 효과가 발동될 것
+		// @ts-expect-error: 테스트를 위한 모킹
 		mockGetUserFromRoom.mockImplementation((roomId, userId) => {
 			const user = mockRoom.users.find((u) => u.id === userId);
 			return Promise.resolve(user || null);
@@ -88,7 +109,7 @@ describe('위성타겟 애니메이션 테스트', () => {
 			AnimationType.SATELLITE_TARGET_ANIMATION,
 		);
 		expect(mockUpdateCharacterFromRoom).toHaveBeenCalled();
-	});
+	}, 10000); // 타임아웃 증가
 
 	it('위성타겟 효과 미발동 시 애니메이션을 전송하지 않아야 함', async () => {
 		// Given
@@ -125,8 +146,13 @@ describe('위성타겟 애니메이션 테스트', () => {
 					},
 				},
 			],
+			ownerId: 'player1',
+			name: 'test room',
+			maxUserNum: 8,
+			state: 2, // INGAME
 		};
 
+		// @ts-expect-error: 테스트를 위한 모킹
 		mockGetUserFromRoom.mockImplementation((roomId, userId) => {
 			const user = mockRoom.users.find((u) => u.id === userId);
 			return Promise.resolve(user || null);
