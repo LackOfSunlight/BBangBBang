@@ -1,4 +1,4 @@
-import { getRoom, saveRoom } from './redis.util.js';
+import { getRoom, saveRoom } from './room.utils';
 import { Room } from '../models/room.model.js';
 import { RoleType, WinType, RoomStateType } from '../generated/common/enums.js';
 import { setGameEndNotification } from '../handlers/notification/game.end.notification.handler.js';
@@ -11,7 +11,7 @@ import gameManager from '../managers/game.manager.js';
  */
 export async function checkAndEndGameIfNeeded(roomId: number): Promise<void> {
 	try {
-		const room = await getRoom(roomId);
+		const room = getRoom(roomId);
 		if (!room) {
 			console.warn(`[GameEnd] 방을 찾을 수 없습니다: roomId=${roomId}`);
 			return;
@@ -142,7 +142,7 @@ async function endGame(room: Room, gameResult: GameEndResult): Promise<void> {
 	try {
 		// 방 상태를 종료로 변경
 		room.state = RoomStateType.WAIT; // 게임 종료 후 대기 상태로 변경
-		await saveRoom(room);
+		saveRoom(room);
 
 		// 게임 종료 알림 패킷 생성
 		const gameEndPacket = setGameEndNotification(
@@ -153,7 +153,7 @@ async function endGame(room: Room, gameResult: GameEndResult): Promise<void> {
 		// 모든 플레이어에게 게임 종료 알림 전송
 		await broadcastDataToRoom(room.users, gameEndPacket, GamePacketType.gameEndNotification);
 
-		await gameManager.endGame(room);
+		gameManager.endGame(room);
 		
 		console.log(`[GameEnd] 게임 종료 완료: ${room.id}번 방`);
 	} catch (error) {

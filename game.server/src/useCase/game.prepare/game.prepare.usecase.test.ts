@@ -53,7 +53,7 @@ describe('gamePrepareUseCase', () => {
 	});
 
 	it('방을 찾을 수 없으면 ROOM_NOT_FOUND를 반환해야 한다', async () => {
-		mockGetRoom.mockResolvedValue(null);
+		mockGetRoom.mockReturnValue(null);
 		const result = await gamePrepareUseCase(mockSocket, mockReq);
 
 		expect(result.payload.oneofKind).toBe('gamePrepareResponse');
@@ -65,7 +65,7 @@ describe('gamePrepareUseCase', () => {
 	it('지원되지 않는 인원 수일 경우 INVALID_REQUEST를 반환해야 한다', async () => {
 		const user1 = new User('user-1', 'User1');
 		const mockRoom = new Room(1, user1.id, 'Test Room', 8, RoomStateType.WAIT, [user1]); // 1명
-		mockGetRoom.mockResolvedValue(mockRoom);
+		mockGetRoom.mockReturnValue(mockRoom);
 
 		const result = await gamePrepareUseCase(mockSocket, mockReq);
 
@@ -83,7 +83,7 @@ describe('gamePrepareUseCase', () => {
 		const user2 = new User('user-2', 'User2');
 		const users = [user1, user2];
 		const mockRoom = new Room(1, user1.id, 'Test Room', 8, RoomStateType.WAIT, users);
-		mockGetRoom.mockResolvedValue(mockRoom);
+		mockGetRoom.mockReturnValue(mockRoom);
 
 		// Math.random()이 항상 0을 반환하도록 하여 첫 번째 요소만 선택하게 만듦
 		randomMock = jest.spyOn(Math, 'random').mockReturnValue(0);
@@ -136,9 +136,15 @@ describe('gamePrepareUseCase', () => {
 
 	it('로직 수행 중 에러 발생 시 UNKNOWN_ERROR를 반환해야 한다', async () => {
 		const error = new Error('Redis connection failed');
-		mockGetRoom.mockRejectedValue(error);
+		mockGetRoom.mockImplementation(() => {
+			throw error;
+		});
+
+		const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
 		const result = await gamePrepareUseCase(mockSocket, mockReq);
+
+		consoleErrorSpy.mockRestore();
 
 		expect(result.payload.oneofKind).toBe('gamePrepareResponse');
 		if (result.payload.oneofKind === 'gamePrepareResponse') {

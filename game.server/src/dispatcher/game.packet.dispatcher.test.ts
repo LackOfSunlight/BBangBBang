@@ -10,15 +10,15 @@ import getRoomListHandler from '../handlers/get.room.list.handler.js';
 import joinRoomHandler from '../handlers/join.room.handler.js';
 import leaveRoomHandler from '../handlers/leave.room.handler.js';
 import gamePrepareHandler from '../handlers/game.prepare.handler.js';
-import gameStartRequestHandler from '../handlers/request/game.start.request.handler.js';
 import positionUpdateHandler from '../handlers/position.update.handler.js';
 import useCardHandler from '../handlers/use.card.handler.js';
-import fleaMarketPickRequestHandler from '../handlers/request/flea.market.pick.request.handler.js';
 import reactionRequestHandler from '../handlers/request/reaction.request.handler.js';
-import destroyCardRequestHandler from '../handlers/request/destroy.card.request.handler.js';
-import cardSelectRequestHandler from '../handlers/request/card.select.request.handler.js';
 import passDebuffHandler from '../handlers/pass.debuff.handler.js';
 import { GameStateData } from '../generated/common/types.js';
+import gameStartHandler from '../handlers/game.start.handler.js';
+import fleaMarketPickHandler from '../handlers/fleamarket.pick.handler.js';
+import destroyCardHandler from '../handlers/destroy.card.handler.js';
+import cardSelectHandler from '../handlers/card.select.handler.js';
 
 jest.mock('../handlers/register.handler.js');
 jest.mock('../handlers/login.handler.js');
@@ -44,13 +44,13 @@ const allHandlers = [
 	joinRoomHandler,
 	leaveRoomHandler,
 	gamePrepareHandler,
-	gameStartRequestHandler,
+	gameStartHandler,
 	positionUpdateHandler,
 	useCardHandler,
-	fleaMarketPickRequestHandler,
+	fleaMarketPickHandler,
 	reactionRequestHandler,
-	destroyCardRequestHandler,
-	cardSelectRequestHandler,
+	destroyCardHandler,
+	cardSelectHandler,
 	passDebuffHandler,
 ];
 

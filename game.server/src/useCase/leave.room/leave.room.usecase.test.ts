@@ -46,7 +46,7 @@ describe('leaveRoomUseCase', () => {
 	});
 
 	it('getRoom이 null을 반환하면 ROOM_NOT_FOUND를 반환해야 한다', async () => {
-		mockGetRoom.mockResolvedValue(null);
+		mockGetRoom.mockReturnValue(null);
 		const result = await leaveRoomUseCase(mockSocket, mockReq);
 
 		expect(result.payload.oneofKind).toBe('leaveRoomResponse');
@@ -58,7 +58,7 @@ describe('leaveRoomUseCase', () => {
 	it('유저가 해당 방의 멤버가 아니면 INVALID_REQUEST를 반환해야 한다', async () => {
 		const mockRoom = new Room(1, owner.id, 'Test Room', 8, RoomStateType.WAIT, []);
 		mockRoom.users.push(owner); // mockSocket.userId('some-user')는 이 방에 없음
-		mockGetRoom.mockResolvedValue(mockRoom);
+		mockGetRoom.mockReturnValue(mockRoom);
 
 		const result = await leaveRoomUseCase(mockSocket, mockReq);
 
@@ -76,7 +76,7 @@ describe('leaveRoomUseCase', () => {
 			const usersInRoom = [owner, user2, user3];
 			const mockRoom = new Room(1, owner.id, 'Test Room', 8, RoomStateType.WAIT, usersInRoom);
 			mockSocket.userId = owner.id;
-			mockGetRoom.mockResolvedValue(mockRoom);
+			mockGetRoom.mockReturnValue(mockRoom);
 
 			// Act
 			const result = await leaveRoomUseCase(mockSocket, mockReq);
@@ -119,7 +119,7 @@ describe('leaveRoomUseCase', () => {
 			mockSocket.userId = user2.id;
 			const mockRoom = new Room(1, owner.id, 'Test Room', 8, RoomStateType.WAIT, []);
 			mockRoom.users.push(owner, user2, user3);
-			mockGetRoom.mockResolvedValue(mockRoom);
+			mockGetRoom.mockReturnValue(mockRoom);
 		});
 
 		it('성공적으로 유저를 내보내고 남은 유저에게 알림을 보내야 한다', async () => {
@@ -154,9 +154,17 @@ describe('leaveRoomUseCase', () => {
 	it('에러 발생 시 UNKNOWN_ERROR를 반환하고 소켓 상태를 롤백해야 한다', async () => {
 		const originalRoomId = mockSocket.roomId;
 		const error = new Error('DB Connection Failed');
-		mockGetRoom.mockRejectedValue(error);
+		mockGetRoom.mockImplementation(() => {
+			throw error;
+		});
+
+		// 테스트 중 console.error 출력을 막기 위해 mock 설정
+		const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
 		const result = await leaveRoomUseCase(mockSocket, mockReq);
+
+		// mock 복원
+		consoleErrorSpy.mockRestore();
 
 		// 1. UNKNOWN_ERROR를 포함한 실패 응답을 반환했는지 확인
 		expect(result.payload.oneofKind).toBe('leaveRoomResponse');

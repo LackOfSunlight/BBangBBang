@@ -6,7 +6,6 @@ import { sendData } from '../../utils/send.data';
 import loginUseCase from '../../useCase/login/login.usecase';
 import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType';
 import { C2SLoginRequest, S2CLoginResponse } from '../../generated/packet/auth';
-import { User } from '../../models/user.model';
 import { GlobalFailCode } from '../../generated/common/enums';
 
 jest.mock('../../utils/type.converter.js');
@@ -21,7 +20,6 @@ describe('loginHandler', () => {
 
   beforeEach(() => {
     mockSocket = {
-      userId: '1',
     };
 
     mockLoginRequest = {

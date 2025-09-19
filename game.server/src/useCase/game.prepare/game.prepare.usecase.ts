@@ -57,7 +57,7 @@ export const gamePrepareUseCase = async (
 	}
 
 	try {
-		const room: Room | null = await getRoom(socket.roomId);
+		const room: Room | null = getRoom(socket.roomId);
 
 		if (!room) {
 			return createGamePrepareResponsePacket({
@@ -70,20 +70,20 @@ export const gamePrepareUseCase = async (
 		const roles: Record<number, RoleType[]> = {
 			2: [RoleType.TARGET, RoleType.HITMAN],
 			3: [RoleType.TARGET, RoleType.PSYCHOPATH, RoleType.HITMAN],
-			4: [RoleType.TARGET, RoleType.PSYCHOPATH, RoleType.HITMAN, RoleType.HITMAN],
+			4: [RoleType.TARGET, RoleType.PSYCHOPATH, RoleType.BODYGUARD, RoleType.HITMAN],
 			5: [
 				RoleType.TARGET,
 				RoleType.PSYCHOPATH,
 				RoleType.HITMAN,
-				RoleType.HITMAN,
+				RoleType.BODYGUARD,
 				RoleType.BODYGUARD,
 			],
 			6: [
 				RoleType.TARGET,
 				RoleType.PSYCHOPATH,
 				RoleType.HITMAN,
-				RoleType.HITMAN,
-				RoleType.HITMAN,
+				RoleType.BODYGUARD,
+				RoleType.BODYGUARD,
 				RoleType.BODYGUARD,
 			],
 			7: [
@@ -91,8 +91,8 @@ export const gamePrepareUseCase = async (
 				RoleType.PSYCHOPATH,
 				RoleType.HITMAN,
 				RoleType.HITMAN,
-				RoleType.HITMAN,
-				RoleType.HITMAN,
+				RoleType.BODYGUARD,
+				RoleType.BODYGUARD,
 				RoleType.BODYGUARD,
 			],
 		};
@@ -145,7 +145,7 @@ export const gamePrepareUseCase = async (
 		// 방 상태를 INGAME으로 변경
 		room.state = RoomStateType.INGAME;
 
-		await saveRoom(room);
+		saveRoom(room);
 
 		// 모든 유저에게 게임 준비 완료 알림 전송
 		const notificationPacket = createGamePrepareNotificationPacket(room);

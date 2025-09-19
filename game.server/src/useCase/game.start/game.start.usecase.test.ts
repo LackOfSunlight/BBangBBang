@@ -89,7 +89,7 @@ describe('gameStartUseCase', () => {
 	});
 
 	it('방을 찾을 수 없으면 ROOM_NOT_FOUND를 반환해야 한다', async () => {
-		mockGetRoom.mockResolvedValue(null);
+		mockGetRoom.mockReturnValue(null);
 		const result = await gameStartUseCase(mockSocket, mockReq);
 
 		expect(result.payload.oneofKind).toBe('gameStartResponse');
@@ -107,7 +107,7 @@ describe('gameStartUseCase', () => {
 		// 카드 분배를 위해 캐릭터 데이터 할당
 		users.forEach((u) => (u.character = { hp: 4, handCards: [], handCardsCount: 0 } as any));
 
-		mockGetRoom.mockResolvedValue(mockRoom);
+		mockGetRoom.mockReturnValue(mockRoom);
 
 		// 스폰 위치 Mocking
 		const mockSpawnPositions: CharacterPositionData[] = [
@@ -202,9 +202,15 @@ describe('gameStartUseCase', () => {
 
 	it('로직 수행 중 에러 발생 시 UNKNOWN_ERROR를 반환해야 한다', async () => {
 		const error = new Error('DB Connection Failed');
-		mockGetRoom.mockRejectedValue(error);
+		mockGetRoom.mockImplementation(() => {
+			throw error;
+		});
+
+		const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
 		const result = await gameStartUseCase(mockSocket, mockReq);
+
+		consoleErrorSpy.mockRestore();
 
 		expect(result.payload.oneofKind).toBe('gameStartResponse');
 		if (result.payload.oneofKind === 'gameStartResponse') {

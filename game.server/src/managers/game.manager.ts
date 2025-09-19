@@ -163,7 +163,7 @@ class GameManager {
 		roomTimers.set(roomTimerMapId, timer);
 	}
 
-	public async endGame(room: Room) {
+	public endGame(room: Room) {
 		console.log(`Ending game in room ${room.id}`);
 		// 기존 게임 종료 로직이 있다면 여기에 위치합니다.
 		const roomId = `room:${room.id}`;

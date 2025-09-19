@@ -1,7 +1,6 @@
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
 import { PhaseType } from '../generated/common/enums';
-import redis from '../redis/redis';
 import { CharacterData } from '../generated/common/types';
 
 const rooms = new Map<number, Room>();
