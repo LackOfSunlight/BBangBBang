@@ -34,7 +34,7 @@ describe('cardMaturedSavingsEffect', () => {
 	it('유효하지 않은 사용자면 종료', async () => {
 		mockGetUserFromRoom.mockResolvedValueOnce(null as any);
 
-		await cardMaturedSavingsEffect(roomId, userId);
+		cardMaturedSavingsEffect(roomId, userId);
 
 		expect(mockGetUserFromRoom).toHaveBeenCalledWith(roomId, userId);
 		expect(mockDrawDeck).not.toHaveBeenCalled();
@@ -48,7 +48,7 @@ describe('cardMaturedSavingsEffect', () => {
 		} as any);
 		mockGetDeckSize.mockReturnValueOnce(1); // 2장 필요하지만 1장만 넣어 부족하게 세팅
 
-		await cardMaturedSavingsEffect(roomId, userId);
+		cardMaturedSavingsEffect(roomId, userId);
 
 		expect(mockDrawDeck).not.toHaveBeenCalled();
 		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
@@ -64,7 +64,7 @@ describe('cardMaturedSavingsEffect', () => {
 		mockGetDeckSize.mockReturnValueOnce(5);
 		mockDrawDeck.mockReturnValueOnce([CardType.BBANG, CardType.AUTO_RIFLE]);
 
-		await cardMaturedSavingsEffect(roomId, userId);
+		cardMaturedSavingsEffect(roomId, userId);
 
 		expect(mockDrawDeck).toHaveBeenCalledWith(roomId, 2);
 		expect(user.character!.handCards).toEqual([
