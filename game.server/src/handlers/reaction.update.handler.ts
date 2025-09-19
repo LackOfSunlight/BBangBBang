@@ -18,19 +18,19 @@ const reactionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket)
     const { userId, roomId } = socket;
     if (!userId || !roomId) {
         // DTO가 유효하지 않으면 즉시 에러 응답
-        is_invalid_request(socket);
+        is_invalid_request(socket, GlobalFailCode.INVALID_REQUEST);
         return;
     }
     
     const room: Room | null = getRoom(roomId);
     if (!room) {
-        is_invalid_request(socket);
+        is_invalid_request(socket, GlobalFailCode.ROOM_NOT_FOUND);
         return;
     }
 
     const payload = getGamePacketType(gamePacket, gamePackTypeSelect.reactionRequest);
     if (!payload) {
-        is_invalid_request(socket);
+        is_invalid_request(socket, GlobalFailCode.INVALID_REQUEST);
         return;
     }
 
@@ -51,14 +51,13 @@ const reactionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket)
 };
 
 /** 오류코드:잘못된요청 을 일괄 처리하기 위한 함수 */
-const is_invalid_request = (socket: GameSocket) => {
-    const wrongDTO = createReactionResponsePacket(false, GlobalFailCode.INVALID_REQUEST);
+const is_invalid_request = (socket: GameSocket, failcode: GlobalFailCode) => {
+    const wrongDTO = createReactionResponsePacket(false, failcode);
     sendData(socket, wrongDTO, GamePacketType.useCardResponse);
-}
-
+};
 /** 패킷 세팅 */
 
-const createReactionResponsePacket = (success: boolean, failCode: GlobalFailCode): GamePacket => {
+export const createReactionResponsePacket = (success: boolean, failCode: GlobalFailCode): GamePacket => {
     const newGamePacket: GamePacket = {
         payload: {
             oneofKind: GamePacketType.reactionResponse,
