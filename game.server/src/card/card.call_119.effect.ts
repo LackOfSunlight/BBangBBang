@@ -1,5 +1,5 @@
 // cardType = 5
-import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../utils/room.utils';
+import { getRoom, updateCharacterFromRoom } from '../utils/room.utils.js';
 import { CharacterType } from '../generated/common/enums.js';
 import { CharacterData } from '../generated/common/types.js';
 
@@ -22,8 +22,13 @@ const getMaxHp = (characterType: CharacterType): number => {
 	}
 };
 
-const cardCall119Effect = (roomId: number, userId: string, targetUserId: string): boolean => {
-	const user = getUserFromRoom(roomId, userId);
+
+const cardCall119Effect = async (
+	roomId: number,
+	userId: string,
+	targetUserId: string,
+): Promise<boolean> => {
+	const user = await getUserFromRoom(roomId, userId);
 
 	// 유효성 검증
 	if (!user || !user.character) return false;
@@ -33,26 +38,37 @@ const cardCall119Effect = (roomId: number, userId: string, targetUserId: string)
 
 	if (targetUserId != '0') {
 		// 자신의 체력 회복
-		healCharacter(roomId, user, user.character);
+		await healCharacter(roomId, user, user.character);
 		return true;
 	} else {
 		// 나머지 플레이어들의 체력 회복
 		// 방의 모든 사용자 정보를 가져와서 자신을 제외한 나머지 플레이어들을 회복
-		const room = getRoom(roomId);
+		const room = await getRoom(roomId);
 		if (!room) return false;
 
-		for (const roomUser of room.users) {
-			if (roomUser.id !== userId && roomUser.character) {
-				healCharacter(roomId, roomUser, roomUser.character);
+		if (targetUserId != "0") {
+			// 자신의 체력 회복
+			healCharacter(roomId, user, user.character);
+			return true;
+		} else {
+			// 나머지 플레이어들의 체력 회복
+			// 방의 모든 사용자 정보를 가져와서 자신을 제외한 나머지 플레이어들을 회복
+			for (const roomUser of room.users) {
+				if (roomUser.id !== userId && roomUser.character) {
+					healCharacter(roomId, roomUser, roomUser.character);
+				}
 			}
-		}
 
-		return true;
+			return true;
+		}
+	} catch (error) {
+		console.error(`[119 호출] 방 또는 유저를 찾을 수 없음:`, error);
+		return false;
 	}
 };
 
 // 체력 회복 로직을 별도 함수로 분리
-const healCharacter = async (
+const healCharacter = (
 	roomId: number,
 	targetUser: { id: string; nickname: string },
 	character: CharacterData,
@@ -70,14 +86,14 @@ const healCharacter = async (
 	const previousHp = character.hp;
 	character.hp = Math.min(character.hp + 1, maxHp);
 
-	// Redis에 업데이트된 캐릭터 정보 저장 (에러 처리 추가)
+	// 방의 유저 정보 업데이트
 	try {
 		updateCharacterFromRoom(roomId, targetUser.id, character);
 		console.log(
 			`[119 호출] ${targetUser.nickname}의 체력이 ${previousHp} → ${character.hp}로 회복되었습니다. (최대: ${maxHp})`,
 		);
 	} catch (error) {
-		console.error(`[119 호출] Redis 업데이트 실패:`, error);
+		console.error(`[119 호출] 방 업데이트 실패:`, error);
 		// 에러가 발생해도 함수는 정상적으로 완료됨
 	}
 };
