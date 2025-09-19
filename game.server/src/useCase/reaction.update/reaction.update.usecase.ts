@@ -17,7 +17,7 @@ import { playAnimationHandler } from "../../handlers/play.animation.handler";
 
 import { broadcastDataToRoom } from '../../utils/notification.util';
 import { createUserUpdateNotificationPacket } from '../../useCase/use.card/use.card.usecase';
-import { AutoShieldBlock } from '../../card/card.auto_shield.effect.js';
+import { autoShieldBlock } from "../../card/card.auto_shield.effect";
 
 export const reactionUpdateUseCase = async (socket:GameSocket, reactionType:ReactionType): Promise<{success:boolean, failcode:GlobalFailCode}> =>{
 
@@ -49,7 +49,7 @@ export const reactionUpdateUseCase = async (socket:GameSocket, reactionType:Reac
                     let isDefended = false;
 
                     // 1. 자동 쉴드 방어 시도 (공격자가 레이저 포인터를 사용하지 않았을 때만)
-                    if (user.character.equips.includes(CardType.AUTO_SHIELD) && AutoShieldBlock()) {
+                    if (user.character.equips.includes(CardType.AUTO_SHIELD) && autoShieldBlock()) {
                         isDefended = true; // 방어 성공
                         playAnimationHandler(room.users, user.id, AnimationType.SHIELD_ANIMATION);
                     }
