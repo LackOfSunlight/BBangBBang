@@ -1,10 +1,10 @@
-// card.matured_savings.effect.test.ts
+// __tests__/cardMaturedSavingsEffect.test.ts
 import cardMaturedSavingsEffect from '../card.matured_savings.effect';
-import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/redis.util';
+import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { drawDeck, getDeckSize } from '../../managers/card.manager';
 import { CardType } from '../../generated/common/enums';
 
-jest.mock('../../utils/redis.util', () => ({
+jest.mock('../../utils/room.utils', () => ({
 	getUserFromRoom: jest.fn(),
 	updateCharacterFromRoom: jest.fn(),
 }));
@@ -13,112 +13,95 @@ jest.mock('../../managers/card.manager', () => ({
 	getDeckSize: jest.fn(),
 }));
 
-const mockGetUserFromRoom = getUserFromRoom as jest.MockedFunction<typeof getUserFromRoom>;
-const mockUpdateCharacterFromRoom = updateCharacterFromRoom as jest.MockedFunction<
-	typeof updateCharacterFromRoom
->;
-const mockDrawDeck = drawDeck as jest.MockedFunction<typeof drawDeck>;
-const mockGetDeckSize = getDeckSize as jest.MockedFunction<typeof getDeckSize>;
-
 describe('cardMaturedSavingsEffect', () => {
-	const roomId = 1;
-	const userId = 'user123';
+  const roomId = 1;
+  const userId = 'user123';
 
-	beforeEach(() => {
-		jest.clearAllMocks();
-		jest.spyOn(console, 'log').mockImplementation(() => {});
-		jest.spyOn(console, 'error').mockImplementation(() => {});
-		jest.useRealTimers();
-	});
+  const mockUser = {
+    id: userId,
+    character: {
+      handCards: [],
+      handCardsCount: 0,
+    },
+  };
 
-	it('유효하지 않은 사용자면 종료', async () => {
-		mockGetUserFromRoom.mockResolvedValueOnce(null as any);
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-		await cardMaturedSavingsEffect(roomId, userId);
 
-		expect(mockGetUserFromRoom).toHaveBeenCalledWith(roomId, userId);
-		expect(mockDrawDeck).not.toHaveBeenCalled();
-		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
-	});
+  it('잘못된 사용자일 경우 false 반환', () => {
+    (getUserFromRoom as jest.Mock).mockReturnValue(null);
 
-	it('덱에 뽑을 카드가 부족하면 종료', async () => {
-		mockGetUserFromRoom.mockResolvedValueOnce({
-			id: userId,
-			character: { handCards: [], handCardsCount: 0 },
-		} as any);
-		mockGetDeckSize.mockReturnValueOnce(1); // 2장 필요하지만 1장만 넣어 부족하게 세팅
+    const result = cardMaturedSavingsEffect(roomId, userId);
 
-		await cardMaturedSavingsEffect(roomId, userId);
+    expect(result).toBe(false);
+    expect(getUserFromRoom).toHaveBeenCalledWith(roomId, userId);
+  });
 
-		expect(mockDrawDeck).not.toHaveBeenCalled();
-		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
-	});
 
-	it('카드를 2장 뽑고, 뽑은 카드를 보유 카드에 추가', async () => {
-		const user = {
-			id: userId,
-			character: { handCards: [], handCardsCount: 0 },
-		};
+  it('덱 매수가 부족할 경우 false 반환', () => {
+    (getUserFromRoom as jest.Mock).mockReturnValue(mockUser);
+    (getDeckSize as jest.Mock).mockReturnValue(1); // 필요한 2장보다 부족
 
-		mockGetUserFromRoom.mockResolvedValueOnce(user as any);
-		mockGetDeckSize.mockReturnValueOnce(5);
-		mockDrawDeck.mockReturnValueOnce([CardType.BBANG, CardType.AUTO_RIFLE]);
+    const result = cardMaturedSavingsEffect(roomId, userId);
 
-		await cardMaturedSavingsEffect(roomId, userId);
+    expect(result).toBe(false);
+    expect(getDeckSize).toHaveBeenCalledWith(roomId);
+  });
 
-		expect(mockDrawDeck).toHaveBeenCalledWith(roomId, 2);
-		expect(user.character!.handCards).toEqual([
-			{ type: CardType.BBANG, count: 1 },
-			{ type: CardType.AUTO_RIFLE, count: 1 },
-		]);
-		expect(user.character!.handCardsCount).toBe(2);
-		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, user.id, user.character);
-	});
 
-	it('이미 있는 카드를 뽑으면 해당 카드의 count가 증가', async () => {
-		const user = {
-			id: userId,
-			character: {
-				handCards: [{ type: CardType.BBANG, count: 1 }], // 이미 소지하고 있는 카드 세팅
-				handCardsCount: 1,
-			},
-		};
+  it('카드 2장을 뽑고 소지 카드에 추가', () => {
+    (getUserFromRoom as jest.Mock).mockReturnValue({
+      ...mockUser,
+      character: { handCards: [], handCardsCount: 0 },
+    });
+    (getDeckSize as jest.Mock).mockReturnValue(10);
+    (drawDeck as jest.Mock).mockReturnValue([CardType.BBANG, CardType.SHIELD]);
+    (updateCharacterFromRoom as jest.Mock).mockReturnValue(true);
 
-		mockGetUserFromRoom.mockResolvedValueOnce(user as any);
-		mockGetDeckSize.mockReturnValueOnce(5);
-		mockDrawDeck.mockReturnValueOnce([CardType.BBANG, CardType.AUTO_RIFLE]);
+    const result = cardMaturedSavingsEffect(roomId, userId);
 
-		await cardMaturedSavingsEffect(roomId, userId);
+    expect(result).toBe(true);
+    expect(drawDeck).toHaveBeenCalledWith(roomId, 2);
+    expect(updateCharacterFromRoom).toHaveBeenCalled();
+    const updatedUser = (updateCharacterFromRoom as jest.Mock).mock.calls[0][2];
+    expect(updatedUser.handCards.length).toBe(2);
+    expect(updatedUser.handCardsCount).toBe(2);
+  });
 
-		// 같은 카드 획득 시 정상적으로 해당 count 값에 가산되는지 확인
-		expect(user.character!.handCards).toEqual([
-			{ type: CardType.BBANG, count: 2 },
-			{ type: CardType.AUTO_RIFLE, count: 1 },
-		]);
-		expect(user.character!.handCardsCount).toBe(3);
-		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, user.id, user.character);
-	});
 
-	it('updateCharacterFromRoom 실패 시 에러 로그 출력', async () => {
-		const user = {
-			id: userId,
-			character: { handCards: [], handCardsCount: 0 },
-		};
+  it('이미 소지한 카드를 또 뽑으면 count 증가', () => {
+    (getUserFromRoom as jest.Mock).mockReturnValue({
+      ...mockUser,
+      character: {
+        handCards: [{ type: CardType.BBANG, count: 1 }],
+        handCardsCount: 1,
+      },
+    });
+    (getDeckSize as jest.Mock).mockReturnValue(10);
+    (drawDeck as jest.Mock).mockReturnValue([CardType.BBANG, CardType.BBANG]);
+    (updateCharacterFromRoom as jest.Mock).mockReturnValue(true);
 
-		mockGetUserFromRoom.mockResolvedValueOnce(user as any);
-		mockGetDeckSize.mockReturnValueOnce(5);
-		mockDrawDeck.mockReturnValueOnce([CardType.BBANG, CardType.AUTO_RIFLE]);
-		mockUpdateCharacterFromRoom.mockImplementationOnce(() => Promise.reject(new Error('DB Error'))); // 임의의 에러 대입
+    const result = cardMaturedSavingsEffect(roomId, userId);
 
-		// await cardMaturedSavingsEffect(roomId, userId);
+    expect(result).toBe(true);
+    const updatedUser = (updateCharacterFromRoom as jest.Mock).mock.calls[0][2];
+    expect(updatedUser.handCards[0].count).toBe(3);
+    expect(updatedUser.handCardsCount).toBe(3);
+  });
 
-		// try/catch로 unhandled rejection 방지
-		await expect(cardMaturedSavingsEffect(roomId, userId)).resolves.toBeUndefined();
-		expect(mockUpdateCharacterFromRoom).toHaveBeenCalled();
-	});
+  
+  it('updateCharacterFromRoom 실패 시 false 반환', () => {
+    (getUserFromRoom as jest.Mock).mockReturnValue(mockUser);
+    (getDeckSize as jest.Mock).mockReturnValue(10);
+    (drawDeck as jest.Mock).mockReturnValue([CardType.BBANG, CardType.SHIELD]);
+    (updateCharacterFromRoom as jest.Mock).mockImplementation(() => {
+      throw new Error('DB Error');
+    });
 
-	afterAll(() => {
-		jest.restoreAllMocks();
-		jest.useRealTimers();
-	});
+    const result = cardMaturedSavingsEffect(roomId, userId);
+
+    expect(result).toBe(false);
+  });
 });

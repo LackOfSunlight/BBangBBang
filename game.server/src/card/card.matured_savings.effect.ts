@@ -7,7 +7,7 @@ const cardMaturedSavingsEffect = (roomId: number, userId: string): boolean => {
 	const user = getUserFromRoom(roomId, userId);
 	// 유효성 검증
 	if (!user) {
-		console.log('잘못된 사용자 정보입니다');
+		console.warn('[만기 적금]잘못된 사용자 정보입니다');
 		return false;
 	}
 
@@ -17,13 +17,13 @@ const cardMaturedSavingsEffect = (roomId: number, userId: string): boolean => {
 	const remainCardNumberInDeck = getDeckSize(roomId);
 	// 덱 매수 부족할 경우 중단
 	if (remainCardNumberInDeck < numberOfDraw) {
-		console.log(`덱에서 뽑을 카드가 부족합니다.`);
+		console.warn(`[만기 적금]덱에서 뽑을 카드가 부족합니다.`);
 		return false;
 	}
 
 	// 카드 2장 뽑기(메인 기믹) 공지
 	const cardYouDraw = drawDeck(roomId, numberOfDraw);
-	console.log(`유저 ${user.id}(이)가 카드 ${numberOfDraw}장을 획득하였습니다\n획득 카드 : `);
+	console.log(`[만기 적금]유저 ${user.id}(이)가 카드 ${numberOfDraw}장을 획득하였습니다\n획득 카드 : `);
 
 	// 뽑은 카드 정리 및 공지
 	cardYouDraw.forEach((cardType) => {
@@ -49,7 +49,7 @@ const cardMaturedSavingsEffect = (roomId: number, userId: string): boolean => {
 		//console.log('로그 저장에 성공하였습니다');
 		return true;
 	} catch (error) {
-		console.error(`로그 저장에 실패하였습니다:[${error}]`);
+		console.error(`[만기 적금]로그 저장에 실패하였습니다:[${error}]`);
 		return false;
 	}
 };
