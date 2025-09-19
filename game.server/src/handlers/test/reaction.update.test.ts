@@ -1,4 +1,4 @@
-// __tests__/reactionUpdate.test.ts
+// reaction.update.test.ts
 import reactionUpdateHandler from "../../handlers/reaction.update.handler";
 import { reactionUpdateUseCase } from "../../useCase/reaction.update/reaction.update.usecase";
 
