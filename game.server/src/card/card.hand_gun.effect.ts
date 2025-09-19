@@ -1,6 +1,6 @@
 // cardType = 14
-import { getRoom, updateCharacterFromRoom } from '../utils/room.utils.js';
-import { CardType } from '../generated/common/enums.js';
+import { getRoom, updateCharacterFromRoom } from '../utils/room.utils';
+import { CardType } from '../generated/common/enums';
 
 const cardHandGunEffect = async (roomId: number, userId: string): Promise<boolean> => {
 	try {
@@ -19,7 +19,7 @@ const cardHandGunEffect = async (roomId: number, userId: string): Promise<boolea
 		updateCharacterFromRoom(roomId, user.id, user.character);
 		return true;
 	} catch (error) {
-		console.error(`[핸드건] 방 또는 유저를 찾을 수 없음:`, error);
+		// 에러 로그 제거
 		return false;
 	}
 };

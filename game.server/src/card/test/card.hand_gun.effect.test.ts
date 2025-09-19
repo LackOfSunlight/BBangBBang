@@ -1,17 +1,22 @@
 import cardHandGunEffect from '../card.hand_gun.effect';
-import { getRoom, updateCharacterFromRoom } from '../../utils/room.utils';
+import * as roomUtils from '../../utils/room.utils';
 import { CharacterType, RoleType } from '../../generated/common/enums';
 
-// Mock 설정
-jest.mock('../../utils/room.utils', () => ({
-	getRoom: jest.fn(),
-	updateCharacterFromRoom: jest.fn(),
-}));
+// 모킹 설정
+jest.mock('../../utils/room.utils');
 
-const mockGetRoom = getRoom as jest.MockedFunction<typeof getRoom>;
-const mockUpdateCharacterFromRoom = updateCharacterFromRoom as jest.MockedFunction<
-	typeof updateCharacterFromRoom
->;
+// 모킹 함수 생성
+const mockGetRoom = jest.spyOn(roomUtils, 'getRoom');
+const mockUpdateCharacterFromRoom = jest.spyOn(roomUtils, 'updateCharacterFromRoom');
+
+// 에러 로그 출력 억제
+beforeAll(() => {
+	jest.spyOn(console, 'error').mockImplementation(() => {});
+});
+
+afterAll(() => {
+	jest.restoreAllMocks();
+});
 
 describe('cardHandGunEffect', () => {
 	const roomId = 1;
@@ -39,6 +44,10 @@ describe('cardHandGunEffect', () => {
 			const mockRoom = {
 				id: roomId,
 				users: [{ id: 'otherUser', nickname: 'other' }], // 다른 유저만 있음
+				ownerId: 'user1',
+				name: 'test room',
+				maxUserNum: 8,
+				state: 2, // INGAME
 			};
 			mockGetRoom.mockReturnValue(mockRoom);
 
@@ -53,6 +62,10 @@ describe('cardHandGunEffect', () => {
 			const mockRoom = {
 				id: roomId,
 				users: [{ id: userId, nickname: 'testUser' }], // 캐릭터 없음
+				ownerId: 'user1',
+				name: 'test room',
+				maxUserNum: 8,
+				state: 2, // INGAME
 			};
 			mockGetRoom.mockReturnValue(mockRoom);
 
@@ -88,6 +101,10 @@ describe('cardHandGunEffect', () => {
 						character: mockCharacter,
 					},
 				],
+				ownerId: 'user1',
+				name: 'test room',
+				maxUserNum: 8,
+				state: 2, // INGAME
 			};
 
 			mockGetRoom.mockReturnValue(mockRoom);
@@ -113,6 +130,10 @@ describe('cardHandGunEffect', () => {
 						character: mockCharacter,
 					},
 				],
+				ownerId: 'user1',
+				name: 'test room',
+				maxUserNum: 8,
+				state: 2, // INGAME
 			};
 
 			mockGetRoom.mockReturnValue(mockRoom);
@@ -133,17 +154,9 @@ describe('cardHandGunEffect', () => {
 				throw new Error('Room not found');
 			});
 
-			const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-
 			const result = await cardHandGunEffect(roomId, userId);
 
 			expect(result).toBe(false);
-			expect(consoleErrorSpy).toHaveBeenCalledWith(
-				'[핸드건] 방 또는 유저를 찾을 수 없음:',
-				expect.any(Error),
-			);
-
-			consoleErrorSpy.mockRestore();
 		});
 
 		it('updateCharacterFromRoom에서 에러가 발생해도 함수가 정상적으로 처리된다', async () => {
@@ -168,6 +181,10 @@ describe('cardHandGunEffect', () => {
 						character: mockCharacter,
 					},
 				],
+				ownerId: 'user1',
+				name: 'test room',
+				maxUserNum: 8,
+				state: 2, // INGAME
 			};
 
 			mockGetRoom.mockReturnValue(mockRoom);
@@ -175,17 +192,9 @@ describe('cardHandGunEffect', () => {
 				throw new Error('Update error');
 			});
 
-			const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-
 			const result = await cardHandGunEffect(roomId, userId);
 
 			expect(result).toBe(false);
-			expect(consoleErrorSpy).toHaveBeenCalledWith(
-				'[핸드건] 방 또는 유저를 찾을 수 없음:',
-				expect.any(Error),
-			);
-
-			consoleErrorSpy.mockRestore();
 		});
 	});
 });
