@@ -1,7 +1,7 @@
 // cardType = 5
-import { getRoom, updateCharacterFromRoom } from '../utils/room.utils.js';
-import { CharacterType } from '../generated/common/enums.js';
-import { CharacterData } from '../generated/common/types.js';
+import { getRoom, updateCharacterFromRoom, getUserFromRoom } from '../utils/room.utils';
+import { CharacterType } from '../generated/common/enums';
+import { CharacterData } from '../generated/common/types';
 
 // 캐릭터 타입별 최대 체력 정의
 const getMaxHp = (characterType: CharacterType): number => {
@@ -22,37 +22,30 @@ const getMaxHp = (characterType: CharacterType): number => {
 	}
 };
 
-
 const cardCall119Effect = async (
 	roomId: number,
 	userId: string,
 	targetUserId: string,
 ): Promise<boolean> => {
-	const user = await getUserFromRoom(roomId, userId);
+	try {
+		const user = await getUserFromRoom(roomId, userId);
 
-	// 유효성 검증
-	if (!user || !user.character) return false;
+		// 유효성 검증
+		if (!user || !user.character) return false;
 
-	// 119 호출 카드 효과: 자신의 체력을 1 회복하거나, 나머지의 체력을 1 회복
-	// targetUserId가 있으면 자신의 체력 회복, 없으면 나머지 플레이어들의 체력 회복
+		// 119 호출 카드 효과: 자신의 체력을 1 회복하거나, 나머지의 체력을 1 회복
+		// targetUserId가 있으면 자신의 체력 회복, 없으면 나머지 플레이어들의 체력 회복
 
-	if (targetUserId != '0') {
-		// 자신의 체력 회복
-		await healCharacter(roomId, user, user.character);
-		return true;
-	} else {
-		// 나머지 플레이어들의 체력 회복
-		// 방의 모든 사용자 정보를 가져와서 자신을 제외한 나머지 플레이어들을 회복
-		const room = await getRoom(roomId);
-		if (!room) return false;
-
-		if (targetUserId != "0") {
+		if (targetUserId != '0') {
 			// 자신의 체력 회복
-			healCharacter(roomId, user, user.character);
+			await healCharacter(roomId, user, user.character);
 			return true;
 		} else {
 			// 나머지 플레이어들의 체력 회복
 			// 방의 모든 사용자 정보를 가져와서 자신을 제외한 나머지 플레이어들을 회복
+			const room = await getRoom(roomId);
+			if (!room) return false;
+
 			for (const roomUser of room.users) {
 				if (roomUser.id !== userId && roomUser.character) {
 					healCharacter(roomId, roomUser, roomUser.character);
@@ -62,7 +55,7 @@ const cardCall119Effect = async (
 			return true;
 		}
 	} catch (error) {
-		console.error(`[119 호출] 방 또는 유저를 찾을 수 없음:`, error);
+		// 에러 발생 시 실패 처리
 		return false;
 	}
 };
@@ -93,7 +86,6 @@ const healCharacter = (
 			`[119 호출] ${targetUser.nickname}의 체력이 ${previousHp} → ${character.hp}로 회복되었습니다. (최대: ${maxHp})`,
 		);
 	} catch (error) {
-		console.error(`[119 호출] 방 업데이트 실패:`, error);
 		// 에러가 발생해도 함수는 정상적으로 완료됨
 	}
 };
