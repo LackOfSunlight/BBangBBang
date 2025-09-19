@@ -1,7 +1,8 @@
 // cardType = 5
-import { getRoom, updateCharacterFromRoom, getUserFromRoom } from '../utils/room.utils';
-import { CharacterType } from '../generated/common/enums';
-import { CharacterData } from '../generated/common/types';
+
+import { getRoom, updateCharacterFromRoom, getUserFromRoom } from '../utils/room.utils.js';
+import { CharacterType } from '../generated/common/enums.js';
+import { CharacterData } from '../generated/common/types.js';
 
 // 캐릭터 타입별 최대 체력 정의
 const getMaxHp = (characterType: CharacterType): number => {
@@ -22,19 +23,31 @@ const getMaxHp = (characterType: CharacterType): number => {
 	}
 };
 
-const cardCall119Effect = async (
+
+
+const cardCall119Effect = (
 	roomId: number,
 	userId: string,
 	targetUserId: string,
-): Promise<boolean> => {
-	try {
-		const user = await getUserFromRoom(roomId, userId);
+): boolean => {
+	const user = getUserFromRoom(roomId, userId);
+
+	// 유효성 검증
+	if (!user || !user.character) return false;
 
 		// 유효성 검증
 		if (!user || !user.character) return false;
 
-		// 119 호출 카드 효과: 자신의 체력을 1 회복하거나, 나머지의 체력을 1 회복
-		// targetUserId가 있으면 자신의 체력 회복, 없으면 나머지 플레이어들의 체력 회복
+
+	if (targetUserId != '0') {
+		// 자신의 체력 회복
+		healCharacter(roomId, user, user.character);
+		return true;
+	} else {
+		// 나머지 플레이어들의 체력 회복
+		// 방의 모든 사용자 정보를 가져와서 자신을 제외한 나머지 플레이어들을 회복
+		const room = getRoom(roomId);
+		if (!room) return false;
 
 		if (targetUserId != '0') {
 			// 자신의 체력 회복
@@ -54,9 +67,6 @@ const cardCall119Effect = async (
 
 			return true;
 		}
-	} catch (error) {
-		// 에러 발생 시 실패 처리
-		return false;
 	}
 };
 

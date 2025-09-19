@@ -1,16 +1,13 @@
 // cardType = 3
-import { setDefaultHighWaterMark } from 'stream';
 import { CardType, CharacterStateType, CharacterType } from '../generated/common/enums.js';
-import { CheckBigBbangService } from '../services/bigbbang.check.service.js';
-import { getRoom, saveRoom } from '../utils/redis.util.js';
+import { CheckBigBbangService as checkBigBbangService } from '../services/bigbbang.check.service.js';
+import { getRoom, saveRoom } from '../utils/room.utils.js';
 import { User } from '../models/user.model.js';
 
-const cardShieldEffect = async (
-	roomId: number,
-	userId: string,
-	targetUserId: string,
-): Promise<boolean> => {
-	let room = await getRoom(roomId);
+
+
+const cardShieldEffect = (roomId: number, userId: string, targetUserId: string) : boolean => {
+	let room = getRoom(roomId);
 
 	if (!room) return false;
 
@@ -58,9 +55,9 @@ const cardShieldEffect = async (
 		}
 	}
 
-	room = await CheckBigBbangService(room);
+	room = checkBigBbangService(room);
 
-	await saveRoom(room);
+	saveRoom(room);
 	return true;
 };
 

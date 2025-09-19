@@ -1,227 +1,134 @@
-import * as redisUtil from '../../utils/redis.util';
-import { sendData } from '../../utils/send.data';
-import { broadcastDataToRoom } from '../../utils/notification.util';
-import useCardRequestHandler from '../../handlers/request/use.card.request.handler';
-import reactionRequestHandler from '../../handlers/request/reaction.request.handler';
-import { GameSocket } from '../../type/game.socket';
+import cardDesertEagleEffect from '../card.desert_eagle.effect';
+import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
+import { User } from '../../models/user.model';
 import {
 	CardType,
-	CharacterStateType,
 	CharacterType,
-	GlobalFailCode,
-	ReactionType,
 	RoleType,
+	CharacterStateType,
 } from '../../generated/common/enums';
-import { RoomData, UserData } from '../../generated/common/types';
-import { GamePacket } from '../../generated/gamePacket';
-import { GamePacketType } from '../../enums/gamePacketType';
-import * as weaponUtil from '../../utils/weapon.util';
+import { CharacterData } from '../../generated/common/types';
 
-// Mock 유틸리티
-jest.mock('../../utils/send.data');
-jest.mock('../../utils/notification.util');
-jest.mock('../../utils/weapon.util');
+// cardDesertEagleEffect 함수의 직접적인 의존성인 room.utils를 모킹합니다.
+jest.mock('../../utils/room.utils', () => ({
+	getUserFromRoom: jest.fn(),
+	updateCharacterFromRoom: jest.fn(),
+}));
 
-// 일반 객체 깊은 복사를 위한 헬퍼
-const cloneDeep = (obj: any) => JSON.parse(JSON.stringify(obj));
+// 타입스크립트와 함께 사용하기 위해 모킹된 함수를 캐스팅합니다.
+const mockGetUserFromRoom = getUserFromRoom as jest.Mock;
+const mockUpdateCharacterFromRoom = updateCharacterFromRoom as jest.Mock;
 
-describe('카드 효과: 데저트 이글', () => {
+describe('cardDesertEagleEffect', () => {
 	const ROOM_ID = 1;
 	const USER_ID = 'user-1';
-	const TARGET_USER_ID = 'user-2';
-
-	let socket: GameSocket;
-	let baseUser: UserData;
-	let baseTarget: UserData;
-	let baseRoom: RoomData;
-	let gamePacket: GamePacket;
+	let mockUser: User;
 
 	beforeEach(() => {
+		// 각 테스트가 독립적으로 실행되도록 모든 모의 함수를 초기화합니다.
 		jest.clearAllMocks();
-		jest.restoreAllMocks(); // 모든 스파이 초기화
 
-		socket = {
-			userId: USER_ID,
-			roomId: ROOM_ID,
-		} as GameSocket;
-
-		baseUser = {
-			id: USER_ID,
-			nickname: 'test-user',
-			character: {
-				characterType: CharacterType.PINK_SLIME,
-				roleType: RoleType.HITMAN,
-				hp: 3,
-				weapon: CardType.NONE,
-				equips: [],
-				debuffs: [],
-				handCards: [],
-				handCardsCount: 0,
-				stateInfo: {
-					state: CharacterStateType.BBANG_SHOOTER,
-					stateTargetUserId: '',
-					nextState: 0,
-					nextStateAt: '0',
-				},
-				bbangCount: 0,
+		// 테스트에 사용할 기본 유저 객체를 설정합니다.
+		mockUser = new User(USER_ID, 'test-user');
+		mockUser.character = {
+			characterType: CharacterType.PINK_SLIME,
+			roleType: RoleType.HITMAN,
+			hp: 4,
+			weapon: CardType.NONE,
+			equips: [],
+			debuffs: [],
+			handCards: [],
+			handCardsCount: 0,
+			stateInfo: {
+				state: CharacterStateType.NONE_CHARACTER_STATE,
+				stateTargetUserId: '',
+				nextState: 0,
+				nextStateAt: '0',
 			},
-		};
+			bbangCount: 0,
+		} as CharacterData;
 
-		baseTarget = {
-			id: TARGET_USER_ID,
-			nickname: 'target-user',
-			character: {
-				characterType: CharacterType.RED,
-				roleType: RoleType.TARGET,
-				hp: 3,
-				weapon: CardType.NONE,
-				equips: [],
-				debuffs: [],
-				handCards: [],
-				handCardsCount: 0,
-				stateInfo: {
-					state: CharacterStateType.BBANG_TARGET,
-					stateTargetUserId: '',
-					nextState: CharacterStateType.NONE_CHARACTER_STATE,
-					nextStateAt: '0',
-				},
-				bbangCount: 0,
-			},
-		};
-
-		baseRoom = {
-			id: ROOM_ID,
-			ownerId: USER_ID,
-			name: 'Test Room',
-			maxUserNum: 4,
-			state: 0, // RoomState.WAIT으로 가정
-			users: [baseUser, baseTarget],
-		};
+		// 모의 함수의 기본 동작을 동기적으로 설정합니다.
+		mockGetUserFromRoom.mockReturnValue(mockUser);
+		mockUpdateCharacterFromRoom.mockImplementation(() => {}); // void 함수
 	});
 
-	describe('useCardRequestHandler: 데저트 이글 장착', () => {
-		it('데저트 이글을 장착하고 손에서 카드를 제거해야 합니다', async () => {
-			// Arrange: 테스트 준비
-			const userForTest = cloneDeep(baseUser);
-			userForTest.character!.handCards = [{ type: CardType.DESERT_EAGLE, count: 1 }];
-			userForTest.character!.handCardsCount = 1;
+	it('성공적으로 데저트 이글을 장착하고 true를 반환해야 합니다', () => {
+		// Act: 테스트할 함수를 실행합니다.
+		const result = cardDesertEagleEffect(ROOM_ID, USER_ID);
 
-			// 테스트를 위한 상태 저장용 Mock DB
-			let dbUser = cloneDeep(userForTest);
-
-			const getUserFromRoomSpy = jest
-				.spyOn(redisUtil, 'getUserFromRoom')
-				.mockImplementation(async (roomId, userId) => {
-					return cloneDeep(dbUser);
-				});
-
-			const updateCharacterFromRoomSpy = jest
-				.spyOn(redisUtil, 'updateCharacterFromRoom')
-				.mockImplementation(async (roomId, userId, character) => {
-					dbUser.character = character;
-					return {} as any;
-				});
-
-			gamePacket = {
-				payload: {
-					oneofKind: GamePacketType.useCardRequest,
-					useCardRequest: {
-						cardType: CardType.DESERT_EAGLE,
-						targetUserId: USER_ID, // 장착 시에는 자기 자신을 타겟으로
-					},
-				},
-			};
-
-			// Act: 테스트할 동작 실행
-			await useCardRequestHandler(socket, gamePacket);
-
-			// Assert: 결과 검증
-			expect(updateCharacterFromRoomSpy).toHaveBeenCalledTimes(2);
-
-			// 첫 번째 호출: 손에서 카드가 제거됨
-			const firstCallCharacter = updateCharacterFromRoomSpy.mock.calls[0][2];
-			expect(firstCallCharacter.handCards).toEqual([]);
-			expect(firstCallCharacter.handCardsCount).toBe(0);
-			expect(firstCallCharacter.weapon).toBe(CardType.NONE);
-
-			// 두 번째 호출: 무기가 장착됨
-			const secondCallCharacter = updateCharacterFromRoomSpy.mock.calls[1][2];
-			expect(secondCallCharacter.weapon).toBe(CardType.DESERT_EAGLE);
-			// 두 번째 호출 시점에도 손의 카드는 비어있어야 함
-			expect(secondCallCharacter.handCards).toEqual([]);
-		});
+		// Assert: 결과를 검증합니다.
+		expect(result).toBe(true);
+		expect(mockGetUserFromRoom).toHaveBeenCalledWith(ROOM_ID, USER_ID);
+		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(
+			ROOM_ID,
+			USER_ID,
+			expect.objectContaining({
+				weapon: CardType.DESERT_EAGLE, // 무기가 데저트 이글로 설정되었는지 확인
+			}),
+		);
 	});
 
-	describe('reactionRequestHandler: 데저트 이글로 빵야', () => {
-		let attacker: UserData;
-		let target: UserData;
-		let targetSocket: GameSocket;
+	it('기존에 다른 무기를 가지고 있었다면, 덮어써야 합니다', () => {
+		// Arrange: 유저가 이미 다른 무기를 가지고 있는 상황을 설정합니다.
+		mockUser.character!.weapon = CardType.HAND_GUN;
 
-		beforeEach(() => {
-			attacker = cloneDeep(baseUser);
-			attacker.character!.weapon = CardType.DESERT_EAGLE;
-			attacker.character!.stateInfo!.state = CharacterStateType.BBANG_SHOOTER;
-			attacker.character!.stateInfo!.stateTargetUserId = TARGET_USER_ID;
+		// Act
+		const result = cardDesertEagleEffect(ROOM_ID, USER_ID);
 
-			target = cloneDeep(baseTarget);
-			target.character!.hp = 3;
-			target.character!.stateInfo!.state = CharacterStateType.BBANG_TARGET;
-			target.character!.stateInfo!.stateTargetUserId = USER_ID;
+		// Assert
+		expect(result).toBe(true);
+		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(
+			ROOM_ID,
+			USER_ID,
+			expect.objectContaining({
+				weapon: CardType.DESERT_EAGLE, // 기존 무기가 데저트 이글로 교체되었는지 확인
+			}),
+		);
+	});
 
-			const room = cloneDeep(baseRoom);
-			room.users = [attacker, target];
-
-			targetSocket = {
-				userId: TARGET_USER_ID,
-				roomId: ROOM_ID,
-			} as GameSocket;
-
-			jest.spyOn(redisUtil, 'getRoom').mockResolvedValue(room);
-			jest.spyOn(redisUtil, 'getUserFromRoom').mockImplementation(async (roomId, userId) => {
-				if (userId === TARGET_USER_ID) return cloneDeep(target);
-				if (userId === USER_ID) return cloneDeep(attacker);
-				return null;
-			});
+	it('유저를 찾을 수 없으면 false를 반환해야 합니다', () => {
+		// Arrange: 유저를 찾을 수 없는 상황 (에러 발생)을 설정합니다.
+		mockGetUserFromRoom.mockImplementation(() => {
+			throw new Error('User not found');
 		});
 
-		it('상대방에게 2의 데미지를 입히고, 상태와 카운트를 정확히 업데이트해야 합니다', async () => {
-			// Arrange: 테스트 준비
-			jest.spyOn(weaponUtil, 'weaponDamageEffect').mockReturnValue(2);
-			const saveRoomSpy = jest.spyOn(redisUtil, 'saveRoom').mockResolvedValue({} as any);
+		// Act
+		const result = cardDesertEagleEffect(ROOM_ID, USER_ID);
 
-			gamePacket = {
-				payload: {
-					oneofKind: GamePacketType.reactionRequest,
-					reactionRequest: {
-						reactionType: ReactionType.NONE_REACTION,
-					},
-				},
-			};
+		// Assert
+		expect(result).toBe(false);
+		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled(); // 캐릭터 업데이트 함수가 호출되지 않았는지 확인
+	});
 
-			// Act: 테스트할 동작 실행
-			await reactionRequestHandler(targetSocket, gamePacket);
+	it('유저의 캐릭터 정보가 없으면 false를 반환해야 합니다', () => {
+		// Arrange: 캐릭터 정보가 없는 상황을 설정합니다.
+		mockUser.character = undefined;
 
-			// Assert: 결과 검증
-			expect(saveRoomSpy).toHaveBeenCalledTimes(1);
-			const savedRoom = saveRoomSpy.mock.calls[0][0] as RoomData;
+		// Act
+		const result = cardDesertEagleEffect(ROOM_ID, USER_ID);
 
-			const updatedTarget = savedRoom.users.find((u) => u.id === TARGET_USER_ID);
-			const updatedAttacker = savedRoom.users.find((u) => u.id === USER_ID);
+		// Assert
+		expect(result).toBe(false);
+		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
+	});
 
-			// 피격자 검증
-			expect(updatedTarget?.character?.hp).toBe(1);
-			expect(updatedTarget?.character?.stateInfo?.state).toBe(
-				CharacterStateType.NONE_CHARACTER_STATE,
-			);
-
-			// 공격자 검증
-			expect(updatedAttacker?.character?.stateInfo?.state).toBe(
-				CharacterStateType.NONE_CHARACTER_STATE,
-			);
-			expect(updatedAttacker?.character?.bbangCount).toBe(1);
-
-			// 알림 전송 검증
-			expect(broadcastDataToRoom).toHaveBeenCalled();
+	it('캐릭터 정보 업데이트에 실패하면 false를 반환해야 합니다', () => {
+		// Arrange: DB 업데이트 실패 상황 (에러 발생)을 설정합니다.
+		const dbError = new Error('DB update failed');
+		mockUpdateCharacterFromRoom.mockImplementation(() => {
+			throw dbError;
 		});
+		const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {}); // 테스트 중 콘솔 에러 출력을 막습니다.
+
+		// Act
+		const result = cardDesertEagleEffect(ROOM_ID, USER_ID);
+
+		// Assert
+		expect(result).toBe(false);
+		expect(consoleErrorSpy).toHaveBeenCalledWith('[데저트 이글] 업데이트 실패:', dbError); // 에러 로그가 정상적으로 출력되었는지 확인
+
+		// Clean up: 스파이 함수를 복원합니다.
+		consoleErrorSpy.mockRestore();
 	});
 });

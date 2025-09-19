@@ -1,11 +1,11 @@
 // cardType = 12
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
+import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 import { drawDeck } from '../managers/card.manager.js';
 import { CardData } from '../generated/common/types.js';
 import { CardType } from '../generated/common/enums.js';
 
-const cardWinLotteryEffect = async (roomId: number, userId: string): Promise<boolean> => {
-	const user = await getUserFromRoom(roomId, userId);
+const cardWinLotteryEffect = (roomId: number, userId: string): boolean => {
+	const user = getUserFromRoom(roomId, userId);
 
 	// 유효성 검증
 	if (!user || !user.character) return false;
@@ -43,7 +43,7 @@ const cardWinLotteryEffect = async (roomId: number, userId: string): Promise<boo
 	// Redis에 업데이트된 캐릭터 정보 저장
 	// S2CUserUpdateNotification으로 클라이언트에 전송됨
 	try {
-		await updateCharacterFromRoom(roomId, user.id, user.character);
+		updateCharacterFromRoom(roomId, user.id, user.character);
 		console.log(
 			`[복권 당첨] ${user.nickname}이 카드 ${newCardTypes.length}장을 획득했습니다:`,
 			newCardTypes.map((type) => CardType[type]).join(', '),

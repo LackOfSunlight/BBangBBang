@@ -1,9 +1,8 @@
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
 import { CharacterStateType } from '../generated/common/enums';
-import { saveRoom } from '../utils/redis.util';
 
-export const CheckBigBbangService = async (room: Room): Promise<Room> => {
+export const CheckBigBbangService = (room: Room): Room => {
 	const users: User[] = room.users;
 	const now = Date.now(); // 현재 시각 (밀리초)
 

@@ -1,13 +1,9 @@
 // cardType = 17
-import {
-	getUserFromRoom,
-	removeUserFromRoom,
-	updateCharacterFromRoom,
-} from '../utils/redis.util.js';
+import { getUserFromRoom, removeUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 import { CardType } from '../generated/common/enums.js';
 
-const cardLaserPointerEffect = async (roomId: number, userId: string): Promise<boolean> => {
-	const user = await getUserFromRoom(roomId, userId);
+const cardLaserPointerEffect = (roomId: number, userId: string) : boolean => {
+	const user = getUserFromRoom(roomId, userId);
 	// 유효성 검증
 	if (!user || !user.character) return false;
 
@@ -19,8 +15,8 @@ const cardLaserPointerEffect = async (roomId: number, userId: string): Promise<b
 	}
 
 	// 수정 정보 갱신
-	try {
-		await updateCharacterFromRoom(roomId, userId, user.character);
+	try{
+		updateCharacterFromRoom(roomId, userId, user.character);
 		return true;
 		//console.log('로그 저장에 성공하였습니다');
 	} catch (error) {

@@ -1,9 +1,9 @@
 // cardType = 18
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
+import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 import { CardType } from '../generated/common/enums.js';
 
-const cardRaderEffect = async (roomId: number, userId: string): Promise<boolean> => {
-	const user = await getUserFromRoom(roomId, userId);
+const cardRaderEffect = (roomId: number, userId: string): boolean => {
+	const user = getUserFromRoom(roomId, userId);
 
 	// 유효성 검증
 	if (!user || !user.character) return false;
@@ -16,7 +16,7 @@ const cardRaderEffect = async (roomId: number, userId: string): Promise<boolean>
 
 	// Redis에 업데이트된 캐릭터 정보 저장
 	try {
-		await updateCharacterFromRoom(roomId, user.id, user.character);
+		updateCharacterFromRoom(roomId, user.id, user.character);
 		return true;
 	} catch (error) {
 		console.error(`[레이더] Redis 업데이트 실패:`, error);

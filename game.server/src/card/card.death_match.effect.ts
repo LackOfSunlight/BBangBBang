@@ -1,18 +1,14 @@
 // cardType = 6
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/redis.util.js';
+import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 import { CardType, CharacterStateType } from '../generated/common/enums.js';
 
-const cardDeathMatchEffect = async (
-	roomId: number,
-	userId: string,
-	targetUserId: string,
-): Promise<boolean> => {
-	const user = await getUserFromRoom(roomId, userId);
+const cardDeathMatchEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
+	const user = getUserFromRoom(roomId, userId);
 
 	// 유효성 검증
 	if (!user || !user.character) return false;
 
-	const target = await getUserFromRoom(roomId, targetUserId);
+	const target = getUserFromRoom(roomId, targetUserId);
 
 	// 유효성 검증
 	if (!target || !target.character) return false;
@@ -44,8 +40,8 @@ const cardDeathMatchEffect = async (
 
 	// Redis에 업데이트된 캐릭터 정보 저장
 	try {
-		await updateCharacterFromRoom(roomId, userId, user.character);
-		await updateCharacterFromRoom(roomId, targetUserId, target.character);
+		updateCharacterFromRoom(roomId, userId, user.character);
+		updateCharacterFromRoom(roomId, targetUserId, target.character);
 		console.log(`[현피] ${user.nickname}이 ${target.nickname}에게 현피를 걸었습니다.`);
 		return true;
 	} catch (error) {

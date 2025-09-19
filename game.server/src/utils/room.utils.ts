@@ -1,9 +1,11 @@
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
-import redis from '../redis/redis';
+import { PhaseType } from '../generated/common/enums';
 import { CharacterData } from '../generated/common/types';
 
 const rooms = new Map<number, Room>();
+export const roomTimers = new Map<string, NodeJS.Timeout>();
+export const roomPhase = new Map<string, PhaseType>();
 
 // 방 저장
 export function saveRoom(room: Room): void {
