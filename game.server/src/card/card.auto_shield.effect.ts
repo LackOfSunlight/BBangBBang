@@ -11,7 +11,7 @@ export const equipAutoShieldEffect = (roomId: number, userId: string): boolean =
 	// 자동 쉴드 장착
 	user.character.equips.push(CardType.AUTO_SHIELD);
 
-	// 정보 업데이트3
+	// 정보 업데이트
 	updateCharacterFromRoom(roomId, userId, user.character);
 	return true;
 };
