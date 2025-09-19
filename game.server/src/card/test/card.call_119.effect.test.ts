@@ -105,7 +105,7 @@ describe('cardCall119Effect', () => {
 
 			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-			const result = await cardCall119Effect(roomId, userId, 'self'); // targetUserId가 있으면 자신 회복
+            const result = await cardCall119Effect(roomId, userId, userId); // targetUserId가 있으면 자신 회복
 
 			expect(result).toBe(true);
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
@@ -190,7 +190,7 @@ describe('cardCall119Effect', () => {
 
 			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-			const result = await cardCall119Effect(roomId, userId, 'self'); // 자신 회복
+            const result = await cardCall119Effect(roomId, userId, userId); // 자신 회복
 
 			expect(result).toBe(true);
 			expect(consoleSpy).toHaveBeenCalledWith('[119 호출] user1의 체력이 이미 최대치(4)입니다.');
@@ -210,7 +210,7 @@ describe('cardCall119Effect', () => {
 
 			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-			const result = await cardCall119Effect(roomId, userId, 'self'); // 자신 회복
+            const result = await cardCall119Effect(roomId, userId, userId); // 자신 회복
 
 			expect(result).toBe(true);
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
@@ -235,7 +235,7 @@ describe('cardCall119Effect', () => {
 
 			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-			const result = await cardCall119Effect(roomId, userId, 'self'); // 자신 회복
+            const result = await cardCall119Effect(roomId, userId, userId); // 자신 회복
 
 			expect(result).toBe(true);
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
@@ -256,7 +256,7 @@ describe('cardCall119Effect', () => {
 				throw new Error('User not found');
 			});
 
-			const result = await cardCall119Effect(roomId, userId, 'self');
+            const result = await cardCall119Effect(roomId, userId, userId);
 
 			expect(result).toBe(false);
 		});
@@ -288,7 +288,7 @@ describe('cardCall119Effect', () => {
 			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
 			// 에러가 발생해도 함수가 정상적으로 처리되는지 확인
-			const result = await cardCall119Effect(roomId, userId, 'self');
+            const result = await cardCall119Effect(roomId, userId, userId);
 
 			expect(result).toBe(true);
 
