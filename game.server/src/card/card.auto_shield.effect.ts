@@ -9,7 +9,11 @@ const cardAutoShieldEffect = (roomId: number, userId: string): boolean => {
 	}
 
 	// 자동 쉴드 장착
-	user.character.equips.push(CardType.AUTO_SHIELD);
+	if (!user.character.equips.includes(CardType.AUTO_SHIELD)) {
+		user.character.equips.push(CardType.AUTO_SHIELD);
+	} else {
+		return false;
+	}
 
 	// 정보 업데이트
 	updateCharacterFromRoom(roomId, userId, user.character);
