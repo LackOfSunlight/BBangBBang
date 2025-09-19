@@ -64,7 +64,9 @@ export const debuffContainmentUnitEffect = (roomId: number, userId: string) => {
 
 	console.log(`[debuffContainmentUnit] (${user.nickname}) : 유저정보식별 성공`);
 
-	const escapeProb = 99; // 탈출 확률
+	// 탈출 확률
+	const escapeProb = 25; 
+	// 실제확률 25; // 테스트용 99; 
 
 	if (user.character.debuffs.includes(CardType.CONTAINMENT_UNIT)) {
 		console.log(`[debuffContainmentUnit] (${user.nickname}) : 디버프 카드 등록 상태 인지 성공`);

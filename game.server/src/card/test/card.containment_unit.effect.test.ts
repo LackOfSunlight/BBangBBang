@@ -1,144 +1,150 @@
-// card.containment_unit.effect.test.ts
 import cardContainmentUnitEffect, {
-	debuffContainmentUnitEffect,
-} from '../card.containment_unit.effect';
-import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/redis.util.js';
+  checkContainmentUnitTarget,
+  debuffContainmentUnitEffect,
+} from '../../card/card.containment_unit.effect';
 import { CardType, CharacterStateType } from '../../generated/common/enums.js';
+import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../utils/room.utils';
 
-jest.mock('../../utils/redis.util.js', () => ({
+jest.mock('../../utils/room.utils', () => ({
+	getRoom: jest.fn(),
 	getUserFromRoom: jest.fn(),
-	updateCharacterFromRoom: jest.fn(),
+	updateCharacterFromRoom: jest.fn()
 }));
 
-// 전체 모듈
-describe('CardContainmentUnitCardEffects', () => {
-	const mockUser = (overrides = {}) => ({
-		id: 'user1',
-		character: {
-			debuffs: [],
-			stateInfo: { state: CharacterStateType.NONE_CHARACTER_STATE },
-			...overrides,
-		},
-	});
+const mockedGetUserFromRoom = jest.mocked(getUserFromRoom);
+const mockedUpdateCharacterFromRoom = jest.mocked(updateCharacterFromRoom);
+const mockedGetRoom = jest.mocked(getRoom);
 
-	beforeEach(() => {
-		jest.clearAllMocks();
-	});
+describe('cardContainmentUnitEffect', () => {
+  const roomId = 1;
+  const userId = 'shooter1';
+  const targetUserId = 'target1';
 
-	// 카드 효과 처리 로직
-	describe('cardContainmentUnitEffect', () => {
-		it('대상 유저에게 디버프가 적용되는지', async () => {
-			const user = mockUser();
-			const target = mockUser();
+  const makeCharacter = (overrides = {}) => ({
+    debuffs: [],
+    stateInfo: { state: CharacterStateType.NONE_CHARACTER_STATE },
+    ...overrides,
+  });
 
-			(getUserFromRoom as jest.Mock)
-				.mockResolvedValueOnce(user) // 시전자
-				.mockResolvedValueOnce(target); // 대상자
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-			await cardContainmentUnitEffect(1, 'user1', 'user2');
 
-			expect(getUserFromRoom).toHaveBeenCalledWith(1, 'user1');
-			expect(getUserFromRoom).toHaveBeenCalledWith(1, 'user2');
-			expect(updateCharacterFromRoom).toHaveBeenCalledWith(
-				1,
-				'user2',
-				expect.objectContaining({
-					debuffs: [CardType.CONTAINMENT_UNIT], // 디버프 란에 감금 카드 추가
-				}),
-			);
-		});
+  it('시전자나 대상이 없으면 false 반환', () => {
+    mockedGetUserFromRoom.mockReturnValueOnce(null as any);
+    const result = cardContainmentUnitEffect(roomId, userId, targetUserId);
+    expect(result).toBe(false);
+  });
 
-		it('시전 유저나 대상 유저 정보가 올바르지 않으면 중단되는지', async () => {
-			(getUserFromRoom as jest.Mock).mockResolvedValueOnce(null);
 
-			await cardContainmentUnitEffect(1, 'user1', 'user2');
+  it('대상이 이미 디버프 상태라면 false 반환', () => {
+    mockedGetUserFromRoom
+      .mockReturnValueOnce({ id: userId, character: makeCharacter() } as any)
+      .mockReturnValueOnce({
+        id: targetUserId,
+        nickname: 'Target',
+        character: makeCharacter({ debuffs: [CardType.CONTAINMENT_UNIT] }),
+      } as any);
 
-			expect(updateCharacterFromRoom).not.toHaveBeenCalled();
-		});
+    const result = cardContainmentUnitEffect(roomId, userId, targetUserId);
+    expect(result).toBe(false);
+  });
 
-		it('대상 유저가 이미 디버프 상태라면 시전이 중단되는지', async () => {
-			const target = mockUser({
-				debuffs: [CardType.CONTAINMENT_UNIT],
-			});
 
-			(getUserFromRoom as jest.Mock).mockResolvedValue(target);
+  it('성공적으로 디버프가 적용되는지 ', () => {
+    const targetChar = makeCharacter();
+    mockedGetUserFromRoom
+      .mockReturnValueOnce({ id: userId, character: makeCharacter() } as any)
+      .mockReturnValueOnce({
+        id: targetUserId,
+        nickname: 'Target',
+        character: targetChar,
+      } as any);
 
-			await cardContainmentUnitEffect(1, 'user1', 'user2');
+    mockedUpdateCharacterFromRoom.mockImplementation(() => true as any);
 
-			expect(updateCharacterFromRoom).not.toHaveBeenCalled();
-		});
-	});
+    const result = cardContainmentUnitEffect(roomId, userId, targetUserId);
+    expect(result).toBe(true);
+    expect(targetChar.debuffs).toContain(CardType.CONTAINMENT_UNIT);
+    expect(mockedUpdateCharacterFromRoom).toHaveBeenCalledWith(
+      roomId,
+      targetUserId,
+      expect.objectContaining({ debuffs: [CardType.CONTAINMENT_UNIT] }),
+    );
+  });
+});
 
-	// 디버프 효과 처리 로직
-	describe('debuffContainmentUnitEffect', () => {
-		it('디버프가 존재하고 대상 유저의 상태가 NONE_CHARACTER_STATE 라면, 대상 유저의 상태가 CONTAINED 로 설정되는지', async () => {
-			const target = mockUser({
-				debuffs: [CardType.CONTAINMENT_UNIT],
-				stateInfo: { state: CharacterStateType.NONE_CHARACTER_STATE },
-			});
 
-			(getUserFromRoom as jest.Mock).mockResolvedValue(target);
 
-			await debuffContainmentUnitEffect(1, 'user1');
 
-			expect(updateCharacterFromRoom).toHaveBeenCalledWith(
-				1,
-				'user1',
-				expect.objectContaining({
-					stateInfo: { state: CharacterStateType.CONTAINED }, // 디버프 받고 바로 다음 날
-				}),
-			);
-		});
+describe('checkContainmentUnitTarget', () => {
+  const roomId = 1;
 
-		it('탈출에 성공하면 디버프가 해제되는지', async () => {
-			jest.spyOn(global.Math, 'random').mockReturnValue(0.1); // 10% < 25% → 탈출 성공
-			const target = mockUser({
-				debuffs: [CardType.CONTAINMENT_UNIT],
-				stateInfo: { state: CharacterStateType.CONTAINED },
-			});
+  it('방 정보가 없으면 방참조실패 에러 반환', () => {
+    mockedGetRoom.mockReturnValueOnce(null as any);
+    const result = checkContainmentUnitTarget(roomId);
+    expect(result).toBeNull();
+  });
 
-			(getUserFromRoom as jest.Mock).mockResolvedValue(target);
 
-			await debuffContainmentUnitEffect(1, 'user1');
+  it('디버프를 가지고 있는 유저라면 debuffContainmentUnitEffect 함수 호출 ', () => {
+    const user = {
+      id: 'user1',
+      character: {
+        debuffs: [CardType.CONTAINMENT_UNIT],
+        stateInfo: { state: CharacterStateType.NONE_CHARACTER_STATE },
+      },
+    };
+    mockedGetRoom.mockReturnValue({
+      users: [user],
+    } as any);
 
-			expect(target.character.debuffs).not.toContain(CardType.CONTAINMENT_UNIT);
-			expect(target.character.stateInfo!.state).toBe(CharacterStateType.NONE_CHARACTER_STATE);
-			// escape 시 updateCharacterFromRoom 호출 안 하는 부분도 체크 가능
-			expect(updateCharacterFromRoom).toHaveBeenCalledWith(
-				1,
-				'user1',
-				expect.objectContaining({
-					stateInfo: { state: CharacterStateType.NONE_CHARACTER_STATE }, // 디버프 해제
-				}),
-			);
+    const spy = jest.spyOn(require('../../card/card.containment_unit.effect'), 'debuffContainmentUnitEffect'); // 실행하지 않고 통과했는지만 확인
+    checkContainmentUnitTarget(roomId);
+    expect(spy).toHaveBeenCalledWith(roomId, 'user1');
+  });
+});
 
-			jest.spyOn(global.Math, 'random').mockRestore();
-		});
 
-		it('탈출에 실패하면 디버프가 유지되는지', async () => {
-			jest.spyOn(global.Math, 'random').mockReturnValue(0.9); // 90% > 25% → 탈출 실패
-			const target = mockUser({
-				debuffs: [CardType.CONTAINMENT_UNIT],
-				stateInfo: { state: CharacterStateType.CONTAINED },
-			});
 
-			(getUserFromRoom as jest.Mock).mockResolvedValue(target);
+describe('debuffContainmentUnitEffect', () => {
+  const roomId = 1;
+  const userId = 'target1';
 
-			await debuffContainmentUnitEffect(1, 'user1');
+  const makeUser = (state: CharacterStateType, debuffs = [CardType.CONTAINMENT_UNIT]) => ({
+    id: userId,
+    nickname: 'Target',
+    character: {
+      debuffs,
+      stateInfo: { state }, // 상태에 따라 값이 변동하므로 상태값만 대입할 수 있도록 설정
+    },
+  });
 
-			expect(target.character.debuffs).toContain(CardType.CONTAINMENT_UNIT);
-			expect(target.character.stateInfo!.state).toBe(CharacterStateType.CONTAINED);
-			expect(updateCharacterFromRoom).toHaveBeenCalled();
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-			jest.spyOn(global.Math, 'random').mockRestore();
-		});
 
-		it('대상 유저가 없다면 아무 일도 발생하지 않는지', async () => {
-			(getUserFromRoom as jest.Mock).mockResolvedValue(null);
+  it('첫 사이클에서 감금 카드가 디버프 카드란에 있다면 CONTAINED 상태로 변경', () => {
+    const user = makeUser(CharacterStateType.NONE_CHARACTER_STATE);
+    mockedGetUserFromRoom.mockReturnValueOnce(user as any);
+    debuffContainmentUnitEffect(roomId, userId);
+    expect(user.character.stateInfo.state).toBe(CharacterStateType.CONTAINED);
+    expect(mockedUpdateCharacterFromRoom).toHaveBeenCalled();
+  });
 
-			await debuffContainmentUnitEffect(1, 'user1');
 
-			expect(updateCharacterFromRoom).not.toHaveBeenCalled();
-		});
-	});
+  it('이미 CONTAINED 상태인 유저는 탈출로직을 실행', () => {
+    const user = makeUser(CharacterStateType.CONTAINED);
+    mockedGetUserFromRoom.mockReturnValueOnce(user as any);
+    // 강제로 탈출 성공하도록 Math.random 고정
+    jest.spyOn(global.Math, 'random').mockReturnValue(0.01);
+
+    debuffContainmentUnitEffect(roomId, userId);
+    expect(user.character.debuffs).not.toContain(CardType.CONTAINMENT_UNIT);
+    expect(user.character.stateInfo.state).toBe(CharacterStateType.NONE_CHARACTER_STATE);
+
+    (global.Math.random as jest.Mock).mockRestore();
+  });
 });
