@@ -21,10 +21,12 @@ export const useCardUseCase = async (userId:string, roomId:number, cardType:Card
 		return {  success: false, failcode: GlobalFailCode.INVALID_REQUEST  };
 	}
 
+	// 확인용 메시지
 	console.log(
 		`[useCardHandler] 유저 ${userId} 가 ${targetUserId} 를 대상으로 ${CardType[cardType]} 카드를 사용하려 합니다)`,
 	);
 
+	// 메인 로직
 	await applyCardEffect(roomId, cardType, userId, targetUserId!);
 
 	// useCardNotification 패킷 전달
@@ -64,6 +66,8 @@ export const useCardUseCase = async (userId:string, roomId:number, cardType:Card
 		success: true, failcode: GlobalFailCode.NONE_FAILCODE,
 	};
 };
+
+/** 패킷 세팅 */
 
 export const createUseCardNotificationPacket = (
 	cardType: CardType,

@@ -8,7 +8,7 @@ import { sendData } from '../utils/send.data.js';
 
 import { GlobalFailCode } from '../generated/common/enums.js';
 import { CardType } from '../generated/common/enums.js';
-import { User } from '../models/user.model.js';
+
 import { Room } from '../models/room.model.js';
 
 import { getRoom } from '../utils/room.utils.js';
