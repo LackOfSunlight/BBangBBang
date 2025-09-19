@@ -25,7 +25,7 @@ const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 		return;
 	}
 
-	const room: Room | null = await getRoom(roomId);
+	const room: Room | null = getRoom(roomId);
 	if (!room) {
 		is_invalid_request(socket);
 		return;
@@ -40,7 +40,6 @@ const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const req = payload.useCardRequest;
 	const cardType = req.cardType;
 	const targetUserId = req.targetUserId;
-	//let isUseCard: boolean = true;
 
 	// 카드 타입 검증
 	if (req.cardType === CardType.NONE) {

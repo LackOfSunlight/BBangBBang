@@ -29,7 +29,7 @@ interface UseCardOutput {
 export const useCardUseCase = async (input: UseCardInput): Promise<UseCardOutput> => {
 	const { userId, roomId, cardType, targetUserId } = input;
 
-	const room = await getRoom(roomId);
+	const room = getRoom(roomId);
 	if (!room) {
 		return { useCardResponse: { success: false, GlobalFailCode: GlobalFailCode.ROOM_NOT_FOUND } };
 	}
