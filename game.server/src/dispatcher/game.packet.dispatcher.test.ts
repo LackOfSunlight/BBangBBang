@@ -17,6 +17,7 @@ import gameStartHandler from '../handlers/game.start.handler.js';
 import fleaMarketPickHandler from '../handlers/fleamarket.pick.handler.js';
 import destroyCardHandler from '../handlers/destroy.card.handler.js';
 import cardSelectHandler from '../handlers/card.select.handler.js';
+import reactionUpdateHandler from '../handlers/reaction.update.handler.js';
 
 jest.mock('../handlers/register.handler.js');
 jest.mock('../handlers/login.handler.js');
@@ -25,14 +26,14 @@ jest.mock('../handlers/get.room.list.handler.js');
 jest.mock('../handlers/join.room.handler.js');
 jest.mock('../handlers/leave.room.handler.js');
 jest.mock('../handlers/game.prepare.handler.js');
-jest.mock('../handlers/request/game.start.request.handler.js');
+jest.mock('../handlers/game.start.handler.js');
 jest.mock('../handlers/position.update.handler.js');
 jest.mock('../handlers/use.card.handler.js');
-jest.mock('../handlers/request/flea.market.pick.request.handler.js');
-jest.mock('../handlers/request/reaction.request.handler.js');
-jest.mock('../handlers/request/destroy.card.request.handler.js');
-jest.mock('../handlers/request/card.select.request.handler.js');
+jest.mock('../handlers/fleamarket.pick.handler.js');
+jest.mock('../handlers/destroy.card.handler.js');
+jest.mock('../handlers/card.select.handler.js');
 jest.mock('../handlers/pass.debuff.handler.js');
+jest.mock('../handlers/reaction.update.handler.js');
 
 const allHandlers = [
 	registerHandler,
@@ -46,6 +47,7 @@ const allHandlers = [
 	positionUpdateHandler,
 	useCardHandler,
 	fleaMarketPickHandler,
+	reactionUpdateHandler,
 	destroyCardHandler,
 	cardSelectHandler,
 	passDebuffHandler,
