@@ -138,7 +138,7 @@ describe('cardDeathMatchEffect', () => {
 			const userId = 'user1';
 			const targetUserId = 'user2';
 
-			mockGetUserFromRoom.mockReturnValue(null);
+			mockGetUserFromRoom.mockReturnValue(null as any);
 
 			// When: 현피 카드 효과 실행
  cardDeathMatchEffect(roomId, userId, targetUserId);
@@ -157,7 +157,7 @@ describe('cardDeathMatchEffect', () => {
 
 			const user: UserData = { id: userId, nickname: '사용자1', character: makeCharacter(true) };
 
-			mockGetUserFromRoom.mockReturnValueOnce(user).mockReturnValueOnce(null);
+			mockGetUserFromRoom.mockReturnValueOnce(user).mockReturnValueOnce(null as any);
 
 			// When: 현피 카드 효과 실행
  cardDeathMatchEffect(roomId, userId, targetUserId);

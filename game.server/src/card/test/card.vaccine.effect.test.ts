@@ -28,9 +28,7 @@ describe('cardVaccineEffect', () => {
 
 	beforeEach(() => {
 		// Reset mocks before each test
-		mockGetUserFromRoom.mockClear();
-		mockUpdateCharacterFromRoom.mockClear();
-		mockGetMaxHp.mockClear();
+		jest.clearAllMocks();
 
 		// Default mock implementations
 		user = new User(userId, 'test-socket');
@@ -95,9 +93,11 @@ describe('cardVaccineEffect', () => {
 	});
 
 	test('유저를 찾을 수 없을 때 false를 반환해야 합니다.', () => {
+		const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+		const notFoundError = new Error('User not found');
 		// GIVEN
 		mockGetUserFromRoom.mockImplementation(() => {
-			throw new Error('User not found');
+			throw notFoundError;
 		});
 
 		// WHEN
@@ -105,9 +105,12 @@ describe('cardVaccineEffect', () => {
 
 		// THEN
 		expect(result).toBe(false);
+		expect(consoleErrorSpy).toHaveBeenCalledWith('[백신] 처리 중 오류 발생:', notFoundError);
+		consoleErrorSpy.mockRestore();
 	});
 
 	test('캐릭터가 없을 때 false를 반환해야 합니다.', () => {
+		const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 		// GIVEN
 		user.character = undefined;
 
@@ -116,13 +119,17 @@ describe('cardVaccineEffect', () => {
 
 		// THEN
 		expect(result).toBe(false);
+		expect(consoleWarnSpy).toHaveBeenCalledWith(`[백신] 유저의 캐릭터 정보가 없습니다: ${userId}`);
+		consoleWarnSpy.mockRestore();
 	});
 
 	test('DB 업데이트 실패 시 false를 반환해야 합니다.', () => {
+		const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+		const updateError = new Error('Update failed');
 		// GIVEN
 		user.character = new Character(CharacterType.RED, RoleType.NONE_ROLE, 3, 0, [], [], [], 1, 0);
 		mockUpdateCharacterFromRoom.mockImplementation(() => {
-			throw new Error('Update failed');
+			throw updateError;
 		});
 
 		// WHEN
@@ -132,5 +139,7 @@ describe('cardVaccineEffect', () => {
 		expect(result).toBe(false);
 		// The in-memory object is still mutated, but the function returns false
 		expect(user.character.hp).toBe(4);
+		expect(consoleErrorSpy).toHaveBeenCalledWith('[백신] 처리 중 오류 발생:', updateError);
+		consoleErrorSpy.mockRestore();
 	});
 });
