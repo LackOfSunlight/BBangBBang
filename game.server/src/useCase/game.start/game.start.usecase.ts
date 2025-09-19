@@ -108,7 +108,6 @@ export const gameStartUseCase = async (
 					}
 				});
 
-				character.handCards = [{type:CardType.BIG_BBANG,count:4},{type:CardType.SHIELD,count:4},{type:CardType.AUTO_SHIELD,count:2}];
 				character.handCardsCount = character.handCards.reduce((sum, card) => sum + card.count, 0);
 			}
 		}
