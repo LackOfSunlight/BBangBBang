@@ -107,14 +107,18 @@ describe('위성 타겟 효과 테스트', () => {
 		});
 
 		it('타겟 유저를 찾지 못하면 false를 반환해야 함', () => {
+			const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+			const notFoundError = new Error('User not found');
 			mockGetUserFromRoom.mockImplementation(() => {
-				throw new Error('User not found');
+				throw notFoundError;
 			});
 
 			const result = cardSatelliteTargetEffect(mockRoomId, mockUserId, mockTargetUserId);
 
 			expect(result).toBe(false);
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
+			expect(consoleErrorSpy).toHaveBeenCalledWith(`[SatelliteTarget] 위성 타겟 적용 중 오류 발생: ${notFoundError}`);
+			consoleErrorSpy.mockRestore();
 		});
 
 		it('캐릭터 정보가 없는 경우 false를 반환해야 함', () => {
@@ -128,15 +132,19 @@ describe('위성 타겟 효과 테스트', () => {
 		});
 
 		it('updateCharacterFromRoom 실패 시 false를 반환해야 함', () => {
+			const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+			const updateError = new Error('Update failed');
 			const mockTarget = createMockUser(mockTargetUserId, '타겟유저', createMockCharacter(10));
 			mockGetUserFromRoom.mockReturnValue(mockTarget as any);
 			mockUpdateCharacterFromRoom.mockImplementation(() => {
-				throw new Error('Update failed');
+				throw updateError;
 			});
 
 			const result = cardSatelliteTargetEffect(mockRoomId, mockUserId, mockTargetUserId);
 
 			expect(result).toBe(false);
+			expect(consoleErrorSpy).toHaveBeenCalledWith(`[SatelliteTarget] 위성 타겟 적용 중 오류 발생: ${updateError}`);
+			consoleErrorSpy.mockRestore();
 		});
 	});
 

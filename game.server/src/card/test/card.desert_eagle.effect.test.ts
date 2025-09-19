@@ -88,9 +88,11 @@ describe('cardDesertEagleEffect', () => {
 	});
 
 	it('유저를 찾을 수 없으면 false를 반환해야 합니다', () => {
+		const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+		const notFoundError = new Error('User not found');
 		// Arrange: 유저를 찾을 수 없는 상황 (에러 발생)을 설정합니다.
 		mockGetUserFromRoom.mockImplementation(() => {
-			throw new Error('User not found');
+			throw notFoundError;
 		});
 
 		// Act
@@ -99,6 +101,8 @@ describe('cardDesertEagleEffect', () => {
 		// Assert
 		expect(result).toBe(false);
 		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled(); // 캐릭터 업데이트 함수가 호출되지 않았는지 확인
+		expect(consoleErrorSpy).toHaveBeenCalledWith('[데저트 이글] 업데이트 실패:', notFoundError);
+		consoleErrorSpy.mockRestore();
 	});
 
 	it('유저의 캐릭터 정보가 없으면 false를 반환해야 합니다', () => {
@@ -127,8 +131,6 @@ describe('cardDesertEagleEffect', () => {
 		// Assert
 		expect(result).toBe(false);
 		expect(consoleErrorSpy).toHaveBeenCalledWith('[데저트 이글] 업데이트 실패:', dbError); // 에러 로그가 정상적으로 출력되었는지 확인
-
-		// Clean up: 스파이 함수를 복원합니다.
 		consoleErrorSpy.mockRestore();
 	});
 });
