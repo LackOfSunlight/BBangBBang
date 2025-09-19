@@ -1,8 +1,6 @@
-import { useCardUseCase } from '../../useCase/use.card/use.card.usecase';
+import { useCardUseCase, createUseCardNotificationPacket, createUserUpdateNotificationPacket } from '../../useCase/use.card/use.card.usecase';
 import useCardHandler, {
 	createUseCardResponsePacket,
-	createUseCardNotificationPacket,
-	createUserUpdateNotificationPacket,
 } from '../use.card.handler';
 
 import { CardType, GlobalFailCode } from '../../generated/common/enums';
@@ -50,7 +48,8 @@ describe('useCardHandler', () => {
 	});
 
 	it('올바른 카드 요청을 받으면 notification 송신', async () => {
-		mockedGetRoom.mockResolvedValue(roomMock);
+		mockedGetRoom.mockReturnValue(roomMock);
+		mockedApplyCardEffect.mockResolvedValue(true);
 
 		const fakePacket: any = {
 			payload: {
@@ -77,48 +76,34 @@ describe('useCardUseCase', () => {
 	});
 
 	it('방을 찾지 못하면 실패 처리', async () => {
-		mockedGetRoom.mockResolvedValue(null);
-
-		const result = await useCardUseCase({
-			userId: 'user1',
-			roomId: 123,
-			cardType: CardType.BBANG,
+		mockedGetRoom.mockImplementation(() => {
+			throw new Error('Room not found');
 		});
 
-		expect(result.response.success).toBe(false);
-		expect(result.response.GlobalFailCode).toBe(GlobalFailCode.ROOM_NOT_FOUND);
+		const result = await useCardUseCase('user1', 123, CardType.BBANG, 'user2');
+
+		expect(result.success).toBe(false);
+		expect(result.failcode).toBe(GlobalFailCode.ROOM_NOT_FOUND);
 	});
 
 	it('cardType이 없다면 실패 처리', async () => {
-		mockedGetRoom.mockResolvedValue({ users: [] });
+		mockedGetRoom.mockReturnValue({ users: [] });
 
-		const result = await useCardUseCase({
-			userId: 'user1',
-			roomId: 123,
-			cardType: CardType.NONE,
-		});
+		const result = await useCardUseCase('user1', 123, CardType.NONE, 'user2');
 
-		expect(result.response.success).toBe(false);
-		expect(result.response.GlobalFailCode).toBe(GlobalFailCode.INVALID_REQUEST);
+		expect(result.success).toBe(false);
+		expect(result.failcode).toBe(GlobalFailCode.INVALID_REQUEST);
 	});
 
 	it('성공시 applyCardEffect 함수로 연결', async () => {
-		mockedGetRoom.mockResolvedValue({ users: [{ id: 'user1' }] });
+		mockedGetRoom.mockReturnValue({ users: [{ id: 'user1' }] });
+		mockedApplyCardEffect.mockResolvedValue(true);
 
-		const result = await useCardUseCase({
-			userId: 'user1',
-			roomId: 123,
-			cardType: CardType.BBANG,
-			targetUserId: 'user2',
-		});
+		const result = await useCardUseCase('user1', 123, CardType.BBANG, 'user2');
 
 		expect(mockedApplyCardEffect).toHaveBeenCalledWith(123, CardType.BBANG, 'user1', 'user2');
-		expect(result.response.success).toBe(true);
-		expect(result.notification).toEqual({
-			cardType: CardType.BBANG,
-			userId: 'user1',
-			targetUserId: 'user2',
-		});
+		expect(result.success).toBe(true);
+		expect(result.failcode).toBe(GlobalFailCode.NONE_FAILCODE);
 	});
 });
 

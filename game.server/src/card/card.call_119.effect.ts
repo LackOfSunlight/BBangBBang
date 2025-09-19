@@ -1,8 +1,7 @@
 // cardType = 5
-
-import { getRoom, updateCharacterFromRoom, getUserFromRoom } from '../utils/room.utils.js';
-import { CharacterType } from '../generated/common/enums.js';
-import { CharacterData } from '../generated/common/types.js';
+import { getRoom, updateCharacterFromRoom, getUserFromRoom } from '../utils/room.utils';
+import { CharacterType } from '../generated/common/enums';
+import { CharacterData } from '../generated/common/types';
 
 // 캐릭터 타입별 최대 체력 정의
 const getMaxHp = (characterType: CharacterType): number => {
@@ -30,33 +29,20 @@ const cardCall119Effect = (
 	userId: string,
 	targetUserId: string,
 ): boolean => {
-	const user = getUserFromRoom(roomId, userId);
-
-	// 유효성 검증
-	if (!user || !user.character) return false;
+	try {
+		const user = getUserFromRoom(roomId, userId);
 
 		// 유효성 검증
 		if (!user || !user.character) return false;
 
-
-	if (targetUserId != '0') {
-		// 자신의 체력 회복
-		healCharacter(roomId, user, user.character);
-		return true;
-	} else {
-		// 나머지 플레이어들의 체력 회복
-		// 방의 모든 사용자 정보를 가져와서 자신을 제외한 나머지 플레이어들을 회복
-		const room = getRoom(roomId);
-		if (!room) return false;
-
 		if (targetUserId != '0') {
 			// 자신의 체력 회복
-			await healCharacter(roomId, user, user.character);
+			healCharacter(roomId, user, user.character);
 			return true;
 		} else {
 			// 나머지 플레이어들의 체력 회복
 			// 방의 모든 사용자 정보를 가져와서 자신을 제외한 나머지 플레이어들을 회복
-			const room = await getRoom(roomId);
+			const room = getRoom(roomId);
 			if (!room) return false;
 
 			for (const roomUser of room.users) {
@@ -67,6 +53,9 @@ const cardCall119Effect = (
 
 			return true;
 		}
+	} catch (error) {
+		// 에러 발생 시 실패 처리
+		return false;
 	}
 };
 

@@ -9,11 +9,11 @@ import { applyCardEffect } from '../../utils/apply.card.effect';
 import { broadcastDataToRoom } from '../../utils/notification.util.js';
 
 export const useCardUseCase = async (userId:string, roomId:number, cardType:CardType, targetUserId:string): Promise<{success:boolean, failcode:GlobalFailCode}> => {
-
-	const room = getRoom(roomId);
-	if (!room) {
-		return { success: false, failcode: GlobalFailCode.ROOM_NOT_FOUND };
-	}
+	try {
+		const room = getRoom(roomId);
+		if (!room) {
+			return { success: false, failcode: GlobalFailCode.ROOM_NOT_FOUND };
+		}
 
 	// 카드 타입 검증
 	if (cardType === CardType.NONE) {
@@ -21,10 +21,7 @@ export const useCardUseCase = async (userId:string, roomId:number, cardType:Card
 		return {  success: false, failcode: GlobalFailCode.INVALID_REQUEST  };
 	}
 
-	// 확인용 메시지
-	console.log(
-		`[useCardHandler] 유저 ${userId} 가 ${targetUserId} 를 대상으로 ${CardType[cardType]} 카드를 사용하려 합니다)`,
-	);
+	// 카드 사용 로직 처리
 
 	// 메인 로직
 	const isSuccess = await applyCardEffect(roomId, cardType, userId, targetUserId!);
@@ -66,6 +63,9 @@ export const useCardUseCase = async (userId:string, roomId:number, cardType:Card
 	return {
 		success: true, failcode: GlobalFailCode.NONE_FAILCODE,
 	};
+	} catch (error) {
+		return { success: false, failcode: GlobalFailCode.ROOM_NOT_FOUND };
+	}
 };
 
 /** 패킷 세팅 */
