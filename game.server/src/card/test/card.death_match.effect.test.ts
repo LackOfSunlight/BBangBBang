@@ -51,7 +51,7 @@ describe('cardDeathMatchEffect', () => {
 	});
 
 	describe('성공 케이스', () => {
-		it('현피 카드 사용 시 두 플레이어의 상태를 올바르게 설정하고 Redis 업데이트 호출', async () => {
+		it('현피 카드 사용 시 두 플레이어의 상태를 올바르게 설정하고 Redis 업데이트 호출',  () => {
 			// Given: 현피 카드를 사용할 공격자와 대상자 설정
 			const roomId = 1;
 			const userId = 'user1';
@@ -74,7 +74,7 @@ describe('cardDeathMatchEffect', () => {
 			mockUpdateCharacterFromRoom.mockReturnValue(undefined as unknown as void);
 
 			// When: 현피 카드 효과 실행
-			await cardDeathMatchEffect(roomId, userId, targetUserId);
+ cardDeathMatchEffect(roomId, userId, targetUserId);
 
 			// Then: Redis 조회 함수들이 올바른 인자로 호출되었는지 확인
 			expect(mockGetUserFromRoom).toHaveBeenCalledWith(roomId, userId);
@@ -102,7 +102,7 @@ describe('cardDeathMatchEffect', () => {
 			);
 		});
 
-		it('현피 카드 사용 시 정상적으로 처리되는지 확인', async () => {
+		it('현피 카드 사용 시 정상적으로 처리되는지 확인',  () => {
 			// Given: 정상적인 현피 카드 사용 시나리오
 			const roomId = 1;
 			const userId = 'user1';
@@ -124,7 +124,7 @@ describe('cardDeathMatchEffect', () => {
 			mockUpdateCharacterFromRoom.mockReturnValue(undefined as unknown as void);
 
 			// When: 현피 카드 효과 실행
-			const result = await cardDeathMatchEffect(roomId, userId, targetUserId);
+			const result =  cardDeathMatchEffect(roomId, userId, targetUserId);
 
 			// Then: 정상적으로 처리되었는지 확인
 			expect(result).toBe(true);
@@ -132,7 +132,7 @@ describe('cardDeathMatchEffect', () => {
 	});
 
 	describe('실패 케이스', () => {
-		it('사용자가 존재하지 않으면 조기 종료', async () => {
+		it('사용자가 존재하지 않으면 조기 종료',  () => {
 			// Given: 사용자가 존재하지 않는 상황
 			const roomId = 1;
 			const userId = 'user1';
@@ -141,7 +141,7 @@ describe('cardDeathMatchEffect', () => {
 			mockGetUserFromRoom.mockReturnValue(null);
 
 			// When: 현피 카드 효과 실행
-			await cardDeathMatchEffect(roomId, userId, targetUserId);
+ cardDeathMatchEffect(roomId, userId, targetUserId);
 
 			// Then: 사용자 조회만 시도하고 대상자 조회나 업데이트는 하지 않아야 함
 			expect(mockGetUserFromRoom).toHaveBeenCalledWith(roomId, userId);
@@ -149,7 +149,7 @@ describe('cardDeathMatchEffect', () => {
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 		});
 
-		it('대상이 존재하지 않으면 조기 종료', async () => {
+		it('대상이 존재하지 않으면 조기 종료',  () => {
 			// Given: 사용자는 존재하지만 대상자가 존재하지 않는 상황
 			const roomId = 1;
 			const userId = 'user1';
@@ -160,7 +160,7 @@ describe('cardDeathMatchEffect', () => {
 			mockGetUserFromRoom.mockReturnValueOnce(user).mockReturnValueOnce(null);
 
 			// When: 현피 카드 효과 실행
-			await cardDeathMatchEffect(roomId, userId, targetUserId);
+ cardDeathMatchEffect(roomId, userId, targetUserId);
 
 			// Then: 사용자와 대상자 조회는 시도하지만 업데이트는 하지 않아야 함
 			expect(mockGetUserFromRoom).toHaveBeenCalledWith(roomId, userId);
@@ -168,7 +168,7 @@ describe('cardDeathMatchEffect', () => {
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 		});
 
-		it('사용자 캐릭터가 없으면 조기 종료', async () => {
+		it('사용자 캐릭터가 없으면 조기 종료',  () => {
 			// Given: 사용자는 존재하지만 캐릭터가 없는 상황
 			const roomId = 1;
 			const userId = 'user1';
@@ -179,7 +179,7 @@ describe('cardDeathMatchEffect', () => {
 			mockGetUserFromRoom.mockReturnValue(user);
 
 			// When: 현피 카드 효과 실행
-			await cardDeathMatchEffect(roomId, userId, targetUserId);
+ cardDeathMatchEffect(roomId, userId, targetUserId);
 
 			// Then: 사용자 조회만 시도하고 대상자 조회나 업데이트는 하지 않아야 함
 			expect(mockGetUserFromRoom).toHaveBeenCalledWith(roomId, userId);
@@ -187,7 +187,7 @@ describe('cardDeathMatchEffect', () => {
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 		});
 
-		it('대상 캐릭터가 없으면 조기 종료', async () => {
+		it('대상 캐릭터가 없으면 조기 종료',  () => {
 			// Given: 사용자와 대상자는 존재하지만 대상자의 캐릭터가 없는 상황
 			const roomId = 1;
 			const userId = 'user1';
@@ -199,7 +199,7 @@ describe('cardDeathMatchEffect', () => {
 			mockGetUserFromRoom.mockReturnValueOnce(user).mockReturnValueOnce(target);
 
 			// When: 현피 카드 효과 실행
-			await cardDeathMatchEffect(roomId, userId, targetUserId);
+ cardDeathMatchEffect(roomId, userId, targetUserId);
 
 			// Then: 사용자와 대상자 조회는 시도하지만 업데이트는 하지 않아야 함
 			expect(mockGetUserFromRoom).toHaveBeenCalledWith(roomId, userId);
@@ -207,7 +207,7 @@ describe('cardDeathMatchEffect', () => {
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 		});
 
-		it('빵야 카드가 없으면 조기 종료', async () => {
+		it('빵야 카드가 없으면 조기 종료',  () => {
 			// Given: 사용자가 빵야 카드를 보유하지 않은 상황
 			const roomId = 1;
 			const userId = 'user1';
@@ -223,14 +223,14 @@ describe('cardDeathMatchEffect', () => {
 			mockGetUserFromRoom.mockReturnValueOnce(user).mockReturnValueOnce(target);
 
 			// When: 현피 카드 효과 실행
-			const result = await cardDeathMatchEffect(roomId, userId, targetUserId);
+			const result =  cardDeathMatchEffect(roomId, userId, targetUserId);
 
 			// Then: 실패해야 함
 			expect(result).toBe(false);
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 		});
 
-		it('업데이트 실패 시 에러 처리', async () => {
+		it('업데이트 실패 시 에러 처리',  () => {
 			// Given: 정상적인 현피 카드 사용이지만 업데이트가 실패하는 상황
 			const roomId = 1;
 			const userId = 'user1';
@@ -249,7 +249,7 @@ describe('cardDeathMatchEffect', () => {
 			});
 
 			// When: 현피 카드 효과 실행
-			const result = await cardDeathMatchEffect(roomId, userId, targetUserId);
+			const result =  cardDeathMatchEffect(roomId, userId, targetUserId);
 
 			// Then: 실패해야 함
 			expect(result).toBe(false);
