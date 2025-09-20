@@ -1,17 +1,22 @@
 // cardType = 6
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
+import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../utils/room.utils';
 import { CardType, CharacterStateType } from '../generated/common/enums';
+import { removeCard } from '../managers/card.manager.js';
 
 const cardDeathMatchEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	const user = getUserFromRoom(roomId, userId);
+	const room = getRoom(roomId);
 
 	// 유효성 검증
-	if (!user || !user.character) return false;
+	if (!user || !user.character || !room) return false;
 
 	const target = getUserFromRoom(roomId, targetUserId);
 
 	// 유효성 검증
 	if (!target || !target.character) return false;
+
+	// 카드 제거
+	removeCard(user, room, CardType.DEATH_MATCH);
 
 	const isBbangCard: boolean = user.character.handCards.some((c) => c.type === CardType.BBANG);
 
