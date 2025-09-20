@@ -11,19 +11,18 @@ interface Packet {
 	payload: Buffer;
 }
 
-// 소켓별 버퍼를 관리하는 WeakMap( Map과 달리 키로 사용된 객체인 Socket이 메모리에서 없어질 경우에 Buffer도 같이 GC에 의해 수거됨, 소켓별 버퍼 지속성 보장 및 메모리 누수 방지 )
-const socketBuffers = new WeakMap<Socket, Buffer>();
+// 소켓별 버퍼를 관리하는 간단한 변수 (소켓 객체에 직접 저장)
 
 export const onData = (socket: Socket, chunk: Buffer) => {
 	try {
-		// 기존 버퍼 가져오기 또는 새로 생성
-		let buffer = socketBuffers.get(socket) || Buffer.alloc(0);
+		// 기존 버퍼 가져오기 또는 새로 생성 (소켓 객체에 직접 저장)
+		let buffer = (socket as any).buffer || Buffer.alloc(0);
 
 		// 새 청크와 기존 버퍼 합치기
 		buffer = Buffer.concat([buffer, chunk]);
 
-		// 버퍼 업데이트
-		socketBuffers.set(socket, buffer);
+		// 버퍼 업데이트 (소켓 객체에 직접 저장)
+		(socket as any).buffer = buffer;
 
 		while (buffer.length >= 11) {
 			// 최소 헤더 크기: type(2) + verLen(1) + seq(4) + payloadLen(4)
@@ -57,7 +56,7 @@ export const onData = (socket: Socket, chunk: Buffer) => {
 			gamePacketDispatcher(socket, gamePacket);
 
 			buffer = buffer.subarray(payloadEnd);
-			socketBuffers.set(socket, buffer);
+			(socket as any).buffer = buffer;
 		}
 	} catch (error) {
 		handleError(socket, error);
@@ -66,5 +65,5 @@ export const onData = (socket: Socket, chunk: Buffer) => {
 
 // 소켓 연결 종료 시 버퍼 정리
 export const cleanupSocketBuffer = (socket: Socket) => {
-	socketBuffers.delete(socket);
+	delete (socket as any).buffer;
 };
