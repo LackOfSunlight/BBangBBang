@@ -1,29 +1,24 @@
 // cardType = 11
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 import { drawDeck, getDeckSize } from '../managers/card.manager.js';
 import { CardType } from '../generated/common/enums.js';
-import { repeatDeck } from '../managers/card.manager.js';
+import { removeCard } from '../managers/card.manager.js';
 
 const cardMaturedSavingsEffect = (roomId: number, userId: string): boolean => {
 	const user = getUserFromRoom(roomId, userId);
+	const room = getRoom(roomId);
 	// 유효성 검증
 	if (!user || !user.character) {
-		console.warn('[만기 적금]잘못된 사용자 정보입니다');
+		console.error('[MATURED_SAVINGS]잘못된 사용자 정보입니다');
+		return false;
+	}
+	if (!room) {
+		console.error('[MATURED_SAVINGS]방이 존재하지 않습니다.');
 		return false;
 	}
 
-	// 여러 검증을 했다면 카드 제거 및 검증 로직 실행
-	const haveCard = user.character.handCards.find(c => c.type === CardType.MATURED_SAVINGS);
-	if (!haveCard) {
-		console.warn('[CardType:MATURED_SAVINGS] 해당 카드를 소유하고 있지 않습니다')
-		return false;
-	}
-	haveCard.count -= 1;
-	if ( haveCard.count <=0 ){
-		const lastCardIndex = user.character.handCards.findIndex(c => c.type === CardType.MATURED_SAVINGS);
-		user.character.handCards.splice(lastCardIndex, 1);
-	}
-	repeatDeck(roomId, [CardType.MATURED_SAVINGS]);
+	// 카드 제거
+	removeCard(user, room, CardType.MATURED_SAVINGS)
 
 	// 뽑을 카드 매수
 	const numberOfDraw = 2;
@@ -31,13 +26,13 @@ const cardMaturedSavingsEffect = (roomId: number, userId: string): boolean => {
 	const remainCardNumberInDeck = getDeckSize(roomId);
 	// 덱 매수 부족할 경우 중단
 	if (remainCardNumberInDeck < numberOfDraw) {
-		console.warn(`[만기 적금]덱에서 뽑을 카드가 부족합니다.`);
+		console.error(`[MATURED_SAVINGS]덱에서 뽑을 카드가 부족합니다.`);
 		return false;
 	}
 
 	// 카드 2장 뽑기(메인 기믹) 공지
 	const cardYouDraw = drawDeck(roomId, numberOfDraw);
-	console.log(`[만기 적금]유저 ${user.id}(이)가 카드 ${numberOfDraw}장을 획득하였습니다\n획득 카드 : `);
+	console.log(`[MATURED_SAVINGS]유저 ${user.id}(이)가 카드 ${numberOfDraw}장을 획득하였습니다\n획득 카드 : `);
 
 	// 뽑은 카드 정리 및 공지
 	cardYouDraw.forEach((cardType) => {
@@ -60,10 +55,10 @@ const cardMaturedSavingsEffect = (roomId: number, userId: string): boolean => {
 	// 수정 정보 갱신
 	try {
 		updateCharacterFromRoom(roomId, user.id, user.character!);
-		//console.log('로그 저장에 성공하였습니다');
+		//console.log('[MATURED_SAVINGS]로그 저장에 성공하였습니다');
 		return true;
 	} catch (error) {
-		console.error(`[만기 적금]로그 저장에 실패하였습니다:[${error}]`);
+		console.error(`[MATURED_SAVINGS]로그 저장에 실패하였습니다:[${error}]`);
 		return false;
 	}
 };
