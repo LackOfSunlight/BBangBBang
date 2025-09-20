@@ -2,14 +2,28 @@
 import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 import { drawDeck, getDeckSize } from '../managers/card.manager.js';
 import { CardType } from '../generated/common/enums.js';
+import { repeatDeck } from '../managers/card.manager.js';
 
 const cardMaturedSavingsEffect = (roomId: number, userId: string): boolean => {
 	const user = getUserFromRoom(roomId, userId);
 	// 유효성 검증
-	if (!user) {
+	if (!user || !user.character) {
 		console.warn('[만기 적금]잘못된 사용자 정보입니다');
 		return false;
 	}
+
+	// 여러 검증을 했다면 카드 제거 및 검증 로직 실행
+	const haveCard = user.character.handCards.find(c => c.type === CardType.MATURED_SAVINGS);
+	if (!haveCard) {
+		console.warn('[CardType:MATURED_SAVINGS] 해당 카드를 소유하고 있지 않습니다')
+		return false;
+	}
+	haveCard.count -= 1;
+	if ( haveCard.count <=0 ){
+		const lastCardIndex = user.character.handCards.findIndex(c => c.type === CardType.MATURED_SAVINGS);
+		user.character.handCards.splice(lastCardIndex, 1);
+	}
+	repeatDeck(roomId, [CardType.MATURED_SAVINGS]);
 
 	// 뽑을 카드 매수
 	const numberOfDraw = 2;
