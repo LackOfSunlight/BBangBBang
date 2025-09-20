@@ -1,9 +1,9 @@
 import { GameSocket } from '../type/game.socket';
-import { GamePacket } from '../generated/gamePacket.js';
-import { getGamePacketType } from '../utils/type.converter.js';
-import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType.js';
+import { GamePacket } from '../generated/gamePacket';
+import { getGamePacketType } from '../utils/type.converter';
+import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
 import destroyCardUseCase from '../useCase/destroy.card/destroy.card.usecase';
-import { sendData } from '../utils/send.data.js';
+import { sendData } from '../utils/send.data';
 
 const destroyCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.destroyCardRequest);

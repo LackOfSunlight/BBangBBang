@@ -1,12 +1,11 @@
-import { GameSocket } from '../../type/game.socket.js';
-import { S2CPhaseUpdateNotification } from '../../generated/packet/notifications.js';
-import { GamePacket } from '../../generated/gamePacket.js';
-import { GamePacketType } from '../../enums/gamePacketType.js';
-import { PhaseType, RoomStateType } from '../../generated/common/enums.js';
-import { CharacterPositionData } from '../../generated/common/types.js';
-import { broadcastDataToRoom } from '../../utils/notification.util.js';
-import { getRoom } from '../../utils/redis.util.js';
-import { Room } from '../../models/room.model.js';
+import { GameSocket } from '../../type/game.socket';
+import { GamePacket } from '../../generated/gamePacket';
+import { GamePacketType } from '../../enums/gamePacketType';
+import { PhaseType, RoomStateType } from '../../generated/common/enums';
+import { CharacterPositionData } from '../../generated/common/types';
+import { broadcastDataToRoom } from '../../utils/notification.util';
+import { getRoom } from '../../utils/room.utils';
+import { Room } from '../../models/room.model';
 
 const phaseUpdateNotificationHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	if (!socket.roomId) return;

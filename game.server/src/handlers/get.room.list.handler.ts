@@ -1,9 +1,9 @@
-import { GameSocket } from '../type/game.socket.js';
-import { GamePacket } from '../generated/gamePacket.js';
-import { getGamePacketType } from '../utils/type.converter.js';
-import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType.js';
-import { sendData } from '../utils/send.data.js';
-import getRoomListUseCase from '../useCase/get.room.list/get.room.list.usecase.js';
+import { GameSocket } from '../type/game.socket';
+import { GamePacket } from '../generated/gamePacket';
+import { getGamePacketType } from '../utils/type.converter';
+import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
+import { sendData } from '../utils/send.data';
+import getRoomListUseCase from '../useCase/get.room.list/get.room.list.usecase';
 
 const getRoomListHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.getRoomListRequest);

@@ -1,29 +1,29 @@
 import { getUserFromRoom, updateCharacterFromRoom } from './room.utils';
 
-import cardAbsorbEffect from '../card/card.absorb.effect.js';
-import cardAutoRifleEffect from '../card/card.auto_rifle.effect.js';
-import cardAutoShieldEffect from '../card/card.auto_shield.effect.js';
-import cardBbangEffect from '../card/card.bbang.effect.js';
-import cardBigBbangEffect from '../card/card.bigbbang.effect.js';
-import cardBombEffect from '../card/card.bomb.effect.js';
-import cardCall119Effect from '../card/card.call_119.effect.js';
-import cardContainmentUnitEffect from '../card/card.containment_unit.effect.js';
-import cardDeathMatchEffect from '../card/card.death_match.effect.js';
-import cardDesertEagleEffect from '../card/card.desert_eagle.effect.js';
-import cardFleaMarketEffect from '../card/card.flea_market.effect.js';
-import cardGuerrillaEffect from '../card/card.guerrilla.effect.js';
-import cardHallucinationEffect from '../card/card.hallucination.effect.js';
-import cardHandGunEffect from '../card/card.hand_gun.effect.js';
-import cardLaserPointerEffect from '../card/card.laser_pointer.effect.js';
-import cardMaturedSavingsEffect from '../card/card.matured_savings.effect.js';
-import cardRaderEffect from '../card/card.rader.effect.js';
-import cardSatelliteTargetEffect from '../card/card.satellite_target.effect.js';
-import cardShieldEffect from '../card/card.shield.effect.js';
-import cardSniperGunEffect from '../card/card.sniper_gun.effect.js';
-import cardStealthSuitEffect from '../card/card.stealth_suit.effect.js';
-import cardVaccineEffect from '../card/card.vaccine.effect.js';
-import cardWinLotteryEffect from '../card/card.win_lottery.effect.js';
-import { repeatDeck } from '../managers/card.manager.js';
+import cardAbsorbEffect from '../card/card.absorb.effect';
+import cardAutoRifleEffect from '../card/card.auto_rifle.effect';
+import cardAutoShieldEffect from '../card/card.auto_shield.effect';
+import cardBbangEffect from '../card/card.bbang.effect';
+import cardBigBbangEffect from '../card/card.bigbbang.effect';
+import cardBombEffect from '../card/card.bomb.effect';
+import cardCall119Effect from '../card/card.call_119.effect';
+import cardContainmentUnitEffect from '../card/card.containment_unit.effect';
+import cardDeathMatchEffect from '../card/card.death_match.effect';
+import cardDesertEagleEffect from '../card/card.desert_eagle.effect';
+import cardFleaMarketEffect from '../card/card.flea_market.effect';
+import cardGuerrillaEffect from '../card/card.guerrilla.effect';
+import cardHallucinationEffect from '../card/card.hallucination.effect';
+import cardHandGunEffect from '../card/card.hand_gun.effect';
+import cardLaserPointerEffect from '../card/card.laser_pointer.effect';
+import cardMaturedSavingsEffect from '../card/card.matured_savings.effect';
+import cardRaderEffect from '../card/card.rader.effect';
+import cardSatelliteTargetEffect from '../card/card.satellite_target.effect';
+import cardShieldEffect from '../card/card.shield.effect';
+import cardSniperGunEffect from '../card/card.sniper_gun.effect';
+import cardStealthSuitEffect from '../card/card.stealth_suit.effect';
+import cardVaccineEffect from '../card/card.vaccine.effect';
+import cardWinLotteryEffect from '../card/card.win_lottery.effect';
+import { repeatDeck } from '../managers/card.manager';
 
 // 카드 효과 적용 함수
 export  function applyCardEffect(

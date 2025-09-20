@@ -1,11 +1,10 @@
 // cardType = 7
 import { CardType, CharacterStateType } from '../generated/common/enums.js';
-import { drawSpecificCard, removeCard, repeatDeck } from '../managers/card.manager.js';
+import { removeCard } from '../managers/card.manager.js';
 import {
 	getRoom,
 	getUserFromRoom,
 	saveRoom,
-	updateCharacterFromRoom,
 } from '../utils/room.utils.js';
 
 const cardGuerrillaEffect = (roomId: number, userId: string, targetUserId: string): boolean => {

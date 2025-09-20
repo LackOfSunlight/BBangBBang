@@ -2,12 +2,11 @@
 import {
 	getRoom,
 	getUserFromRoom,
-	removeUserFromRoom,
 	saveRoom,
 	updateCharacterFromRoom,
 } from '../utils/room.utils';
 import { CardType, CharacterStateType } from '../generated/common/enums.js';
-import { drawSpecificCard, removeCard, repeatDeck } from '../managers/card.manager.js';
+import { removeCard } from '../managers/card.manager.js';
 
 const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	const room = getRoom(roomId);
