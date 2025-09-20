@@ -1,39 +1,37 @@
 // cardType = 16
 
 import { CardType } from '../generated/common/enums';
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
-import { repeatDeck } from '../managers/card.manager';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
+import { removeCard, repeatDeck } from '../managers/card.manager';
 
 const cardAutoRifleEffect = (roomId: number, userId: string): boolean => {
 	// 정보값 가져오기
 	const user = getUserFromRoom(roomId, userId);
+	const room = getRoom(roomId);
 	// 유효성 검증
-	if (!user || !user.character || !user.character.stateInfo) return false;
-
-	// 여러 검증을 했다면 카드 제거 및 검증 로직 실행
-	const haveCard = user.character.handCards.find(c => c.type === CardType.AUTO_RIFLE);
-	if (!haveCard) {
-		console.warn('[CardType:AUTO_RIFLE] 해당 카드를 소유하고 있지 않습니다')
+	if (!user || !user.character || !user.character.stateInfo) {
+		console.error('[AUTO_RIFLE]사용자 정보가 존재하지 않습니다');
 		return false;
 	}
-	haveCard.count -= 1;
-	if ( haveCard.count <=0 ){
-		const lastCardIndex = user.character.handCards.findIndex(c => c.type === CardType.AUTO_RIFLE);
-		user.character.handCards.splice(lastCardIndex, 1);
+	if (!room) {
+		console.error('[AUTO_RIFLE]방이 존재하지 않습니다.');
+		return false;
 	}
-	repeatDeck(roomId, [CardType.AUTO_RIFLE]);
 
+	// 카드 제거
+	removeCard(user, room, CardType.AUTO_RIFLE);
 	
-	user.character.weapon = CardType.AUTO_RIFLE; // 16;AUTO_RIFLE 장착
+	// 16;AUTO_RIFLE 장착
+	user.character.weapon = CardType.AUTO_RIFLE; 
 	
 
 	// 수정 정보 갱신
 	try {
 		updateCharacterFromRoom(roomId, userId, user.character);
 		return true;
-		//console.log('로그 저장에 성공하였습니다');
+		//console.log('[AUTO_RIFLE]로그 저장에 성공하였습니다');
 	} catch (error) {
-		console.error(`로그 저장에 실패하였습니다:[${error}]`);
+		console.error(`[AUTO_RIFLE]로그 저장에 실패하였습니다:[${error}]`);
 		return false;
 	}
 };

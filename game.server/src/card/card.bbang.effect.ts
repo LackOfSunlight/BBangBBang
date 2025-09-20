@@ -2,7 +2,7 @@
 import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../utils/room.utils';
 import { CardType, CharacterStateType } from '../generated/common/enums';
 import { CheckGuerrillaService } from '../services/guerrilla.check.service';
-import { repeatDeck } from '../managers/card.manager';
+import { removeCard } from '../managers/card.manager';
 
 const cardBbangEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	// 정보값 가져오기
@@ -11,39 +11,27 @@ const cardBbangEffect = (roomId: number, userId: string, targetUserId: string): 
 	const room = getRoom(roomId);
 
 	// 유효성 검증
-
 	if (!room) {
-		console.log('방이 존재하지 않습니다.');
+		console.error('[BBANG]방이 존재하지 않습니다.');
 		return false;
 	}
 	if (!user || !user.character || !user.character.stateInfo) {
-		console.log('사용자 정보가 존재하지 않습니다');
+		console.error('[BBANG]사용자 정보가 존재하지 않습니다');
 		return false;
 	}
 	if (!target || !target.character || !target.character.stateInfo) {
-		console.log('타깃 유저의 정보가 존재하지 않습니다 ');
+		console.error('[BBANG]타깃 유저의 정보가 존재하지 않습니다 ');
 		return false;
 	}
 
 	// 타겟 유저가 사망 상태라면 불발 처리
 	if (target.character.hp <= 0) {
-		console.log('타깃 유저의 체력이 이미 0 입니다.');
+		console.error('[BBANG]타깃 유저의 체력이 이미 0 입니다.');
 		return false;
 	}
-	//if (!user || !target || !user.character || !target.character) return false;
 
-	// 여러 검증을 했다면 카드 제거 및 검증 로직 실행
-	const haveCard = user.character.handCards.find(c => c.type === CardType.BBANG);
-	if (!haveCard) {
-		console.warn('[CardType:BBANG] 해당 카드를 소유하고 있지 않습니다')
-		return false;
-	}
-	haveCard.count -= 1;
-	if ( haveCard.count <=0 ){
-		const lastCardIndex = user.character.handCards.findIndex(c => c.type === CardType.BBANG);
-		user.character.handCards.splice(lastCardIndex, 1);
-	}
-	repeatDeck(roomId, [CardType.BBANG]);
+	// 카드 제거
+	removeCard(user, room, CardType.BBANG);
 	
 	
 	if (user.character.stateInfo.state === CharacterStateType.NONE_CHARACTER_STATE) {
@@ -85,9 +73,9 @@ const cardBbangEffect = (roomId: number, userId: string, targetUserId: string): 
 		updateCharacterFromRoom(roomId, userId, user.character);
 		updateCharacterFromRoom(roomId, targetUserId, target.character);
 		return true;
-		//console.log('로그 저장에 성공하였습니다');
+		//console.log('[BBANG]로그 저장에 성공하였습니다');
 	} catch (error) {
-		console.error(`로그 저장에 실패하였습니다:[${error}]`);
+		console.error(`[BBANG]로그 저장에 실패하였습니다:[${error}]`);
 		return false;
 	}
 };
