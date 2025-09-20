@@ -1,9 +1,14 @@
+import { CardType } from '../generated/common/enums';
+import { removeCard } from '../managers/card.manager';
 import getMaxHp from '../utils/character.util';
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 
 const cardVaccineEffect = (roomId: number, userId: string): boolean => {
 	try {
 		const user = getUserFromRoom(roomId, userId);
+		let room = getRoom(roomId);
+
+		if (!room) return false;
 
 		// 유효성 검증 (캐릭터 존재 여부)
 		if (!user.character) {
@@ -16,6 +21,8 @@ const cardVaccineEffect = (roomId: number, userId: string): boolean => {
 			console.log(`체력이 최대치(${maxHp})에 도달하여 더이상 회복 할 수 없습니다.`);
 			return false;
 		}
+
+		removeCard(user, room, CardType.VACCINE);
 
 		const previousHp = user.character.hp;
 		user.character.hp = Math.min(user.character.hp + 1, maxHp);

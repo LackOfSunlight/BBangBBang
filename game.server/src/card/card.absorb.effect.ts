@@ -1,10 +1,13 @@
 // cardType = 8
 
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
+import { CardType } from '../generated/common/enums';
+import { removeCard } from '../managers/card.manager';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 
 const cardAbsorbEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	const user = getUserFromRoom(roomId, userId);
 	const target = getUserFromRoom(roomId, targetUserId);
+	let room = getRoom(roomId)
 	// 유효성 검증
 	if (!user || !user.character || !target || !target.character) return false;
 
@@ -15,6 +18,8 @@ const cardAbsorbEffect = (roomId: number, userId: string, targetUserId: string):
 		// 대상이 카드를 가지고 있지 않으면 효과가 발동하지 않음
 		return false;
 	}
+
+	removeCard(user, room, CardType.ABSORB)
 
 	// 대상의 손에서 무작위로 카드 한 장을 선택하여 훔침
 	const randomIndex = Math.floor(Math.random() * targetHand.length);

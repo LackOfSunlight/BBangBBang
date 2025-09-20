@@ -3,16 +3,19 @@ import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room
 import { CardType, AnimationType } from '../generated/common/enums';
 import { playAnimationHandler } from '../handlers/play.animation.handler';
 import { checkAndEndGameIfNeeded } from '../utils/game.end.util';
+import { removeCard } from '../managers/card.manager';
 
 // 위성 타겟 카드 사용 시 디버프 추가
 const cardSatelliteTargetEffect = (
 	roomId: number,
 	userId: string,
 	targetUserId: string,
-
 ): boolean => {
 	try {
 		const target = getUserFromRoom(roomId, targetUserId);
+		const user = getUserFromRoom(roomId, userId);
+		let room = getRoom(roomId);
+
 		if (!target.character) {
 			return false;
 		}
@@ -21,6 +24,8 @@ const cardSatelliteTargetEffect = (
 		if (target.character.debuffs.includes(CardType.SATELLITE_TARGET)) {
 			return true;
 		}
+
+		removeCard(user, room, CardType.SATELLITE_TARGET);
 
 		// 디버프 추가
 		target.character.debuffs.push(CardType.SATELLITE_TARGET);
@@ -60,7 +65,6 @@ export const checkSatelliteTargetEffect = async (roomId: number) => {
 // 개별 유저의 위성 타겟 효과 처리
 const processSatelliteTargetEffect = async (roomId: number, userId: string, allUsers: any[]) => {
 	try {
-
 		const target = getUserFromRoom(roomId, userId);
 		if (!target || !target.character) return;
 
@@ -90,7 +94,6 @@ const processSatelliteTargetEffect = async (roomId: number, userId: string, allU
 			if (debuffIndex > -1) {
 				target.character.debuffs.splice(debuffIndex, 1);
 			}
-
 
 			updateCharacterFromRoom(roomId, userId, target.character);
 
@@ -129,4 +132,3 @@ const processSatelliteTargetEffect = async (roomId: number, userId: string, allU
 };
 
 export default cardSatelliteTargetEffect;
-
