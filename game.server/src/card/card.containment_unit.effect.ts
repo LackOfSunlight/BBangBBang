@@ -1,6 +1,7 @@
 // cardType = 21
 import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../utils/room.utils';
 import { CardType, CharacterStateType } from '../generated/common/enums';
+import { repeatDeck } from '../managers/card.manager';
 
 // 디버프 적용 처리 로직
 const cardContainmentUnitEffect = (
@@ -11,13 +12,26 @@ const cardContainmentUnitEffect = (
 	const user = getUserFromRoom(roomId, userId);
 	const target = getUserFromRoom(roomId, targetUserId);
 	// 유효성 검증s
-	if (!user || !target || !target.character) return false;
+	if (!user || !user.character || !target || !target.character) return false;
 
 	// 이미 해당 디버프 상태일 경우 ; 중복 검증
 	if (target.character.debuffs.includes(CardType.CONTAINMENT_UNIT)) {
 		console.log(`이미 ${target.nickname} 유저는 감금 장치에 맞았습니다. `);
 		return false;
 	}
+
+	// 여러 검증을 했다면 카드 제거 및 검증 로직 실행
+	const haveCard = user.character.handCards.find(c => c.type === CardType.CONTAINMENT_UNIT);
+	if (!haveCard) {
+		console.warn('[CardType:CONTAINMENT_UNIT] 해당 카드를 소유하고 있지 않습니다')
+		return false;
+	}
+	haveCard.count -= 1;
+	if ( haveCard.count <=0 ){
+		const lastCardIndex = user.character.handCards.findIndex(c => c.type === CardType.CONTAINMENT_UNIT);
+		user.character.handCards.splice(lastCardIndex, 1);
+	}
+	repeatDeck(roomId, [CardType.CONTAINMENT_UNIT])
 
 	target.character.debuffs.push(CardType.CONTAINMENT_UNIT);
 	//console.log(`유저 ${targetUserId}가 감금장치 카드에 맞았습니다.\n다음 차례부터 감금장치에 영향을 받습니다.`);
