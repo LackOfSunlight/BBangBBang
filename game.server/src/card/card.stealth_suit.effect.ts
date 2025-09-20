@@ -1,16 +1,21 @@
 // cardType = 20
 import { CardType } from '../generated/common/enums';
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
+import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../utils/room.utils';
+import { removeCard } from '../managers/card.manager.js';
 
 const cardStealthSuitEffect = (roomId: number, userId: string): boolean => {
 	try {
 		const user = getUserFromRoom(roomId, userId);
+		const room = getRoom(roomId);
 
 		// 유효성 검증
-		if (!user.character) {
+		if (!user.character || !room) {
 			console.warn(`[스텔스 장치] 유저의 캐릭터 정보가 없습니다: ${userId}`);
 			return false;
 		}
+
+		// 카드 제거
+		removeCard(user, room, CardType.STEALTH_SUIT);
 
 		// 기존 스텔스 장치가 있는지 확인 (중복 착용 방지)
 		const existingStealthIndex = user.character.equips.findIndex(

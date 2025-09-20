@@ -1,13 +1,17 @@
 // cardType = 12
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
-import { drawDeck } from '../managers/card.manager';
+import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../utils/room.utils';
+import { drawDeck, removeCard } from '../managers/card.manager';
 import { CardType } from '../generated/common/enums';
 
 const cardWinLotteryEffect = (roomId: number, userId: string): boolean => {
 	const user = getUserFromRoom(roomId, userId);
+	const room = getRoom(roomId);
 
 	// 유효성 검증
-	if (!user || !user.character) return false;
+	if (!user || !user.character || !room) return false;
+
+	// 카드 제거
+	removeCard(user, room, CardType.WIN_LOTTERY);
 
 	// 복권방 카드 효과: 새로운 카드 세 장을 획득
 	// useTag: "Lottery"로 복권방 NPC와만 상호작용
