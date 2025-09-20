@@ -1,81 +1,184 @@
-// apply.card.effect.test.ts
 import { applyCardEffect } from '../apply.card.effect';
-import { getUserFromRoom } from '../redis.util';
-import cardBbangEffect from '../../card/card.bbang.effect';
+import { getUserFromRoom, updateCharacterFromRoom } from '../room.utils';
+import { repeatDeck } from '../../managers/card.manager.js';
 
-// redis.util 모듈의 필요 함수들을 mock 처리
-jest.mock('../redis.util', () => ({
+// 카드 효과 모듈 mock
+import cardAbsorbEffect from '../../card/card.absorb.effect.js';
+import cardAutoRifleEffect from '../../card/card.auto_rifle.effect.js';
+import cardAutoShieldEffect from '../../card/card.auto_shield.effect.js';
+import cardBbangEffect from '../../card/card.bbang.effect.js';
+import cardBigBbangEffect from '../../card/card.bigbbang.effect.js';
+import cardBombEffect from '../../card/card.bomb.effect.js';
+import cardCall119Effect from '../../card/card.call_119.effect.js';
+import cardContainmentUnitEffect from '../../card/card.containment_unit.effect.js';
+import cardDeathMatchEffect from '../../card/card.death_match.effect.js';
+import cardDesertEagleEffect from '../../card/card.desert_eagle.effect.js';
+import cardFleaMarketEffect from '../../card/card.flea_market.effect.js';
+import cardGuerrillaEffect from '../../card/card.guerrilla.effect.js';
+import cardHallucinationEffect from '../../card/card.hallucination.effect.js';
+import cardHandGunEffect from '../../card/card.hand_gun.effect.js';
+import cardLaserPointerEffect from '../../card/card.laser_pointer.effect.js';
+import cardMaturedSavingsEffect from '../../card/card.matured_savings.effect.js';
+import cardRaderEffect from '../../card/card.rader.effect.js';
+import cardSatelliteTargetEffect from '../../card/card.satellite_target.effect.js';
+import cardShieldEffect from '../../card/card.shield.effect.js';
+import cardSniperGunEffect from '../../card/card.sniper_gun.effect.js';
+import cardStealthSuitEffect from '../../card/card.stealth_suit.effect.js';
+import cardVaccineEffect from '../../card/card.vaccine.effect.js';
+import cardWinLotteryEffect from '../../card/card.win_lottery.effect.js';
+
+jest.mock('../room.utils', () => ({
 	getUserFromRoom: jest.fn(),
+	updateCharacterFromRoom: jest.fn()
 }));
-jest.mock('../../card/card.bbang.effect');
+jest.mock('../../managers/card.manager.js', () =>({
+	repeatDeck: jest.fn()
+}));
+
+// 모든 카드 효과 모듈을 default export jest.fn() 으로 mock 처리
+jest.mock('../../card/card.absorb.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.auto_rifle.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.auto_shield.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.bbang.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.bigbbang.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.bomb.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.call_119.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.containment_unit.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.death_match.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.desert_eagle.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.flea_market.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.guerrilla.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.hallucination.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.hand_gun.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.laser_pointer.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.matured_savings.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.rader.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.satellite_target.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.shield.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.sniper_gun.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.stealth_suit.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.vaccine.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/card.win_lottery.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+
+
+const mockedGetUserFromRoom = getUserFromRoom as jest.Mock;
+const mockedUpdateCharacterFromRoom = updateCharacterFromRoom as jest.Mock;
+const mockedRepeatDeck = repeatDeck as jest.Mock;
 
 describe('applyCardEffect', () => {
-	const roomId = 1;
-	const userId = 'user1';
-	const targetUserId = 'user2';
+  const roomId = 1;
+  const userId = 'user1';
+  const targetUserId = 'user2';
 
-	beforeEach(() => {
-		jest.clearAllMocks();
-	});
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-	it('유저 또는 타겟이 존재하지 않으면 아무 동작 안함', async () => {
-		(getUserFromRoom as jest.Mock).mockResolvedValueOnce(null);
+  function mockUserWithCard(cardType: number, count = 1) {
+    mockedGetUserFromRoom.mockReturnValue({
+      id: userId,
+      character: {
+        handCards: [{ type: cardType, count }],
+        handCardsCount: count,
+      },
+    });
+  }
 
-		await applyCardEffect(roomId, 1, userId, targetUserId);
 
-		expect(cardBbangEffect).not.toHaveBeenCalled();
-	});
+  test('유저 정보가 없다면 false 반환', async () => {
+    mockedGetUserFromRoom.mockReturnValue(null);
+    const result = await applyCardEffect(roomId, 1, userId, targetUserId);
+    expect(result).toBe(false);
+  });
 
-	it('유저에게 캐릭터가 없다면 아무 동작 안함', async () => {
-		(getUserFromRoom as jest.Mock)
-			.mockResolvedValueOnce({ id: userId }) // user without character
-			.mockResolvedValueOnce({ id: targetUserId, character: {} });
 
-		await applyCardEffect(roomId, 1, userId, targetUserId);
+  test('캐릭터 정보가 없다면 false 반환', async () => {
+    mockedGetUserFromRoom.mockReturnValue({ id: userId });
+    const result = await applyCardEffect(roomId, 1, userId, targetUserId);
+    expect(result).toBe(false);
+  });
 
-		expect(cardBbangEffect).not.toHaveBeenCalled();
-	});
 
-	it('유저에게 남은 카드가 없다면 아무 동작 안함', async () => {
-		(getUserFromRoom as jest.Mock)
-			.mockResolvedValueOnce({
-				id: userId,
-				character: { handCards: [{ type: 99 }] },
-			})
-			.mockResolvedValueOnce({
-				id: targetUserId,
-				character: { handCards: [] },
-			});
+  test('성공시 사용 카드를 소지 카드에서 감소 및 캐릭터 정보 업데이트', async () => {
+    mockUserWithCard(1, 2); // BBANG
+    (cardBbangEffect as jest.Mock).mockResolvedValue(true);
 
-		await applyCardEffect(roomId, 1, userId, targetUserId);
+    const result = await applyCardEffect(roomId, 1, userId, targetUserId);
 
-		expect(cardBbangEffect).not.toHaveBeenCalled();
-	});
+    expect(mockedRepeatDeck).toHaveBeenCalledWith(roomId, [1]);
+    expect(mockedUpdateCharacterFromRoom).toHaveBeenCalled();
+    expect(cardBbangEffect).toHaveBeenCalledWith(roomId, userId, targetUserId);
+    expect(result).toBe(true);
+  });
 
-	it('BBang 카드 사용 명령어가 들어오면, 소지 카드중 해당 카드와 일치하는 맨 앞의 카드를 제거후 CardBbangEffect 실행', async () => {
-		const handCards = [{ type: 1 }, { type: 99 }];
-		const user = { id: userId, character: { handCards } };
-		const target = { id: targetUserId, character: { handCards: [] } };
 
-		(getUserFromRoom as jest.Mock).mockResolvedValueOnce(user).mockResolvedValueOnce(target);
+  test('소지 카드에서 카드 카운트가 0이 된 카드 소지카드에서 제거', async () => {
+    mockUserWithCard(1, 1);
+    (cardBbangEffect as jest.Mock).mockResolvedValue(true);
 
-		await applyCardEffect(roomId, 1, userId, targetUserId);
+    await applyCardEffect(roomId, 1, userId, targetUserId);
 
-		expect(user.character.handCards).toEqual([{ type: 99 }]); // 카드 제거됨
-		expect(cardBbangEffect).toHaveBeenCalledWith(roomId, userId, targetUserId); // CardBbangEffect 명령 수행
-	});
+    const updatedCharacter = mockedUpdateCharacterFromRoom.mock.calls[0][2];
+    expect(updatedCharacter.handCards).toEqual([]);
+    expect(updatedCharacter.handCardsCount).toBe(0);
+  });
 
-	it('잘못된 카드 정보가 들어오면 에러 메시지 반환', async () => {
-		const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-		const handCards = [{ type: 123 }];
-		const user = { id: userId, character: { handCards: [...handCards] } };
-		const target = { id: targetUserId, character: { handCards: [] } };
+  test('소지 카드 목록에 사용하려는 카드가 없다면 로그 출력 및 false 반환 ', async () => {
+    mockUserWithCard(2, 1); // only BIGBBANG
+    console.log = jest.fn();
 
-		(getUserFromRoom as jest.Mock).mockResolvedValueOnce(user).mockResolvedValueOnce(target);
+    const result = await applyCardEffect(roomId, 99, userId, targetUserId);
 
-		await applyCardEffect(roomId, 123, userId, targetUserId);
+    expect(console.log).toHaveBeenCalledWith('해당 카드를 소유하고 있지 않습니다.');
+    expect(result).toBe(false);
+  });
 
-		expect(consoleSpy).toHaveBeenCalledWith('Unknown card type');
-		consoleSpy.mockRestore();
-	});
+  // 카드 효과별 공통 테스트
+  const cardEffectMap: Record<number, jest.MockedFunction<any>> = {
+    1: cardBbangEffect as jest.Mock,
+    2: cardBigBbangEffect as jest.Mock,
+    3: cardShieldEffect as jest.Mock,
+    4: cardVaccineEffect as jest.Mock,
+    5: cardCall119Effect as jest.Mock,
+    6: cardDeathMatchEffect as jest.Mock,
+    7: cardGuerrillaEffect as jest.Mock,
+    8: cardAbsorbEffect as jest.Mock,
+    9: cardHallucinationEffect as jest.Mock,
+    10: cardFleaMarketEffect as jest.Mock,
+    11: cardMaturedSavingsEffect as jest.Mock,
+    12: cardWinLotteryEffect as jest.Mock,
+    13: cardSniperGunEffect as jest.Mock,
+    14: cardHandGunEffect as jest.Mock,
+    15: cardDesertEagleEffect as jest.Mock,
+    16: cardAutoRifleEffect as jest.Mock,
+    17: cardLaserPointerEffect as jest.Mock,
+    18: cardRaderEffect as jest.Mock,
+    19: cardAutoShieldEffect as jest.Mock,
+    20: cardStealthSuitEffect as jest.Mock,
+    21: cardContainmentUnitEffect as jest.Mock,
+    22: cardSatelliteTargetEffect as jest.Mock,
+    23: cardBombEffect as jest.Mock,
+  };
+
+  Object.entries(cardEffectMap).forEach(([cardType, effectFn]) => {
+    test(`cardType이 ${cardType}인 카드 효과 처리 로직이 정상적으로 작동하는지 확인`, async () => {
+      mockUserWithCard(Number(cardType), 1);
+      effectFn.mockResolvedValue(true);
+
+      const result = await applyCardEffect(roomId, Number(cardType), userId, targetUserId);
+
+      expect(effectFn).toHaveBeenCalled();
+      expect(result).toBe(true);
+    });
+  });
+
+  test('card type이 unknown인 카드를 받으면 false 반환 ', async () => {
+    mockUserWithCard(999, 1);
+    console.log = jest.fn();
+
+    const result = await applyCardEffect(roomId, 999, userId, targetUserId);
+
+    expect(console.log).toHaveBeenCalledWith('Unknown card type');
+    expect(result).toBe(false);
+  });
 });
