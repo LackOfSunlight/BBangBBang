@@ -5,7 +5,7 @@ import { Room } from '../../models/room.model';
 import { GlobalFailCode } from '../../generated/common/enums';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { getUserByUserId } from '../../services/prisma.service';
-import { addUserToRoom, getRoom, getRooms } from '../../utils/room.utils';
+import { addUserToRoom, getRooms } from '../../utils/room.utils';
 import { User } from '../../models/user.model';
 import { broadcastDataToRoom } from '../../utils/notification.util';
 

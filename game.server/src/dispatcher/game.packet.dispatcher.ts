@@ -17,6 +17,7 @@ import fleaMarketPickHandler from '../handlers/fleamarket.pick.handler.js';
 import destroyCardHandler from '../handlers/destroy.card.handler.js';
 import cardSelectHandler from '../handlers/card.select.handler.js';
 import reactionUpdateHandler from '../handlers/reaction.update.handler.js';
+import joinRandomRoomHandler from '../handlers/join.random.room.handler.js';
 
 // Request Handlers
 
@@ -27,7 +28,7 @@ const handlers: Record<RequestPacketType, (socket: Socket, gamePacket: GamePacke
 	[GamePacketType.createRoomRequest]: createRoomHandler,
 	[GamePacketType.getRoomListRequest]: getRoomListHandler,
 	[GamePacketType.joinRoomRequest]: joinRoomHandler,
-	[GamePacketType.joinRandomRoomRequest]: joinRoomHandler,
+	[GamePacketType.joinRandomRoomRequest]: joinRandomRoomHandler,
 	[GamePacketType.leaveRoomRequest]: leaveRoomHandler,
 	[GamePacketType.gamePrepareRequest]: gamePrepareHandler,
 	[GamePacketType.gameStartRequest]: gameStartHandler,
