@@ -1,22 +1,26 @@
 // cardType = 3
 import { CardType, CharacterStateType, CharacterType } from '../generated/common/enums.js';
 import { CheckBigBbangService as checkBigBbangService } from '../services/bigbbang.check.service.js';
-import { getRoom, saveRoom } from '../utils/room.utils.js';
+import { getRoom, getUserFromRoom, saveRoom } from '../utils/room.utils.js';
 import { User } from '../models/user.model.js';
+import { removeCard } from '../managers/card.manager.js';
 
-
-
-const cardShieldEffect = (roomId: number, userId: string, targetUserId: string) : boolean => {
+const cardShieldEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	let room = getRoom(roomId);
 
 	if (!room) return false;
 
-	const user = room.users.find((u) => u.id === userId);
+	const user = getUserFromRoom(roomId, userId);
 
 	if (!user?.character) {
 		console.log('유저에 캐릭터 정보가 없다');
 		return false;
 	}
+
+	if (user.character.stateInfo?.state === CharacterStateType.NONE_CHARACTER_STATE) return false;
+
+	removeCard(user, room, CardType.SHIELD);
+
 	const stateInfo = user?.character?.stateInfo;
 
 	if (stateInfo) {

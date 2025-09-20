@@ -1,6 +1,9 @@
 import cardData from '../data/card.data.json';
 import { CardData } from '../generated/common/types';
 import { CardType } from '../generated/common/enums';
+import { Room } from '../models/room.model';
+import { User } from '../models/user.model';
+import { updateCharacterFromRoom } from '../utils/room.utils';
 
 // This list defines the composition of the deck
 const cardDefinitions: CardData[] = (cardData as any[]).map((card) => ({
@@ -70,4 +73,25 @@ export const drawSpecificCard = (roomId: number, cardType: CardType): CardType |
 
 	// 해당 카드를 덱에서 제거 후 반환
 	return deck.splice(index, 1)[0];
+};
+
+export const removeCard = (user: User, room: Room, cardType: CardType) => {
+	const usedCard = user.character!.handCards.find((c) => c.type === cardType);
+
+	if (usedCard != undefined) {
+		usedCard.count -= 1;
+		repeatDeck(room.id, [cardType]);
+
+		if (usedCard.count <= 0) {
+			user.character!.handCards = user.character!.handCards.filter((c) => c.count > 0);
+			user.character!.handCardsCount = user.character!.handCards.reduce(
+				(sum, card) => sum + card.count,
+				0,
+			);
+		}
+
+		updateCharacterFromRoom(room.id, user.id, user.character!);
+	} else {
+		console.log('해당 카드를 소유하고 있지 않습니다.');
+	}
 };
