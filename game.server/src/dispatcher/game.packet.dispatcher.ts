@@ -1,22 +1,22 @@
 // game.server/src/handlers/gamePacketHandler.ts
 import { Socket } from 'net';
-import { GamePacket } from '../generated/gamePacket.js';
-import { GamePacketType, RequestPacketType } from '../enums/gamePacketType.js';
-import registerHandler from '../handlers/register.handler.js';
-import loginHandler from '../handlers/login.handler.js';
-import createRoomHandler from '../handlers/create.room.handler.js';
-import getRoomListHandler from '../handlers/get.room.list.handler.js';
-import joinRoomHandler from '../handlers/join.room.handler.js';
-import leaveRoomHandler from '../handlers/leave.room.handler.js';
-import gamePrepareHandler from '../handlers/game.prepare.handler.js';
-import positionUpdateHandler from '../handlers/position.update.handler.js';
-import useCardHandler from '../handlers/use.card.handler.js';
-import passDebuffHandler from '../handlers/pass.debuff.handler.js';
-import gameStartHandler from '../handlers/game.start.handler.js';
-import fleaMarketPickHandler from '../handlers/fleamarket.pick.handler.js';
-import destroyCardHandler from '../handlers/destroy.card.handler.js';
-import cardSelectHandler from '../handlers/card.select.handler.js';
-import reactionUpdateHandler from '../handlers/reaction.update.handler.js';
+import { GamePacket } from '../generated/gamePacket';
+import { GamePacketType, RequestPacketType } from '../enums/gamePacketType';
+import registerHandler from '../handlers/register.handler';
+import loginHandler from '../handlers/login.handler';
+import createRoomHandler from '../handlers/create.room.handler';
+import getRoomListHandler from '../handlers/get.room.list.handler';
+import joinRoomHandler from '../handlers/join.room.handler';
+import leaveRoomHandler from '../handlers/leave.room.handler';
+import gamePrepareHandler from '../handlers/game.prepare.handler';
+import positionUpdateHandler from '../handlers/position.update.handler';
+import useCardHandler from '../handlers/use.card.handler';
+import passDebuffHandler from '../handlers/pass.debuff.handler';
+import gameStartHandler from '../handlers/game.start.handler';
+import fleaMarketPickHandler from '../handlers/fleamarket.pick.handler';
+import destroyCardHandler from '../handlers/destroy.card.handler';
+import cardSelectHandler from '../handlers/card.select.handler';
+import reactionUpdateHandler from '../handlers/reaction.update.handler';
 
 // Request Handlers
 

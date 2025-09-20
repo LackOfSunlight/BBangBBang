@@ -1,8 +1,8 @@
 // cardType = 3
-import { CardType, CharacterStateType, CharacterType } from '../generated/common/enums.js';
-import { CheckBigBbangService as checkBigBbangService } from '../services/bigbbang.check.service.js';
-import { getRoom, saveRoom } from '../utils/room.utils.js';
-import { User } from '../models/user.model.js';
+import { CardType, CharacterStateType, CharacterType } from '../generated/common/enums';
+import { CheckBigBbangService as checkBigBbangService } from '../services/bigbbang.check.service';
+import { getRoom, saveRoom } from '../utils/room.utils';
+import { User } from '../models/user.model';
 
 
 

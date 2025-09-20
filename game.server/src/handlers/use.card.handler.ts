@@ -1,19 +1,13 @@
-import { GameSocket } from '../type/game.socket.js';
-import { GamePacket } from '../generated/gamePacket.js';
-import { GamePacketType } from '../enums/gamePacketType.js';
-import { getGamePacketType } from '../utils/type.converter.js';
-import { gamePackTypeSelect } from '../enums/gamePacketType.js';
+import { GamePacketType, gamePackTypeSelect } from "../enums/gamePacketType";
+import { CardType, GlobalFailCode } from "../generated/common/enums";
+import { GamePacket } from "../generated/gamePacket";
+import { Room } from "../models/room.model";
+import { GameSocket } from "../type/game.socket";
+import { useCardUseCase } from "../useCase/use.card/use.card.usecase";
+import { getRoom } from "../utils/room.utils";
+import { sendData } from "../utils/send.data";
+import { getGamePacketType } from "../utils/type.converter";
 
-import { sendData } from '../utils/send.data.js';
-
-import { GlobalFailCode } from '../generated/common/enums.js';
-import { CardType } from '../generated/common/enums.js';
-
-import { Room } from '../models/room.model.js';
-
-import { getRoom } from '../utils/room.utils.js';
-
-import { useCardUseCase } from '../useCase/use.card/use.card.usecase.js';
 
 const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	/// 1. DTO 생성 및 기본 유효성 검사

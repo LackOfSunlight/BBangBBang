@@ -1,6 +1,6 @@
 // cardType = 17
-import { getUserFromRoom, removeUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
-import { CardType } from '../generated/common/enums.js';
+import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
+import { CardType } from '../generated/common/enums';
 
 const cardLaserPointerEffect = (roomId: number, userId: string) : boolean => {
 	const user = getUserFromRoom(roomId, userId);

@@ -1,11 +1,10 @@
-import { GameSocket } from '../../type/game.socket.js';
-import { S2CPositionUpdateNotification } from '../../generated/packet/notifications.js';
-import { GamePacket } from '../../generated/gamePacket.js';
-import { GamePacketType } from '../../enums/gamePacketType.js';
-import { broadcastDataToRoom } from '../../utils/notification.util.js';
-import { getRoom } from '../../utils/redis.util.js';
-import { Room } from '../../models/room.model.js';
-import { CharacterPositionData } from '../../generated/common/types.js';
+import { GameSocket } from '../../type/game.socket';
+import { GamePacket } from '../../generated/gamePacket';
+import { GamePacketType } from '../../enums/gamePacketType';
+import { broadcastDataToRoom } from '../../utils/notification.util';
+import { getRoom } from '../../utils/room.utils';
+import { Room } from '../../models/room.model';
+import { CharacterPositionData } from '../../generated/common/types';
 
 /**
  * 포지션 업데이트 알림 핸들러

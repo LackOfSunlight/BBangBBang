@@ -1,11 +1,10 @@
-import { GameSocket } from '../../type/game.socket.js';
-import { S2CGameEndNotification } from '../../generated/packet/notifications.js';
-import { GamePacket } from '../../generated/gamePacket.js';
-import { GamePacketType } from '../../enums/gamePacketType.js';
-import { WinType } from '../../generated/common/enums.js';
-import { broadcastDataToRoom } from '../../utils/notification.util.js';
-import { getRoom } from '../../utils/redis.util.js';
-import { Room } from '../../models/room.model.js';
+import { GameSocket } from '../../type/game.socket';
+import { GamePacket } from '../../generated/gamePacket';
+import { GamePacketType } from '../../enums/gamePacketType';
+import { WinType } from '../../generated/common/enums';
+import { broadcastDataToRoom } from '../../utils/notification.util';
+import { getRoom } from '../../utils/room.utils';
+import { Room } from '../../models/room.model';
 
 const gameEndNotificationHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	if (!socket.roomId) return;

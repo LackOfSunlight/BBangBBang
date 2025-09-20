@@ -1,5 +1,5 @@
-import { GamePacket } from '../generated/gamePacket.js';
-import { GamePacketType } from '../enums/gamePacketType.js';
+import { GamePacket } from '../generated/gamePacket';
+import { GamePacketType } from '../enums/gamePacketType';
 import { Socket } from 'net';
 
 const version = '1.0.0';
