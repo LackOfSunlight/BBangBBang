@@ -14,8 +14,10 @@ const cardDeathMatchEffect = (roomId: number, userId: string, targetUserId: stri
 	if (!target || !target.character) return false;
 
 	const isBbangCard: boolean = user.character.handCards.some((c) => c.type === CardType.BBANG);
+	const isEnemyBbangCard: boolean = target.character.handCards.some((c) => c.type === CardType.BBANG);
 
-	if (!isBbangCard) {
+	// 캐릭터중 어느쪽도 빵야 카드가 없다면 실행되지 않음
+	if (!isBbangCard || !isEnemyBbangCard) {
 		return false;
 	}
 
