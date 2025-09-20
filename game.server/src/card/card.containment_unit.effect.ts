@@ -34,7 +34,7 @@ const cardContainmentUnitEffect = (
 };
 
 // 효과 대상자 체크
-export const checkContainmentUnitTarget = (roomId: number) => {
+export const checkContainmentUnitTarget = async (roomId: number) => {
 	const room = getRoom(roomId);
 	if (!room || !room.users) {
 		console.warn(`[ContainmentUnitTarget] 방을 찾을 수 없습니다: roomId=${roomId}`);
@@ -107,13 +107,13 @@ export const debuffContainmentUnitEffect = (roomId: number, userId: string) => {
 						(c) => c === CardType.CONTAINMENT_UNIT,
 					);
 					user.character.debuffs.splice(yourDebuffIndex, 1);
-					console.log(`${user.nickname} 유저가 감금 상태에서 탈출에 성공했습니다`);
+					console.log(`[debuffContainmentUnit]${user.nickname} 유저가 감금 상태에서 탈출에 성공했습니다`);
 
 					try {
 						updateCharacterFromRoom(roomId, userId, user.character);
-						console.log(`[debuffContainmentUnit] (${user.nickname}) :  로그 저장에 성공하였습니다`);
+						//console.log(`[debuffContainmentUnit] (${user.nickname}) :  로그 저장에 성공하였습니다`);
 					} catch (error) {
-						console.error(`로그 저장에 실패하였습니다:[${error}]`);
+						console.error(`[debuffContainmentUnit]로그 저장에 실패하였습니다:[${error}]`);
 					}
 				}
 				break;
