@@ -1,4 +1,4 @@
-// __tests__/cardMaturedSavingsEffect.test.ts
+// card.matured_savings.effect.test.ts
 import cardMaturedSavingsEffect from '../card.matured_savings.effect';
 import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { drawDeck, getDeckSize } from '../../managers/card.manager';
@@ -42,7 +42,7 @@ describe('cardMaturedSavingsEffect', () => {
 
   it('덱 매수가 부족할 경우 false 반환', () => {
     (getUserFromRoom as jest.Mock).mockReturnValue(mockUser);
-    (getDeckSize as jest.Mock).mockReturnValue(1); // 필요한 2장보다 부족
+    (getDeckSize as jest.Mock).mockReturnValue(1); // 필요한 2장보다 부족한 1장 추가
 
     const result = cardMaturedSavingsEffect(roomId, userId);
 
@@ -60,7 +60,7 @@ describe('cardMaturedSavingsEffect', () => {
     (drawDeck as jest.Mock).mockReturnValue([CardType.BBANG, CardType.SHIELD]);
     (updateCharacterFromRoom as jest.Mock).mockReturnValue(true);
 
-    const result = cardMaturedSavingsEffect(roomId, userId);
+    const result = cardMaturedSavingsEffect(roomId, userId); // jest.fn()은 toHaveBeenCalledWith으로 처리하기 힘들기에 jest.fn을 처리한 변수를 대신 대입
 
     expect(result).toBe(true);
     expect(drawDeck).toHaveBeenCalledWith(roomId, 2);
