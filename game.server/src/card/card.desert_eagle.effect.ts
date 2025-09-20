@@ -1,10 +1,14 @@
 import { CardType } from '../generated/common/enums';
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
+import { removeCard } from '../managers/card.manager';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 const cardDesertEagleEffect = (roomId: number, userId: string): boolean => {
 	try {
 		const user = getUserFromRoom(roomId, userId);
+		let room = getRoom(roomId)
 		// 유효성 검증
 		if (!user || !user.character) return false;
+		
+		removeCard(user, room, CardType.DESERT_EAGLE )
 
 		// 데저트 이글 장착 (기존 무기는 덮어쓰기로 교체)
 		user.character.weapon = CardType.DESERT_EAGLE;
