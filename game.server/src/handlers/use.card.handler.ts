@@ -48,7 +48,7 @@ const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	}
 
 	/// 2. 유즈케이스 호출
-	const res = await useCardUseCase(
+	const res = useCardUseCase(
 		userId,
 		roomId,
 		cardType,

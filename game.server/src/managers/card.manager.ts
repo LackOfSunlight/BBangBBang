@@ -9,6 +9,8 @@ const cardDefinitions: CardData[] = (cardData as any[]).map((card) => ({
 }));
 
 export const roomDecks = new Map<number, CardType[]>();
+export const roomFleaMarketCards = new Map<number, CardType[]>();
+export const fleaMarketPickIndex = new Map<number, number[]>();
 
 export const initializeDeck = (roomId: number): void => {
 	const deck: CardType[] = [];

@@ -26,12 +26,12 @@ import cardWinLotteryEffect from '../card/card.win_lottery.effect.js';
 import { repeatDeck } from '../managers/card.manager.js';
 
 // 카드 효과 적용 함수
-export async function applyCardEffect(
+export  function applyCardEffect(
 	roomId: number,
 	CardType: number,
 	userId: string,
 	targetUserId: string,
-): Promise<boolean> {
+): boolean {
 	const user = getUserFromRoom(roomId, userId);
 
 	// 유효성 검증 (119 카드 예외 처리)

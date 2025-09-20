@@ -8,31 +8,33 @@ import { getRoom } from '../../utils/room.utils';
 import { applyCardEffect } from '../../utils/apply.card.effect';
 import { broadcastDataToRoom } from '../../utils/notification.util.js';
 
-export const useCardUseCase = async (userId:string, roomId:number, cardType:CardType, targetUserId:string): Promise<{success:boolean, failcode:GlobalFailCode}> => {
-	try {
-		const room = getRoom(roomId);
-		if (!room) {
-			return { success: false, failcode: GlobalFailCode.ROOM_NOT_FOUND };
-		}
+export const useCardUseCase = (
+	userId: string,
+	roomId: number,
+	cardType: CardType,
+	targetUserId: string,
+): { success: boolean; failcode: GlobalFailCode } => {
+	const room = getRoom(roomId);
+	if (!room) {
+		return { success: false, failcode: GlobalFailCode.ROOM_NOT_FOUND };
+	}
 
 	// 카드 타입 검증
 	if (cardType === CardType.NONE) {
 		console.error(`[useCardHandler] 잘못된 카드 타입 요청: NONE`);
-		return {  success: false, failcode: GlobalFailCode.INVALID_REQUEST  };
+		return { success: false, failcode: GlobalFailCode.INVALID_REQUEST };
 	}
 
 	// 카드 사용 로직 처리
 
 	// 메인 로직
-	const isSuccess = await applyCardEffect(roomId, cardType, userId, targetUserId!);
-	if(!isSuccess){ return {success: false, failcode: GlobalFailCode.INVALID_REQUEST } }
+	const isSuccess = applyCardEffect(roomId, cardType, userId, targetUserId!);
+	if (!isSuccess) {
+		return { success: false, failcode: GlobalFailCode.INVALID_REQUEST };
+	}
 
 	// useCardNotification 패킷 전달
-	const useCardNotificationPacket = createUseCardNotificationPacket(
-		cardType,
-		userId,
-		targetUserId,
-	);
+	const useCardNotificationPacket = createUseCardNotificationPacket(cardType, userId, targetUserId);
 
 	// 장착이 가능한가? equipCard : useCard
 	if (cardType >= 13 && cardType <= 20)
@@ -42,30 +44,21 @@ export const useCardUseCase = async (userId:string, roomId:number, cardType:Card
 			GamePacketType.equipCardNotification,
 		);
 	else
-		broadcastDataToRoom(
-			room.users,
-			useCardNotificationPacket,
-			GamePacketType.useCardNotification,
-		);
-	
+		broadcastDataToRoom(room.users, useCardNotificationPacket, GamePacketType.useCardNotification);
 
 	// userUpdateNotification 패킷 전달
-	const userUpdateNotificationPacket = createUserUpdateNotificationPacket(
-		room.users,
-	);
+
+	const userUpdateNotificationPacket = createUserUpdateNotificationPacket(room.users);
 	broadcastDataToRoom(
 		room.users,
 		userUpdateNotificationPacket,
 		GamePacketType.userUpdateNotification,
 	);
 
-
 	return {
-		success: true, failcode: GlobalFailCode.NONE_FAILCODE,
+		success: true,
+		failcode: GlobalFailCode.NONE_FAILCODE,
 	};
-	} catch (error) {
-		return { success: false, failcode: GlobalFailCode.ROOM_NOT_FOUND };
-	}
 };
 
 /** 패킷 세팅 */
