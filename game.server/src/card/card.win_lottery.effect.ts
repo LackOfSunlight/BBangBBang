@@ -1,8 +1,7 @@
 // cardType = 12
 import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
-import { drawDeck } from '../managers/card.manager.js';
-import { CardData } from '../generated/common/types.js';
-import { CardType } from '../generated/common/enums.js';
+import { drawDeck } from '../managers/card.manager';
+import { CardType } from '../generated/common/enums';
 
 const cardWinLotteryEffect = (roomId: number, userId: string): boolean => {
 	const user = getUserFromRoom(roomId, userId);

@@ -31,13 +31,13 @@ const cardAbsorbEffect = (roomId: number, userId: string, targetUserId: string):
 		user.character.handCards.push(removed);
 	}
 
-	// 변경된 두 유저의 정보를 Redis에 업데이트
+	// 변경된 두 유저의 정보를 업데이트
 	try {
 		updateCharacterFromRoom(roomId, userId, user.character);
 		updateCharacterFromRoom(roomId, targetUserId, target.character);
 		return true;
 	} catch (error) {
-		console.error(`[흡수] Redis 업데이트 실패:`, error);
+		console.error(`[흡수] 업데이트 실패:`, error);
 		return false;
 	}
 };

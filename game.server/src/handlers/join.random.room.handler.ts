@@ -1,9 +1,9 @@
 import { GameSocket } from '../type/game.socket';
-import { GamePacket } from '../generated/gamePacket.js';
-import { getGamePacketType } from '../utils/type.converter.js';
-import { gamePackTypeSelect, GamePacketType } from '../enums/gamePacketType.js';
+import { GamePacket } from '../generated/gamePacket';
+import { getGamePacketType } from '../utils/type.converter';
+import { gamePackTypeSelect, GamePacketType } from '../enums/gamePacketType';
 import joinRandomRoomUseCase from '../useCase/join.random.room/join.random.room.usecase';
-import { sendData } from '../utils/send.data.js';
+import { sendData } from '../utils/send.data';
 
 const joinRandomRoomHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.joinRandomRoomRequest);

@@ -3,6 +3,7 @@ import { GamePacket } from '../generated/gamePacket.js';
 import { getGamePacketType } from '../utils/type.converter.js';
 import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType.js';
 import { sendData } from '../utils/send.data.js';
+import fleaMarketPickUseCase from '../useCase/fleamarket.pick/fleamarket,pick.usecase';
 
 const fleaMarketPickHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.fleaMarketPickRequest);
@@ -13,6 +14,10 @@ const fleaMarketPickHandler = async (socket: GameSocket, gamePacket: GamePacket)
 	}
 
 	const req = payload.fleaMarketPickRequest;
+
+	const res = fleaMarketPickUseCase(socket, req);
+
+	sendData(socket, res, GamePacketType.fleaMarketPickResponse);
 
 };
 

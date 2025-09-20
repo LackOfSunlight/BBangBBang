@@ -1,8 +1,7 @@
 import { GameSocket } from '../type/game.socket';
-import { GamePacket } from '../generated/gamePacket.js';
-import { getGamePacketType } from '../utils/type.converter.js';
-import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType.js';
-import { sendData } from '../utils/send.data.js';
+import { GamePacket } from '../generated/gamePacket';
+import { getGamePacketType } from '../utils/type.converter';
+import { gamePackTypeSelect } from '../enums/gamePacketType';
 
 const cardSelectHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
     const payload = getGamePacketType(gamePacket, gamePackTypeSelect.cardSelectRequest);
