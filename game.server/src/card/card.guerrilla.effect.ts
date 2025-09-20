@@ -1,7 +1,11 @@
-import { CardType, CharacterStateType } from "../generated/common/enums";
-import { drawSpecificCard } from "../managers/card.manager";
-import { getRoom, getUserFromRoom, saveRoom, updateCharacterFromRoom } from "../utils/room.utils";
-
+// cardType = 7
+import { CardType, CharacterStateType } from '../generated/common/enums.js';
+import { removeCard } from '../managers/card.manager.js';
+import {
+	getRoom,
+	getUserFromRoom,
+	saveRoom,
+} from '../utils/room.utils.js';
 
 const cardGuerrillaEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	const room = getRoom(roomId);
@@ -17,20 +21,10 @@ const cardGuerrillaEffect = (roomId: number, userId: string, targetUserId: strin
 	);
 
 	if (isBlockedStateUsers) {
-		const getCard = drawSpecificCard(room.id, CardType.GUERRILLA);
-
-		if (getCard) {
-			const existCard = shooter?.character?.handCards.find((card) => card.type === getCard);
-			if (existCard) {
-				existCard.count += 1;
-			} else {
-				shooter.character?.handCards.push({ type: getCard, count: 1 });
-			}
-
-			updateCharacterFromRoom(room.id, shooter.id, shooter.character!);
-			return true;
-		}
+		return false;
 	}
+
+	removeCard(shooter, room, CardType.GUERRILLA);
 
 	for (let user of room.users) {
 		if (user.character?.stateInfo?.state != null) {

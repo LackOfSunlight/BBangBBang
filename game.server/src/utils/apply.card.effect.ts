@@ -26,34 +26,16 @@ import cardWinLotteryEffect from '../card/card.win_lottery.effect';
 import { repeatDeck } from '../managers/card.manager';
 
 // 카드 효과 적용 함수
-export async function applyCardEffect(
+export  function applyCardEffect(
 	roomId: number,
 	CardType: number,
 	userId: string,
 	targetUserId: string,
-): Promise<boolean> {
+): boolean {
 	const user = getUserFromRoom(roomId, userId);
 
 	// 유효성 검증 (119 카드 예외 처리)
 	if (!user || !user.character) return false;
-
-	const usedCard = user.character.handCards.find((c) => c.type === CardType);
-	if (usedCard != undefined) {
-		usedCard.count -= 1;
-		repeatDeck(roomId, [CardType]);
-
-		if (usedCard.count <= 0) {
-			user.character.handCards = user.character.handCards.filter((c) => c.count > 0);
-			user.character.handCardsCount = user.character.handCards.reduce(
-				(sum, card) => sum + card.count,
-				0,
-			);
-		}
-
-		updateCharacterFromRoom(roomId, user.id, user.character);
-	} else {
-		console.log('해당 카드를 소유하고 있지 않습니다.');
-	}
 
 	// 소지한 카드 제거 후 효과 적용
 	switch (CardType) {

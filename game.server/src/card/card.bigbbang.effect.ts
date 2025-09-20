@@ -5,8 +5,8 @@ import {
 	saveRoom,
 	updateCharacterFromRoom,
 } from '../utils/room.utils';
-import { CardType, CharacterStateType } from '../generated/common/enums';
-import { drawSpecificCard } from '../managers/card.manager';
+import { CardType, CharacterStateType } from '../generated/common/enums.js';
+import { removeCard } from '../managers/card.manager.js';
 
 const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	const room = getRoom(roomId);
@@ -25,20 +25,11 @@ const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string
 	);
 
 	if (isBlockedStateUsers) {
-		const getCard = drawSpecificCard(room.id, CardType.BIG_BBANG);
-
-		if (getCard) {
-			const existCard = shooter?.character?.handCards.find((card) => card.type === getCard);
-			if (existCard) {
-				existCard.count += 1;
-			} else {
-				shooter.character?.handCards.push({ type: getCard, count: 1 });
-			}
-
-			updateCharacterFromRoom(room.id, shooter.id, shooter.character!);
-			return true;
-		}
+		return false;
 	}
+
+	removeCard(shooter, room, CardType.BIG_BBANG);
+
 
 	for (let user of room.users) {
 		if (user.character?.stateInfo?.state != null) {
@@ -60,7 +51,7 @@ const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string
 		}
 	}
 
-	saveRoom(room);
+	// saveRoom(room);
 
 	return true;
 };

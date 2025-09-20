@@ -1,8 +1,10 @@
 // cardType = 18
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
-import { CardType } from '../generated/common/enums';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
+import { CardType } from '../generated/common/enums.js';
+import { removeCard } from '../managers/card.manager';
 
 const cardRaderEffect = (roomId: number, userId: string): boolean => {
+	const room = getRoom(roomId);
 	const user = getUserFromRoom(roomId, userId);
 
 	// 유효성 검증
@@ -10,6 +12,7 @@ const cardRaderEffect = (roomId: number, userId: string): boolean => {
 
 	if (!user.character.equips.includes(CardType.RADAR)) {
 		user.character.equips.push(CardType.RADAR);
+		removeCard(user, room, CardType.RADAR);
 	} else {
 		return false;
 	}
