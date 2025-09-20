@@ -1,7 +1,8 @@
 // cardType = 1
 import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../utils/room.utils';
-import { CharacterStateType } from '../generated/common/enums';
+import { CardType, CharacterStateType } from '../generated/common/enums';
 import { CheckGuerrillaService } from '../services/guerrilla.check.service';
+import { repeatDeck } from '../managers/card.manager';
 
 const cardBbangEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	// 정보값 가져오기
@@ -15,12 +16,10 @@ const cardBbangEffect = (roomId: number, userId: string, targetUserId: string): 
 		console.log('방이 존재하지 않습니다.');
 		return false;
 	}
-
 	if (!user || !user.character || !user.character.stateInfo) {
 		console.log('사용자 정보가 존재하지 않습니다');
 		return false;
 	}
-
 	if (!target || !target.character || !target.character.stateInfo) {
 		console.log('타깃 유저의 정보가 존재하지 않습니다 ');
 		return false;
@@ -31,8 +30,22 @@ const cardBbangEffect = (roomId: number, userId: string, targetUserId: string): 
 		console.log('타깃 유저의 체력이 이미 0 입니다.');
 		return false;
 	}
-	if (!user || !target || !user.character || !target.character) return false;
+	//if (!user || !target || !user.character || !target.character) return false;
 
+	// 여러 검증을 했다면 카드 제거 및 검증 로직 실행
+	const haveCard = user.character.handCards.find(c => c.type === CardType.BBANG);
+	if (!haveCard) {
+		console.warn('[CardType:BBANG] 해당 카드를 소유하고 있지 않습니다')
+		return false;
+	}
+	haveCard.count -= 1;
+	if ( haveCard.count <=0 ){
+		const lastCardIndex = user.character.handCards.findIndex(c => c.type === CardType.BBANG);
+		user.character.handCards.splice(lastCardIndex, 1);
+	}
+	repeatDeck(roomId, [CardType.BBANG]);
+	
+	
 	if (user.character.stateInfo.state === CharacterStateType.NONE_CHARACTER_STATE) {
 		// 상태 설정
 		user.character.stateInfo.state = CharacterStateType.BBANG_SHOOTER; // 빵야 카드 사용자는 BBANG_SHOOTER 상태가 되고
