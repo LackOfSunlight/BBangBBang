@@ -18,5 +18,5 @@
 		"resolveJsonModule": true,
 		"esModuleInterop": true
 	},
-	"include": ["game.server/src/**/*.ts", "game.server/src/utils/test/redis.util.test.test"]
+	"include": ["game.server/src/**/*.ts"]
 }

@@ -3,9 +3,7 @@ import { GamePacket } from '../generated/gamePacket';
 import { getGamePacketType } from '../utils/type.converter';
 import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
 import joinRoomUseCase from '../useCase/join.room/join.room.usecase';
-import { sendData } from '../utils/send.data.js';
-import { broadcastDataToRoom } from '../utils/notification.util.js';
-import { getRoom } from '../utils/room.utils.js';
+import { sendData } from '../utils/send.data';
 
 const joinRoomHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.joinRoomRequest);

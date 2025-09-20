@@ -1,7 +1,7 @@
 // cardType = 16
 
-import { CardType } from '../generated/common/enums.js';
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils.js';
+import { CardType } from '../generated/common/enums';
+import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
 
 const cardAutoRifleEffect = (roomId: number, userId: string): boolean => {
 	// 정보값 가져오기

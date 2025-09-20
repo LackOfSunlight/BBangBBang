@@ -5,7 +5,6 @@ import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
 import { sendData } from '../utils/send.data';
 import passDebuffUseCase from '../useCase/pass.debuff/pass.debuff.usecase';
 import { C2SPassDebuffRequest } from '../generated/packet/game_actions';
-import { GlobalFailCode } from '../generated/common/enums';
 
 const passDebuffHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.passDebuffRequest);

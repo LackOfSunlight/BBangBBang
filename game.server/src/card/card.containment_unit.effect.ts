@@ -1,6 +1,6 @@
 // cardType = 21
 import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../utils/room.utils';
-import { CardType, CharacterStateType } from '../generated/common/enums.js';
+import { CardType, CharacterStateType } from '../generated/common/enums';
 
 // 디버프 적용 처리 로직
 const cardContainmentUnitEffect = (

@@ -115,6 +115,6 @@ describe('cardAbsorbEffect', () => {
 		const result = cardAbsorbEffect(roomId, userId, targetId);
 
 		expect(result).toBe(false);
-		expect(consoleErrorSpy).toHaveBeenCalledWith(`[흡수] Redis 업데이트 실패:`, dbError);
+		expect(consoleErrorSpy).toHaveBeenCalledWith(`[흡수] 업데이트 실패:`, dbError);
 	});
 });

@@ -1,10 +1,10 @@
 import { getRoom, saveRoom } from './room.utils';
-import { Room } from '../models/room.model.js';
-import { RoleType, WinType, RoomStateType } from '../generated/common/enums.js';
-import { setGameEndNotification } from '../handlers/notification/game.end.notification.handler.js';
-import { broadcastDataToRoom } from './notification.util.js';
-import { GamePacketType } from '../enums/gamePacketType.js';
-import gameManager from '../managers/game.manager.js';
+import { Room } from '../models/room.model';
+import { RoleType, WinType, RoomStateType } from '../generated/common/enums';
+import { setGameEndNotification } from '../handlers/notification/game.end.notification.handler';
+import { broadcastDataToRoom } from './notification.util';
+import { GamePacketType } from '../enums/gamePacketType';
+import gameManager from '../managers/game.manager';
 
 /**
  * 게임 종료 조건을 검사하고 필요시 게임을 종료하는 함수
