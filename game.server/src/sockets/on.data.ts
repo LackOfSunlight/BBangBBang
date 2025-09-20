@@ -1,6 +1,5 @@
 import { Socket } from 'net';
 import { handleError } from '../handlers/handleError.js';
-import { handleGamePacket } from '../handlers/gamePacketHandler.js';
 import { GamePacket } from '../generated/gamePacket.js';
 import { gamePacketDispatcher } from '../dispatcher/game.packet.dispatcher.js';
 
@@ -11,18 +10,26 @@ interface Packet {
 	payload: Buffer;
 }
 
+// Socket 인터페이스 확장으로 타입 안전성 확보
+interface ExtendedSocket extends Socket {
+	buffer?: Buffer;
+}
+
 // 소켓별 버퍼를 관리하는 간단한 변수 (소켓 객체에 직접 저장)
 
 export const onData = (socket: Socket, chunk: Buffer) => {
 	try {
+		// ExtendedSocket으로 타입 캐스팅하여 타입 안전성 확보
+		const extendedSocket = socket as ExtendedSocket;
+		
 		// 기존 버퍼 가져오기 또는 새로 생성 (소켓 객체에 직접 저장)
-		let buffer = (socket as any).buffer || Buffer.alloc(0);
+		let buffer = extendedSocket.buffer || Buffer.alloc(0);
 
 		// 새 청크와 기존 버퍼 합치기
 		buffer = Buffer.concat([buffer, chunk]);
 
 		// 버퍼 업데이트 (소켓 객체에 직접 저장)
-		(socket as any).buffer = buffer;
+		extendedSocket.buffer = buffer;
 
 		while (buffer.length >= 11) {
 			// 최소 헤더 크기: type(2) + verLen(1) + seq(4) + payloadLen(4)
@@ -56,7 +63,7 @@ export const onData = (socket: Socket, chunk: Buffer) => {
 			gamePacketDispatcher(socket, gamePacket);
 
 			buffer = buffer.subarray(payloadEnd);
-			(socket as any).buffer = buffer;
+			extendedSocket.buffer = buffer;
 		}
 	} catch (error) {
 		handleError(socket, error);
@@ -65,5 +72,6 @@ export const onData = (socket: Socket, chunk: Buffer) => {
 
 // 소켓 연결 종료 시 버퍼 정리
 export const cleanupSocketBuffer = (socket: Socket) => {
-	delete (socket as any).buffer;
+	const extendedSocket = socket as ExtendedSocket;
+	delete extendedSocket.buffer;
 };
