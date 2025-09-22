@@ -93,3 +93,16 @@ export const removeCard = (user: User, room: Room, cardType: CardType) => {
 		console.log('해당 카드를 소유하고 있지 않습니다.');
 	}
 };
+
+export const addCardToUser = (user: User, cardType: CardType) => {
+	if (!user.character) {
+		return;
+	}
+	const cardInHand = user.character.handCards.find((c) => c.type === cardType);
+	if (cardInHand) {
+		cardInHand.count++;
+	} else {
+		user.character.handCards.push({ type: cardType, count: 1 });
+	}
+	user.character.handCardsCount = user.character.handCards.reduce((sum, card) => sum + card.count, 0);
+};

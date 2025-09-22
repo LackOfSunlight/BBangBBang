@@ -57,13 +57,6 @@ const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	);
 	sendData(socket, useCardResponsePacket, GamePacketType.useCardResponse);
 
-	const userUpdateNotificationPacket =  createUserUpdateNotificationPacket(room.users);
-	broadcastDataToRoom(
-		room.users,
-		userUpdateNotificationPacket,
-		GamePacketType.userUpdateNotification,
-	);
-
 };
 
 /** 오류코드:잘못된요청을 일괄 처리하기 위한 함수 */

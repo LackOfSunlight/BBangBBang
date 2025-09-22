@@ -75,7 +75,7 @@ export const gameStartUseCase = async (
 		const characterPositionsData = shuffle(spawnPositions);
 
 		// 게임 상태 설정 (다음 페이즈까지의 시간 등)
-		const duration = 180000; // 낮 시간 3분
+		const duration = 60000; // 낮 시간 3분
 
 		const gameState: GameStateData = {
 			phaseType: PhaseType.DAY,
@@ -113,7 +113,7 @@ export const gameStartUseCase = async (
 					{type:CardType.SHIELD,count:3},
 					// {type:CardType.SNIPER_GUN,count:3},
 					{type:CardType.BBANG,count:3},
-					// {type:CardType.ABSORB,count:3},
+					{type:CardType.ABSORB,count:3},
 					// {type:CardType.AUTO_RIFLE, count:3},
 					// {type:CardType.AUTO_SHIELD, count:3},
 				    // {type:CardType.CALL_119, count:3},
