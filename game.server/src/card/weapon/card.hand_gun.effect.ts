@@ -11,13 +11,15 @@ const cardHandGunEffect = (roomId: number, userId: string): boolean => {
 		const user = room.users.find((u) => u.id === userId);
 		if (!user || !user.character) return false;
 
-		// 카드 제거
-		removeCard(user, room, CardType.HAND_GUN);
-
-		// 핸드건 카드 효과: 하루에 사용할 수 있는 빵야!가 두 개로 증가
-		// 무기 카드이므로 자신에게만 적용 (targetUserId 무시)
-
-		user.character.weapon = CardType.HAND_GUN;
+		if (user.character.weapon !== CardType.HAND_GUN) {
+			// 핸드건 카드 효과: 하루에 사용할 수 있는 빵야!가 두 개로 증가
+			// 무기 카드이므로 자신에게만 적용 (targetUserId 무시)
+			user.character.weapon = CardType.HAND_GUN;
+			// 카드 제거
+			removeCard(user, room, CardType.HAND_GUN);
+		} else {
+			return false;
+		}
 
 		// 방의 유저 정보 업데이트
 		updateCharacterFromRoom(roomId, user.id, user.character);

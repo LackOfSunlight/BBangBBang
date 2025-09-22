@@ -14,21 +14,24 @@ const cardStealthSuitEffect = (roomId: number, userId: string): boolean => {
 			return false;
 		}
 
-		// 카드 제거
-		removeCard(user, room, CardType.STEALTH_SUIT);
-
-		// 기존 스텔스 장치가 있는지 확인 (중복 착용 방지)
-		const existingStealthIndex = user.character.equips.findIndex(
-			(equipId) => equipId === CardType.STEALTH_SUIT,
-		);
-
-		if (existingStealthIndex >= 0) {
-			// 이미 스텔스 장치를 착용 중인 경우 - 교체 (기존 장비 제거 후 새로 추가)
-			user.character.equips.splice(existingStealthIndex, 1);
+		if (!user.character.equips.includes(CardType.STEALTH_SUIT)) {
+			// 스텔스 장치 장착 (장비 ID: CardType.STEALTH_SUIT)
+			user.character.equips.push(CardType.STEALTH_SUIT);
+			// 카드 제거
+			removeCard(user, room, CardType.STEALTH_SUIT);
+		} else {
+			return false;
 		}
 
-		// 스텔스 장치 장착 (장비 ID: CardType.STEALTH_SUIT)
-		user.character.equips.push(CardType.STEALTH_SUIT);
+		// // 기존 스텔스 장치가 있는지 확인 (중복 착용 방지)
+		// const existingStealthIndex = user.character.equips.findIndex(
+		// 	(equipId) => equipId === CardType.STEALTH_SUIT,
+		// );
+
+		// if (existingStealthIndex >= 0) {
+		// 	// 이미 스텔스 장치를 착용 중인 경우 - 교체 (기존 장비 제거 후 새로 추가)
+		// 	user.character.equips.splice(existingStealthIndex, 1);
+		// }
 
 		updateCharacterFromRoom(roomId, user.id, user.character);
 		console.log(`[스텔스 장치] ${user.nickname}이 스텔스 장치를 장착했습니다.`);

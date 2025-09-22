@@ -19,11 +19,14 @@ const cardAutoShieldEffect = (roomId: number, userId: string): boolean => {
 			return false;
 		}
 
-		// 조건 만족 시 카드 제거
-		removeCard(user, room, CardType.AUTO_SHIELD);
-
-		// 자동 방패 장착
-		user.character.equips.push(CardType.AUTO_SHIELD);
+		if (!user.character.equips.includes(CardType.AUTO_SHIELD)) {
+			// 자동 방패 장착
+			user.character.equips.push(CardType.AUTO_SHIELD);
+			// 조건 만족 시 카드 제거
+			removeCard(user, room, CardType.AUTO_SHIELD);
+		} else {
+			return false;
+		}
 
 		// 정보 업데이트
 		updateCharacterFromRoom(roomId, userId, user.character);
