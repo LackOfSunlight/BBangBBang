@@ -38,7 +38,7 @@ class GameManager {
 		const phase = PhaseType.DAY;
 		roomPhase.set(roomId, phase);
 
-		const intervalId = setInterval(() => broadcastPositionUpdates(room), 1000000);
+		const intervalId = setInterval(() => broadcastPositionUpdates(room), 200);
 
 		positionUpdateIntervals.set(room.id, intervalId);
 		this.scheduleNextPhase(room.id, roomId);
@@ -46,8 +46,8 @@ class GameManager {
 
 	private scheduleNextPhase(roomId: number, roomTimerMapId: string) {
 		this.clearTimer(roomTimerMapId);
-		const dayInterval = 60000; // 1분
-		const eveningInterval = 10000; //30초
+		const dayInterval = 30000; // 1분
+		const eveningInterval = 30000; //30초
 
 		let nextPhase: PhaseType;
 		let interval: number;
@@ -83,20 +83,22 @@ class GameManager {
 							user = removedCard(room, user);
 						}
 
-						const drawCards = drawDeck(room.id, 2);
-						drawCards.forEach((type) => {
-							const existCard = user.character?.handCards.find((card) => card.type === type);
-							if (existCard) {
-								existCard.count += 1;
-							} else {
-								user.character?.handCards.push({ type, count: 1 });
-							}
-						});
+						if (user.character!.stateInfo?.state !== CharacterStateType.CONTAINED) {
+							const drawCards = drawDeck(room.id, 2);
+							drawCards.forEach((type) => {
+								const existCard = user.character?.handCards.find((card) => card.type === type);
+								if (existCard) {
+									existCard.count += 1;
+								} else {
+									user.character?.handCards.push({ type, count: 1 });
+								}
+							});
 
-						user.character!.handCardsCount = user.character!.handCards.reduce(
-							(sum, card) => sum + card.count,
-							0,
-						);
+							user.character!.handCardsCount = user.character!.handCards.reduce(
+								(sum, card) => sum + card.count,
+								0,
+							);
+						}
 
 						user.character!.bbangCount = 0;
 						if (user.character!.stateInfo!.state !== CharacterStateType.CONTAINED) {
