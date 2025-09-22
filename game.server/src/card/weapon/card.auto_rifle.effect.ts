@@ -18,12 +18,16 @@ const cardAutoRifleEffect = (roomId: number, userId: string): boolean => {
 		return false;
 	}
 
+	if (user.character.weapon !== CardType.AUTO_RIFLE) {
+		user.character.weapon = CardType.AUTO_RIFLE;
+		removeCard(user, room, CardType.AUTO_RIFLE);
+	} else {
+		return false;
+	}
+
 	// 카드 제거
-	removeCard(user, room, CardType.AUTO_RIFLE);
-	
+
 	// 16;AUTO_RIFLE 장착
-	user.character.weapon = CardType.AUTO_RIFLE; 
-	
 
 	// 수정 정보 갱신
 	try {
