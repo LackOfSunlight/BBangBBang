@@ -1,6 +1,6 @@
 // cardType = 8
 
-import { CardType } from '../../generated/common/enums';
+import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { removeCard } from '../../managers/card.manager';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 
@@ -10,6 +10,10 @@ const cardAbsorbEffect = (roomId: number, userId: string, targetUserId: string):
 	let room = getRoom(roomId)
 	// 유효성 검증
 	if (!user || !user.character || !target || !target.character) return false;
+
+	if(target.character.stateInfo?.state === CharacterStateType.CONTAINED){
+		return false;
+	}
 
 	// 대상의 손에 카드가 있는지 확인s
 	const targetHand = target.character.handCards;
