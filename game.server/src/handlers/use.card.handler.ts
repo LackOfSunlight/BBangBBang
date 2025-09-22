@@ -3,7 +3,8 @@ import { CardType, GlobalFailCode } from "../generated/common/enums";
 import { GamePacket } from "../generated/gamePacket";
 import { Room } from "../models/room.model";
 import { GameSocket } from "../type/game.socket";
-import { useCardUseCase } from "../useCase/use.card/use.card.usecase";
+import { createUserUpdateNotificationPacket, useCardUseCase } from "../useCase/use.card/use.card.usecase";
+import { broadcastDataToRoom } from "../utils/notification.util";
 import { getRoom } from "../utils/room.utils";
 import { sendData } from "../utils/send.data";
 import { getGamePacketType } from "../utils/type.converter";
@@ -55,6 +56,13 @@ const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 		res.failcode,
 	);
 	sendData(socket, useCardResponsePacket, GamePacketType.useCardResponse);
+
+	const userUpdateNotificationPacket =  createUserUpdateNotificationPacket(room.users);
+	broadcastDataToRoom(
+		room.users,
+		userUpdateNotificationPacket,
+		GamePacketType.userUpdateNotification,
+	);
 
 };
 

@@ -17,7 +17,11 @@ const cardShieldEffect = (roomId: number, userId: string, targetUserId: string):
 		return false;
 	}
 
-	if (user.character.stateInfo?.state === CharacterStateType.NONE_CHARACTER_STATE) return false;
+	if (user.character.stateInfo!.state === CharacterStateType.NONE_CHARACTER_STATE||
+		user.character.stateInfo!.state === undefined
+	) {	
+		return false;
+	}
 
 	removeCard(user, room, CardType.SHIELD);
 
