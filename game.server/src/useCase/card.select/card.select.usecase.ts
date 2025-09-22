@@ -12,7 +12,6 @@ import { GameSocket } from '../../type/game.socket';
 import { addCardToUser } from '../../managers/card.manager';
 import { broadcastDataToRoom } from '../../utils/notification.util';
 import { getRoom, getUserFromRoom } from '../../utils/room.utils';
-import { sendData } from '../../utils/send.data';
 
 export const cardSelectUseCase = (
 	socket: GameSocket,
@@ -48,13 +47,18 @@ export const cardSelectUseCase = (
 
 	if (selectType === SelectCardType.HAND) {
 		const targetHand = target.character.handCards;
-		const cardIndex = targetHand.findIndex((card) => card.type === selectCardType);
-		if (cardIndex > -1) {
-			stolenCardType = targetHand[cardIndex].type;
-			if (targetHand[cardIndex].count > 1) {
-				targetHand[cardIndex].count -= 1;
+		const randomIndex = Math.floor(Math.random()*targetHand.length);
+		const targetCard = targetHand[randomIndex];
+		if (targetCard) {
+			// 찾은 카드 타입 저장
+			stolenCardType = targetCard.type;
+			if (targetCard.count > 1) {
+				// 여러 장 있으면 개수만 줄임
+				targetCard.count -= 1;
 			} else {
-				targetHand.splice(cardIndex, 1);
+				// 1장뿐이면 배열에서 제거
+				const index = targetHand.indexOf(targetCard);
+				targetHand.splice(index, 1);
 			}
 		}
 	} else if (selectType === SelectCardType.EQUIP) {
@@ -65,7 +69,7 @@ export const cardSelectUseCase = (
 	} else if (selectType === SelectCardType.WEAPON) {
 		if (target.character.weapon === selectCardType) {
 			stolenCardType = target.character.weapon;
-			target.character.weapon = CardType.NONE;
+			target.character.weapon = 0;
 		}
 	} else if (selectType === SelectCardType.DEBUFF) {
 		const cardIndex = target.character.debuffs.findIndex((cardType) => cardType === selectCardType);
@@ -80,23 +84,6 @@ export const cardSelectUseCase = (
 		return { success: false, failCode: GlobalFailCode.UNKNOWN_ERROR };
 	}
 
-	const responsePacket = (): GamePacket => {
-	const responsePacket: GamePacket = {
-		payload: {
-			oneofKind: 'cardSelectResponse',
-			cardSelectResponse: {
-				success: true,
-                failCode: GlobalFailCode.NONE_FAILCODE
-			},
-		},
-	};
-
-	return responsePacket;
-};
-
-
-	sendData(socket, responsePacket(), GamePacketType.cardSelectResponse);
-
 	// Reset states
 	user.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
 	user.character.stateInfo!.stateTargetUserId = '0';
@@ -108,6 +95,7 @@ export const cardSelectUseCase = (
 		userUpdateNotificationPacket,
 		GamePacketType.userUpdateNotification,
 	);
+
 
 	return { success: true, failCode: GlobalFailCode.NONE_FAILCODE };
 };
@@ -124,4 +112,3 @@ export const createUserUpdateNotificationPacket = (user: User[]): GamePacket => 
 
 	return NotificationPacket;
 };
-

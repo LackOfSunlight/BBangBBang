@@ -15,7 +15,7 @@ const cardSelectHandler = async (socket: GameSocket, gamePacket: GamePacket) => 
     }
 
     const req = payload.cardSelectRequest
-    const res = await cardSelectUseCase(socket, req);
+    const res = cardSelectUseCase(socket, req);
 
     const responsePacket: GamePacket = {
         payload: {
@@ -23,6 +23,8 @@ const cardSelectHandler = async (socket: GameSocket, gamePacket: GamePacket) => 
             cardSelectResponse: res
         }
     }
+
+    sendData(socket, responsePacket, GamePacketType.cardSelectResponse);
     
 
 }
