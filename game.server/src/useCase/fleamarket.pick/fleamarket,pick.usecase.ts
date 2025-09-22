@@ -62,12 +62,15 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 	}
 
 	// 모든 유저가 FLEA_MARKET_WAIT 상태인지 확인
-	const allWaiting = room.users.every(
-		(u) => u.character?.stateInfo?.state === CharacterStateType.FLEA_MARKET_WAIT,
-	);
+	const allWaiting = room.users
+		.filter((u) => u.character?.stateInfo?.state !== CharacterStateType.CONTAINED)
+		.every((u) => u.character?.stateInfo?.state === CharacterStateType.FLEA_MARKET_WAIT);
 
 	if (allWaiting) {
 		for (const u of room.users) {
+			// 감옥에 있는 애들은 상태를 바꾸지 않음
+			if (u.character?.stateInfo?.state === CharacterStateType.CONTAINED) continue;
+
 			u.character!.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
 			u.character!.stateInfo!.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 			u.character!.stateInfo!.nextStateAt = '0';
@@ -83,7 +86,6 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 	broadcastDataToRoom(room.users, fleaMarketGamePacket, GamePacketType.fleaMarketNotification);
 
 	broadcastDataToRoom(room.users, userUpdateGamePacket, GamePacketType.userUpdateNotification);
-	console.log('플리마켓 리퀘스트 완료');
 
 	return formFleaMarketResponse(true, GlobalFailCode.NONE_FAILCODE);
 };

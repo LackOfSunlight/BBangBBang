@@ -50,7 +50,7 @@ const cardContainmentUnitEffect = (
 };
 
 // 효과 대상자 체크
-export const checkContainmentUnitTarget = async (roomId: number) => {
+export const checkContainmentUnitTarget = (roomId: number) => {
 	const room = getRoom(roomId);
 	if (!room || !room.users) {
 		console.error(`[debuffCONTAINMENT_UNIT] 방을 찾을 수 없습니다: roomId=${roomId}`);

@@ -11,6 +11,10 @@ const cardAbsorbEffect = (roomId: number, userId: string, targetUserId: string):
 	// 유효성 검증
 	if (!user || !user.character || !target || !target.character) return false;
 
+	if(target.character.stateInfo?.state === CharacterStateType.CONTAINED){
+		return false;
+	}
+
 	// 대상의 손에 카드가 있는지 확인s
 	const targetHand = target.character.handCards;
 	if (targetHand.length === 0) {
