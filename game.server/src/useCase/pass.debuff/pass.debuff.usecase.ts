@@ -17,7 +17,7 @@ const passDebuffUseCase = async (
 
 	try {
 		// 1. 방 존재 확인
-		const room = getRoom(parseInt(roomId));
+		const room = getRoom(roomId);
 	} catch (error) {
 		// 방을 찾을 수 없는 경우
 		return setPassDebuffResponse(false, GlobalFailCode.ROOM_NOT_FOUND);
@@ -25,7 +25,7 @@ const passDebuffUseCase = async (
 
 	try {
 		// 1. 방 존재 확인 (재시도)
-		const room = getRoom(parseInt(roomId));
+		const room = getRoom(roomId);
 
 		// 2. 요청자와 대상자가 같은 방에 있는지 확인
 		const fromUser = room.users.find((u) => u.id === userId);
@@ -36,21 +36,21 @@ const passDebuffUseCase = async (
 		}
 
 		// 3. 요청자가 해당 디버프를 가지고 있는지 확인
-		const hasDebuff = fromUser.character.debuffs.includes(req.debuffCardType);
+		const hasDebuff = fromUser.character!.debuffs.includes(req.debuffCardType);
 		if (!hasDebuff) {
 			return setPassDebuffResponse(false, GlobalFailCode.CHARACTER_NO_CARD);
 		}
 
 		// 4. 디버프 전달 실행
 		// 요청자에서 디버프 제거
-		const updatedFromDebuffs = fromUser.character.debuffs.filter(
+		const updatedFromDebuffs = fromUser.character!.debuffs.filter(
 			(debuff) => debuff !== req.debuffCardType,
 		);
-		updateCharacterFromRoom(parseInt(roomId), userId, { debuffs: updatedFromDebuffs });
+		updateCharacterFromRoom(roomId, userId, { debuffs: updatedFromDebuffs });
 
 		// 대상자에게 디버프 추가
-		const updatedToDebuffs = [...toUser.character.debuffs, req.debuffCardType];
-		updateCharacterFromRoom(parseInt(roomId), req.targetUserId, { debuffs: updatedToDebuffs });
+		const updatedToDebuffs = [...toUser.character!.debuffs, req.debuffCardType];
+		updateCharacterFromRoom(roomId, req.targetUserId, { debuffs: updatedToDebuffs });
 
 		// 5. 성공 응답
 		return setPassDebuffResponse(true, GlobalFailCode.NONE_FAILCODE);
