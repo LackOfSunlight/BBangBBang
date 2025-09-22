@@ -10,7 +10,7 @@ const cardSniperGunEffect = (roomId: number, userId: string): boolean => {
 	// 유효성 검증
 	if (!user || !user.character) return false;
 
-	if (user.character.weapon === CardType.SNIPER_GUN) {
+	if (user.character.weapon !== CardType.SNIPER_GUN) {
 		user.character.weapon = CardType.SNIPER_GUN;
 		removeCard(user, room, CardType.SNIPER_GUN);
 	} else {

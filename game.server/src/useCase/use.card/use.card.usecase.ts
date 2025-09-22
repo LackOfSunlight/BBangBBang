@@ -3,10 +3,11 @@ import { GamePacketType } from '../../enums/gamePacketType';
 import { CardType, GlobalFailCode } from '../../generated/common/enums';
 import { User } from '../../models/user.model';
 
-import { getRoom } from '../../utils/room.utils';
+import { getRoom, getUserFromRoom } from '../../utils/room.utils';
 
 import { applyCardEffect } from '../../utils/apply.card.effect';
 import { broadcastDataToRoom } from '../../utils/notification.util.js';
+import { Socket } from 'dgram';
 
 export const useCardUseCase = (
 	userId: string,
@@ -30,6 +31,7 @@ export const useCardUseCase = (
 	// 메인 로직
 	const isSuccess = applyCardEffect(roomId, cardType, userId, targetUserId!);
 	if (!isSuccess) {
+		console.log("사용 실패");
 		return { success: false, failcode: GlobalFailCode.INVALID_REQUEST };
 	}
 
@@ -37,23 +39,24 @@ export const useCardUseCase = (
 	const useCardNotificationPacket = createUseCardNotificationPacket(cardType, userId, targetUserId);
 
 	// 장착이 가능한가? equipCard : useCard
-	if (cardType >= 13 && cardType <= 20)
+	if (cardType >= 13 && cardType <= 20){
 		broadcastDataToRoom(
 			room.users,
 			useCardNotificationPacket,
 			GamePacketType.equipCardNotification,
 		);
+	}
 	else
 		broadcastDataToRoom(room.users, useCardNotificationPacket, GamePacketType.useCardNotification);
 
 	// userUpdateNotification 패킷 전달
 
-	const userUpdateNotificationPacket = createUserUpdateNotificationPacket(room.users);
-	broadcastDataToRoom(
-		room.users,
-		userUpdateNotificationPacket,
-		GamePacketType.userUpdateNotification,
-	);
+	// const userUpdateNotificationPacket = createUserUpdateNotificationPacket(room.users);
+	// broadcastDataToRoom(
+	// 	room.users,
+	// 	userUpdateNotificationPacket,
+	// 	GamePacketType.userUpdateNotification,
+	// );
 
 	return {
 		success: true,

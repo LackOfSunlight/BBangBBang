@@ -89,8 +89,6 @@ export const removeCard = (user: User, room: Room, cardType: CardType) => {
 				0,
 			);
 		}
-
-		updateCharacterFromRoom(room.id, user.id, user.character!);
 	} else {
 		console.log('해당 카드를 소유하고 있지 않습니다.');
 	}
