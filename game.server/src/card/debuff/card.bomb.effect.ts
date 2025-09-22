@@ -1,11 +1,12 @@
 // cardType = 22
 import { getRoom, getUserFromRoom, saveRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { removeCard } from '../../managers/card.manager';
-import { CardType } from '../../generated/common/enums';
-import { GamePacket } from '../../generated/gamePacket';
+import { AnimationType, CardType } from '../../generated/common/enums';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { createUserUpdateNotificationPacket } from '../../useCase/use.card/use.card.usecase';
 import { broadcastDataToRoom } from '../../utils/notification.util';
+import { playAnimationHandler } from '../../handlers/play.animation.handler';
+import { checkAndEndGameIfNeeded } from '../../utils/game.end.util';
 
 // 폭탄 디버프 부여
 const cardBombEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
@@ -128,8 +129,12 @@ export const bombExplosion = (roomId:number, bombUserId: string ) => {
 	}
 
 	//animation 추후 추가 예정
+	playAnimationHandler(room.users, bombUserId, AnimationType.BOMB_ANIMATION);
+	//await new Promise((resolve) => setTimeout(resolve, 3000)); // 3초 대기
+
 	userInExplode.character.hp -= 2;
 	userInExplode.character.debuffs.splice(bombCardIndex, 1);
+	checkAndEndGameIfNeeded(roomId);
 
 	const userUpdateNotificationPacket =  createUserUpdateNotificationPacket(room.users);
     broadcastDataToRoom(room.users, userUpdateNotificationPacket, GamePacketType.userUpdateNotification);
