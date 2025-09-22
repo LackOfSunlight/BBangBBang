@@ -36,6 +36,8 @@ const joinRandomRoomUseCase = async (
 
 			addUserToRoom(room.id, user);
 
+			socket.roomId = room.id;
+
 			const notificationPacket = setJoinRoomNotification(user);
 
 			broadcastDataToRoom(room.users, notificationPacket, GamePacketType.joinRoomNotification);

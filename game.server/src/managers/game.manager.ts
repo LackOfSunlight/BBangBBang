@@ -37,7 +37,7 @@ class GameManager {
 		const phase = PhaseType.DAY;
 		roomPhase.set(roomId, phase);
 
-		const intervalId = setInterval(() => broadcastPositionUpdates(room), 100);
+		const intervalId = setInterval(() => broadcastPositionUpdates(room), 200);
 
 		positionUpdateIntervals.set(room.id, intervalId);
 		this.scheduleNextPhase(room.id, roomId);
