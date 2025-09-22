@@ -15,16 +15,16 @@ const cardDeathMatchEffect = (roomId: number, userId: string, targetUserId: stri
 	// 유효성 검증
 	if (!target || !target.character) return false;
 
-	// 카드 제거
-	removeCard(user, room, CardType.DEATH_MATCH);
-
 	const isBbangCard: boolean = user.character.handCards.some((c) => c.type === CardType.BBANG);
 	const isEnemyBbangCard: boolean = target.character.handCards.some((c) => c.type === CardType.BBANG);
 
-	// 캐릭터중 어느쪽도 빵야 카드가 없다면 실행되지 않음
-	if (!isBbangCard || !isEnemyBbangCard) {
+	if (!isBbangCard || target.character.stateInfo?.state === CharacterStateType.CONTAINED) {
 		return false;
 	}
+
+
+	// 카드 제거
+	removeCard(user, room, CardType.DEATH_MATCH);
 
 	// 현피 카드 효과: 현피 상태 설정
 	// 사용자: DEATH_MATCH_TURN_STATE (현피 차례)

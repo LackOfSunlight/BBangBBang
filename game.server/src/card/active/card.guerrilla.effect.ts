@@ -16,8 +16,7 @@ const cardGuerrillaEffect = (roomId: number, userId: string, targetUserId: strin
 	const isBlockedStateUsers = room.users.some(
 		(s) =>
 			s.character &&
-			s.character.stateInfo?.state !== CharacterStateType.NONE_CHARACTER_STATE && // NONE이 아닌데
-			s.character.stateInfo?.state !== CharacterStateType.CONTAINED, // CONTAINED도 아닌 경우
+			s.character.stateInfo?.state !== CharacterStateType.NONE_CHARACTER_STATE// NONE이 아닌데
 	);
 
 	if (isBlockedStateUsers) {
@@ -37,7 +36,7 @@ const cardGuerrillaEffect = (roomId: number, userId: string, targetUserId: strin
 				continue;
 			}
 
-			if (user.character && user.character.hp > 0) {
+			if (user.character && user.character.hp > 0 && user.character.stateInfo.state != CharacterStateType.CONTAINED) {
 				user.character.stateInfo.state = CharacterStateType.GUERRILLA_TARGET;
 				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 				user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;

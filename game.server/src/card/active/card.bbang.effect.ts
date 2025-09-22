@@ -30,10 +30,14 @@ const cardBbangEffect = (roomId: number, userId: string, targetUserId: string): 
 		return false;
 	}
 
+	if(target.character.stateInfo.state === CharacterStateType.CONTAINED ){
+		console.error('[BBANG]타킷 유저의 상태가 감옥 상태입니다.');
+		return false;
+	}
+
 	// 카드 제거
 	removeCard(user, room, CardType.BBANG);
-	
-	
+
 	if (user.character.stateInfo.state === CharacterStateType.NONE_CHARACTER_STATE) {
 		// 상태 설정
 		user.character.stateInfo.state = CharacterStateType.BBANG_SHOOTER; // 빵야 카드 사용자는 BBANG_SHOOTER 상태가 되고

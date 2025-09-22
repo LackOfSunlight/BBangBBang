@@ -50,7 +50,7 @@ const cardContainmentUnitEffect = (
 };
 
 // 효과 대상자 체크
-export const checkContainmentUnitTarget = async (roomId: number) => {
+export const checkContainmentUnitTarget = (roomId: number) => {
 	const room = getRoom(roomId);
 	if (!room || !room.users) {
 		console.error(`[debuffCONTAINMENT_UNIT] 방을 찾을 수 없습니다: roomId=${roomId}`);
@@ -81,7 +81,7 @@ export const debuffContainmentUnitEffect = (roomId: number, userId: string) => {
 	//console.log(`[debuffCONTAINMENT_UNIT] (${user.nickname}) : 유저정보식별 성공`);
 
 	// 탈출 확률
-	const escapeProb = 25; 
+	const escapeProb = 0; 
 	// 실제확률 25; // 테스트용 99; 
 
 	if (user.character.debuffs.includes(CardType.CONTAINMENT_UNIT)) {

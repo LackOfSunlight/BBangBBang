@@ -2,8 +2,6 @@
 import {
 	getRoom,
 	getUserFromRoom,
-	saveRoom,
-	updateCharacterFromRoom,
 } from '../../utils/room.utils';
 import { CardType, CharacterStateType } from '../../generated/common/enums.js';
 import { removeCard } from '../../managers/card.manager.js';
@@ -20,8 +18,8 @@ const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string
 	const isBlockedStateUsers = room.users.some(
 		(s) =>
 			s.character &&
-			s.character.stateInfo?.state !== CharacterStateType.NONE_CHARACTER_STATE && // NONE이 아닌데
-			s.character.stateInfo?.state !== CharacterStateType.CONTAINED, // CONTAINED도 아닌 경우
+			s.character.stateInfo?.state !== CharacterStateType.NONE_CHARACTER_STATE// NONE이 아닌데
+			// s.character.stateInfo?.state !== CharacterStateType.CONTAINED, // CONTAINED도 아닌 경우
 	);
 
 	if (isBlockedStateUsers) {
@@ -42,7 +40,7 @@ const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string
 				continue;
 			}
 
-			if (user.character && user.character.hp > 0) {
+			if (user.character && user.character.hp > 0 && user.character.stateInfo.state != CharacterStateType.CONTAINED) {
 				user.character.stateInfo.state = CharacterStateType.BIG_BBANG_TARGET;
 				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 				user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
