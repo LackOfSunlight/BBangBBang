@@ -4,7 +4,7 @@ import { User } from '../../models/user.model';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { removeCard } from '../../managers/card.manager';
-import cardBbangEffect from '../card.bbang.effect';
+import cardBbangEffect from '../active/card.bbang.effect';
 
 // Mock dependencies
 jest.mock('../../utils/room.utils');

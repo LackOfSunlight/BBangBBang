@@ -1,9 +1,9 @@
 // cardType = 22
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
-import { CardType, AnimationType } from '../generated/common/enums';
-import { playAnimationHandler } from '../handlers/play.animation.handler';
-import { checkAndEndGameIfNeeded } from '../utils/game.end.util';
-import { removeCard } from '../managers/card.manager';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
+import { CardType, AnimationType } from '../../generated/common/enums';
+import { playAnimationHandler } from '../../handlers/play.animation.handler';
+import { checkAndEndGameIfNeeded } from '../../utils/game.end.util';
+import { removeCard } from '../../managers/card.manager';
 
 // 위성 타겟 카드 사용 시 디버프 추가
 const cardSatelliteTargetEffect = (

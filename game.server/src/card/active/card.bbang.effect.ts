@@ -1,8 +1,8 @@
 // cardType = 1
-import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../utils/room.utils';
-import { CardType, CharacterStateType } from '../generated/common/enums';
-import { CheckGuerrillaService } from '../services/guerrilla.check.service';
-import { removeCard } from '../managers/card.manager';
+import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../utils/room.utils';
+import { CardType, CharacterStateType } from '../../generated/common/enums';
+import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
+import { removeCard } from '../../managers/card.manager';
 
 const cardBbangEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	// 정보값 가져오기

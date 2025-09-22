@@ -33,7 +33,7 @@ global.setTimeout = jest.fn().mockImplementation((cb) => {
 	return {} as any;
 });
 
-import { checkSatelliteTargetEffect } from '../card/card.satellite_target.effect';
+import { checkSatelliteTargetEffect } from '../card/debuff/card.satellite_target.effect';
 import { AnimationType } from '../generated/common/enums';
 
 describe('위성타겟 애니메이션 테스트', () => {

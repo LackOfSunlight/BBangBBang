@@ -1,7 +1,7 @@
-import { CardType } from '../generated/common/enums';
-import { removeCard } from '../managers/card.manager';
-import getMaxHp from '../utils/character.util';
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
+import { CardType } from '../../generated/common/enums';
+import { removeCard } from '../../managers/card.manager';
+import getMaxHp from '../../utils/character.util';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 
 const cardVaccineEffect = (roomId: number, userId: string): boolean => {
 	try {

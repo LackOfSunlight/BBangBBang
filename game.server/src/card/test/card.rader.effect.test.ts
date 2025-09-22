@@ -1,7 +1,7 @@
 import { CardType } from '../../generated/common/enums';
 import { User } from '../../models/user.model';
 import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import cardRaderEffect from '../card.rader.effect';
+import cardRaderEffect from '../equip/card.rader.effect';
 
 // Mock dependencies
 jest.mock('../../utils/room.utils');

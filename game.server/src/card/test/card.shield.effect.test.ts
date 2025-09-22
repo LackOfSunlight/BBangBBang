@@ -3,7 +3,7 @@ import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import { CheckBigBbangService } from '../../services/bigbbang.check.service';
 import { getRoom, saveRoom } from '../../utils/room.utils';
-import cardShieldEffect from '../card.shield.effect';
+import cardShieldEffect from '../active/card.shield.effect';
 
 // Mock dependencies
 jest.mock('../../utils/room.utils');

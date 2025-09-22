@@ -8,9 +8,9 @@ import { GamePacket } from '../generated/gamePacket';
 import { GamePacketType } from '../enums/gamePacketType';
 import { broadcastDataToRoom } from '../utils/notification.util';
 import { User } from '../models/user.model';
-import { checkSatelliteTargetEffect } from '../card/card.satellite_target.effect';
+import { checkSatelliteTargetEffect } from '../card/debuff/card.satellite_target.effect';
 import { setPositionUpdateNotification } from '../handlers/notification/position.update.notification.handler';
-import { checkContainmentUnitTarget } from '../card/card.containment_unit.effect';
+import { checkContainmentUnitTarget } from '../card/debuff/card.containment_unit.effect';
 import { deleteRoom, getRoom, roomPhase, roomTimers, saveRoom } from '../utils/room.utils';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];

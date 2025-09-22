@@ -1,5 +1,5 @@
 // cardType = 9
-import { getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
+import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 
 const cardHallucinationEffect = (roomId: number, userId: string, targetUserId: string) : boolean => {
 	const user = getUserFromRoom(roomId, userId);

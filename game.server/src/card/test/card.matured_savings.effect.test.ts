@@ -1,5 +1,5 @@
 // card.matured_savings.effect.test.ts
-import cardMaturedSavingsEffect from '../card.matured_savings.effect';
+import cardMaturedSavingsEffect from '../active/card.matured_savings.effect';
 import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { drawDeck, getDeckSize } from '../../managers/card.manager';
 import { CardType } from '../../generated/common/enums';

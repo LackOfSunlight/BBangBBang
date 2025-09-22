@@ -1,6 +1,6 @@
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
-import { CardType } from '../generated/common/enums';
-import { removeCard } from '../managers/card.manager';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
+import { CardType } from '../../generated/common/enums';
+import { removeCard } from '../../managers/card.manager';
 
 const cardAutoShieldEffect = (roomId: number, userId: string): boolean => {
 	try {

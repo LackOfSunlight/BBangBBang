@@ -1,10 +1,10 @@
 // cardType = 10
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
-import { CardType, CharacterStateType } from '../generated/common/enums.js';
-import { GamePacket } from '../generated/gamePacket';
-import { GamePacketType } from '../enums/gamePacketType';
-import { drawDeck, fleaMarketPickIndex, roomFleaMarketCards } from '../managers/card.manager';
-import { broadcastDataToRoom } from '../utils/notification.util';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
+import { CardType, CharacterStateType } from '../../generated/common/enums.js';
+import { GamePacket } from '../../generated/gamePacket';
+import { GamePacketType } from '../../enums/gamePacketType';
+import { drawDeck, fleaMarketPickIndex, roomFleaMarketCards } from '../../managers/card.manager';
+import { broadcastDataToRoom } from '../../utils/notification.util';
 
 const cardFleaMarketEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	// 방 정보 가져오기

@@ -1,7 +1,7 @@
 // cardType = 13
-import { CardType } from '../generated/common/enums.js';
-import { removeCard } from '../managers/card.manager.js';
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils.js';
+import { CardType } from '../../generated/common/enums.js';
+import { removeCard } from '../../managers/card.manager.js';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils.js';
 
 const cardSniperGunEffect = (roomId: number, userId: string): boolean => {
 	const user = getUserFromRoom(roomId, userId);

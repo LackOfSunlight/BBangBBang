@@ -1,4 +1,4 @@
-import cardCall119Effect from '../card.call_119.effect';
+import cardCall119Effect from '../active/card.call_119.effect';
 import * as roomUtils from '../../utils/room.utils';
 import { CharacterType, RoleType, RoomStateType } from '../../generated/common/enums';
 import { User } from '../../models/user.model';

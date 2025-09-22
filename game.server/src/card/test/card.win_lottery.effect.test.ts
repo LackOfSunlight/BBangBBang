@@ -1,4 +1,4 @@
-import cardWinLotteryEffect from '../card.win_lottery.effect';
+import cardWinLotteryEffect from '../active/card.win_lottery.effect';
 import * as roomUtils from '../../utils/room.utils';
 import * as cardManager from '../../managers/card.manager';
 import { CharacterType, RoleType, CardType } from '../../generated/common/enums';

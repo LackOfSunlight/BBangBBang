@@ -1,8 +1,8 @@
 // cardType = 8
 
-import { CardType } from '../generated/common/enums';
-import { removeCard } from '../managers/card.manager';
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
+import { CardType } from '../../generated/common/enums';
+import { removeCard } from '../../managers/card.manager';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 
 const cardAbsorbEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	const user = getUserFromRoom(roomId, userId);

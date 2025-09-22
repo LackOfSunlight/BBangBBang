@@ -7,7 +7,6 @@ import { getRoom, getUserFromRoom } from '../../utils/room.utils';
 
 import { applyCardEffect } from '../../utils/apply.card.effect';
 import { broadcastDataToRoom } from '../../utils/notification.util.js';
-import { Socket } from 'dgram';
 
 export const useCardUseCase = (
 	userId: string,

@@ -3,7 +3,7 @@ import { removeCard } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import cardAutoShieldEffect, { autoShieldBlock } from '../card.auto_shield.effect';
+import cardAutoShieldEffect, { autoShieldBlock } from '../equip/card.auto_shield.effect';
 import { Character } from '../../models/character.model';
 
 // 의존성 모의(Mock) 설정

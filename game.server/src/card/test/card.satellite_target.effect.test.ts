@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, jest, afterEach } from '@jest/globals';
 import { CardType, AnimationType } from '../../generated/common/enums';
-import { checkSatelliteTargetEffect } from '../card.satellite_target.effect';
-import cardSatelliteTargetEffect from '../card.satellite_target.effect';
+import { checkSatelliteTargetEffect } from '../debuff/card.satellite_target.effect';
+import cardSatelliteTargetEffect from '../debuff/card.satellite_target.effect';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { playAnimationHandler } from '../../handlers/play.animation.handler';
 import { checkAndEndGameIfNeeded } from '../../utils/game.end.util';

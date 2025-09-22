@@ -1,6 +1,6 @@
-import { CardType } from '../generated/common/enums';
-import { removeCard } from '../managers/card.manager';
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
+import { CardType } from '../../generated/common/enums';
+import { removeCard } from '../../managers/card.manager';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 const cardDesertEagleEffect = (roomId: number, userId: string): boolean => {
 	try {
 		const user = getUserFromRoom(roomId, userId);
