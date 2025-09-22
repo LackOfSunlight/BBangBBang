@@ -1,7 +1,7 @@
 // cardType = 21
-import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../utils/room.utils';
-import { CardType, CharacterStateType } from '../generated/common/enums';
-import { removeCard } from '../managers/card.manager';
+import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../utils/room.utils';
+import { CardType, CharacterStateType } from '../../generated/common/enums';
+import { removeCard } from '../../managers/card.manager';
 
 // 디버프 적용 처리 로직
 const cardContainmentUnitEffect = (

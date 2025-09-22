@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { CardType } from '../../generated/common/enums';
-import cardStealthSuitEffect from '../card.stealth_suit.effect';
+import cardStealthSuitEffect from '../equip/card.stealth_suit.effect';
 import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { User } from '../../models/user.model';
 import { CharacterData } from '../../generated/common/types';

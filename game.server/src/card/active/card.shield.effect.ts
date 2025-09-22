@@ -1,9 +1,9 @@
 // cardType = 3
-import { CardType, CharacterStateType, CharacterType } from '../generated/common/enums.js';
-import { CheckBigBbangService as checkBigBbangService } from '../services/bigbbang.check.service.js';
-import { getRoom, getUserFromRoom, saveRoom } from '../utils/room.utils.js';
-import { User } from '../models/user.model.js';
-import { removeCard } from '../managers/card.manager.js';
+import { CardType, CharacterStateType, CharacterType } from '../../generated/common/enums.js';
+import { CheckBigBbangService as checkBigBbangService } from '../../services/bigbbang.check.service.js';
+import { getRoom, getUserFromRoom, saveRoom } from '../../utils/room.utils.js';
+import { User } from '../../models/user.model.js';
+import { removeCard } from '../../managers/card.manager.js';
 
 const cardShieldEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	let room = getRoom(roomId);

@@ -1,7 +1,7 @@
 import { CardType } from '../../generated/common/enums';
 import { User } from '../../models/user.model';
 import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import cardSniperGunEffect from '../card.sniper_gun.effect';
+import cardSniperGunEffect from '../weapon/card.sniper_gun.effect';
 
 // Mock dependencies
 jest.mock('../../utils/room.utils');

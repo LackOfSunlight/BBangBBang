@@ -1,8 +1,8 @@
 // cardType = 11
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
-import { drawDeck, getDeckSize } from '../managers/card.manager.js';
-import { CardType } from '../generated/common/enums.js';
-import { removeCard } from '../managers/card.manager.js';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
+import { drawDeck, getDeckSize } from '../../managers/card.manager.js';
+import { CardType } from '../../generated/common/enums.js';
+import { removeCard } from '../../managers/card.manager.js';
 
 const cardMaturedSavingsEffect = (roomId: number, userId: string): boolean => {
 	const user = getUserFromRoom(roomId, userId);

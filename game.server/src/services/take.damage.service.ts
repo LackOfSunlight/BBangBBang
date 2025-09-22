@@ -1,4 +1,4 @@
-import { autoShieldBlock } from '../card/card.auto_shield.effect';
+import { autoShieldBlock } from '../card/equip/card.auto_shield.effect';
 import { AnimationType, CardType, CharacterType } from '../generated/common/enums';
 import { playAnimationHandler } from '../handlers/play.animation.handler';
 import { drawDeck } from '../managers/card.manager';

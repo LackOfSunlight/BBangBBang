@@ -1,4 +1,4 @@
-import cardDeathMatchEffect from '../card.death_match.effect';
+import cardDeathMatchEffect from '../active/card.death_match.effect';
 import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import {
 	CharacterStateType,

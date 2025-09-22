@@ -1,7 +1,7 @@
 // cardType = 18
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
-import { CardType } from '../generated/common/enums.js';
-import { removeCard } from '../managers/card.manager';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
+import { CardType } from '../../generated/common/enums.js';
+import { removeCard } from '../../managers/card.manager';
 
 const cardRaderEffect = (roomId: number, userId: string): boolean => {
 	const room = getRoom(roomId);

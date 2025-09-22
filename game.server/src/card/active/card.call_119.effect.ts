@@ -1,8 +1,8 @@
 // cardType = 5
-import { getRoom, updateCharacterFromRoom, getUserFromRoom } from '../utils/room.utils';
-import { CharacterType, CardType } from '../generated/common/enums';
-import { CharacterData } from '../generated/common/types';
-import { removeCard } from '../managers/card.manager.js';
+import { getRoom, updateCharacterFromRoom, getUserFromRoom } from '../../utils/room.utils';
+import { CharacterType, CardType } from '../../generated/common/enums';
+import { CharacterData } from '../../generated/common/types';
+import { removeCard } from '../../managers/card.manager.js';
 
 // 캐릭터 타입별 최대 체력 정의
 const getMaxHp = (characterType: CharacterType): number => {

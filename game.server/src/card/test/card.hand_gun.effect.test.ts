@@ -1,4 +1,4 @@
-import cardHandGunEffect from '../card.hand_gun.effect';
+import cardHandGunEffect from '../weapon/card.hand_gun.effect';
 import * as roomUtils from '../../utils/room.utils';
 import { CharacterType, RoleType } from '../../generated/common/enums';
 

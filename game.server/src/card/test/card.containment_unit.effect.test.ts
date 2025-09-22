@@ -1,7 +1,7 @@
 import cardContainmentUnitEffect, {
   checkContainmentUnitTarget,
   debuffContainmentUnitEffect,
-} from '../../card/card.containment_unit.effect';
+} from '../debuff/card.containment_unit.effect';
 import { CardType, CharacterStateType } from '../../generated/common/enums.js';
 import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../utils/room.utils';
 

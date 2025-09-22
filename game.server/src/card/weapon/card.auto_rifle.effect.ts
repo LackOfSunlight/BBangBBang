@@ -1,8 +1,8 @@
 // cardType = 16
 
-import { CardType } from '../generated/common/enums';
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
-import { removeCard, repeatDeck } from '../managers/card.manager';
+import { CardType } from '../../generated/common/enums';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
+import { removeCard, repeatDeck } from '../../managers/card.manager';
 
 const cardAutoRifleEffect = (roomId: number, userId: string): boolean => {
 	// 정보값 가져오기

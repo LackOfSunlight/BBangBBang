@@ -1,7 +1,7 @@
 // cardType = 20
-import { CardType } from '../generated/common/enums';
-import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../utils/room.utils';
-import { removeCard } from '../managers/card.manager.js';
+import { CardType } from '../../generated/common/enums';
+import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../utils/room.utils';
+import { removeCard } from '../../managers/card.manager.js';
 
 const cardStealthSuitEffect = (roomId: number, userId: string): boolean => {
 	try {

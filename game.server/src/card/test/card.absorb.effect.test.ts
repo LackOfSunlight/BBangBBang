@@ -2,7 +2,7 @@ import { CardType } from '../../generated/common/enums';
 import { removeCard } from '../../managers/card.manager';
 import { User } from '../../models/user.model';
 import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import cardAbsorbEffect from '../card.absorb.effect';
+import cardAbsorbEffect from '../active/card.absorb.effect';
 
 // Mock dependencies
 jest.mock('../../utils/room.utils');

@@ -1,4 +1,4 @@
-import cardDesertEagleEffect from '../card.desert_eagle.effect';
+import cardDesertEagleEffect from '../weapon/card.desert_eagle.effect';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { User } from '../../models/user.model';
 import {

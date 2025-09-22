@@ -3,7 +3,7 @@ import { drawSpecificCard } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import { getRoom, getUserFromRoom, saveRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import cardGuerrillaEffect from '../card.guerrilla.effect';
+import cardGuerrillaEffect from '../active/card.guerrilla.effect';
 import { RoomStateType } from '../../generated/common/enums';
 
 // Mock dependencies

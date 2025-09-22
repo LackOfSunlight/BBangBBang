@@ -1,22 +1,18 @@
-// cardType = 2
+// cardType = 7
+import { CardType, CharacterStateType } from '../../generated/common/enums.js';
+import { removeCard } from '../../managers/card.manager.js';
 import {
 	getRoom,
 	getUserFromRoom,
 	saveRoom,
-	updateCharacterFromRoom,
-} from '../utils/room.utils';
-import { CardType, CharacterStateType } from '../generated/common/enums.js';
-import { removeCard } from '../managers/card.manager.js';
+} from '../../utils/room.utils.js';
 
-const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
+const cardGuerrillaEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	const room = getRoom(roomId);
 	const shooter = getUserFromRoom(roomId, userId);
 
-	if (!room || !shooter) {
-		return false;
-	}
+	if (!room || !shooter) return false;
 
-	// "카드 사용을 막아야 하는 상태"만 정의
 	const isBlockedStateUsers = room.users.some(
 		(s) =>
 			s.character &&
@@ -28,13 +24,12 @@ const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string
 		return false;
 	}
 
-	removeCard(shooter, room, CardType.BIG_BBANG);
-
+	removeCard(shooter, room, CardType.GUERRILLA);
 
 	for (let user of room.users) {
 		if (user.character?.stateInfo?.state != null) {
 			if (user.id === userId) {
-				user.character.stateInfo.state = CharacterStateType.BIG_BBANG_SHOOTER;
+				user.character.stateInfo.state = CharacterStateType.GUERRILLA_SHOOTER;
 				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 				user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
 				user.character.stateInfo.stateTargetUserId = targetUserId;
@@ -43,7 +38,7 @@ const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string
 			}
 
 			if (user.character && user.character.hp > 0) {
-				user.character.stateInfo.state = CharacterStateType.BIG_BBANG_TARGET;
+				user.character.stateInfo.state = CharacterStateType.GUERRILLA_TARGET;
 				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 				user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
 				user.character.stateInfo.stateTargetUserId = userId;
@@ -51,9 +46,8 @@ const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string
 		}
 	}
 
-	// saveRoom(room);
-
+	saveRoom(room);
 	return true;
 };
 
-export default cardBigBbangEffect;
+export default cardGuerrillaEffect;

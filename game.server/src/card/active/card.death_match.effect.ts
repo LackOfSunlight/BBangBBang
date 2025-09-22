@@ -1,7 +1,7 @@
 // cardType = 6
-import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../utils/room.utils';
-import { CardType, CharacterStateType } from '../generated/common/enums';
-import { removeCard } from '../managers/card.manager.js';
+import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../utils/room.utils';
+import { CardType, CharacterStateType } from '../../generated/common/enums';
+import { removeCard } from '../../managers/card.manager.js';
 
 const cardDeathMatchEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	const user = getUserFromRoom(roomId, userId);
