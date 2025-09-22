@@ -12,6 +12,7 @@ import { checkSatelliteTargetEffect } from '../card/debuff/card.satellite_target
 import { setPositionUpdateNotification } from '../handlers/notification/position.update.notification.handler';
 import { checkContainmentUnitTarget } from '../card/debuff/card.containment_unit.effect';
 import { deleteRoom, getRoom, roomPhase, roomTimers, saveRoom } from '../utils/room.utils';
+import { bombManager } from '../card/debuff/card.bomb.effect';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 const positionUpdateIntervals = new Map<number, NodeJS.Timeout>();
@@ -45,7 +46,7 @@ class GameManager {
 
 	private scheduleNextPhase(roomId: number, roomTimerMapId: string) {
 		this.clearTimer(roomTimerMapId);
-		const dayInterval = 600000; // 1분
+		const dayInterval = 60000; // 1분
 		const eveningInterval = 10000; //30초
 
 		let nextPhase: PhaseType;
@@ -174,6 +175,9 @@ class GameManager {
 			positionUpdateIntervals.delete(room.id); // Map에서 제거
 		}
 		this.clearTimer(roomId);
+		
+		// 방 종료 시 폭탄 타이머 정리
+    	bombManager.clearRoom(room.id);
 
 		deleteRoom(room.id);
 	}
