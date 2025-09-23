@@ -1,11 +1,13 @@
 import { C2SPassDebuffRequest } from '../../generated/packet/game_actions';
 import { getRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import { GlobalFailCode } from '../../generated/common/enums';
+import { GlobalFailCode, CardType } from '../../generated/common/enums';
+import { GamePacketType } from '../../enums/gamePacketType';
 import { GamePacket } from '../../generated/gamePacket';
 import { GameSocket } from '../../type/game.socket';
 import { passDebuffResponseForm } from '../../factory/packet.pactory';
 import { bombManager } from '../../card/debuff/card.bomb.effect';
-import { createUserUpdateNotificationPacket } from '../use.card/use.card.usecase';
+//import { createUserUpdateNotificationPacket } from '../use.card/use.card.usecase';
+import { userUpdateNotificationPacketForm } from '../../factory/packet.pactory';
 import { broadcastDataToRoom } from '../../utils/notification.util';
 
 const passDebuffUseCase = async (
@@ -62,7 +64,7 @@ const passDebuffUseCase = async (
 		updateCharacterFromRoom(roomId, fromUser.id, fromUser.character!);
     	updateCharacterFromRoom(roomId, toUser.id, toUser.character!);
 
-		const updateClient = createUserUpdateNotificationPacket(room.users);
+		const updateClient = userUpdateNotificationPacketForm(room.users);
 		broadcastDataToRoom(room.users, updateClient, GamePacketType.userUpdateNotification);
 
 		// 6. 성공 응답

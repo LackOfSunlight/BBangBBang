@@ -4,7 +4,9 @@ import { removeCard } from '../../managers/card.manager';
 import { AnimationType, CardType, WarningType } from '../../generated/common/enums';
 import { GamePacket } from '../../generated/gamePacket';
 import { GamePacketType } from '../../enums/gamePacketType';
-import { createUserUpdateNotificationPacket } from '../../useCase/use.card/use.card.usecase';
+//import { createUserUpdateNotificationPacket } from '../../useCase/use.card/use.card.usecase';
+import { warnNotificationPacketForm } from '../../factory/packet.pactory';
+import { userUpdateNotificationPacketForm } from '../../factory/packet.pactory';
 import { broadcastDataToRoom } from '../../utils/notification.util';
 import { playAnimationHandler } from '../../handlers/play.animation.handler';
 import { checkAndEndGameIfNeeded } from '../../utils/game.end.util';
@@ -94,7 +96,7 @@ class BombManager {
 
 		if (remain <= 0) {
 			// 경고 패킷 초기화
-			const warnExplosionOver = createWarnNotificationPacket(WarningType.NO_WARNING, `0`);
+			const warnExplosionOver = warnNotificationPacketForm(WarningType.NO_WARNING, `0`);
 			broadcastDataToRoom(room.users, warnExplosionOver, GamePacketType.warningNotification);
 			// 타이머 제거
 			clearInterval(timer);
@@ -105,7 +107,7 @@ class BombManager {
 		}
 		else if(remain === 10){
 			// 경고 패킷 활성화 
-			const warnExplosion = createWarnNotificationPacket(WarningType.BOMB_WANING, `${remain}`);
+			const warnExplosion = warnNotificationPacketForm(WarningType.BOMB_WANING, `${remain}`);
 			broadcastDataToRoom(room.users, warnExplosion, GamePacketType.warningNotification);
 		}
 
@@ -166,7 +168,7 @@ export const bombExplosion = (roomId:number, bombUserId: string ) => {
 	userInExplode.character.debuffs.splice(bombCardIndex, 1);
 	checkAndEndGameIfNeeded(roomId);
 
-	const userUpdateNotificationPacket =  createUserUpdateNotificationPacket(room.users);
+	const userUpdateNotificationPacket =  userUpdateNotificationPacketForm(room.users);
     broadcastDataToRoom(room.users, userUpdateNotificationPacket, GamePacketType.userUpdateNotification);
     console.log(`[BOMB] 폭탄이 ${userInExplode.nickname} 에서 폭발하였습니다`);
 
@@ -187,22 +189,22 @@ export const bombExplosion = (roomId:number, bombUserId: string ) => {
     int64 expectedAt = 2; // 밀리초 타임스탬프
 } 
 	*/
-export const createWarnNotificationPacket = (
-	warningType: WarningType,
-	expectedAt: string
-): GamePacket => {
-	const NotificationPacket: GamePacket = {
-		payload: {
-			oneofKind: GamePacketType.warningNotification,
-			warningNotification: {
-				warningType: warningType,
-				expectedAt : expectedAt
-			},
-		},
-	};
+// export const createWarnNotificationPacket = (
+// 	warningType: WarningType,
+// 	expectedAt: string
+// ): GamePacket => {
+// 	const NotificationPacket: GamePacket = {
+// 		payload: {
+// 			oneofKind: GamePacketType.warningNotification,
+// 			warningNotification: {
+// 				warningType: warningType,
+// 				expectedAt : expectedAt
+// 			},
+// 		},
+// 	};
 
-	return NotificationPacket;
-};
+// 	return NotificationPacket;
+// };
 
 
 export default cardBombEffect;
