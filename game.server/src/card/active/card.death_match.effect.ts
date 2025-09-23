@@ -6,6 +6,7 @@ import { removeCard } from '../../managers/card.manager.js';
 const cardDeathMatchEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	const user = getUserFromRoom(roomId, userId);
 	const room = getRoom(roomId);
+	const nowTime = Date.now();
 
 	// 유효성 검증
 	if (!user || !user.character || !room) return false;
@@ -33,14 +34,14 @@ const cardDeathMatchEffect = (roomId: number, userId: string, targetUserId: stri
 	user.character.stateInfo = {
 		state: CharacterStateType.DEATH_MATCH_TURN_STATE,
 		nextState: CharacterStateType.NONE_CHARACTER_STATE,
-		nextStateAt: '0',
+		nextStateAt: `${nowTime + 10}`,
 		stateTargetUserId: targetUserId,
 	};
 
 	target.character.stateInfo = {
 		state: CharacterStateType.DEATH_MATCH_STATE,
 		nextState: CharacterStateType.NONE_CHARACTER_STATE,
-		nextStateAt: '0',
+		nextStateAt: `${nowTime + 10}`,
 		stateTargetUserId: userId,
 	};
 
