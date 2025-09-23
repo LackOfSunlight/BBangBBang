@@ -136,15 +136,16 @@ class GameManager {
 			const roomMap = notificationCharacterPosition.get(room.id);
 
 			if (roomMap) {
+				// 🎯 페이즈 변경 시에는 모든 플레이어 위치를 새로 할당
+				roomMap.clear(); // 기존 데이터 정리
+				
 				for (let i = 0; i < room.users.length; i++) {
-					if (room.users[i].character!.hp <= 0) {
-						const pos = roomMap.get(room.users[i].id);
-						if (pos) characterPosition[i] = pos;
-
-						continue;
-					}
+					// 모든 플레이어(죽은 플레이어 포함)에게 새로운 위치 할당
 					roomMap.set(room.users[i].id, characterPosition[i]);
 				}
+				
+				// 🚀 페이즈 변경으로 인한 위치 변화 플래그 설정
+				roomPositionChanged.set(room.id, true);
 			}
 
 			const newInterval = nextPhase === PhaseType.DAY ? dayInterval : eveningInterval;
@@ -244,7 +245,7 @@ export const broadcastPositionUpdates = (room: Room) => {
 		return; // 위치 변화가 없으면 패킷 전송 생략
 	}
 
-	// 🎯 간단한 최적화: notificationCharacterPosition에 있는 데이터만 브로드캐스트
+	// 간단한 최적화: notificationCharacterPosition에 있는 데이터만 브로드캐스트
 	// (position.update.usecase에서 이미 변화된 플레이어만 추가했으므로)
 	const characterPositions: CharacterPositionData[] = [];
 	
@@ -256,11 +257,20 @@ export const broadcastPositionUpdates = (room: Room) => {
 		});
 	}
 
-	// 위치 업데이트 패킷 생성
-	const gamePacket = positionUpdateNotificationForm(characterPositions);
+	// 데이터가 있을 때만 브로드캐스트
+	if (characterPositions.length > 0) {
+		// 위치 업데이트 패킷 생성
+		const gamePacket = positionUpdateNotificationForm(characterPositions);
 
-	// 방의 모든 유저에게 전송
-	broadcastDataToRoom(room.users, gamePacket, GamePacketType.positionUpdateNotification);
+		// 방의 모든 유저에게 전송
+		broadcastDataToRoom(room.users, gamePacket, GamePacketType.positionUpdateNotification);
+
+		// 🎯 핵심: 브로드캐스트 후 Map 비우기 (다음 변화까지 대기)
+		roomMap.clear();
+	}
+
+	// 변화 플래그 리셋 (다음 위치 변경까지 대기)
+	roomPositionChanged.set(room.id, false);
 };
 
 export default GameManager.getInstance();
