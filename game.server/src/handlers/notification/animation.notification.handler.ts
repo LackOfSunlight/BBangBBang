@@ -5,23 +5,7 @@
 // import { AnimationType } from '../../generated/common/enums';
 // import { UserData } from '../../generated/common/types';
 
-// export const sendAnimationNotification = (
-// 	users: UserData[],
-// 	userId: string,
-// 	animationType: AnimationType,
-// ) => {
-// 	const newGamePacket: GamePacket = {
-// 		payload: {
-// 			oneofKind: GamePacketType.animationNotification,
-// 			animationNotification: {
-// 				userId: userId,
-// 				animationType: animationType,
-// 			},
-// 		},
-// 	};
 
-// 	broadcastDataToRoom(users, newGamePacket, GamePacketType.animationNotification);
-// };
 
 // const animationNotificationHandler = (socket: GameSocket, gamePacket: GamePacket) => {};
 

@@ -1,5 +1,5 @@
 import { GamePacketType } from '../enums/gamePacketType';
-import { CardType, GlobalFailCode, PhaseType, WinType } from '../generated/common/enums';
+import { AnimationType, CardType, GlobalFailCode, PhaseType, WinType } from '../generated/common/enums';
 import {
 	CardData,
 	CharacterPositionData,
@@ -17,6 +17,7 @@ import {
 import { S2CLeaveRoomResponse } from '../generated/packet/room_actions';
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
+import { broadcastDataToRoom } from '../utils/notification.util';
 
 /**
  * 회원가입 응답
@@ -471,6 +472,30 @@ export const gameEndNotificationForm = (winners: string[], winType: WinType): Ga
 			gameEndNotification: {
 				winners,
 				winType,
+			},
+		},
+	};
+
+	return newGamePacket;
+};
+
+/**
+ * 애니메이션 알림
+ * @param users 
+ * @param userId 
+ * @param animationType 
+ */
+export const animationNotificationForm = (
+	users: UserData[],
+	userId: string,
+	animationType: AnimationType,
+) => {
+	const newGamePacket: GamePacket = {
+		payload: {
+			oneofKind: GamePacketType.animationNotification,
+			animationNotification: {
+				userId: userId,
+				animationType: animationType,
 			},
 		},
 	};
