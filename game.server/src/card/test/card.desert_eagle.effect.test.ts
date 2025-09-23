@@ -9,7 +9,7 @@ import {
 	RoomStateType,
 } from '../../generated/common/enums';
 import { CharacterData } from '../../generated/common/types';
-import { removeCard } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 
 // 의존성 모의(Mock) 설정
@@ -19,15 +19,12 @@ jest.mock('../../utils/room.utils', () => ({
 	updateCharacterFromRoom: jest.fn(),
 }));
 
-jest.mock('../../managers/card.manager', () => ({
-	removeCard: jest.fn(),
-}));
+jest.mock('../../managers/card.manager');
 
 // 모의 함수(Mock Function) 정의
 const mockGetRoom = getRoom as jest.Mock;
 const mockGetUserFromRoom = getUserFromRoom as jest.Mock;
 const mockUpdateCharacterFromRoom = updateCharacterFromRoom as jest.Mock;
-const mockRemoveCard = removeCard as jest.Mock;
 
 describe('cardDesertEagleEffect', () => {
 	const ROOM_ID = 1;
@@ -72,7 +69,7 @@ describe('cardDesertEagleEffect', () => {
 
 		// 검증: 결과를 검증합니다.
 		expect(result).toBe(true);
-		expect(mockRemoveCard).toHaveBeenCalledTimes(1);
+		expect(cardManager.removeCard).toHaveBeenCalledTimes(1);
 		expect(mockGetUserFromRoom).toHaveBeenCalledWith(ROOM_ID, USER_ID);
 		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(
 			ROOM_ID,
@@ -92,7 +89,7 @@ describe('cardDesertEagleEffect', () => {
 
 		// 검증
 		expect(result).toBe(true);
-		expect(mockRemoveCard).toHaveBeenCalledTimes(1);
+		expect(cardManager.removeCard).toHaveBeenCalledTimes(1);
 		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(
 			ROOM_ID,
 			USER_ID,
@@ -111,7 +108,7 @@ describe('cardDesertEagleEffect', () => {
 
 		// 검증
 		expect(result).toBe(false);
-		expect(mockRemoveCard).not.toHaveBeenCalled();
+		expect(cardManager.removeCard).not.toHaveBeenCalled();
 		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled(); // 캐릭터 업데이트 함수가 호출되지 않았는지 확인
 	});
 
@@ -124,7 +121,7 @@ describe('cardDesertEagleEffect', () => {
 
 		// 검증
 		expect(result).toBe(false);
-		expect(mockRemoveCard).not.toHaveBeenCalled();
+		expect(cardManager.removeCard).not.toHaveBeenCalled();
 		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 	});
 
@@ -141,7 +138,7 @@ describe('cardDesertEagleEffect', () => {
 
 		// 검증
 		expect(result).toBe(false);
-		expect(mockRemoveCard).toHaveBeenCalledTimes(1); // 업데이트 실패 전 카드 제거는 호출되어야 함
+		expect(cardManager.removeCard).toHaveBeenCalledTimes(1); // 업데이트 실패 전 카드 제거는 호출되어야 함
 		expect(consoleErrorSpy).toHaveBeenCalledWith('[데저트 이글] 업데이트 실패:', dbError); // 에러 로그가 정상적으로 출력되었는지 확인
 		consoleErrorSpy.mockRestore();
 	});

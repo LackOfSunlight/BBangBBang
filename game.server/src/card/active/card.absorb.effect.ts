@@ -1,7 +1,7 @@
 // cardType = 8
 
 import { CardType, CharacterStateType } from '../../generated/common/enums';
-import { removeCard } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 
 const cardAbsorbEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
@@ -23,7 +23,7 @@ const cardAbsorbEffect = (roomId: number, userId: string, targetUserId: string):
 		return false;
 	}
 
-	removeCard(user, room, CardType.ABSORB);
+	cardManager.removeCard(user, room, CardType.ABSORB);
 
 	// 상태 변경
 	user.character.stateInfo!.state = CharacterStateType.ABSORBING;

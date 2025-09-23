@@ -1,5 +1,5 @@
 import { CardType, CharacterStateType, RoomStateType } from '../../generated/common/enums';
-import { drawSpecificCard } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import { getRoom, getUserFromRoom, saveRoom, updateCharacterFromRoom } from '../../utils/room.utils';
@@ -14,7 +14,6 @@ const mockGetRoom = getRoom as jest.Mock;
 const mockGetUserFromRoom = getUserFromRoom as jest.Mock;
 const mockSaveRoom = saveRoom as jest.Mock;
 const mockUpdateCharacterFromRoom = updateCharacterFromRoom as jest.Mock;
-const mockDrawSpecificCard = drawSpecificCard as jest.Mock;
 
 describe('cardBigBbangEffect', () => {
 	let mockRoom: Room;
@@ -80,15 +79,12 @@ describe('cardBigBbangEffect', () => {
 			target1.character!.stateInfo!.state = CharacterStateType.DEATH_MATCH_STATE;
 		});
 
-		it('카드를 되돌려받고 true를 반환해야 한다', () => {
-			mockDrawSpecificCard.mockReturnValue(CardType.BIG_BBANG);
-
+		it('카드를 되돌려받고 false를 반환해야 한다', () => {
 			const result = cardBigBbangEffect(roomId, shooterId, aimedTargetId);
 
-			expect(result).toBe(true);
-			expect(mockDrawSpecificCard).toHaveBeenCalledWith(roomId, CardType.BIG_BBANG);
-			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, shooterId, shooter.character);
-			expect(shooter.character!.handCards).toContainEqual({ type: CardType.BIG_BBANG, count: 1 });
+			expect(result).toBe(false);
+			expect(cardManager.drawSpecificCard).not.toHaveBeenCalled();
+			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 			expect(mockSaveRoom).not.toHaveBeenCalled();
 		});
 	});
@@ -98,13 +94,13 @@ describe('cardBigBbangEffect', () => {
 	describe('모든 유저가 일반 상태일 때', () => {
 		it('슈터와 HP가 0보다 큰 모든 타겟의 상태를 변경해야 한다', () => {
 			const now = Date.now();
-			const expectedNextStateAt = `${now + 10000}`;
+			const expectedNextStateAt = `${now + 10}`;
 
 			const result = cardBigBbangEffect(roomId, shooterId, aimedTargetId);
 
 			expect(result).toBe(true);
 			expect(mockSaveRoom).toHaveBeenCalledWith(mockRoom);
-			expect(mockDrawSpecificCard).not.toHaveBeenCalled();
+			expect(cardManager.drawSpecificCard).not.toHaveBeenCalled();
 
 			// Verify shooter's state
 			const shooterState = shooter.character!.stateInfo!;

@@ -1,7 +1,7 @@
 // cardType = 14
 import { getRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { CardType } from '../../generated/common/enums';
-import { removeCard } from '../../managers/card.manager.js';
+import { cardManager } from '../../managers/card.manager.js';
 
 const cardHandGunEffect = (roomId: number, userId: string): boolean => {
 	try {
@@ -16,7 +16,7 @@ const cardHandGunEffect = (roomId: number, userId: string): boolean => {
 			// 무기 카드이므로 자신에게만 적용 (targetUserId 무시)
 			user.character.weapon = CardType.HAND_GUN;
 			// 카드 제거
-			removeCard(user, room, CardType.HAND_GUN);
+			cardManager.removeCard(user, room, CardType.HAND_GUN);
 		} else {
 			return false;
 		}

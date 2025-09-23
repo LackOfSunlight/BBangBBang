@@ -3,12 +3,7 @@ import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/r
 import { CardType, CharacterStateType } from '../../generated/common/enums.js';
 import { GamePacket } from '../../generated/gamePacket';
 import { GamePacketType } from '../../enums/gamePacketType';
-import {
-	drawDeck,
-	fleaMarketPickIndex,
-	removeCard,
-	roomFleaMarketCards,
-} from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import { broadcastDataToRoom } from '../../utils/notification.util';
 
 const cardFleaMarketEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
@@ -23,7 +18,7 @@ const cardFleaMarketEffect = (roomId: number, userId: string, targetUserId: stri
 	const users = room.users;
 	if (!users || users.length === 0) throw new Error('No users in room');
 
-	removeCard(user, room, CardType.FLEA_MARKET);
+	cardManager.removeCard(user, room, CardType.FLEA_MARKET);
 
 	const prisonCount = users.reduce(
 		(count, u) => count + (u.character?.stateInfo?.state === CharacterStateType.CONTAINED ? 1 : 0),
@@ -31,9 +26,9 @@ const cardFleaMarketEffect = (roomId: number, userId: string, targetUserId: stri
 	);
 
 	// 방 수 만큼 카드 드로우
-	const selectedCards = drawDeck(room.id, users.length - prisonCount);
-	roomFleaMarketCards.set(roomId, selectedCards);
-	fleaMarketPickIndex.set(roomId, []);
+	const selectedCards = cardManager.drawDeck(room.id, users.length - prisonCount);
+	cardManager.roomFleaMarketCards.set(roomId, selectedCards);
+	cardManager.fleaMarketPickIndex.set(roomId, []);
 	// const pickIndex = selectedCards.map((_, index) => index);
 
 	user.character!.stateInfo!.state = CharacterStateType.FLEA_MARKET_TURN;

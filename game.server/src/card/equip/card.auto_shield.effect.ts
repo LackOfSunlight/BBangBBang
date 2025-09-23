@@ -1,6 +1,6 @@
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { CardType } from '../../generated/common/enums';
-import { removeCard } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 
 const cardAutoShieldEffect = (roomId: number, userId: string): boolean => {
 	try {
@@ -23,7 +23,7 @@ const cardAutoShieldEffect = (roomId: number, userId: string): boolean => {
 			// 자동 방패 장착
 			user.character.equips.push(CardType.AUTO_SHIELD);
 			// 조건 만족 시 카드 제거
-			removeCard(user, room, CardType.AUTO_SHIELD);
+			cardManager.removeCard(user, room, CardType.AUTO_SHIELD);
 		} else {
 			return false;
 		}

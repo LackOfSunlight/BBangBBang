@@ -2,7 +2,7 @@
 
 import { CardType } from '../../generated/common/enums';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import { removeCard, repeatDeck } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 
 const cardAutoRifleEffect = (roomId: number, userId: string): boolean => {
 	// 정보값 가져오기
@@ -20,7 +20,7 @@ const cardAutoRifleEffect = (roomId: number, userId: string): boolean => {
 
 	if (user.character.weapon !== CardType.AUTO_RIFLE) {
 		user.character.weapon = CardType.AUTO_RIFLE;
-		removeCard(user, room, CardType.AUTO_RIFLE);
+		cardManager.removeCard(user, room, CardType.AUTO_RIFLE);
 	} else {
 		return false;
 	}

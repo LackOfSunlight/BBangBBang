@@ -1,5 +1,5 @@
 import { CardType, CharacterType, RoleType, RoomStateType } from '../../generated/common/enums';
-import { removeCard } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
@@ -12,15 +12,12 @@ jest.mock('../../utils/room.utils', () => ({
 	getUserFromRoom: jest.fn(),
 	updateCharacterFromRoom: jest.fn(),
 }));
-jest.mock('../../managers/card.manager', () => ({
-	removeCard: jest.fn(),
-}));
+jest.mock('../../managers/card.manager');
 
 // 모의 함수(Mock Function) 정의
 const mockGetUserFromRoom = getUserFromRoom as jest.Mock;
 const mockUpdateCharacterFromRoom = updateCharacterFromRoom as jest.Mock;
 const mockGetRoom = getRoom as jest.Mock;
-const mockRemoveCard = removeCard as jest.Mock;
 
 describe('cardAutoShieldEffect', () => {
 	const roomId = 1;
@@ -47,7 +44,7 @@ describe('cardAutoShieldEffect', () => {
 		const result = cardAutoShieldEffect(roomId, userId);
 		// 검증
 		expect(result).toBe(false);
-		expect(mockRemoveCard).not.toHaveBeenCalled();
+		expect(cardManager.removeCard).not.toHaveBeenCalled();
 		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 	});
 
@@ -58,7 +55,7 @@ describe('cardAutoShieldEffect', () => {
 		const result = cardAutoShieldEffect(roomId, userId);
 		// 검증
 		expect(result).toBe(false);
-		expect(mockRemoveCard).not.toHaveBeenCalled();
+		expect(cardManager.removeCard).not.toHaveBeenCalled();
 		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 	});
 
@@ -69,7 +66,7 @@ describe('cardAutoShieldEffect', () => {
 
 		// 검증
 		expect(result).toBe(true);
-		expect(mockRemoveCard).toHaveBeenCalledTimes(1);
+		expect(cardManager.removeCard).toHaveBeenCalledTimes(1);
 		expect(mockUser.character!.equips).toContain(CardType.AUTO_SHIELD);
 		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, mockUser.character);
 	});
@@ -84,7 +81,7 @@ describe('cardAutoShieldEffect', () => {
 
 		// 검증
 		expect(result).toBe(false);
-		expect(mockRemoveCard).not.toHaveBeenCalled();
+		expect(cardManager.removeCard).not.toHaveBeenCalled();
 		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 	});
 
@@ -101,7 +98,7 @@ describe('cardAutoShieldEffect', () => {
 
 		// 검증
 		expect(result).toBe(false);
-		expect(mockRemoveCard).toHaveBeenCalledTimes(1); // 카드 제거는 먼저 실행됨
+		expect(cardManager.removeCard).toHaveBeenCalledTimes(1); // 카드 제거는 먼저 실행됨
 		expect(consoleErrorSpy).toHaveBeenCalledWith('[자동 방패] 처리 중 에러 발생:', dbError);
 		consoleErrorSpy.mockRestore();
 	});

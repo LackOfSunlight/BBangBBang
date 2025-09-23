@@ -1,6 +1,6 @@
 import cardWinLotteryEffect from '../active/card.win_lottery.effect';
 import * as roomUtils from '../../utils/room.utils';
-import * as cardManager from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import { CharacterType, RoleType, CardType } from '../../generated/common/enums';
 import { User } from '../../models/user.model';
 
@@ -10,6 +10,7 @@ jest.mock('../../managers/card.manager');
 const mockGetUserFromRoom = jest.spyOn(roomUtils, 'getUserFromRoom');
 const mockUpdateCharacterFromRoom = jest.spyOn(roomUtils, 'updateCharacterFromRoom');
 const mockDrawDeck = jest.spyOn(cardManager, 'drawDeck');
+const mockRemoveCard = jest.spyOn(cardManager, 'removeCard');
 
 beforeAll(() => {
 	jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -25,6 +26,7 @@ describe('cardWinLotteryEffect', () => {
 
 	beforeEach(() => {
 		jest.clearAllMocks();
+		mockRemoveCard.mockImplementation(() => {});
 	});
 
 	const createMockCharacter = (handCards: Array<{ type: CardType; count: number }> = []) => ({
@@ -47,6 +49,7 @@ describe('cardWinLotteryEffect', () => {
 			const result = cardWinLotteryEffect(roomId, userId);
 
 			expect(result).toBe(false);
+			expect(mockRemoveCard).not.toHaveBeenCalled();
 			expect(mockDrawDeck).not.toHaveBeenCalled();
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 		});
@@ -56,11 +59,12 @@ describe('cardWinLotteryEffect', () => {
 				id: userId,
 				nickname: 'testUser',
 				// character 속성이 없음
-			});
+			} as User);
 
 			const result = cardWinLotteryEffect(roomId, userId);
 
 			expect(result).toBe(false);
+			expect(mockRemoveCard).not.toHaveBeenCalled();
 			expect(mockDrawDeck).not.toHaveBeenCalled();
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 		});
@@ -71,7 +75,7 @@ describe('cardWinLotteryEffect', () => {
 				id: userId,
 				nickname: 'testUser',
 				character: mockCharacter,
-			});
+			} as User);
 
 			mockDrawDeck.mockReturnValue([]);
 
@@ -80,6 +84,8 @@ describe('cardWinLotteryEffect', () => {
 			const result = cardWinLotteryEffect(roomId, userId);
 
 			expect(result).toBe(false);
+			expect(mockRemoveCard).toHaveBeenCalledTimes(1);
+			expect(mockDrawDeck).toHaveBeenCalledTimes(1);
 			expect(consoleSpy).toHaveBeenCalledWith('[복권 당첨] testUser: 덱에 카드가 없습니다.');
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 
@@ -104,6 +110,7 @@ describe('cardWinLotteryEffect', () => {
 			const result = cardWinLotteryEffect(roomId, userId);
 
 			expect(result).toBe(true);
+			expect(mockRemoveCard).toHaveBeenCalledTimes(1);
 			expect(mockDrawDeck).toHaveBeenCalledWith(roomId, 3);
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, mockCharacter);
 			expect(mockCharacter.handCards).toEqual([

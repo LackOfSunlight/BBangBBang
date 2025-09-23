@@ -3,7 +3,7 @@ import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/r
 import { CardType, AnimationType } from '../../generated/common/enums';
 import { playAnimationHandler } from '../../handlers/play.animation.handler';
 import { checkAndEndGameIfNeeded } from '../../utils/game.end.util';
-import { removeCard } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 
 // 위성 타겟 카드 사용 시 디버프 추가
 const cardSatelliteTargetEffect = (
@@ -25,7 +25,7 @@ const cardSatelliteTargetEffect = (
 			return true;
 		}
 
-		removeCard(user, room, CardType.SATELLITE_TARGET);
+		cardManager.removeCard(user, room, CardType.SATELLITE_TARGET);
 
 		// 디버프 추가
 		target.character.debuffs.push(CardType.SATELLITE_TARGET);

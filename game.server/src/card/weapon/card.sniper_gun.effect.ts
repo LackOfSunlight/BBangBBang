@@ -1,6 +1,6 @@
 // cardType = 13
 import { CardType } from '../../generated/common/enums.js';
-import { removeCard } from '../../managers/card.manager.js';
+import { cardManager } from '../../managers/card.manager.js';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils.js';
 
 const cardSniperGunEffect = (roomId: number, userId: string): boolean => {
@@ -12,7 +12,7 @@ const cardSniperGunEffect = (roomId: number, userId: string): boolean => {
 
 	if (user.character.weapon !== CardType.SNIPER_GUN) {
 		user.character.weapon = CardType.SNIPER_GUN;
-		removeCard(user, room, CardType.SNIPER_GUN);
+		cardManager.removeCard(user, room, CardType.SNIPER_GUN);
 	} else {
 		return false;
 	}

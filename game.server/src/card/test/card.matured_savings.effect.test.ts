@@ -1,17 +1,14 @@
 // card.matured_savings.effect.test.ts
 import cardMaturedSavingsEffect from '../active/card.matured_savings.effect';
 import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import { drawDeck, getDeckSize } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import { CardType } from '../../generated/common/enums';
 
 jest.mock('../../utils/room.utils', () => ({
 	getUserFromRoom: jest.fn(),
 	updateCharacterFromRoom: jest.fn(),
 }));
-jest.mock('../../managers/card.manager', () => ({
-	drawDeck: jest.fn(),
-	getDeckSize: jest.fn(),
-}));
+jest.mock('../../managers/card.manager');
 
 describe('cardMaturedSavingsEffect', () => {
   const roomId = 1;
@@ -42,12 +39,12 @@ describe('cardMaturedSavingsEffect', () => {
 
   it('덱 매수가 부족할 경우 false 반환', () => {
     (getUserFromRoom as jest.Mock).mockReturnValue(mockUser);
-    (getDeckSize as jest.Mock).mockReturnValue(1); // 필요한 2장보다 부족한 1장 추가
+    (cardManager.getDeckSize as jest.Mock).mockReturnValue(1); // 필요한 2장보다 부족한 1장 추가
 
     const result = cardMaturedSavingsEffect(roomId, userId);
 
     expect(result).toBe(false);
-    expect(getDeckSize).toHaveBeenCalledWith(roomId);
+    expect(cardManager.getDeckSize).toHaveBeenCalledWith(roomId);
   });
 
 
@@ -56,14 +53,14 @@ describe('cardMaturedSavingsEffect', () => {
       ...mockUser,
       character: { handCards: [], handCardsCount: 0 },
     });
-    (getDeckSize as jest.Mock).mockReturnValue(10);
-    (drawDeck as jest.Mock).mockReturnValue([CardType.BBANG, CardType.SHIELD]);
+    (cardManager.getDeckSize as jest.Mock).mockReturnValue(10);
+    (cardManager.drawDeck as jest.Mock).mockReturnValue([CardType.BBANG, CardType.SHIELD]);
     (updateCharacterFromRoom as jest.Mock).mockReturnValue(true);
 
     const result = cardMaturedSavingsEffect(roomId, userId); // jest.fn()은 toHaveBeenCalledWith으로 처리하기 힘들기에 jest.fn을 처리한 변수를 대신 대입
 
     expect(result).toBe(true);
-    expect(drawDeck).toHaveBeenCalledWith(roomId, 2);
+    expect(cardManager.drawDeck).toHaveBeenCalledWith(roomId, 2);
     expect(updateCharacterFromRoom).toHaveBeenCalled();
     const updatedUser = (updateCharacterFromRoom as jest.Mock).mock.calls[0][2];
     expect(updatedUser.handCards.length).toBe(2);
@@ -79,8 +76,8 @@ describe('cardMaturedSavingsEffect', () => {
         handCardsCount: 1,
       },
     });
-    (getDeckSize as jest.Mock).mockReturnValue(10);
-    (drawDeck as jest.Mock).mockReturnValue([CardType.BBANG, CardType.BBANG]);
+    (cardManager.getDeckSize as jest.Mock).mockReturnValue(10);
+    (cardManager.drawDeck as jest.Mock).mockReturnValue([CardType.BBANG, CardType.BBANG]);
     (updateCharacterFromRoom as jest.Mock).mockReturnValue(true);
 
     const result = cardMaturedSavingsEffect(roomId, userId);
@@ -94,8 +91,8 @@ describe('cardMaturedSavingsEffect', () => {
   
   it('updateCharacterFromRoom 실패 시 false 반환', () => {
     (getUserFromRoom as jest.Mock).mockReturnValue(mockUser);
-    (getDeckSize as jest.Mock).mockReturnValue(10);
-    (drawDeck as jest.Mock).mockReturnValue([CardType.BBANG, CardType.SHIELD]);
+    (cardManager.getDeckSize as jest.Mock).mockReturnValue(10);
+    (cardManager.drawDeck as jest.Mock).mockReturnValue([CardType.BBANG, CardType.SHIELD]);
     (updateCharacterFromRoom as jest.Mock).mockImplementation(() => {
       throw new Error('DB Error');
     });

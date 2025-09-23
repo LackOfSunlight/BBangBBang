@@ -2,7 +2,7 @@
 import { getRoom, updateCharacterFromRoom, getUserFromRoom } from '../../utils/room.utils';
 import { CharacterType, CardType } from '../../generated/common/enums';
 import { CharacterData } from '../../generated/common/types';
-import { removeCard } from '../../managers/card.manager.js';
+import { cardManager } from '../../managers/card.manager.js';
 
 // 캐릭터 타입별 최대 체력 정의
 const getMaxHp = (characterType: CharacterType): number => {
@@ -38,7 +38,7 @@ const cardCall119Effect = (roomId: number, userId: string, targetUserId: string)
 			}
 
 			// 카드 제거
-			removeCard(user, room, CardType.CALL_119);
+			cardManager.removeCard(user, room, CardType.CALL_119);
 			// 자신의 체력 회복
 			healCharacter(roomId, user, user.character);
 			return true;
@@ -49,7 +49,7 @@ const cardCall119Effect = (roomId: number, userId: string, targetUserId: string)
 			if (isAllFullHp) return false;
 
 			// 카드 제거
-			removeCard(user, room, CardType.CALL_119);
+			cardManager.removeCard(user, room, CardType.CALL_119);
 
 			// 나머지 플레이어들의 체력 회복
 			// 방의 모든 사용자 정보를 가져와서 자신을 제외한 나머지 플레이어들을 회복

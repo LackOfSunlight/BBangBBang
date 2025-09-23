@@ -1,5 +1,5 @@
 import { CardType } from '../../generated/common/enums';
-import { removeCard } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import getMaxHp from '../../utils/character.util';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 
@@ -22,7 +22,7 @@ const cardVaccineEffect = (roomId: number, userId: string): boolean => {
 			return false;
 		}
 
-		removeCard(user, room, CardType.VACCINE);
+		cardManager.removeCard(user, room, CardType.VACCINE);
 
 		const previousHp = user.character.hp;
 		user.character.hp = Math.min(user.character.hp + 1, maxHp);

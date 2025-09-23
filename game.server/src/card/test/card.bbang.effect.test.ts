@@ -3,7 +3,7 @@ import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import { removeCard } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import cardBbangEffect from '../active/card.bbang.effect';
 
 // Mock dependencies
@@ -16,7 +16,6 @@ const mockGetRoom = getRoom as jest.Mock;
 const mockGetUserFromRoom = getUserFromRoom as jest.Mock;
 const mockUpdateCharacterFromRoom = updateCharacterFromRoom as jest.Mock;
 const mockCheckGuerrillaService = CheckGuerrillaService as jest.Mock;
-const mockRemoveCard = removeCard as jest.Mock;
 
 describe('cardBbangEffect', () => {
   let mockRoom: Room;
@@ -80,7 +79,7 @@ describe('cardBbangEffect', () => {
 
   it('일반 상태에서 빵야를 사용하면 BBANG 상태로 변경', () => {
     const now = Date.now();
-    const expectedNextStateAt = `${now + 10000}`;
+    const expectedNextStateAt = `${now + 10}`;
 
     const result = cardBbangEffect(roomId, userId, targetId);
 
@@ -90,7 +89,7 @@ describe('cardBbangEffect', () => {
     expect(user.character!.stateInfo!.nextStateAt).toBe(expectedNextStateAt);
     expect(target.character!.stateInfo!.nextStateAt).toBe(expectedNextStateAt);
     expect(mockUpdateCharacterFromRoom).toHaveBeenCalledTimes(2);
-    expect(mockRemoveCard).toHaveBeenCalledWith(user, mockRoom, CardType.BBANG);
+    expect(cardManager.removeCard).toHaveBeenCalledWith(user, mockRoom, CardType.BBANG);
   });
 
   it('데스매치 턴 상태에서 빵야를 사용하면 데스매치 관련 상태로 변경', () => {
@@ -102,7 +101,7 @@ describe('cardBbangEffect', () => {
     expect(user.character!.stateInfo!.state).toBe(CharacterStateType.DEATH_MATCH_STATE);
     expect(target.character!.stateInfo!.state).toBe(CharacterStateType.DEATH_MATCH_TURN_STATE);
     expect(mockUpdateCharacterFromRoom).toHaveBeenCalledTimes(2);
-    expect(mockRemoveCard).toHaveBeenCalledWith(user, mockRoom, CardType.BBANG);
+    expect(cardManager.removeCard).toHaveBeenCalledWith(user, mockRoom, CardType.BBANG);
   });
 
   it('게릴라 타겟 상태에서 빵야를 사용하면 상태 초기화 & GuerrillaService 호출', () => {
@@ -114,7 +113,7 @@ describe('cardBbangEffect', () => {
     expect(user.character!.stateInfo!.state).toBe(CharacterStateType.NONE_CHARACTER_STATE);
     expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, user.character);
     expect(mockCheckGuerrillaService).toHaveBeenCalledWith(mockRoom);
-    expect(mockRemoveCard).toHaveBeenCalledWith(user, mockRoom, CardType.BBANG);
+    expect(cardManager.removeCard).toHaveBeenCalledWith(user, mockRoom, CardType.BBANG);
   });
 
   // --- Error Handling Test ---

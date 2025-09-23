@@ -1,20 +1,16 @@
 import { CardType } from '../../generated/common/enums';
-import { removeCard } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import { User } from '../../models/user.model';
 import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import cardAbsorbEffect from '../active/card.absorb.effect';
 
 // Mock dependencies
 jest.mock('../../utils/room.utils');
-jest.mock('../../managers/card.manager', () => ({
-	removeCard: jest.fn(),
-}));
+jest.mock('../../managers/card.manager');
 
 // Cast mocks to the correct type
 const mockGetUserFromRoom = getUserFromRoom as jest.Mock;
 const mockUpdateCharacterFromRoom = updateCharacterFromRoom as jest.Mock;
-const mockRemoveCard = removeCard as jest.Mock;
-
 
 describe('cardAbsorbEffect', () => {
 	let user: User;
@@ -64,7 +60,7 @@ describe('cardAbsorbEffect', () => {
 
 	it('유저 또는 타겟을 찾을 수 없으면 false를 반환해야 한다', () => {
 		mockGetUserFromRoom.mockReturnValue(null);
-		expect(mockRemoveCard).toHaveBeenCalledTimes(0)
+		expect(cardManager.removeCard).toHaveBeenCalledTimes(0);
 		expect(cardAbsorbEffect(roomId, userId, targetId)).toBe(false);
 	});
 
@@ -72,7 +68,7 @@ describe('cardAbsorbEffect', () => {
 		target.character!.handCards = [];
 		const result = cardAbsorbEffect(roomId, userId, targetId);
 		expect(result).toBe(false);
-		expect(mockRemoveCard).toHaveBeenCalledTimes(0)
+		expect(cardManager.removeCard).toHaveBeenCalledTimes(0);
 		expect(consoleLogSpy).toHaveBeenCalled();
 		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 	});
@@ -86,7 +82,7 @@ describe('cardAbsorbEffect', () => {
 		const result = cardAbsorbEffect(roomId, userId, targetId);
 
 		expect(result).toBe(true);
-		expect(mockRemoveCard).toHaveBeenCalledTimes(1)
+		expect(cardManager.removeCard).toHaveBeenCalledTimes(1);
 		// Target should lose the hand gun
 		expect(target.character!.handCards.some((c) => c.type === CardType.HAND_GUN)).toBe(false);
 		// User should gain the hand gun
@@ -104,7 +100,7 @@ describe('cardAbsorbEffect', () => {
 		const result = cardAbsorbEffect(roomId, userId, targetId);
 
 		expect(result).toBe(true);
-		expect(mockRemoveCard).toHaveBeenCalledTimes(1)
+		expect(cardManager.removeCard).toHaveBeenCalledTimes(1);
 		// Target's shield count should decrease
 		expect(target.character!.handCards.find((c) => c.type === CardType.SHIELD)?.count).toBe(2);
 		// User should gain one shield

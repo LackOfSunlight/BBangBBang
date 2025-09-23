@@ -1,6 +1,6 @@
 import { applyCardEffect } from '../apply.card.effect';
 import { getUserFromRoom, updateCharacterFromRoom } from '../room.utils';
-import { repeatDeck } from '../../managers/card.manager.js';
+import { cardManager } from '../../managers/card.manager.js';
 
 // 카드 효과 모듈 mock
 import cardAbsorbEffect from '../../card/active/card.absorb.effect.js';
@@ -31,39 +31,36 @@ jest.mock('../room.utils', () => ({
 	getUserFromRoom: jest.fn(),
 	updateCharacterFromRoom: jest.fn()
 }));
-jest.mock('../../managers/card.manager.js', () =>({
-	repeatDeck: jest.fn()
-}));
+jest.mock('../../managers/card.manager.js');
 
 // 모든 카드 효과 모듈을 default export jest.fn() 으로 mock 처리
-jest.mock('../../card/card.absorb.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.auto_rifle.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.auto_shield.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.bbang.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.bigbbang.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.bomb.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.call_119.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.containment_unit.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.death_match.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.desert_eagle.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.flea_market.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.guerrilla.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.hallucination.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.hand_gun.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.laser_pointer.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.matured_savings.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.rader.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.satellite_target.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.shield.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.sniper_gun.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.stealth_suit.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.vaccine.effect.js', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('../../card/card.win_lottery.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/active/card.absorb.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/weapon/card.auto_rifle.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/equip/card.auto_shield.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/active/card.bbang.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/active/card.bigbbang.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/debuff/card.bomb.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/active/card.call_119.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/debuff/card.containment_unit.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/active/card.death_match.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/weapon/card.desert_eagle.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/active/card.flea_market.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/active/card.guerrilla.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/active/card.hallucination.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/weapon/card.hand_gun.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/equip/card.laser_pointer.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/active/card.matured_savings.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/equip/card.rader.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/debuff/card.satellite_target.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/active/card.shield.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/weapon/card.sniper_gun.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/equip/card.stealth_suit.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/active/card.vaccine.effect.js', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('../../card/active/card.win_lottery.effect.js', () => ({ __esModule: true, default: jest.fn() }));
 
 
 const mockedGetUserFromRoom = getUserFromRoom as jest.Mock;
 const mockedUpdateCharacterFromRoom = updateCharacterFromRoom as jest.Mock;
-const mockedRepeatDeck = repeatDeck as jest.Mock;
 
 describe('applyCardEffect', () => {
   const roomId = 1;
@@ -105,7 +102,7 @@ describe('applyCardEffect', () => {
 
     const result = await applyCardEffect(roomId, 1, userId, targetUserId);
 
-    expect(mockedRepeatDeck).toHaveBeenCalledWith(roomId, [1]);
+    expect(cardManager.repeatDeck).toHaveBeenCalledWith(roomId, [1]);
     expect(mockedUpdateCharacterFromRoom).toHaveBeenCalled();
     expect(cardBbangEffect).toHaveBeenCalledWith(roomId, userId, targetUserId);
     expect(result).toBe(true);

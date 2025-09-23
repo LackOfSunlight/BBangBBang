@@ -1,6 +1,6 @@
 // cardType = 12
 import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../utils/room.utils';
-import { drawDeck, removeCard } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import { CardType } from '../../generated/common/enums';
 
 const cardWinLotteryEffect = (roomId: number, userId: string): boolean => {
@@ -11,14 +11,14 @@ const cardWinLotteryEffect = (roomId: number, userId: string): boolean => {
 	if (!user || !user.character || !room) return false;
 
 	// 카드 제거
-	removeCard(user, room, CardType.WIN_LOTTERY);
+	cardManager.removeCard(user, room, CardType.WIN_LOTTERY);
 
 	// 복권방 카드 효과: 새로운 카드 세 장을 획득
 	// useTag: "Lottery"로 복권방 NPC와만 상호작용
 	// targetUserId는 필요 없음 (isTargetSelect: false)
 
 	// 덱에서 카드 3장 뽑기 (CardType[] 반환)
-	const newCardTypes = drawDeck(roomId, 3);
+	const newCardTypes = cardManager.drawDeck(roomId, 3);
 
 	if (newCardTypes.length === 0) {
 		console.log(`[복권 당첨] ${user.nickname}: 덱에 카드가 없습니다.`);
