@@ -49,7 +49,7 @@ describe('positionUpdateUseCase', () => {
 		});
 
 		it('소켓에 roomId가 없으면 함수가 실패한다', async () => {
-			// @ts-expect-error: 테스트를 위한 모킹
+			// ts-expect-error: 테스트를 위한 모킹
 			const mockSocket = {
 				userId: userId,
 				roomId: undefined,

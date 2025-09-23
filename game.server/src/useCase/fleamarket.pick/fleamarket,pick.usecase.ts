@@ -1,14 +1,14 @@
 import { GamePacket } from '../../generated/gamePacket';
 import { GameSocket } from '../../type/game.socket';
 import { Room } from '../../models/room.model';
-import { CardType, CharacterStateType, GlobalFailCode } from '../../generated/common/enums';
+import { CharacterStateType, GlobalFailCode } from '../../generated/common/enums';
 import { GamePacketType } from '../../enums/gamePacketType';
-import { addUserToRoom, getRoom, getRooms, getUserFromRoom } from '../../utils/room.utils';
+import { getRoom, getUserFromRoom } from '../../utils/room.utils';
 import { User } from '../../models/user.model';
 import { broadcastDataToRoom } from '../../utils/notification.util';
 import { C2SFleaMarketPickRequest } from '../../generated/packet/game_actions';
 import { fleaMarketPickIndex, roomFleaMarketCards } from '../../managers/card.manager';
-import { count } from 'console';
+import { fleaMarketNotificationForm, fleaMarketResponseForm, userUpdateNotificationPacketForm } from '../../factory/packet.pactory';
 
 const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest): GamePacket => {
 	let userInfo: User;
@@ -19,7 +19,7 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 		userInfo = getUserFromRoom(room.id, socket.userId!);
 	} catch (err) {
 		console.log(`DB 에러 발생: ${err}`);
-		return formFleaMarketResponse(false, GlobalFailCode.ROOM_NOT_FOUND);
+		return fleaMarketResponseForm(false, GlobalFailCode.ROOM_NOT_FOUND);
 	}
 
 	const fleaMarketCards = roomFleaMarketCards.get(room.id);
@@ -27,7 +27,7 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 
 	if (fleaMarketCards === undefined || pickNumbers === undefined) {
 		console.log('플리마켓 카드덱에서 에러 발생');
-		return formFleaMarketResponse(false, GlobalFailCode.UNKNOWN_ERROR);
+		return fleaMarketResponseForm(false, GlobalFailCode.UNKNOWN_ERROR);
 	}
 
 	const selectedCard = fleaMarketCards[req.pickIndex];
@@ -80,55 +80,15 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 		roomFleaMarketCards.set(room.id, []);
 	}
 
-	const fleaMarketGamePacket = formFleaMarketNotification(fleaMarketCards, pickNumbers);
-	const userUpdateGamePacket = fromUserUpdateNotificationPacket(room.users);
+	const fleaMarketGamePacket = fleaMarketNotificationForm(fleaMarketCards, pickNumbers);
+	const userUpdateGamePacket = userUpdateNotificationPacketForm(room.users);
 
 	broadcastDataToRoom(room.users, fleaMarketGamePacket, GamePacketType.fleaMarketNotification);
 
 	broadcastDataToRoom(room.users, userUpdateGamePacket, GamePacketType.userUpdateNotification);
 
-	return formFleaMarketResponse(true, GlobalFailCode.NONE_FAILCODE);
+	return fleaMarketResponseForm(true, GlobalFailCode.NONE_FAILCODE);
 };
 
-const formFleaMarketResponse = (success: boolean, failCode: GlobalFailCode): GamePacket => {
-	const newGamePacket: GamePacket = {
-		payload: {
-			oneofKind: GamePacketType.fleaMarketPickResponse,
-			fleaMarketPickResponse: {
-				success,
-				failCode,
-			},
-		},
-	};
-
-	return newGamePacket;
-};
-
-const formFleaMarketNotification = (cardTypes: CardType[], pickIndex: number[]): GamePacket => {
-	const newGamePacket: GamePacket = {
-		payload: {
-			oneofKind: GamePacketType.fleaMarketNotification,
-			fleaMarketNotification: {
-				cardTypes,
-				pickIndex,
-			},
-		},
-	};
-
-	return newGamePacket;
-};
-
-const fromUserUpdateNotificationPacket = (user: User[]): GamePacket => {
-	const NotificationPacket: GamePacket = {
-		payload: {
-			oneofKind: GamePacketType.userUpdateNotification,
-			userUpdateNotification: {
-				user: user,
-			},
-		},
-	};
-
-	return NotificationPacket;
-};
 
 export default fleaMarketPickUseCase;

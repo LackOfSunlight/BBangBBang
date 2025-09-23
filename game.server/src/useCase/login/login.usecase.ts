@@ -7,12 +7,13 @@ import { GamePacketType } from '../../enums/gamePacketType';
 import checkUserPassword from '../../services/login/check.user.password';
 import { GameSocket } from '../../type/game.socket';
 import { addSocket } from '../../managers/socket.manger';
+import { loginResponseForm } from '../../factory/packet.pactory';
 
 const loginUseCase = async (socket: GameSocket, req: C2SLoginRequest): Promise<GamePacket> => {
 	const userInfo = await getUserByEmail(req.email);
 
 	if (!userInfo) {
-		return setLoginResponse(
+		return loginResponseForm(
 			false,
 			'해당 유저는 존재하지 않습니다.',
 			'',
@@ -21,11 +22,11 @@ const loginUseCase = async (socket: GameSocket, req: C2SLoginRequest): Promise<G
 	}
 
 	if (userInfo?.token) {
-		return setLoginResponse(false, '로그인 상태 입니다.', '', GlobalFailCode.INVALID_REQUEST);
+		return loginResponseForm(false, '로그인 상태 입니다.', '', GlobalFailCode.INVALID_REQUEST);
 	}
 
 	if (!(await checkUserPassword(req, userInfo.password))) {
-		return setLoginResponse(
+		return loginResponseForm(
 			false,
 			'비밀번호가 일치하지 않습니다.',
 			'',
@@ -43,30 +44,9 @@ const loginUseCase = async (socket: GameSocket, req: C2SLoginRequest): Promise<G
 		nickname: userInfo.nickname,
 	};
 
-	return setLoginResponse(true, '로그인 성공', token, GlobalFailCode.NONE_FAILCODE, user);
+	return loginResponseForm(true, '로그인 성공', token, GlobalFailCode.NONE_FAILCODE, user);
 };
 
-const setLoginResponse = (
-	success: boolean,
-	message: string,
-	token: string,
-	failCode: GlobalFailCode,
-	myInfo?: UserData,
-): GamePacket => {
-	const newGamePacket: GamePacket = {
-		payload: {
-			oneofKind: GamePacketType.loginResponse,
-			loginResponse: {
-				success: success,
-				message: message,
-				token: token,
-				myInfo: myInfo,
-				failCode: failCode,
-			},
-		},
-	};
 
-	return newGamePacket;
-};
 
 export default loginUseCase;

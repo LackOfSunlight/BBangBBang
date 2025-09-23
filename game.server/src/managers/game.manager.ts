@@ -1,6 +1,6 @@
 import { CardType, CharacterStateType, PhaseType } from '../generated/common/enums';
 import { Room } from '../models/room.model';
-import { drawDeck, repeatDeck, shuffleDeck } from './card.manager';
+import { drawDeck, repeatDeck } from './card.manager';
 import characterSpawnPosition from '../data/character.spawn.position.json';
 import { CharacterPositionData } from '../generated/common/types';
 import { shuffle } from '../utils/shuffle.util';
@@ -9,9 +9,9 @@ import { GamePacketType } from '../enums/gamePacketType';
 import { broadcastDataToRoom } from '../utils/notification.util';
 import { User } from '../models/user.model';
 import { checkSatelliteTargetEffect } from '../card/debuff/card.satellite_target.effect';
-import { setPositionUpdateNotification } from '../handlers/notification/position.update.notification.handler';
 import { checkContainmentUnitTarget } from '../card/debuff/card.containment_unit.effect';
 import { deleteRoom, getRoom, roomPhase, roomTimers, saveRoom } from '../utils/room.utils';
+import { positionUpdateNotificationForm } from '../factory/packet.pactory';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 const positionUpdateIntervals = new Map<number, NodeJS.Timeout>();
@@ -51,7 +51,7 @@ class GameManager {
 
 	private scheduleNextPhase(roomId: number, roomTimerMapId: string) {
 		this.clearTimer(roomTimerMapId);
-		const dayInterval = 600000; // 1분
+		const dayInterval = 60000; // 1분
 		const eveningInterval = 30000; //30초
 
 		let nextPhase: PhaseType;
@@ -256,17 +256,11 @@ export const broadcastPositionUpdates = (room: Room) => {
 		});
 	}
 
-	// 데이터가 있을 때만 브로드캐스트
-	if (characterPositions.length > 0) {
-		const gamePacket = setPositionUpdateNotification(characterPositions);
-		broadcastDataToRoom(room.users, gamePacket, GamePacketType.positionUpdateNotification);
-		
-		// 🎯 핵심: 브로드캐스트 후 Map 비우기 (다음 변화까지 대기)
-		roomMap.clear();
-	}
-	
-	// 변화 플래그 리셋 (다음 위치 변경까지 대기)
-	roomPositionChanged.set(room.id, false);
+	// 위치 업데이트 패킷 생성
+	const gamePacket = positionUpdateNotificationForm(characterPositions);
+
+	// 방의 모든 유저에게 전송
+	broadcastDataToRoom(room.users, gamePacket, GamePacketType.positionUpdateNotification);
 };
 
 export default GameManager.getInstance();
