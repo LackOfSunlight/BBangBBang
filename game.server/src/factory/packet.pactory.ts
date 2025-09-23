@@ -482,8 +482,8 @@ export const equipCardNotificationForm = (cardType: CardType, userId: string) =>
 		payload: {
 			oneofKind: GamePacketType.equipCardNotification,
 			equipCardNotification: {
-				cardType: cardType,
-				userId: userId,
+				cardType,
+				userId,
 			},
 		},
 	};
@@ -506,9 +506,9 @@ export const cardEffectNotificationForm = (
 		payload: {
 			oneofKind: GamePacketType.cardEffectNotification,
 			cardEffectNotification: {
-				cardType: cardType,
-				userId: userId,
-				success: true,
+				cardType,
+				userId,
+				success,
 			},
 		},
 	};
@@ -552,8 +552,8 @@ export const animationNotificationForm = (
 		payload: {
 			oneofKind: GamePacketType.animationNotification,
 			animationNotification: {
-				userId: userId,
-				animationType: animationType,
+				userId,
+				animationType,
 			},
 		},
 	};
