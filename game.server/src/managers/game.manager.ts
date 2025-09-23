@@ -12,6 +12,7 @@ import { checkSatelliteTargetEffect } from '../card/debuff/card.satellite_target
 import { checkContainmentUnitTarget } from '../card/debuff/card.containment_unit.effect';
 import { deleteRoom, getRoom, roomPhase, roomTimers, saveRoom } from '../utils/room.utils';
 import { positionUpdateNotificationForm } from '../factory/packet.pactory';
+import { bombManager } from '../card/debuff/card.bomb.effect';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 const positionUpdateIntervals = new Map<number, NodeJS.Timeout>();
@@ -182,6 +183,9 @@ class GameManager {
 			positionUpdateIntervals.delete(room.id); // Map에서 제거
 		}
 		this.clearTimer(roomId);
+		
+		// 방 종료 시 폭탄 타이머 정리
+    	bombManager.clearRoom(room.id);
 
 		// 위치 변화 플래그 정리
 		roomPositionChanged.delete(room.id);

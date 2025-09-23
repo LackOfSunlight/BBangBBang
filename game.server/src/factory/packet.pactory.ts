@@ -6,6 +6,7 @@ import {
 	PhaseType,
 	SelectCardType,
 	WinType,
+	WarningType
 } from '../generated/common/enums';
 import {
 	CardData,
@@ -25,6 +26,7 @@ import { S2CLeaveRoomResponse } from '../generated/packet/room_actions';
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
 import { broadcastDataToRoom } from '../utils/notification.util';
+
 
 /**
  * 회원가입 응답
@@ -357,6 +359,29 @@ export const passDebuffResponseForm = (success: boolean, failCode: GlobalFailCod
 	};
 
 	return newGamePacket;
+};
+
+/**
+ * 경고 알림
+ * @param warningType 
+ * @param expectedAt 
+ * @returns 
+ */
+export const warnNotificationPacketForm = (
+	warningType: WarningType,
+	expectedAt: string
+): GamePacket => {
+	const NotificationPacket: GamePacket = {
+		payload: {
+			oneofKind: GamePacketType.warningNotification,
+			warningNotification: {
+				warningType: warningType,
+				expectedAt : expectedAt
+			},
+		},
+	};
+
+	return NotificationPacket;
 };
 
 /**
