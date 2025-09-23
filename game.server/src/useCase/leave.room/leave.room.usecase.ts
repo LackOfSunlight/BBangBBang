@@ -7,26 +7,9 @@ import { GameSocket } from '../../type/game.socket';
 import { deleteRoom, getRoom, removeUserFromRoom } from '../../utils/room.utils';
 import { broadcastDataToRoom } from '../../utils/notification.util';
 import { User } from '../../models/user.model';
+import { leaveRoomResponsePacketForm, userLeftNotificationPacketForm } from '../../factory/packet.pactory';
 
-// 방 나가기 응답 패킷을 생성하는 헬퍼 함수
-const createLeaveRoomResponsePacket = (payload: S2CLeaveRoomResponse): GamePacket => {
-	return {
-		payload: {
-			oneofKind: 'leaveRoomResponse',
-			leaveRoomResponse: payload,
-		},
-	};
-};
 
-// 다른 유저에게 유저가 나갔음을 알리는 알림 패킷을 생성하는 헬퍼 함수
-const createUserLeftNotificationPacket = (payload: S2CLeaveRoomNotification): GamePacket => {
-	return {
-		payload: {
-			oneofKind: 'leaveRoomNotification',
-			leaveRoomNotification: payload,
-		},
-	};
-};
 
 export const leaveRoomUseCase = async (
 	socket: GameSocket,
@@ -37,7 +20,7 @@ export const leaveRoomUseCase = async (
 
 	// 유저가 방에 속해있지 않은 경우, 잘못된 요청으로 처리
 	if (!roomId || !userId) {
-		return createLeaveRoomResponsePacket({
+		return leaveRoomResponsePacketForm({
 			success: false,
 			failCode: GlobalFailCode.INVALID_REQUEST,
 		});
@@ -48,7 +31,7 @@ export const leaveRoomUseCase = async (
 		const room = getRoom(roomId);
 		// 방이 존재하지 않는 경우
 		if (!room) {
-			return createLeaveRoomResponsePacket({
+			return leaveRoomResponsePacketForm({
 				success: false,
 				failCode: GlobalFailCode.ROOM_NOT_FOUND,
 			});
@@ -57,7 +40,7 @@ export const leaveRoomUseCase = async (
 		// 요청한 유저가 실제로 방에 있는지 확인
 		const userInRoom = room.users.find((u: User) => u.id === userId);
 		if (!userInRoom) {
-			return createLeaveRoomResponsePacket({
+			return leaveRoomResponsePacketForm({
 				success: false,
 				failCode: GlobalFailCode.INVALID_REQUEST,
 			});
@@ -74,13 +57,13 @@ export const leaveRoomUseCase = async (
 			deleteRoom(roomId);
 
 			// 방장에게 보낼 성공 응답 패킷
-			const ownerResponsePacket = createLeaveRoomResponsePacket({
+			const ownerResponsePacket = leaveRoomResponsePacketForm({
 				success: true,
 				failCode: GlobalFailCode.NONE_FAILCODE,
 			});
 
 			// 다른 유저들에게 '방이 닫혔음'을 알리기 위한 패킷
-			const roomClosedPacket = createLeaveRoomResponsePacket({
+			const roomClosedPacket = leaveRoomResponsePacketForm({
 				success: true,
 				failCode: GlobalFailCode.NONE_FAILCODE,
 			});
@@ -102,12 +85,12 @@ export const leaveRoomUseCase = async (
 			const remainingUsers = room.users.filter((u: User) => u.id !== userId);
 
 			// 남은 유저들에게 '누가 나갔는지' 알림 패킷 생성
-			const notificationPacket = createUserLeftNotificationPacket({ userId: userId });
+			const notificationPacket = userLeftNotificationPacketForm({ userId: userId });
 			// 남은 유저들에게 알림 전송
 			broadcastDataToRoom(remainingUsers, notificationPacket, GamePacketType.leaveRoomNotification);
 
 			// 요청자에게 성공 응답 반환
-			return createLeaveRoomResponsePacket({
+			return leaveRoomResponsePacketForm({
 				success: true,
 				failCode: GlobalFailCode.NONE_FAILCODE,
 			});
@@ -118,7 +101,7 @@ export const leaveRoomUseCase = async (
 		// 롤백: 만약의 경우를 대비해 소켓의 roomId를 복구
 		socket.roomId = roomId;
 		// 요청자에게 에러 응답 반환
-		return createLeaveRoomResponsePacket({
+		return leaveRoomResponsePacketForm({
 			success: false,
 			failCode: GlobalFailCode.UNKNOWN_ERROR,
 		});

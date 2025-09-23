@@ -1,5 +1,4 @@
-import { getUserFromRoom, updateCharacterFromRoom } from './room.utils';
-
+import { getUserFromRoom } from './room.utils';
 import cardAbsorbEffect from '../card/active/card.absorb.effect';
 import cardAutoRifleEffect from '../card/weapon/card.auto_rifle.effect';
 import cardAutoShieldEffect from '../card/equip/card.auto_shield.effect';
@@ -26,7 +25,7 @@ import cardWinLotteryEffect from '../card/active/card.win_lottery.effect';
 import { repeatDeck } from '../managers/card.manager';
 
 // 카드 효과 적용 함수
-export  function applyCardEffect(
+export function applyCardEffect(
 	roomId: number,
 	CardType: number,
 	userId: string,

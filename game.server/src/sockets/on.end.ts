@@ -6,8 +6,8 @@ import { deleteRoom, getRoom, removeUserFromRoom, saveRoom } from '../utils/room
 import { checkAndEndGameIfNeeded } from '../utils/game.end.util.js';
 import { broadcastDataToRoom } from '../utils/notification.util.js';
 import { GamePacketType } from '../enums/gamePacketType.js';
-import { createUserUpdateNotificationPacket } from '../useCase/use.card/use.card.usecase.js';
 import { RoomStateType } from '../generated/common/enums.js';
+import { userUpdateNotificationPacketForm } from '../factory/packet.pactory.js';
 
 
 const onEnd = (socket: GameSocket) => async () => {
@@ -34,7 +34,7 @@ const onEnd = (socket: GameSocket) => async () => {
 						saveRoom(room);
 						
 						// 모든 플레이어에게 사용자 상태 업데이트 알림 전송
-						const userUpdatePacket = createUserUpdateNotificationPacket(room.users);
+						const userUpdatePacket = userUpdateNotificationPacketForm(room.users);
 						await broadcastDataToRoom(room.users, userUpdatePacket, GamePacketType.userUpdateNotification);
 						
 						// 게임 종료 조건 확인

@@ -11,6 +11,7 @@ import { RoomStateType } from '../../generated/common/enums.js';
 import { User } from '../../models/user.model.js';
 import { createRoomDB, getUserByUserId } from '../../services/prisma.service.js';
 import { saveRoom } from '../../utils/room.utils';
+import { createRoomResponseForm } from '../../factory/packet.pactory';
 
 const createRoomUseCase = async (
 	socket: GameSocket,
@@ -20,14 +21,14 @@ const createRoomUseCase = async (
 	let userInfo;
 
 	if (!req.name || !socket.userId) {
-		return setCreateResponse(false, GlobalFailCode.CREATE_ROOM_FAILED);
+		return createRoomResponseForm(false, GlobalFailCode.CREATE_ROOM_FAILED);
 	}
 
 	try {
 		roomDB = await createRoomDB(socket, req);
 		userInfo = await getUserByUserId(Number(socket.userId));
 	} catch (err) {
-		return setCreateResponse(false, GlobalFailCode.CREATE_ROOM_FAILED);
+		return createRoomResponseForm(false, GlobalFailCode.CREATE_ROOM_FAILED);
 	}
 
 	if (roomDB && userInfo) {
@@ -46,29 +47,12 @@ const createRoomUseCase = async (
 
 		saveRoom(room);
 
-		return setCreateResponse(true, GlobalFailCode.NONE_FAILCODE, room);
+		return createRoomResponseForm(true, GlobalFailCode.NONE_FAILCODE, room);
 	} else {
-		return setCreateResponse(false, GlobalFailCode.CREATE_ROOM_FAILED);
+		return createRoomResponseForm(false, GlobalFailCode.CREATE_ROOM_FAILED);
 	}
 };
 
-const setCreateResponse = (
-	success: boolean,
-	failCode: GlobalFailCode,
-	room?: RoomData,
-): GamePacket => {
-	const newGamePacket: GamePacket = {
-		payload: {
-			oneofKind: GamePacketType.createRoomResponse,
-			createRoomResponse: {
-				success,
-				room,
-				failCode,
-			},
-		},
-	};
 
-	return newGamePacket;
-};
 
 export default createRoomUseCase;

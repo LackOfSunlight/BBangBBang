@@ -1,6 +1,6 @@
 import { GameSocket } from '../../type/game.socket.js';
 import { GamePacket } from '../../generated/gamePacket.js';
-import { C2SGameStartRequest, S2CGameStartResponse } from '../../generated/packet/game_actions.js';
+import { C2SGameStartRequest } from '../../generated/packet/game_actions.js';
 import {
 	CardType,
 	GlobalFailCode,
@@ -10,50 +10,23 @@ import {
 import { GamePacketType } from '../../enums/gamePacketType.js';
 import { getRoom, saveRoom } from '../../utils/room.utils.js';
 import { Room } from '../../models/room.model.js';
-import { User } from '../../models/user.model.js';
 import { CharacterPositionData, GameStateData } from '../../generated/common/types.js';
-import { S2CGameStartNotification } from '../../generated/packet/notifications.js';
 import { broadcastDataToRoom } from '../../utils/notification.util.js';
 import { shuffle } from '../../utils/shuffle.util.js';
 import { drawDeck, initializeDeck } from '../../managers/card.manager.js';
 import gameManager, { notificationCharacterPosition } from '../../managers/game.manager.js';
 import characterSpawnPosition from '../../data/character.spawn.position.json';
-
-// 응답 패킷 생성 헬퍼
-const createGameStartResponsePacket = (payload: S2CGameStartResponse): GamePacket => {
-	return {
-		payload: {
-			oneofKind: 'gameStartResponse',
-			gameStartResponse: payload,
-		},
-	};
-};
-
-// 알림 패킷 생성 헬퍼
-const createGameStartNotificationPacket = (
-	gameState: GameStateData,
-	users: User[],
-	characterPositions: CharacterPositionData[],
-): GamePacket => {
-	const payload: S2CGameStartNotification = {
-		gameState,
-		users,
-		characterPositions,
-	};
-	return {
-		payload: {
-			oneofKind: 'gameStartNotification',
-			gameStartNotification: payload,
-		},
-	};
-};
+import {
+	gameStartNotificationPacketForm,
+	gameStartResponsePacketForm,
+} from '../../factory/packet.pactory.js';
 
 export const gameStartUseCase = async (
 	socket: GameSocket,
 	req: C2SGameStartRequest,
 ): Promise<GamePacket> => {
 	if (!socket.roomId) {
-		return createGameStartResponsePacket({
+		return gameStartResponsePacketForm({
 			success: false,
 			failCode: GlobalFailCode.INVALID_REQUEST,
 		});
@@ -62,7 +35,7 @@ export const gameStartUseCase = async (
 	try {
 		const room: Room | null = getRoom(socket.roomId);
 		if (!room) {
-			return createGameStartResponsePacket({
+			return gameStartResponsePacketForm({
 				success: false,
 				failCode: GlobalFailCode.ROOM_NOT_FOUND,
 			});
@@ -108,28 +81,28 @@ export const gameStartUseCase = async (
 				});
 
 				character.handCards = [
-					{type:CardType.HALLUCINATION,count:3},
+					{ type: CardType.HALLUCINATION, count: 3 },
 					// {type:CardType.SHIELD,count:3},
 					// {type:CardType.SNIPER_GUN,count:1},
-					{type:CardType.BBANG,count:3},
+					{ type: CardType.BBANG, count: 3 },
 					//    {type:CardType.BIG_BBANG,count:3},
 					// {type:CardType.ABSORB,count:3},
-					{type:CardType.AUTO_RIFLE, count:3},
+					{ type: CardType.AUTO_RIFLE, count: 3 },
 					// {type:CardType.AUTO_SHIELD, count:3},
-				    {type:CardType.CALL_119, count:3},
+					{ type: CardType.CALL_119, count: 3 },
 					// {type:CardType.CONTAINMENT_UNIT, count:3},
 					// {type:CardType.DEATH_MATCH, count:3},
-					{type:CardType.DESERT_EAGLE, count:3},
+					{ type: CardType.DESERT_EAGLE, count: 3 },
 					// {type:CardType.FLEA_MARKET, count:3},
 					// {type:CardType.HAND_GUN, count:3},
-					{type:CardType.GUERRILLA, count:3},
+					{ type: CardType.GUERRILLA, count: 3 },
 					// {type:CardType.LASER_POINTER, count:3},
 					// {type:CardType.MATURED_SAVINGS,count:3},
-					{type:CardType.RADAR, count:3},
-					{type:CardType.SATELLITE_TARGET, count:3},
-					{type:CardType.STEALTH_SUIT, count:3},
-					{type:CardType.VACCINE, count:3},
-					{type:CardType.WIN_LOTTERY, count:3}
+					{ type: CardType.RADAR, count: 3 },
+					{ type: CardType.SATELLITE_TARGET, count: 3 },
+					{ type: CardType.STEALTH_SUIT, count: 3 },
+					{ type: CardType.VACCINE, count: 3 },
+					{ type: CardType.WIN_LOTTERY, count: 3 },
 				];
 				character.handCardsCount = character.handCards.reduce((sum, card) => sum + card.count, 0);
 			}
@@ -143,7 +116,7 @@ export const gameStartUseCase = async (
 		gameManager.startGame(room);
 
 		// 모든 플레이어에게 게임 시작 알림 전송
-		const notificationPacket = createGameStartNotificationPacket(
+		const notificationPacket = gameStartNotificationPacketForm(
 			gameState,
 			room.users,
 			characterPositionsData,
@@ -151,10 +124,10 @@ export const gameStartUseCase = async (
 		broadcastDataToRoom(room.users, notificationPacket, GamePacketType.gameStartNotification);
 
 		// 요청자에게 성공 응답 반환
-		return createGameStartResponsePacket({ success: true, failCode: GlobalFailCode.NONE_FAILCODE });
+		return gameStartResponsePacketForm({ success: true, failCode: GlobalFailCode.NONE_FAILCODE });
 	} catch (error) {
 		console.error('Error in gameStartUseCase:', error);
-		return createGameStartResponsePacket({
+		return gameStartResponsePacketForm({
 			success: false,
 			failCode: GlobalFailCode.UNKNOWN_ERROR,
 		});

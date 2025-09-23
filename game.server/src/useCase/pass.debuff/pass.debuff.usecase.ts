@@ -1,9 +1,9 @@
 import { C2SPassDebuffRequest } from '../../generated/packet/game_actions';
 import { getRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import { GlobalFailCode, CardType } from '../../generated/common/enums';
+import { GlobalFailCode } from '../../generated/common/enums';
 import { GamePacket } from '../../generated/gamePacket';
-import { GamePacketType } from '../../enums/gamePacketType';
 import { GameSocket } from '../../type/game.socket';
+import { passDebuffResponseForm } from '../../factory/packet.pactory';
 import { bombManager } from '../../card/debuff/card.bomb.effect';
 import { createUserUpdateNotificationPacket } from '../use.card/use.card.usecase';
 import { broadcastDataToRoom } from '../../utils/notification.util';
@@ -15,7 +15,7 @@ const passDebuffUseCase = async (
 	const { userId, roomId } = socket;
 
 	if (!userId || !roomId) {
-		return setPassDebuffResponse(false, GlobalFailCode.INVALID_REQUEST);
+		return passDebuffResponseForm(false, GlobalFailCode.INVALID_REQUEST);
 	}
 
 	try {
@@ -23,7 +23,7 @@ const passDebuffUseCase = async (
 		const room = getRoom(roomId);
 	} catch (error) {
 		// 방을 찾을 수 없는 경우
-		return setPassDebuffResponse(false, GlobalFailCode.ROOM_NOT_FOUND);
+		return passDebuffResponseForm(false, GlobalFailCode.ROOM_NOT_FOUND);
 	}
 
 	try {
@@ -34,15 +34,15 @@ const passDebuffUseCase = async (
 		const fromUser = room.users.find((u) => u.id === userId);
 		const toUser = room.users.find((u) => u.id === req.targetUserId);
 		if (!fromUser || !toUser) {
-			return setPassDebuffResponse(false, GlobalFailCode.INVALID_REQUEST);
+			return passDebuffResponseForm(false, GlobalFailCode.INVALID_REQUEST);
 		}
 
 		// 3. 요청자가 해당 디버프를 가지고 있는지 확인
-		const hasDebuff = fromUser.character!.debuffs.includes(CardType.BOMB);
+		const hasDebuff = fromUser.character!!.debuffs.includes(CardType.BOMB);
 		// 4. 대상자가 이미 해당 디버프를 가지고 있는지 확인
 		const alreadyDebuffed = toUser.character!.debuffs.includes(CardType.BOMB);
 		if (!hasDebuff || alreadyDebuffed) { // 사용자는 해당 디버프 소지 , 대상자는 해당 디버프가 없어야 실행
-			return setPassDebuffResponse(false, GlobalFailCode.CHARACTER_NO_CARD);
+			return passDebuffResponseForm(false, GlobalFailCode.CHARACTER_NO_CARD);
 		}
 		 
 		// 5. 디버프 전달 실행
@@ -66,25 +66,13 @@ const passDebuffUseCase = async (
 		broadcastDataToRoom(room.users, updateClient, GamePacketType.userUpdateNotification);
 
 		// 6. 성공 응답
-		return setPassDebuffResponse(true, GlobalFailCode.NONE_FAILCODE);
+		return passDebuffResponseForm(true, GlobalFailCode.NONE_FAILCODE);
 	} catch (error) {
 		console.error('Error in passDebuffUseCase:', error);
-		return setPassDebuffResponse(false, GlobalFailCode.UNKNOWN_ERROR);
+		return passDebuffResponseForm(false, GlobalFailCode.UNKNOWN_ERROR);
 	}
 };
 
-const setPassDebuffResponse = (success: boolean, failCode: GlobalFailCode): GamePacket => {
-	const newGamePacket: GamePacket = {
-		payload: {
-			oneofKind: GamePacketType.passDebuffResponse,
-			passDebuffResponse: {
-				success,
-				failCode,
-			},
-		},
-	};
 
-	return newGamePacket;
-};
 
 export default passDebuffUseCase;

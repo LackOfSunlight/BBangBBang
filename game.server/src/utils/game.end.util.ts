@@ -1,10 +1,10 @@
 import { getRoom, saveRoom } from './room.utils';
 import { Room } from '../models/room.model';
 import { RoleType, WinType, RoomStateType } from '../generated/common/enums';
-import { setGameEndNotification } from '../handlers/notification/game.end.notification.handler';
 import { broadcastDataToRoom } from './notification.util';
 import { GamePacketType } from '../enums/gamePacketType';
 import gameManager from '../managers/game.manager';
+import { gameEndNotificationForm } from '../factory/packet.pactory';
 
 /**
  * 게임 종료 조건을 검사하고 필요시 게임을 종료하는 함수
@@ -140,7 +140,7 @@ async function endGame(room: Room, gameResult: GameEndResult): Promise<void> {
 		saveRoom(room);
 
 		// 게임 종료 알림 패킷 생성
-		const gameEndPacket = setGameEndNotification(gameResult.winners, gameResult.winType);
+		const gameEndPacket = gameEndNotificationForm(gameResult.winners, gameResult.winType);
 
 		// 모든 플레이어에게 게임 종료 알림 전송
 		await broadcastDataToRoom(room.users, gameEndPacket, GamePacketType.gameEndNotification);

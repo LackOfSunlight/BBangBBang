@@ -5,42 +5,44 @@ import {
 	GlobalFailCode,
 	SelectCardType,
 } from '../../generated/common/enums';
-import { GamePacket } from '../../generated/gamePacket';
-import { C2SCardSelectRequest, S2CCardSelectResponse } from '../../generated/packet/game_actions';
-import { User } from '../../models/user.model';
+import { C2SCardSelectRequest } from '../../generated/packet/game_actions';
 import { GameSocket } from '../../type/game.socket';
 import { addCardToUser } from '../../managers/card.manager';
 import { broadcastDataToRoom } from '../../utils/notification.util';
 import { getRoom, getUserFromRoom } from '../../utils/room.utils';
+import {
+	cardSelectResponseForm,
+	userUpdateNotificationPacketForm,
+} from '../../factory/packet.pactory';
+import { GamePacket } from '../../generated/gamePacket';
 
-export const cardSelectUseCase = (
-	socket: GameSocket,
-	req: C2SCardSelectRequest,
-): S2CCardSelectResponse => {
+export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest): GamePacket => {
 	const { userId, roomId } = socket;
 	if (!userId || !roomId) {
-		return { success: false, failCode: GlobalFailCode.AUTHENTICATION_FAILED };
+		return cardSelectResponseForm(false, GlobalFailCode.AUTHENTICATION_FAILED);
 	}
 
 	const room = getRoom(roomId);
 	if (!room) {
-		return { success: false, failCode: GlobalFailCode.ROOM_NOT_FOUND };
+		return cardSelectResponseForm(false, GlobalFailCode.ROOM_NOT_FOUND);
 	}
 
 	const user = getUserFromRoom(roomId, userId);
 	if (!user || !user.character) {
-		return { success: false, failCode: GlobalFailCode.CHARACTER_NOT_FOUND };
+		return cardSelectResponseForm(false, GlobalFailCode.CHARACTER_NOT_FOUND);
 	}
 
-	if (user.character.stateInfo!.state !== CharacterStateType.ABSORBING && 
-		user.character.stateInfo!.state !== CharacterStateType.HALLUCINATING) {
-		return { success: false, failCode: GlobalFailCode.CHARACTER_STATE_ERROR };
+	if (
+		user.character.stateInfo!.state !== CharacterStateType.ABSORBING &&
+		user.character.stateInfo!.state !== CharacterStateType.HALLUCINATING
+	) {
+		return cardSelectResponseForm(false, GlobalFailCode.CHARACTER_STATE_ERROR);
 	}
 
 	const targetId = user.character.stateInfo!.stateTargetUserId;
 	const target = getUserFromRoom(roomId, targetId);
 	if (!target || !target.character) {
-		return { success: false, failCode: GlobalFailCode.CHARACTER_NOT_FOUND };
+		return cardSelectResponseForm(false, GlobalFailCode.CHARACTER_NOT_FOUND);
 	}
 
 	const { selectType, selectCardType } = req;
@@ -48,7 +50,7 @@ export const cardSelectUseCase = (
 
 	if (selectType === SelectCardType.HAND) {
 		const targetHand = target.character.handCards;
-		const randomIndex = Math.floor(Math.random()*targetHand.length);
+		const randomIndex = Math.floor(Math.random() * targetHand.length);
 		const targetCard = targetHand[randomIndex];
 		if (targetCard) {
 			// 찾은 카드 타입 저장
@@ -87,7 +89,7 @@ export const cardSelectUseCase = (
 		// 신기루 카드인 경우: 카드 삭제만 (가져오지 않음)
 		// stolenCardType은 이미 타겟에서 제거됨
 	} else {
-		return { success: false, failCode: GlobalFailCode.UNKNOWN_ERROR };
+		return cardSelectResponseForm(false, GlobalFailCode.UNKNOWN_ERROR);
 	}
 
 	// Reset states
@@ -95,26 +97,12 @@ export const cardSelectUseCase = (
 	user.character.stateInfo!.stateTargetUserId = '0';
 	target.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
 
-	const userUpdateNotificationPacket = createUserUpdateNotificationPacket(room.users);
+	const userUpdateNotificationPacket = userUpdateNotificationPacketForm(room.users);
 	broadcastDataToRoom(
 		room.users,
 		userUpdateNotificationPacket,
 		GamePacketType.userUpdateNotification,
 	);
 
-
-	return { success: true, failCode: GlobalFailCode.NONE_FAILCODE };
-};
-
-export const createUserUpdateNotificationPacket = (user: User[]): GamePacket => {
-	const NotificationPacket: GamePacket = {
-		payload: {
-			oneofKind: 'userUpdateNotification',
-			userUpdateNotification: {
-				user: user,
-			},
-		},
-	};
-
-	return NotificationPacket;
+	return cardSelectResponseForm(true, GlobalFailCode.NONE_FAILCODE);
 };
