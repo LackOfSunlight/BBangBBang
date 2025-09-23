@@ -1,6 +1,6 @@
 import { CardType, CharacterStateType, PhaseType } from '../generated/common/enums';
 import { Room } from '../models/room.model';
-import { drawDeck, repeatDeck, shuffleDeck } from './card.manager';
+import { drawDeck, repeatDeck } from './card.manager';
 import characterSpawnPosition from '../data/character.spawn.position.json';
 import { CharacterPositionData } from '../generated/common/types';
 import { shuffle } from '../utils/shuffle.util';
@@ -9,9 +9,9 @@ import { GamePacketType } from '../enums/gamePacketType';
 import { broadcastDataToRoom } from '../utils/notification.util';
 import { User } from '../models/user.model';
 import { checkSatelliteTargetEffect } from '../card/debuff/card.satellite_target.effect';
-import { setPositionUpdateNotification } from '../handlers/notification/position.update.notification.handler';
 import { checkContainmentUnitTarget } from '../card/debuff/card.containment_unit.effect';
 import { deleteRoom, getRoom, roomPhase, roomTimers, saveRoom } from '../utils/room.utils';
+import { positionUpdateNotificationForm } from '../factory/packet.pactory';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 const positionUpdateIntervals = new Map<number, NodeJS.Timeout>();
@@ -240,7 +240,7 @@ export const broadcastPositionUpdates = (room: Room) => {
 	}
 
 	// 위치 업데이트 패킷 생성
-	const gamePacket = setPositionUpdateNotification(characterPositions);
+	const gamePacket = positionUpdateNotificationForm(characterPositions);
 
 	// 방의 모든 유저에게 전송
 	broadcastDataToRoom(room.users, gamePacket, GamePacketType.positionUpdateNotification);

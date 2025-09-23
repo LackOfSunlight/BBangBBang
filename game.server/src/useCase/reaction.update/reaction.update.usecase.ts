@@ -1,21 +1,17 @@
 import { GameSocket } from '../../type/game.socket';
-
 import { GamePacketType } from '../../enums/gamePacketType';
 import {
 	ReactionType,
 	GlobalFailCode,
-	CharacterStateType,
-	CardType,
-	AnimationType,
+	CharacterStateType
 } from '../../generated/common/enums';
-
 import { getRoom, saveRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { weaponDamageEffect } from '../../utils/weapon.util';
 import { CheckBigBbangService } from '../../services/bigbbang.check.service';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
 import { broadcastDataToRoom } from '../../utils/notification.util';
-import { createUserUpdateNotificationPacket } from '../../useCase/use.card/use.card.usecase';
 import takeDamageService from '../../services/take.damage.service';
+import { userUpdateNotificationPacketForm } from '../../factory/packet.pactory';
 
 
 export const reactionUpdateUseCase = async (
@@ -100,7 +96,7 @@ export const reactionUpdateUseCase = async (
 	}
 	saveRoom(room);
 
-	const userUpdateNotificationPacket = createUserUpdateNotificationPacket(room.users);
+	const userUpdateNotificationPacket = userUpdateNotificationPacketForm(room.users);
 	broadcastDataToRoom(
 		room.users,
 		userUpdateNotificationPacket,

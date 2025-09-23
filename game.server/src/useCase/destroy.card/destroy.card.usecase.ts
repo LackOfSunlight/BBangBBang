@@ -1,9 +1,8 @@
 import { GamePacket } from '../../generated/gamePacket';
 import { C2SDestroyCardRequest } from '../../generated/packet/game_actions';
 import { GameSocket } from '../../type/game.socket';
-import { CardData } from '../../generated/common/types';
-import { GamePacketType } from '../../enums/gamePacketType';
 import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
+import { destroyResponseForm } from '../../factory/packet.pactory';
 
 const destroyCardUseCase = async (
 	socket: GameSocket,
@@ -33,23 +32,12 @@ const destroyCardUseCase = async (
 
 		updateCharacterFromRoom(socket.roomId!, user.id, user.character);
 
-		return setDestroyResponse(user.character.handCards);
+		return destroyResponseForm(user.character.handCards);
 	} else {
-		return setDestroyResponse([]);
+		return destroyResponseForm([]);
 	}
 };
 
-const setDestroyResponse = (handCards: CardData[]): GamePacket => {
-	const newGamePacket: GamePacket = {
-		payload: {
-			oneofKind: GamePacketType.destroyCardResponse,
-			destroyCardResponse: {
-				handCards,
-			},
-		},
-	};
 
-	return newGamePacket;
-};
 
 export default destroyCardUseCase;

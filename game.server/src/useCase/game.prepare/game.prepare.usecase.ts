@@ -1,8 +1,5 @@
 import { GameSocket } from '../../type/game.socket.js';
-import {
-	C2SGamePrepareRequest,
-	S2CGamePrepareResponse,
-} from '../../generated/packet/game_actions.js';
+import { C2SGamePrepareRequest } from '../../generated/packet/game_actions.js';
 import { GamePacket } from '../../generated/gamePacket.js';
 import {
 	CharacterStateType,
@@ -18,39 +15,15 @@ import characterType from '../../data/characterType.json';
 import { CharacterInfo } from '../../type/character.info.js';
 import { GamePacketType } from '../../enums/gamePacketType.js';
 import { broadcastDataToRoom } from '../../utils/notification.util.js';
-import { S2CGamePrepareNotification } from '../../generated/packet/notifications.js';
 import { getRoom, saveRoom } from '../../utils/room.utils.js';
+import {
+	gamePrepareNotificationPacketForm,
+	gamePrepareResponsePacketForm,
+} from '../../factory/packet.pactory.js';
 
-// 응답 패킷 생성 헬퍼
-const createGamePrepareResponsePacket = (payload: S2CGamePrepareResponse): GamePacket => {
-	return {
-		payload: {
-			oneofKind: 'gamePrepareResponse',
-			gamePrepareResponse: payload,
-		},
-	};
-};
-
-// 알림 패킷 생성 헬퍼
-const createGamePrepareNotificationPacket = (room: Room): GamePacket => {
-	const notificationPayload: S2CGamePrepareNotification = {
-		room: room,
-	};
-
-	return {
-		payload: {
-			oneofKind: 'gamePrepareNotification',
-			gamePrepareNotification: notificationPayload,
-		},
-	};
-};
-
-export const gamePrepareUseCase = async (
-	socket: GameSocket,
-	req: C2SGamePrepareRequest,
-): Promise<GamePacket> => {
+export const gamePrepareUseCase = (socket: GameSocket, req: C2SGamePrepareRequest): GamePacket => {
 	if (!socket.roomId) {
-		return createGamePrepareResponsePacket({
+		return gamePrepareResponsePacketForm({
 			success: false,
 			failCode: GlobalFailCode.INVALID_REQUEST,
 		});
@@ -60,7 +33,7 @@ export const gamePrepareUseCase = async (
 		const room: Room | null = getRoom(socket.roomId);
 
 		if (!room) {
-			return createGamePrepareResponsePacket({
+			return gamePrepareResponsePacketForm({
 				success: false,
 				failCode: GlobalFailCode.ROOM_NOT_FOUND,
 			});
@@ -100,7 +73,7 @@ export const gamePrepareUseCase = async (
 		const role = roles[room.users.length];
 		if (!role) {
 			// 지원하지 않는 인원 수에 대한 처리
-			return createGamePrepareResponsePacket({
+			return gamePrepareResponsePacketForm({
 				success: false,
 				failCode: GlobalFailCode.INVALID_REQUEST,
 			});
@@ -148,17 +121,17 @@ export const gamePrepareUseCase = async (
 		saveRoom(room);
 
 		// 모든 유저에게 게임 준비 완료 알림 전송
-		const notificationPacket = createGamePrepareNotificationPacket(room);
+		const notificationPacket = gamePrepareNotificationPacketForm(room);
 		broadcastDataToRoom(room.users, notificationPacket, GamePacketType.gamePrepareNotification);
 
 		// 요청자에게 성공 응답 반환
-		return createGamePrepareResponsePacket({
+		return gamePrepareResponsePacketForm({
 			success: true,
 			failCode: GlobalFailCode.NONE_FAILCODE,
 		});
 	} catch (error) {
 		console.error('Error in gamePrepareUseCase:', error);
-		return createGamePrepareResponsePacket({
+		return gamePrepareResponsePacketForm({
 			success: false,
 			failCode: GlobalFailCode.UNKNOWN_ERROR,
 		});

@@ -1,10 +1,10 @@
 import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
+import { userUpdateNotificationPacketForm } from '../factory/packet.pactory';
 import { CardType, GlobalFailCode } from '../generated/common/enums';
 import { GamePacket } from '../generated/gamePacket';
 import { Room } from '../models/room.model';
 import { GameSocket } from '../type/game.socket';
 import {
-	createUserUpdateNotificationPacket,
 	useCardUseCase,
 } from '../useCase/use.card/use.card.usecase';
 import { broadcastDataToRoom } from '../utils/notification.util';
@@ -52,7 +52,7 @@ const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	sendData(socket, useCardResponsePacket, GamePacketType.useCardResponse);
 
 	if (res.success) {
-		const userUpdateNotificationPacket = createUserUpdateNotificationPacket(room.users);
+		const userUpdateNotificationPacket = userUpdateNotificationPacketForm(room.users);
 		broadcastDataToRoom(
 			room.users,
 			userUpdateNotificationPacket,

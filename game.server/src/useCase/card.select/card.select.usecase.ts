@@ -1,16 +1,13 @@
-import { GamePacketType } from '../../enums/gamePacketType';
 import {
 	CardType,
 	CharacterStateType,
 	GlobalFailCode,
 	SelectCardType,
 } from '../../generated/common/enums';
-import { GamePacket } from '../../generated/gamePacket';
 import { C2SCardSelectRequest, S2CCardSelectResponse } from '../../generated/packet/game_actions';
-import { User } from '../../models/user.model';
 import { GameSocket } from '../../type/game.socket';
 import { addCardToUser } from '../../managers/card.manager';
-import { broadcastDataToRoom } from '../../utils/notification.util';
+
 import { getRoom, getUserFromRoom } from '../../utils/room.utils';
 
 export const cardSelectUseCase = (
@@ -32,8 +29,7 @@ export const cardSelectUseCase = (
 		return { success: false, failCode: GlobalFailCode.CHARACTER_NOT_FOUND };
 	}
 
-	if (user.character.stateInfo!.state !== CharacterStateType.ABSORBING && 
-		user.character.stateInfo!.state !== CharacterStateType.HALLUCINATING) {
+	if (user.character.stateInfo!.state !== CharacterStateType.ABSORBING) {
 		return { success: false, failCode: GlobalFailCode.CHARACTER_STATE_ERROR };
 	}
 
@@ -48,18 +44,13 @@ export const cardSelectUseCase = (
 
 	if (selectType === SelectCardType.HAND) {
 		const targetHand = target.character.handCards;
-		const randomIndex = Math.floor(Math.random()*targetHand.length);
-		const targetCard = targetHand[randomIndex];
-		if (targetCard) {
-			// 찾은 카드 타입 저장
-			stolenCardType = targetCard.type;
-			if (targetCard.count > 1) {
-				// 여러 장 있으면 개수만 줄임
-				targetCard.count -= 1;
+		const cardIndex = targetHand.findIndex((card) => card.type === selectCardType);
+		if (cardIndex > -1) {
+			stolenCardType = targetHand[cardIndex].type;
+			if (targetHand[cardIndex].count > 1) {
+				targetHand[cardIndex].count -= 1;
 			} else {
-				// 1장뿐이면 배열에서 제거
-				const index = targetHand.indexOf(targetCard);
-				targetHand.splice(index, 1);
+				targetHand.splice(cardIndex, 1);
 			}
 		}
 	} else if (selectType === SelectCardType.EQUIP) {
@@ -70,7 +61,7 @@ export const cardSelectUseCase = (
 	} else if (selectType === SelectCardType.WEAPON) {
 		if (target.character.weapon === selectCardType) {
 			stolenCardType = target.character.weapon;
-			target.character.weapon = 0;
+			target.character.weapon = CardType.NONE;
 		}
 	} else if (selectType === SelectCardType.DEBUFF) {
 		const cardIndex = target.character.debuffs.findIndex((cardType) => cardType === selectCardType);
@@ -80,12 +71,7 @@ export const cardSelectUseCase = (
 	}
 
 	if (stolenCardType) {
-		// 흡수 카드인 경우: 카드를 가져오기
-		if (user.character.stateInfo!.state === CharacterStateType.ABSORBING) {
-			addCardToUser(user, stolenCardType);
-		}
-		// 신기루 카드인 경우: 카드 삭제만 (가져오지 않음)
-		// stolenCardType은 이미 타겟에서 제거됨
+		addCardToUser(user, stolenCardType);
 	} else {
 		return { success: false, failCode: GlobalFailCode.UNKNOWN_ERROR };
 	}
@@ -95,26 +81,5 @@ export const cardSelectUseCase = (
 	user.character.stateInfo!.stateTargetUserId = '0';
 	target.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
 
-	const userUpdateNotificationPacket = createUserUpdateNotificationPacket(room.users);
-	broadcastDataToRoom(
-		room.users,
-		userUpdateNotificationPacket,
-		GamePacketType.userUpdateNotification,
-	);
-
-
 	return { success: true, failCode: GlobalFailCode.NONE_FAILCODE };
-};
-
-export const createUserUpdateNotificationPacket = (user: User[]): GamePacket => {
-	const NotificationPacket: GamePacket = {
-		payload: {
-			oneofKind: 'userUpdateNotification',
-			userUpdateNotification: {
-				user: user,
-			},
-		},
-	};
-
-	return NotificationPacket;
 };
