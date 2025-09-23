@@ -1,6 +1,5 @@
 import { CardType, CharacterStateType, PhaseType } from '../generated/common/enums';
 import { Room } from '../models/room.model';
-import { drawDeck, repeatDeck } from './card.manager';
 import characterSpawnPosition from '../data/character.spawn.position.json';
 import { CharacterPositionData } from '../generated/common/types';
 import { shuffle } from '../utils/shuffle.util';
@@ -12,6 +11,7 @@ import { checkSatelliteTargetEffect } from '../card/debuff/card.satellite_target
 import { checkContainmentUnitTarget } from '../card/debuff/card.containment_unit.effect';
 import { deleteRoom, getRoom, roomPhase, roomTimers, saveRoom } from '../utils/room.utils';
 import { positionUpdateNotificationForm } from '../factory/packet.pactory';
+import { cardManager } from './card.manager';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 const positionUpdateIntervals = new Map<number, NodeJS.Timeout>();
@@ -89,7 +89,7 @@ class GameManager {
 						}
 
 						if (user.character!.stateInfo?.state !== CharacterStateType.CONTAINED) {
-							const drawCards = drawDeck(room.id, 2);
+							const drawCards = cardManager.drawDeck(room.id, 2);
 							drawCards.forEach((type) => {
 								const existCard = user.character?.handCards.find((card) => card.type === type);
 								if (existCard) {
@@ -224,7 +224,7 @@ const removedCard = (room: Room, user: User): User => {
 	user.character.handCards = user.character.handCards.filter((c) => c.count > 0);
 	removedCards.forEach((c) => {
 		for (let i = 0; i < c.count; i++) {
-			repeatDeck(room.id, [c.type]);
+			cardManager.repeatDeck(room.id, [c.type]);
 		}
 	});
 

@@ -1,6 +1,6 @@
 import { AnimationType, CardType, CharacterType } from '../../generated/common/enums';
 import { playAnimationHandler } from '../../handlers/play.animation.handler';
-import { drawDeck } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import takeDamageService from '../take.damage.service';
@@ -11,7 +11,6 @@ jest.mock('../../managers/card.manager');
 
 // Cast mocks to the correct type
 const mockPlayAnimationHandler = playAnimationHandler as jest.Mock;
-const mockDrawDeck = drawDeck as jest.Mock;
 
 describe('takeDamageService', () => {
 	let mockRoom: Room;
@@ -92,12 +91,12 @@ describe('takeDamageService', () => {
 
 		it('말랑이는 데미지를 받고 카드 1장을 뽑는다', () => {
 			user.character!.characterType = CharacterType.MALANG;
-			mockDrawDeck.mockReturnValue([CardType.SHIELD]);
+			(cardManager.drawDeck as jest.Mock).mockReturnValue([CardType.SHIELD]);
 
 			takeDamageService(mockRoom, user, shooter, damage);
 
 			expect(user.character!.hp).toBe(3);
-			expect(mockDrawDeck).toHaveBeenCalledWith(mockRoom.id, 1);
+			expect(cardManager.drawDeck).toHaveBeenCalledWith(mockRoom.id, 1);
 			expect(user.character!.handCards).toContainEqual({ type: CardType.SHIELD, count: 1 });
 			expect(user.character!.handCardsCount).toBe(1);
 		});

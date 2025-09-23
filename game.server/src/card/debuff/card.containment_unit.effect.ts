@@ -1,7 +1,7 @@
 // cardType = 21
 import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../utils/room.utils';
 import { CardType, CharacterStateType } from '../../generated/common/enums';
-import { removeCard } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 
 // 디버프 적용 처리 로직
 const cardContainmentUnitEffect = (
@@ -33,7 +33,7 @@ const cardContainmentUnitEffect = (
 	}
 
 	// 카드 제거
-	removeCard(user, room, CardType.CONTAINMENT_UNIT);
+	cardManager.removeCard(user, room, CardType.CONTAINMENT_UNIT);
 
 	target.character.debuffs.push(CardType.CONTAINMENT_UNIT);
 	//console.log(`유저 ${targetUserId}가 감금장치 카드에 맞았습니다.\n다음 차례부터 감금장치에 영향을 받습니다.`);

@@ -1,7 +1,7 @@
 // cardType = 20
 import { CardType } from '../../generated/common/enums';
 import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../utils/room.utils';
-import { removeCard } from '../../managers/card.manager.js';
+import { cardManager } from '../../managers/card.manager.js';
 
 const cardStealthSuitEffect = (roomId: number, userId: string): boolean => {
 	try {
@@ -18,7 +18,7 @@ const cardStealthSuitEffect = (roomId: number, userId: string): boolean => {
 			// 스텔스 장치 장착 (장비 ID: CardType.STEALTH_SUIT)
 			user.character.equips.push(CardType.STEALTH_SUIT);
 			// 카드 제거
-			removeCard(user, room, CardType.STEALTH_SUIT);
+			cardManager.removeCard(user, room, CardType.STEALTH_SUIT);
 		} else {
 			return false;
 		}

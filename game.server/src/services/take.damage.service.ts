@@ -1,7 +1,7 @@
 import { autoShieldBlock } from '../card/equip/card.auto_shield.effect';
 import { AnimationType, CardType, CharacterType } from '../generated/common/enums';
 import { playAnimationHandler } from '../handlers/play.animation.handler';
-import { drawDeck } from '../managers/card.manager';
+import { cardManager } from '../managers/card.manager';
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
 
@@ -26,7 +26,7 @@ const takeDamageService = (room: Room, user: User, shooter: User, damage: number
 	if (user.character?.characterType === CharacterType.MALANG) {
 		user.character.hp -= damage;
 		// 덱에서 카드 1장 뽑기 (CardType[] 반환)
-		const newCardTypes = drawDeck(room.id, 1);
+		const newCardTypes = cardManager.drawDeck(room.id, 1);
 
 		if (newCardTypes.length === 0) {
 			console.log(`[말랑이 특수능력] ${user.nickname}: 덱에 카드가 없습니다.`);

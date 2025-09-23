@@ -1,5 +1,5 @@
 import { CardType } from '../../generated/common/enums';
-import { removeCard } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 const cardDesertEagleEffect = (roomId: number, userId: string): boolean => {
 	try {
@@ -10,7 +10,7 @@ const cardDesertEagleEffect = (roomId: number, userId: string): boolean => {
 
 		if (user.character.weapon !== CardType.DESERT_EAGLE) {
 			user.character.weapon = CardType.DESERT_EAGLE;
-			removeCard(user, room, CardType.DESERT_EAGLE);
+			cardManager.removeCard(user, room, CardType.DESERT_EAGLE);
 		} else {
 			return false;
 		}

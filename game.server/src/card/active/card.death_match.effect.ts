@@ -1,7 +1,7 @@
 // cardType = 6
 import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../utils/room.utils';
 import { CardType, CharacterStateType } from '../../generated/common/enums';
-import { removeCard } from '../../managers/card.manager.js';
+import { cardManager } from '../../managers/card.manager.js';
 
 const cardDeathMatchEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	const user = getUserFromRoom(roomId, userId);
@@ -25,7 +25,7 @@ const cardDeathMatchEffect = (roomId: number, userId: string, targetUserId: stri
 
 
 	// 카드 제거
-	removeCard(user, room, CardType.DEATH_MATCH);
+	cardManager.removeCard(user, room, CardType.DEATH_MATCH);
 
 	// 현피 카드 효과: 현피 상태 설정
 	// 사용자: DEATH_MATCH_TURN_STATE (현피 차례)

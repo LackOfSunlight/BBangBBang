@@ -7,7 +7,6 @@ import {
 } from '../../generated/common/enums';
 import { C2SCardSelectRequest } from '../../generated/packet/game_actions';
 import { GameSocket } from '../../type/game.socket';
-import { addCardToUser } from '../../managers/card.manager';
 import { broadcastDataToRoom } from '../../utils/notification.util';
 import { getRoom, getUserFromRoom } from '../../utils/room.utils';
 import {
@@ -15,6 +14,7 @@ import {
 	userUpdateNotificationPacketForm,
 } from '../../factory/packet.pactory';
 import { GamePacket } from '../../generated/gamePacket';
+import { cardManager } from '../../managers/card.manager';
 
 export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest): GamePacket => {
 	const { userId, roomId } = socket;
@@ -84,7 +84,7 @@ export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest)
 	if (stolenCardType) {
 		// 흡수 카드인 경우: 카드를 가져오기
 		if (user.character.stateInfo!.state === CharacterStateType.ABSORBING) {
-			addCardToUser(user, stolenCardType);
+			cardManager.addCardToUser(user, stolenCardType);
 		}
 		// 신기루 카드인 경우: 카드 삭제만 (가져오지 않음)
 		// stolenCardType은 이미 타겟에서 제거됨

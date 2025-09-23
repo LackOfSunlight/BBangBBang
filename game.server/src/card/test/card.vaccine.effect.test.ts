@@ -1,4 +1,4 @@
-import { removeCard } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import cardVaccineEffect from '../active/card.vaccine.effect';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import getMaxHp from '../../utils/character.util';
@@ -19,16 +19,13 @@ jest.mock('../../utils/character.util', () => ({
 	default: jest.fn(),
 }));
 
-jest.mock('../../managers/card.manager', () => ({
-	removeCard: jest.fn(),
-}));
+jest.mock('../../managers/card.manager');
 
 // 모의 함수(Mock Function) 정의
 const mockGetRoom = getRoom as jest.Mock;
 const mockGetUserFromRoom = getUserFromRoom as jest.Mock;
 const mockUpdateCharacterFromRoom = updateCharacterFromRoom as jest.Mock;
 const mockGetMaxHp = getMaxHp as jest.Mock;
-const mockRemoveCard = removeCard as jest.Mock;
 
 describe('cardVaccineEffect', () => {
 	const roomId = 1;
@@ -62,7 +59,7 @@ describe('cardVaccineEffect', () => {
 
 		// 검증 (Then): true를 반환하고, 카드가 제거되며, 체력이 1 증가해야 함
 		expect(result).toBe(true);
-		expect(mockRemoveCard).toHaveBeenCalledTimes(1);
+		expect(cardManager.removeCard).toHaveBeenCalledTimes(1);
 		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledTimes(1);
 		expect(user.character.hp).toBe(4);
 	});
@@ -76,7 +73,7 @@ describe('cardVaccineEffect', () => {
 
 		// 검증 (Then): false를 반환하고, 카드가 제거되지 않으며, 체력도 변하지 않아야 함
 		expect(result).toBe(false);
-		expect(mockRemoveCard).not.toHaveBeenCalled();
+		expect(cardManager.removeCard).not.toHaveBeenCalled();
 		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 		expect(user.character.hp).toBe(4);
 	});
@@ -90,7 +87,7 @@ describe('cardVaccineEffect', () => {
 
 		// 검증 (Then): true를 반환하고, 카드가 제거되며, 체력이 1 증가해야 함
 		expect(result).toBe(true);
-		expect(mockRemoveCard).toHaveBeenCalledTimes(1);
+		expect(cardManager.removeCard).toHaveBeenCalledTimes(1);
 		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledTimes(1);
 		expect(user.character.hp).toBe(3);
 	});
@@ -104,7 +101,7 @@ describe('cardVaccineEffect', () => {
 
 		// 검증 (Then): false를 반환하고, 카드가 제거되지 않으며, 체력도 변하지 않아야 함
 		expect(result).toBe(false);
-		expect(mockRemoveCard).not.toHaveBeenCalled();
+		expect(cardManager.removeCard).not.toHaveBeenCalled();
 		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 		expect(user.character.hp).toBe(3);
 	});
@@ -122,7 +119,7 @@ describe('cardVaccineEffect', () => {
 
 		// 검증 (Then): false를 반환하고, 에러 로그가 출력되어야 함
 		expect(result).toBe(false);
-		expect(mockRemoveCard).not.toHaveBeenCalled();
+		expect(cardManager.removeCard).not.toHaveBeenCalled();
 		expect(consoleErrorSpy).toHaveBeenCalledWith('[백신] 처리 중 오류 발생:', notFoundError);
 		consoleErrorSpy.mockRestore();
 	});
@@ -137,7 +134,7 @@ describe('cardVaccineEffect', () => {
 
 		// 검증 (Then): false를 반환하고, 경고 로그가 출력되어야 함
 		expect(result).toBe(false);
-		expect(mockRemoveCard).not.toHaveBeenCalled();
+		expect(cardManager.removeCard).not.toHaveBeenCalled();
 		expect(consoleWarnSpy).toHaveBeenCalledWith(`[백신] 유저의 캐릭터 정보가 없습니다: ${userId}`);
 		consoleWarnSpy.mockRestore();
 	});
@@ -156,7 +153,7 @@ describe('cardVaccineEffect', () => {
 
 		// 검증 (Then): false를 반환하지만, 카드는 제거되어야 함
 		expect(result).toBe(false);
-		expect(mockRemoveCard).toHaveBeenCalledTimes(1);
+		expect(cardManager.removeCard).toHaveBeenCalledTimes(1);
 		// 메모리 상의 객체는 변경되지만, 함수는 false를 반환하고 에러 로그를 남김
 		expect(user.character.hp).toBe(4);
 		expect(consoleErrorSpy).toHaveBeenCalledWith('[백신] 처리 중 오류 발생:', updateError);

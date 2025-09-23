@@ -1,7 +1,7 @@
 // cardType = 9
 
 import { CardType, CharacterStateType } from '../../generated/common/enums';
-import { removeCard } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 
 const cardHallucinationEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
@@ -24,7 +24,7 @@ const cardHallucinationEffect = (roomId: number, userId: string, targetUserId: s
 		return false;
 	}
 
-	removeCard(user, room, CardType.HALLUCINATION);
+	cardManager.removeCard(user, room, CardType.HALLUCINATION);
 
 	// 상태 변경
 	user.character.stateInfo!.state = CharacterStateType.HALLUCINATING;

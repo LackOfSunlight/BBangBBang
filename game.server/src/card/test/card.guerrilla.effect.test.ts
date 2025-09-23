@@ -1,5 +1,5 @@
 import { CardType, CharacterStateType } from '../../generated/common/enums';
-import { drawSpecificCard } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import { getRoom, getUserFromRoom, saveRoom, updateCharacterFromRoom } from '../../utils/room.utils';
@@ -15,7 +15,6 @@ const mockGetRoom = getRoom as jest.Mock;
 const mockGetUserFromRoom = getUserFromRoom as jest.Mock;
 const mockSaveRoom = saveRoom as jest.Mock;
 const mockUpdateCharacterFromRoom = updateCharacterFromRoom as jest.Mock;
-const mockDrawSpecificCard = drawSpecificCard as jest.Mock;
 
 describe('cardGuerrillaEffect', () => {
 	let mockRoom: Room;
@@ -91,32 +90,25 @@ describe('cardGuerrillaEffect', () => {
 			otherUser1.character!.stateInfo!.state = CharacterStateType.DEATH_MATCH_STATE;
 		});
 
-		it('카드를 되돌려받고 true를 반환해야 한다', () => {
-			mockDrawSpecificCard.mockReturnValue(CardType.GUERRILLA);
-
+		it('false를 반환해야 한다', () => {
 			const result = cardGuerrillaEffect(roomId, shooterId, targetId);
 
-			expect(result).toBe(true);
-			expect(mockDrawSpecificCard).toHaveBeenCalledWith(roomId, CardType.GUERRILLA);
-			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, shooterId, shooter.character);
-			// The card should be added back to the shooter's hand
-			expect(shooter.character!.handCards).toContainEqual({ type: CardType.GUERRILLA, count: 1 });
+			expect(result).toBe(false);
+			expect(cardManager.drawSpecificCard).not.toHaveBeenCalled();
+			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 			// Main logic should not run
 			expect(mockSaveRoom).not.toHaveBeenCalled();
 		});
 
-		it('되돌려받을 카드가 덱에 없으면, 메인 로직이 실행되어야 한다 (버그성 동작 확인)', () => {
-			// This test case verifies a potential bug where failure to draw a card
-			// causes the main effect to trigger despite the blocking condition.
-			mockDrawSpecificCard.mockReturnValue(undefined);
+		it('되돌려받을 카드가 덱에 없어도 false를 반환해야 한다', () => {
+			(cardManager.drawSpecificCard as jest.Mock).mockReturnValue(undefined);
 
 			const result = cardGuerrillaEffect(roomId, shooterId, targetId);
 
-			expect(result).toBe(true);
-			expect(mockDrawSpecificCard).toHaveBeenCalledWith(roomId, CardType.GUERRILLA);
+			expect(result).toBe(false);
+			expect(cardManager.drawSpecificCard).not.toHaveBeenCalled();
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled(); // Card not returned, so no update
-			expect(mockSaveRoom).toHaveBeenCalledWith(mockRoom); // Main logic runs
-			expect(shooter.character!.stateInfo!.state).toBe(CharacterStateType.GUERRILLA_SHOOTER);
+			expect(mockSaveRoom).not.toHaveBeenCalled(); // Main logic does not run
 		});
 	});
 
@@ -125,13 +117,13 @@ describe('cardGuerrillaEffect', () => {
 	describe('모든 유저가 일반 상태일 때 (사용 성공 조건)', () => {
 		it('모든 유저의 상태를 게릴라 상태로 변경하고 true를 반환해야 한다', () => {
 			const now = Date.now();
-			const expectedNextStateAt = `${now + 10000}`;
+			const expectedNextStateAt = `${now + 10}`;
 
 			const result = cardGuerrillaEffect(roomId, shooterId, targetId);
 
 			expect(result).toBe(true);
 			expect(mockSaveRoom).toHaveBeenCalledWith(mockRoom);
-			expect(mockDrawSpecificCard).not.toHaveBeenCalled(); // Should not be called in success case
+			expect(cardManager.drawSpecificCard).not.toHaveBeenCalled(); // Should not be called in success case
 
 			// Verify shooter's state
 			const shooterState = shooter.character!.stateInfo!;

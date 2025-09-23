@@ -22,7 +22,7 @@ import cardSniperGunEffect from '../card/weapon/card.sniper_gun.effect';
 import cardStealthSuitEffect from '../card/equip/card.stealth_suit.effect';
 import cardVaccineEffect from '../card/active/card.vaccine.effect';
 import cardWinLotteryEffect from '../card/active/card.win_lottery.effect';
-import { repeatDeck } from '../managers/card.manager';
+import { cardManager } from '../managers/card.manager';
 
 // 카드 효과 적용 함수
 export function applyCardEffect(

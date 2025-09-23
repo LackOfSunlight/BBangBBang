@@ -1,20 +1,17 @@
 import { CardType, CharacterStateType } from '../../generated/common/enums';
-import { removeCard } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import { User } from '../../models/user.model';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import cardHallucinationEffect from '../active/card.hallucination.effect';
 
 // Mock dependencies
 jest.mock('../../utils/room.utils');
-jest.mock('../../managers/card.manager', () => ({
-	removeCard: jest.fn(),
-}));
+jest.mock('../../managers/card.manager');
 
 // Cast mocks to the correct type
 const mockGetRoom = getRoom as jest.Mock;
 const mockGetUserFromRoom = getUserFromRoom as jest.Mock;
 const mockUpdateCharacterFromRoom = updateCharacterFromRoom as jest.Mock;
-const mockRemoveCard = removeCard as jest.Mock;
 
 describe('cardHallucinationEffect', () => {
 	let user: User;
@@ -77,7 +74,7 @@ describe('cardHallucinationEffect', () => {
 
 	it('유저 또는 타겟을 찾을 수 없으면 false를 반환해야 한다', () => {
 		mockGetUserFromRoom.mockReturnValue(null);
-		expect(mockRemoveCard).toHaveBeenCalledTimes(0);
+		expect(cardManager.removeCard).toHaveBeenCalledTimes(0);
 		expect(cardHallucinationEffect(roomId, userId, targetId)).toBe(false);
 	});
 
@@ -85,7 +82,7 @@ describe('cardHallucinationEffect', () => {
 		target.character!.stateInfo!.state = CharacterStateType.CONTAINED;
 		const result = cardHallucinationEffect(roomId, userId, targetId);
 		expect(result).toBe(false);
-		expect(mockRemoveCard).toHaveBeenCalledTimes(0);
+		expect(cardManager.removeCard).toHaveBeenCalledTimes(0);
 		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 	});
 
@@ -93,7 +90,7 @@ describe('cardHallucinationEffect', () => {
 		target.character!.handCards = [];
 		const result = cardHallucinationEffect(roomId, userId, targetId);
 		expect(result).toBe(false);
-		expect(mockRemoveCard).toHaveBeenCalledTimes(0);
+		expect(cardManager.removeCard).toHaveBeenCalledTimes(0);
 		expect(consoleLogSpy).toHaveBeenCalled();
 		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 	});
@@ -104,7 +101,7 @@ describe('cardHallucinationEffect', () => {
 		const result = cardHallucinationEffect(roomId, userId, targetId);
 
 		expect(result).toBe(true);
-		expect(mockRemoveCard).toHaveBeenCalledWith(user, expect.any(Object), CardType.HALLUCINATION);
+		expect(cardManager.removeCard).toHaveBeenCalledWith(user, expect.any(Object), CardType.HALLUCINATION);
 		
 		// 상태 변경 확인
 		expect(user.character!.stateInfo!.state).toBe(CharacterStateType.HALLUCINATING);

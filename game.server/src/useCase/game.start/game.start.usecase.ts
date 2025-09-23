@@ -13,7 +13,7 @@ import { Room } from '../../models/room.model.js';
 import { CharacterPositionData, GameStateData } from '../../generated/common/types.js';
 import { broadcastDataToRoom } from '../../utils/notification.util.js';
 import { shuffle } from '../../utils/shuffle.util.js';
-import { drawDeck, initializeDeck } from '../../managers/card.manager.js';
+import { cardManager } from '../../managers/card.manager.js';
 import gameManager, { notificationCharacterPosition } from '../../managers/game.manager.js';
 import characterSpawnPosition from '../../data/character.spawn.position.json';
 import {
@@ -54,7 +54,7 @@ export const gameStartUseCase = async (
 		};
 
 		// 카드 덱 초기화
-		initializeDeck(room.id);
+		cardManager.initializeDeck(room.id);
 
 		// 캐릭터 위치 정보 저장을 위한 Map 초기화
 		if (!notificationCharacterPosition.has(room.id)) {
@@ -70,7 +70,7 @@ export const gameStartUseCase = async (
 			posMap.set(user.id, characterPositionsData[i]); // 위치 정보 저장
 
 			if (character) {
-				const drawCards: CardType[] = drawDeck(room.id, character.hp);
+				const drawCards: CardType[] = cardManager.drawDeck(room.id, character.hp);
 				drawCards.forEach((type) => {
 					const existCard = character.handCards.find((card) => card.type === type);
 					if (existCard) {

@@ -5,7 +5,7 @@ import cardSatelliteTargetEffect from '../debuff/card.satellite_target.effect';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { playAnimationHandler } from '../../handlers/play.animation.handler';
 import { checkAndEndGameIfNeeded } from '../../utils/game.end.util';
-import { removeCard } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 
 // Mocks
 jest.mock('../../utils/room.utils', () => ({
@@ -22,9 +22,7 @@ jest.mock('../../utils/game.end.util', () => ({
 	checkAndEndGameIfNeeded: jest.fn(),
 }));
 
-jest.mock('../../managers/card.manager', () => ({
-	removeCard: jest.fn(),
-}));
+jest.mock('../../managers/card.manager');
 
 const mockGetRoom = getRoom as jest.MockedFunction<typeof getRoom>;
 const mockGetUserFromRoom = getUserFromRoom as jest.MockedFunction<typeof getUserFromRoom>;
@@ -37,7 +35,6 @@ const mockPlayAnimationHandler = playAnimationHandler as jest.MockedFunction<
 const mockCheckAndEndGameIfNeeded = checkAndEndGameIfNeeded as jest.MockedFunction<
 	typeof checkAndEndGameIfNeeded
 >;
-const mockRemoveCard = removeCard as jest.Mock;
 
 describe('위성 타겟 효과 테스트', () => {
 	const mockRoomId = 1;
@@ -90,7 +87,7 @@ describe('위성 타겟 효과 테스트', () => {
 			const result = cardSatelliteTargetEffect(mockRoomId, mockUserId, mockTargetUserId);
 
 			expect(result).toBe(true);
-			expect(mockRemoveCard).toHaveBeenCalledTimes(1)
+			expect(cardManager.removeCard).toHaveBeenCalledTimes(1)
 			expect(mockTarget.character.debuffs).toContain(CardType.SATELLITE_TARGET);
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(
 				mockRoomId,
@@ -123,7 +120,7 @@ describe('위성 타겟 효과 테스트', () => {
 			const result = cardSatelliteTargetEffect(mockRoomId, mockUserId, mockTargetUserId);
 
 			expect(result).toBe(false);
-			expect(mockRemoveCard).toHaveBeenCalledTimes(0)
+			expect(cardManager.removeCard).toHaveBeenCalledTimes(0)
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 			expect(consoleErrorSpy).toHaveBeenCalledWith(`[SatelliteTarget] 위성 타겟 적용 중 오류 발생: ${notFoundError}`);
 			consoleErrorSpy.mockRestore();
@@ -136,7 +133,7 @@ describe('위성 타겟 효과 테스트', () => {
 			const result = cardSatelliteTargetEffect(mockRoomId, mockUserId, mockTargetUserId);
 
 			expect(result).toBe(false);
-			expect(mockRemoveCard).toHaveBeenCalledTimes(0)
+			expect(cardManager.removeCard).toHaveBeenCalledTimes(0)
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 		});
 
@@ -152,7 +149,7 @@ describe('위성 타겟 효과 테스트', () => {
 			const result = cardSatelliteTargetEffect(mockRoomId, mockUserId, mockTargetUserId);
 
 			expect(result).toBe(false);
-			expect(mockRemoveCard).toHaveBeenCalledTimes(1)
+			expect(cardManager.removeCard).toHaveBeenCalledTimes(1)
 			expect(consoleErrorSpy).toHaveBeenCalledWith(`[SatelliteTarget] 위성 타겟 적용 중 오류 발생: ${updateError}`);
 			consoleErrorSpy.mockRestore();
 		});

@@ -4,7 +4,7 @@ import {
 	getUserFromRoom,
 } from '../../utils/room.utils';
 import { CardType, CharacterStateType } from '../../generated/common/enums.js';
-import { removeCard } from '../../managers/card.manager.js';
+import { cardManager } from '../../managers/card.manager.js';
 
 const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	const room = getRoom(roomId);
@@ -27,7 +27,7 @@ const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string
 		return false;
 	}
 
-	removeCard(shooter, room, CardType.BIG_BBANG);
+	cardManager.removeCard(shooter, room, CardType.BIG_BBANG);
 
 
 	for (let user of room.users) {

@@ -17,10 +17,7 @@ jest.mock('../../utils/notification.util', () => ({
 jest.mock('../../utils/shuffle.util', () => ({
 	shuffle: jest.fn(),
 }));
-jest.mock('../../managers/card.manager', () => ({
-	drawDeck: jest.fn(),
-	initializeDeck: jest.fn(),
-}));
+jest.mock('../../managers/card.manager');
 jest.mock('../../managers/game.manager', () => ({
 	__esModule: true,
 	default: {
@@ -37,18 +34,15 @@ jest.mock('../../managers/game.manager', () => ({
 import { getRoom, saveRoom } from '../../utils/room.utils';
 import { broadcastDataToRoom } from '../../utils/notification.util';
 import { shuffle } from '../../utils/shuffle.util';
-import { drawDeck, initializeDeck } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import gameManager, { notificationCharacterPosition } from '../../managers/game.manager';
 import { gameStartUseCase } from './game.start.usecase';
-import characterSpawnPosition from '../../data/character.spawn.position.json';
 
 // Mock 함수 캐스팅
 const mockGetRoom = getRoom as jest.Mock;
 const mockSaveRoom = saveRoom as jest.Mock;
 const mockBroadcastDataToRoom = broadcastDataToRoom as jest.Mock;
 const mockShuffle = shuffle as jest.Mock;
-const mockDrawDeck = drawDeck as jest.Mock;
-const mockInitializeDeck = initializeDeck as jest.Mock;
 const mockGameManagerStartGame = gameManager.startGame as jest.Mock;
 
 // notificationCharacterPosition은 전역 Map이므로, Mocking된 모듈에서 가져와야 함
@@ -118,7 +112,7 @@ describe('gameStartUseCase', () => {
 		mockShuffle.mockReturnValue(mockSpawnPositions);
 
 		// 카드 분배 Mocking
-		mockDrawDeck.mockImplementation((roomId, hp) => {
+		(cardManager.drawDeck as jest.Mock).mockImplementation((roomId, hp) => {
 			if (hp === 4) return [CardType.HAND_GUN, CardType.SHIELD];
 			return [];
 		});
@@ -144,7 +138,7 @@ describe('gameStartUseCase', () => {
 		expect(savedRoom.state).toBe(RoomStateType.INGAME);
 
 		// 4. 카드 덱 초기화 함수 호출 확인
-		expect(mockInitializeDeck).toHaveBeenCalledWith(mockRoom.id);
+		expect(cardManager.initializeDeck).toHaveBeenCalledWith(mockRoom.id);
 
 		// 5. notificationCharacterPosition Map 업데이트 확인
 		expect(mockNotificationCharacterPosition.has).toHaveBeenCalledWith(mockRoom.id);
