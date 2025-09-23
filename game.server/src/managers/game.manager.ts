@@ -46,7 +46,7 @@ class GameManager {
 
 	private scheduleNextPhase(roomId: number, roomTimerMapId: string) {
 		this.clearTimer(roomTimerMapId);
-		const dayInterval = 600000; // 1분
+		const dayInterval = 60000; // 1분
 		const eveningInterval = 30000; //30초
 
 		let nextPhase: PhaseType;
