@@ -103,75 +103,7 @@ export const createRoomResponseForm = (
 	return newGamePacket;
 };
 
-/**
- * 게임준비 응답
- * @param payload
- * @returns
- */
-export const gamePrepareResponsePacketForm = (payload: S2CGamePrepareResponse): GamePacket => {
-	return {
-		payload: {
-			oneofKind: GamePacketType.gamePrepareResponse,
-			gamePrepareResponse: payload,
-		},
-	};
-};
-/**
- * 게임 준비 알림
- * @param room
- * @returns
- */
-export const gamePrepareNotificationPacketForm = (room: Room): GamePacket => {
-	const notificationPayload: S2CGamePrepareNotification = {
-		room: room,
-	};
 
-	return {
-		payload: {
-			oneofKind: GamePacketType.gamePrepareNotification,
-			gamePrepareNotification: notificationPayload,
-		},
-	};
-};
-
-/**
- * 게임시작 응답
- * @param payload
- * @returns
- */
-export const gameStartResponsePacketForm = (payload: S2CGameStartResponse): GamePacket => {
-	return {
-		payload: {
-			oneofKind: GamePacketType.gameStartResponse,
-			gameStartResponse: payload,
-		},
-	};
-};
-
-/**
- * 게임시작 알림
- * @param gameState
- * @param users
- * @param characterPositions
- * @returns
- */
-export const gameStartNotificationPacketForm = (
-	gameState: GameStateData,
-	users: User[],
-	characterPositions: CharacterPositionData[],
-): GamePacket => {
-	const payload: S2CGameStartNotification = {
-		gameState,
-		users,
-		characterPositions,
-	};
-	return {
-		payload: {
-			oneofKind: GamePacketType.gameStartNotification,
-			gameStartNotification: payload,
-		},
-	};
-};
 
 /**
  * 방 목록 응답
@@ -290,6 +222,76 @@ export const userLeftNotificationPacketForm = (payload: S2CLeaveRoomNotification
 };
 
 /**
+ * 게임준비 응답
+ * @param payload
+ * @returns
+ */
+export const gamePrepareResponsePacketForm = (payload: S2CGamePrepareResponse): GamePacket => {
+	return {
+		payload: {
+			oneofKind: GamePacketType.gamePrepareResponse,
+			gamePrepareResponse: payload,
+		},
+	};
+};
+/**
+ * 게임 준비 알림
+ * @param room
+ * @returns
+ */
+export const gamePrepareNotificationPacketForm = (room: Room): GamePacket => {
+	const notificationPayload: S2CGamePrepareNotification = {
+		room: room,
+	};
+
+	return {
+		payload: {
+			oneofKind: GamePacketType.gamePrepareNotification,
+			gamePrepareNotification: notificationPayload,
+		},
+	};
+};
+
+/**
+ * 게임시작 응답
+ * @param payload
+ * @returns
+ */
+export const gameStartResponsePacketForm = (payload: S2CGameStartResponse): GamePacket => {
+	return {
+		payload: {
+			oneofKind: GamePacketType.gameStartResponse,
+			gameStartResponse: payload,
+		},
+	};
+};
+
+/**
+ * 게임시작 알림
+ * @param gameState
+ * @param users
+ * @param characterPositions
+ * @returns
+ */
+export const gameStartNotificationPacketForm = (
+	gameState: GameStateData,
+	users: User[],
+	characterPositions: CharacterPositionData[],
+): GamePacket => {
+	const payload: S2CGameStartNotification = {
+		gameState,
+		users,
+		characterPositions,
+	};
+	return {
+		payload: {
+			oneofKind: GamePacketType.gameStartNotification,
+			gameStartNotification: payload,
+		},
+	};
+};
+
+/**
  * 밤시간 카드 제거 응답
  * @param handCards
  * @returns
@@ -368,6 +370,29 @@ export const passDebuffResponseForm = (success: boolean, failCode: GlobalFailCod
 	};
 
 	return newGamePacket;
+};
+
+/**
+ * 카드사용 응답
+ * @param success 
+ * @param failCode 
+ * @returns 
+ */
+export const useCardResponsePacketForm = (
+	success: boolean,
+	failCode: GlobalFailCode,
+): GamePacket => {
+	const ResponsePacket: GamePacket = {
+		payload: {
+			oneofKind: GamePacketType.useCardResponse,
+			useCardResponse: {
+				success: success,
+				failCode: failCode,
+			},
+		},
+	};
+
+	return ResponsePacket;
 };
 
 /**
