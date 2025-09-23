@@ -23,13 +23,7 @@ const getMaxHp = (characterType: CharacterType): number => {
 	}
 };
 
-
-
-const cardCall119Effect = (
-	roomId: number,
-	userId: string,
-	targetUserId: string,
-): boolean => {
+const cardCall119Effect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	try {
 		const user = getUserFromRoom(roomId, userId);
 		const room = getRoom(roomId);
@@ -37,17 +31,28 @@ const cardCall119Effect = (
 		// 유효성 검증
 		if (!user || !user.character || !room) return false;
 
-		// 카드 제거
-		removeCard(user, room, CardType.CALL_119);
-
 		if (targetUserId != '0') {
+			const maxHp = getMaxHp(user.character.characterType);
+			if (user.character.hp >= maxHp) {
+				return false;
+			}
+
+			// 카드 제거
+			removeCard(user, room, CardType.CALL_119);
 			// 자신의 체력 회복
 			healCharacter(roomId, user, user.character);
 			return true;
 		} else {
+			const isAllFullHp = room.users.every(
+				(u) => u.character!.hp >= getMaxHp(u.character!.characterType),
+			);
+			if (isAllFullHp) return false;
+
+			// 카드 제거
+			removeCard(user, room, CardType.CALL_119);
+
 			// 나머지 플레이어들의 체력 회복
 			// 방의 모든 사용자 정보를 가져와서 자신을 제외한 나머지 플레이어들을 회복
-
 			for (const roomUser of room.users) {
 				if (roomUser.id !== userId && roomUser.character) {
 					healCharacter(roomId, roomUser, roomUser.character);

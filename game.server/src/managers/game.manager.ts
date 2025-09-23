@@ -38,7 +38,7 @@ class GameManager {
 		const phase = PhaseType.DAY;
 		roomPhase.set(roomId, phase);
 
-		const intervalId = setInterval(() => broadcastPositionUpdates(room), 200);
+		const intervalId = setInterval(() => broadcastPositionUpdates(room), 100);
 
 		positionUpdateIntervals.set(room.id, intervalId);
 		this.scheduleNextPhase(room.id, roomId);
@@ -46,8 +46,8 @@ class GameManager {
 
 	private scheduleNextPhase(roomId: number, roomTimerMapId: string) {
 		this.clearTimer(roomTimerMapId);
-		const dayInterval = 40000; // 1분
-		const eveningInterval = 10000; //30초
+		const dayInterval = 60000; // 1분
+		const eveningInterval = 30000; //30초
 
 		let nextPhase: PhaseType;
 		let interval: number;
