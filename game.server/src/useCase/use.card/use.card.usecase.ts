@@ -50,12 +50,6 @@ export const useCardUseCase = (
 
 	// userUpdateNotification 패킷 전달
 
-	const userUpdateNotificationPacket = createUserUpdateNotificationPacket(room.users);
-	broadcastDataToRoom(
-		room.users,
-		userUpdateNotificationPacket,
-		GamePacketType.userUpdateNotification,
-	);
 
 	return {
 		success: true,

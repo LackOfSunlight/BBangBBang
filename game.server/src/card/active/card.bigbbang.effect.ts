@@ -9,6 +9,7 @@ import { removeCard } from '../../managers/card.manager.js';
 const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	const room = getRoom(roomId);
 	const shooter = getUserFromRoom(roomId, userId);
+	const nowTime = Date.now();
 
 	if (!room || !shooter) {
 		return false;
@@ -34,7 +35,7 @@ const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string
 			if (user.id === userId) {
 				user.character.stateInfo.state = CharacterStateType.BIG_BBANG_SHOOTER;
 				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-				user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
+				user.character.stateInfo.nextStateAt = `${nowTime + 10}`;
 				user.character.stateInfo.stateTargetUserId = targetUserId;
 
 				continue;
@@ -43,7 +44,7 @@ const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string
 			if (user.character && user.character.hp > 0 && user.character.stateInfo.state != CharacterStateType.CONTAINED) {
 				user.character.stateInfo.state = CharacterStateType.BIG_BBANG_TARGET;
 				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-				user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
+				user.character.stateInfo.nextStateAt = `${nowTime + 10}`;
 				user.character.stateInfo.stateTargetUserId = userId;
 			}
 		}

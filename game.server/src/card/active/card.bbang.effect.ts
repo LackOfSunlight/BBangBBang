@@ -9,6 +9,7 @@ const cardBbangEffect = (roomId: number, userId: string, targetUserId: string): 
 	const user = getUserFromRoom(roomId, userId);
 	const target = getUserFromRoom(roomId, targetUserId);
 	const room = getRoom(roomId);
+	const nowTime = Date.now();
 
 	// 유효성 검증
 	if (!room) {
@@ -42,23 +43,23 @@ const cardBbangEffect = (roomId: number, userId: string, targetUserId: string): 
 		// 상태 설정
 		user.character.stateInfo.state = CharacterStateType.BBANG_SHOOTER; // 빵야 카드 사용자는 BBANG_SHOOTER 상태가 되고
 		user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-		user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`; //ms
+		user.character.stateInfo.nextStateAt = `${nowTime + 10}`; //ms
 		user.character.stateInfo.stateTargetUserId = targetUserId; // 빵야 카드 사용자는 targetId에 대상자 ID를 기록
 
 		target.character.stateInfo.state = CharacterStateType.BBANG_TARGET; // 빵야 카드 대상자는 BBANG_TARGET 상태가 됩니다
 		target.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-		target.character.stateInfo.nextStateAt = `${Date.now() + 10000}`; //ms
+		target.character.stateInfo.nextStateAt = `${nowTime +10}`; //ms
 		target.character.stateInfo.stateTargetUserId = userId;
 	} else if (user.character.stateInfo.state === CharacterStateType.DEATH_MATCH_TURN_STATE) {
 		// 상태 설정
-		user.character.stateInfo.state = CharacterStateType.DEATH_MATCH_STATE; // 빵야 카드 사용자는 BBANG_SHOOTER 상태가 되고
+		user.character.stateInfo.state = CharacterStateType.DEATH_MATCH_STATE;
 		user.character.stateInfo.nextState = CharacterStateType.DEATH_MATCH_TURN_STATE;
-		user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`; //ms
-		user.character.stateInfo.stateTargetUserId = targetUserId; // 빵야 카드 사용자는 targetId에 대상자 ID를 기록
+		user.character.stateInfo.nextStateAt = `${nowTime + 10}`; //ms
+		user.character.stateInfo.stateTargetUserId = targetUserId; 
 
-		target.character.stateInfo.state = CharacterStateType.DEATH_MATCH_TURN_STATE; // 빵야 카드 대상자는 BBANG_TARGET 상태가 됩니다
+		target.character.stateInfo.state = CharacterStateType.DEATH_MATCH_TURN_STATE; 
 		target.character.stateInfo.nextState = CharacterStateType.DEATH_MATCH_STATE;
-		target.character.stateInfo.nextStateAt = `${Date.now() + 10000}`; //ms
+		target.character.stateInfo.nextStateAt = `${nowTime + 10}`; //ms
 		target.character.stateInfo.stateTargetUserId = userId;
 	} else if (user.character.stateInfo.state === CharacterStateType.GUERRILLA_TARGET) {
 		user.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
