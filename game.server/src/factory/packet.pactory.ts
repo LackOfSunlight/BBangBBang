@@ -72,11 +72,11 @@ export const loginResponseForm = (
 		payload: {
 			oneofKind: GamePacketType.loginResponse,
 			loginResponse: {
-				success: success,
-				message: message,
-				token: token,
-				myInfo: myInfo,
-				failCode: failCode,
+				success,
+				message,
+				token,
+				myInfo,
+				failCode,
 			},
 		},
 	};
@@ -373,8 +373,8 @@ export const useCardResponsePacketForm = (
 		payload: {
 			oneofKind: GamePacketType.useCardResponse,
 			useCardResponse: {
-				success: success,
-				failCode: failCode,
+				success,
+				failCode,
 			},
 		},
 	};
