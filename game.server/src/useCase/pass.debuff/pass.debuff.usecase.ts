@@ -1,9 +1,14 @@
 import { C2SPassDebuffRequest } from '../../generated/packet/game_actions';
 import { getRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import { GlobalFailCode } from '../../generated/common/enums';
+import { GlobalFailCode, CardType } from '../../generated/common/enums';
+import { GamePacketType } from '../../enums/gamePacketType';
 import { GamePacket } from '../../generated/gamePacket';
 import { GameSocket } from '../../type/game.socket';
 import { passDebuffResponseForm } from '../../factory/packet.pactory';
+import { bombManager } from '../../card/debuff/card.bomb.effect';
+//import { createUserUpdateNotificationPacket } from '../use.card/use.card.usecase';
+import { userUpdateNotificationPacketForm } from '../../factory/packet.pactory';
+import { broadcastDataToRoom } from '../../utils/notification.util';
 
 const passDebuffUseCase = async (
 	socket: GameSocket,
@@ -30,29 +35,39 @@ const passDebuffUseCase = async (
 		// 2. 요청자와 대상자가 같은 방에 있는지 확인
 		const fromUser = room.users.find((u) => u.id === userId);
 		const toUser = room.users.find((u) => u.id === req.targetUserId);
-
 		if (!fromUser || !toUser) {
 			return passDebuffResponseForm(false, GlobalFailCode.INVALID_REQUEST);
 		}
 
 		// 3. 요청자가 해당 디버프를 가지고 있는지 확인
-		const hasDebuff = fromUser.character!.debuffs.includes(req.debuffCardType);
-		if (!hasDebuff) {
+		const hasDebuff = fromUser.character!!.debuffs.includes(CardType.BOMB);
+		// 4. 대상자가 이미 해당 디버프를 가지고 있는지 확인
+		const alreadyDebuffed = toUser.character!.debuffs.includes(CardType.BOMB);
+		if (!hasDebuff || alreadyDebuffed) { // 사용자는 해당 디버프 소지 , 대상자는 해당 디버프가 없어야 실행
 			return passDebuffResponseForm(false, GlobalFailCode.CHARACTER_NO_CARD);
 		}
+		 
+		// 5. 디버프 전달 실행
+		const idx = fromUser.character!.debuffs.findIndex((c) => c === CardType.BOMB);
+		if (idx !== undefined && idx >= 0) {
+		fromUser.character!.debuffs.splice(idx, 1);
+		}
+		toUser.character!.debuffs.push(CardType.BOMB);
 
-		// 4. 디버프 전달 실행
-		// 요청자에서 디버프 제거
-		const updatedFromDebuffs = fromUser.character!.debuffs.filter(
-			(debuff) => debuff !== req.debuffCardType,
-		);
-		updateCharacterFromRoom(roomId, userId, { debuffs: updatedFromDebuffs });
+		const timerKey = `${roomId}:${fromUser.id}`;
+		const explosionTime = bombManager.clearTimer(timerKey);
+		const remainTime = explosionTime - Date.now();
+		bombManager.startBombTimer(roomId, toUser.id, remainTime);
+		console.log(`[BOMB] 폭탄이 ${fromUser.nickname} → ${toUser.nickname} 에게 전달됨 (남은 시간 ${remainTime}ms)`);
 
-		// 대상자에게 디버프 추가
-		const updatedToDebuffs = [...toUser.character!.debuffs, req.debuffCardType];
-		updateCharacterFromRoom(roomId, req.targetUserId, { debuffs: updatedToDebuffs });
+		// 6. 유저 정보 업데이트
+		updateCharacterFromRoom(roomId, fromUser.id, fromUser.character!);
+    	updateCharacterFromRoom(roomId, toUser.id, toUser.character!);
 
-		// 5. 성공 응답
+		const updateClient = userUpdateNotificationPacketForm(room.users);
+		broadcastDataToRoom(room.users, updateClient, GamePacketType.userUpdateNotification);
+
+		// 6. 성공 응답
 		return passDebuffResponseForm(true, GlobalFailCode.NONE_FAILCODE);
 	} catch (error) {
 		console.error('Error in passDebuffUseCase:', error);
