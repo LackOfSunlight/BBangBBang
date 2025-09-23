@@ -84,7 +84,7 @@ export const fleaMarketNotificationForm = (
 export const gamePrepareResponsePacketForm = (payload: S2CGamePrepareResponse): GamePacket => {
 	return {
 		payload: {
-			oneofKind: 'gamePrepareResponse',
+			oneofKind: GamePacketType.gamePrepareResponse,
 			gamePrepareResponse: payload,
 		},
 	};
@@ -97,7 +97,7 @@ export const gamePrepareNotificationPacketForm = (room: Room): GamePacket => {
 
 	return {
 		payload: {
-			oneofKind: 'gamePrepareNotification',
+			oneofKind: GamePacketType.gamePrepareNotification,
 			gamePrepareNotification: notificationPayload,
 		},
 	};
@@ -106,7 +106,7 @@ export const gamePrepareNotificationPacketForm = (room: Room): GamePacket => {
 export const gameStartResponsePacketForm = (payload: S2CGameStartResponse): GamePacket => {
 	return {
 		payload: {
-			oneofKind: 'gameStartResponse',
+			oneofKind: GamePacketType.gameStartResponse,
 			gameStartResponse: payload,
 		},
 	};
@@ -124,7 +124,7 @@ export const gameStartNotificationPacketForm = (
 	};
 	return {
 		payload: {
-			oneofKind: 'gameStartNotification',
+			oneofKind: GamePacketType.gameStartNotification,
 			gameStartNotification: payload,
 		},
 	};
@@ -197,7 +197,7 @@ export const joinRoomResponseForm = (
 export const leaveRoomResponsePacketForm = (payload: S2CLeaveRoomResponse): GamePacket => {
 	return {
 		payload: {
-			oneofKind: 'leaveRoomResponse',
+			oneofKind: GamePacketType.leaveRoomResponse,
 			leaveRoomResponse: payload,
 		},
 	};
@@ -206,7 +206,7 @@ export const leaveRoomResponsePacketForm = (payload: S2CLeaveRoomResponse): Game
 export const userLeftNotificationPacketForm = (payload: S2CLeaveRoomNotification): GamePacket => {
 	return {
 		payload: {
-			oneofKind: 'leaveRoomNotification',
+			oneofKind: GamePacketType.leaveRoomNotification,
 			leaveRoomNotification: payload,
 		},
 	};
@@ -299,6 +299,8 @@ export const userUpdateNotificationPacketForm = (user: User[]): GamePacket => {
 
 	return NotificationPacket;
 };
+
+
 
 export const positionUpdateNotificationForm = (
 	characterPositions: CharacterPositionData[],
