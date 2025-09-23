@@ -244,19 +244,26 @@ export const broadcastPositionUpdates = (room: Room) => {
 		return; // 위치 변화가 없으면 패킷 전송 생략
 	}
 
-	// 방의 유저 위치 배열 생성
+	// 🎯 간단한 최적화: notificationCharacterPosition에 있는 데이터만 브로드캐스트
+	// (position.update.usecase에서 이미 변화된 플레이어만 추가했으므로)
 	const characterPositions: CharacterPositionData[] = [];
+	
 	for (const [userId, positionData] of roomMap.entries()) {
 		characterPositions.push({
-			...positionData, // x, y 등 위치 정보
+			id: userId,  // 🔑 핵심: ID 포함
+			x: positionData.x,
+			y: positionData.y,
 		});
 	}
 
-	// 위치 업데이트 패킷 생성
-	const gamePacket = setPositionUpdateNotification(characterPositions);
-
-	// 방의 모든 유저에게 전송
-	broadcastDataToRoom(room.users, gamePacket, GamePacketType.positionUpdateNotification);
+	// 데이터가 있을 때만 브로드캐스트
+	if (characterPositions.length > 0) {
+		const gamePacket = setPositionUpdateNotification(characterPositions);
+		broadcastDataToRoom(room.users, gamePacket, GamePacketType.positionUpdateNotification);
+		
+		// 🎯 핵심: 브로드캐스트 후 Map 비우기 (다음 변화까지 대기)
+		roomMap.clear();
+	}
 	
 	// 변화 플래그 리셋 (다음 위치 변경까지 대기)
 	roomPositionChanged.set(room.id, false);
