@@ -601,9 +601,9 @@ export const gameEndNotificationForm = (winners: string[], winType: WinType): Ga
 
 /**
  * 카드선택 응답
- * @param success 
- * @param failCode 
- * @returns 
+ * @param success
+ * @param failCode
+ * @returns
  */
 export const cardSelectResponseForm = (success: boolean, failCode: GlobalFailCode): GamePacket => {
 	const newGamePacket: GamePacket = {
