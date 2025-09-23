@@ -8,6 +8,7 @@ import { checkAndEndGameIfNeeded } from '../utils/game.end.util';
 import { Room } from '../models/room.model';
 import { getRoom } from '../utils/room.utils';
 import { GlobalFailCode } from '../generated/common/enums';
+import { reactionResponsePacketForm } from '../factory/packet.pactory';
 
 
 const reactionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
@@ -38,7 +39,7 @@ const reactionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket)
 
 
     /// 3. 유즈케이스 결과에 따라 응답/알림 전송
-    const responsePacket = createReactionResponsePacket(res.success, res.failcode);
+    const responsePacket = reactionResponsePacketForm(res.success, res.failcode);
     sendData(socket, responsePacket, GamePacketType.reactionResponse);
     
     
@@ -48,24 +49,9 @@ const reactionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket)
 
 /** 오류코드:잘못된요청 을 일괄 처리하기 위한 함수 */
 const is_invalid_request = (socket: GameSocket, failcode: GlobalFailCode) => {
-    const wrongDTO = createReactionResponsePacket(false, failcode);
+    const wrongDTO = reactionResponsePacketForm(false, failcode);
     sendData(socket, wrongDTO, GamePacketType.useCardResponse);
 };
-/** 패킷 세팅 */
-
-export const createReactionResponsePacket = (success: boolean, failCode: GlobalFailCode): GamePacket => {
-    const newGamePacket: GamePacket = {
-        payload: {
-            oneofKind: GamePacketType.reactionResponse,
-            reactionResponse: {
-                success,
-                failCode,
-            },
-        },
-    };
-    return newGamePacket;
-};
-
 
 
 export default reactionUpdateHandler;

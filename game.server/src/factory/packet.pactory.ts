@@ -1,5 +1,12 @@
 import { GamePacketType } from '../enums/gamePacketType';
-import { AnimationType, CardType, GlobalFailCode, PhaseType, WinType } from '../generated/common/enums';
+import {
+	AnimationType,
+	CardType,
+	GlobalFailCode,
+	PhaseType,
+	SelectCardType,
+	WinType,
+} from '../generated/common/enums';
 import {
 	CardData,
 	CharacterPositionData,
@@ -102,8 +109,6 @@ export const createRoomResponseForm = (
 
 	return newGamePacket;
 };
-
-
 
 /**
  * 방 목록 응답
@@ -292,24 +297,6 @@ export const gameStartNotificationPacketForm = (
 };
 
 /**
- * 밤시간 카드 제거 응답
- * @param handCards
- * @returns
- */
-export const destroyResponseForm = (handCards: CardData[]): GamePacket => {
-	const newGamePacket: GamePacket = {
-		payload: {
-			oneofKind: GamePacketType.destroyCardResponse,
-			destroyCardResponse: {
-				handCards,
-			},
-		},
-	};
-
-	return newGamePacket;
-};
-
-/**
  * 플리마켓 응답
  * @param success
  * @param failCode
@@ -374,9 +361,9 @@ export const passDebuffResponseForm = (success: boolean, failCode: GlobalFailCod
 
 /**
  * 카드사용 응답
- * @param success 
- * @param failCode 
- * @returns 
+ * @param success
+ * @param failCode
+ * @returns
  */
 export const useCardResponsePacketForm = (
 	success: boolean,
@@ -485,6 +472,114 @@ export const phaseUpdateNotificationForm = (
 };
 
 /**
+ * 카드 장비 알림
+ * @param cardType
+ * @param userId
+ * @returns
+ */
+export const equipCardNotificationForm = (cardType: CardType, userId: string) => {
+	const newGamePacket: GamePacket = {
+		payload: {
+			oneofKind: GamePacketType.equipCardNotification,
+			equipCardNotification: {
+				cardType: cardType,
+				userId: userId,
+			},
+		},
+	};
+	return newGamePacket;
+};
+
+/**
+ * 장비 효과 발동 알림
+ * @param cardType
+ * @param userId
+ * @param success
+ * @returns
+ */
+export const cardEffectNotificationForm = (
+	cardType: CardType,
+	userId: string,
+	success: boolean,
+) => {
+	const newGamePacket: GamePacket = {
+		payload: {
+			oneofKind: GamePacketType.cardEffectNotification,
+			cardEffectNotification: {
+				cardType: cardType,
+				userId: userId,
+				success: true,
+			},
+		},
+	};
+	return newGamePacket;
+};
+
+/**
+ * 리액션 응답
+ * @param success
+ * @param failCode
+ * @returns
+ */
+export const reactionResponsePacketForm = (
+	success: boolean,
+	failCode: GlobalFailCode,
+): GamePacket => {
+	const newGamePacket: GamePacket = {
+		payload: {
+			oneofKind: GamePacketType.reactionResponse,
+			reactionResponse: {
+				success,
+				failCode,
+			},
+		},
+	};
+	return newGamePacket;
+};
+
+/**
+ * 애니메이션 알림
+ * @param users
+ * @param userId
+ * @param animationType
+ */
+export const animationNotificationForm = (
+	users: UserData[],
+	userId: string,
+	animationType: AnimationType,
+) => {
+	const newGamePacket: GamePacket = {
+		payload: {
+			oneofKind: GamePacketType.animationNotification,
+			animationNotification: {
+				userId: userId,
+				animationType: animationType,
+			},
+		},
+	};
+
+	return newGamePacket;
+};
+
+/**
+ * 밤시간 카드 제거 응답
+ * @param handCards
+ * @returns
+ */
+export const destroyResponseForm = (handCards: CardData[]): GamePacket => {
+	const newGamePacket: GamePacket = {
+		payload: {
+			oneofKind: GamePacketType.destroyCardResponse,
+			destroyCardResponse: {
+				handCards,
+			},
+		},
+	};
+
+	return newGamePacket;
+};
+
+/**
  * 게임 종료 알림
  * @param winners
  * @param winType
@@ -505,25 +600,20 @@ export const gameEndNotificationForm = (winners: string[], winType: WinType): Ga
 };
 
 /**
- * 애니메이션 알림
- * @param users 
- * @param userId 
- * @param animationType 
+ * 카드선택 응답
+ * @param success 
+ * @param failCode 
+ * @returns 
  */
-export const animationNotificationForm = (
-	users: UserData[],
-	userId: string,
-	animationType: AnimationType,
-) => {
+export const cardSelectResponseForm = (success: boolean, failCode: GlobalFailCode): GamePacket => {
 	const newGamePacket: GamePacket = {
 		payload: {
-			oneofKind: GamePacketType.animationNotification,
-			animationNotification: {
-				userId: userId,
-				animationType: animationType,
+			oneofKind: GamePacketType.cardSelectResponse,
+			cardSelectResponse: {
+				success,
+				failCode,
 			},
 		},
 	};
-
 	return newGamePacket;
 };
