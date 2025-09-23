@@ -1,7 +1,7 @@
 import { C2SPositionUpdateRequest } from '../../generated/packet/game_actions';
 import { GameSocket } from '../../type/game.socket';
 import { CharacterPositionData } from '../../generated/common/types';
-import { notificationCharacterPosition } from '../../managers/game.manager';
+import { notificationCharacterPosition, roomPositionChanged } from '../../managers/game.manager';
 
 const positionUpdateUseCase = async (
 	socket: GameSocket,
@@ -27,9 +27,25 @@ const positionUpdateUseCase = async (
 
 	// 3. 위치 정보 업데이트
 	const roomMap = notificationCharacterPosition.get(roomId);
-	roomMap!.set(userId, positionData);
+	if (!roomMap) {
+		return false;
+	}
+	
+	// 이전 위치와 비교하여 변화 감지
+	const currentPosition = roomMap.get(userId);
+	const isPositionChanged = !currentPosition || 
+		currentPosition.x !== req.x || 
+		currentPosition.y !== req.y;
+	
+	// 위치 업데이트
+	roomMap.set(userId, positionData);
+	
+	// 위치가 변경되었으면 변화 플래그 설정
+	if (isPositionChanged) {
+		roomPositionChanged.set(roomId, true);
+	}
 
-	// 5. 성공
+	// 성공
 	return true;
 };
 

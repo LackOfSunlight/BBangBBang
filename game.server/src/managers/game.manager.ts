@@ -21,6 +21,9 @@ export const notificationCharacterPosition = new Map<
 	Map<string, CharacterPositionData> // userId → 위치 배열
 >();
 
+// 위치 변화 감지 플래그 (성능 최적화용)
+export const roomPositionChanged = new Map<number, boolean>();
+
 class GameManager {
 	private static instance: GameManager;
 
@@ -36,6 +39,9 @@ class GameManager {
 		const roomId = `room:${room.id}`;
 		const phase = PhaseType.DAY;
 		roomPhase.set(roomId, phase);
+
+		// 위치 변화 플래그 초기화 (최초 시작 시에는 true로 설정)
+		roomPositionChanged.set(room.id, true);
 
 		const intervalId = setInterval(() => broadcastPositionUpdates(room), 100);
 
@@ -177,6 +183,9 @@ class GameManager {
 		}
 		this.clearTimer(roomId);
 
+		// 위치 변화 플래그 정리
+		roomPositionChanged.delete(room.id);
+
 		deleteRoom(room.id);
 	}
 
@@ -227,12 +236,16 @@ export const broadcastPositionUpdates = (room: Room) => {
 	if (!roomMap) return; // 해당 방의 위치 정보가 없으면 종료
 
 	const phase = roomPhase.get(`room:${room.id}`);
-
 	if (phase === PhaseType.END) return;
+
+	// 변화가 없으면 브로드캐스트 생략 (성능 최적화)
+	const hasChanged = roomPositionChanged.get(room.id);
+	if (!hasChanged) {
+		return; // 위치 변화가 없으면 패킷 전송 생략
+	}
 
 	// 방의 유저 위치 배열 생성
 	const characterPositions: CharacterPositionData[] = [];
-
 	for (const [userId, positionData] of roomMap.entries()) {
 		characterPositions.push({
 			...positionData, // x, y 등 위치 정보
@@ -244,6 +257,9 @@ export const broadcastPositionUpdates = (room: Room) => {
 
 	// 방의 모든 유저에게 전송
 	broadcastDataToRoom(room.users, gamePacket, GamePacketType.positionUpdateNotification);
+	
+	// 변화 플래그 리셋 (다음 위치 변경까지 대기)
+	roomPositionChanged.set(room.id, false);
 };
 
 export default GameManager.getInstance();
