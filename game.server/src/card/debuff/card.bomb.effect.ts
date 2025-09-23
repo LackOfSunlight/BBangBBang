@@ -89,15 +89,21 @@ class BombManager {
       const remain = Math.ceil((explosionAt - Date.now()) / 1000);
       console.log(`[BOMB][${bombUser.nickname}] 남은 시간: ${remain}s`);
 
-    if (remain <= 0) {
-        clearInterval(timer);
-        this.bombTimers.delete(key);
-        bombExplosion(roomId, userId);
-    }
-	else if(remain <= 10){
-	  const warnExplosion = createWarnNotificationPacket(WarningType.BOMB_WANING, `${remain}`);
-	  broadcastDataToRoom(room.users, warnExplosion, GamePacketType.warningNotification);
-	}
+		if (remain <= 0) {
+			// 경고 패킷 초기화
+			const warnExplosionOver = createWarnNotificationPacket(WarningType.NO_WARNING, `0`);
+			broadcastDataToRoom(room.users, warnExplosionOver, GamePacketType.warningNotification);
+
+			clearInterval(timer);
+			this.bombTimers.delete(key);
+			bombExplosion(roomId, userId);
+			
+		}
+		else if(remain === 10){
+			// 경고 패킷 활성화 
+			const warnExplosion = createWarnNotificationPacket(WarningType.BOMB_WANING, `${remain}`);
+			broadcastDataToRoom(room.users, warnExplosion, GamePacketType.warningNotification);
+		}
 
     }, 1000);
 
