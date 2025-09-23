@@ -18,8 +18,6 @@ import { shuffle } from '../../utils/shuffle.util.js';
 import { drawDeck, initializeDeck } from '../../managers/card.manager.js';
 import gameManager, { notificationCharacterPosition } from '../../managers/game.manager.js';
 import characterSpawnPosition from '../../data/character.spawn.position.json';
-import { testCard } from '../../init/test.card.js';
-import { count } from 'console';
 
 // 응답 패킷 생성 헬퍼
 const createGameStartResponsePacket = (payload: S2CGameStartResponse): GamePacket => {
@@ -128,10 +126,10 @@ export const gameStartUseCase = async (
 					// {type:CardType.LASER_POINTER, count:3},
 					// {type:CardType.MATURED_SAVINGS,count:3},
 					{type:CardType.RADAR, count:3},
-					// {type:CardType.SATELLITE_TARGET, count:3},
-					// {type:CardType.STEALTH_SUIT, count:3},
-					// {type:CardType.VACCINE, count:3},
-					// {type:CardType.WIN_LOTTERY, count:3}
+					{type:CardType.SATELLITE_TARGET, count:3},
+					{type:CardType.STEALTH_SUIT, count:3},
+					{type:CardType.VACCINE, count:3},
+					{type:CardType.WIN_LOTTERY, count:3}
 				];
 				character.handCardsCount = character.handCards.reduce((sum, card) => sum + card.count, 0);
 			}

@@ -1,14 +1,16 @@
-import { GamePacketType, gamePackTypeSelect } from "../enums/gamePacketType";
-import { CardType, GlobalFailCode } from "../generated/common/enums";
-import { GamePacket } from "../generated/gamePacket";
-import { Room } from "../models/room.model";
-import { GameSocket } from "../type/game.socket";
-import { createUserUpdateNotificationPacket, useCardUseCase } from "../useCase/use.card/use.card.usecase";
-import { broadcastDataToRoom } from "../utils/notification.util";
-import { getRoom } from "../utils/room.utils";
-import { sendData } from "../utils/send.data";
-import { getGamePacketType } from "../utils/type.converter";
-
+import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
+import { CardType, GlobalFailCode } from '../generated/common/enums';
+import { GamePacket } from '../generated/gamePacket';
+import { Room } from '../models/room.model';
+import { GameSocket } from '../type/game.socket';
+import {
+	createUserUpdateNotificationPacket,
+	useCardUseCase,
+} from '../useCase/use.card/use.card.usecase';
+import { broadcastDataToRoom } from '../utils/notification.util';
+import { getRoom } from '../utils/room.utils';
+import { sendData } from '../utils/send.data';
+import { getGamePacketType } from '../utils/type.converter';
 
 const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	/// 1. DTO 생성 및 기본 유효성 검사
@@ -43,20 +45,20 @@ const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	}
 
 	/// 2. 유즈케이스 호출
-	const res = useCardUseCase(
-		userId,
-		roomId,
-		cardType,
-		targetUserId,
-	);
+	const res = useCardUseCase(userId, roomId, cardType, targetUserId);
 
 	/// 3. 유즈케이스 결과에 따라 응답/알림 전송
-	const useCardResponsePacket = createUseCardResponsePacket(
-		res.success,
-		res.failcode,
-	);
+	const useCardResponsePacket = createUseCardResponsePacket(res.success, res.failcode);
 	sendData(socket, useCardResponsePacket, GamePacketType.useCardResponse);
 
+	if (res.success) {
+		const userUpdateNotificationPacket = createUserUpdateNotificationPacket(room.users);
+		broadcastDataToRoom(
+			room.users,
+			userUpdateNotificationPacket,
+			GamePacketType.userUpdateNotification,
+		);
+	}
 };
 
 /** 오류코드:잘못된요청을 일괄 처리하기 위한 함수 */
