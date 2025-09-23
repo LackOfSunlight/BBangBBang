@@ -10,6 +10,7 @@ import {
 const cardGuerrillaEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	const room = getRoom(roomId);
 	const shooter = getUserFromRoom(roomId, userId);
+	const nowTime = Date.now();
 
 	if (!room || !shooter) return false;
 
@@ -30,7 +31,7 @@ const cardGuerrillaEffect = (roomId: number, userId: string, targetUserId: strin
 			if (user.id === userId) {
 				user.character.stateInfo.state = CharacterStateType.GUERRILLA_SHOOTER;
 				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-				user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
+				user.character.stateInfo.nextStateAt = `${nowTime + 10}`;
 				user.character.stateInfo.stateTargetUserId = targetUserId;
 
 				continue;
@@ -39,7 +40,7 @@ const cardGuerrillaEffect = (roomId: number, userId: string, targetUserId: strin
 			if (user.character && user.character.hp > 0 && user.character.stateInfo.state != CharacterStateType.CONTAINED) {
 				user.character.stateInfo.state = CharacterStateType.GUERRILLA_TARGET;
 				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-				user.character.stateInfo.nextStateAt = `${Date.now() + 10000}`;
+				user.character.stateInfo.nextStateAt = `${nowTime + 10}`;
 				user.character.stateInfo.stateTargetUserId = userId;
 			}
 		}

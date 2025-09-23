@@ -15,6 +15,7 @@ const cardFleaMarketEffect = (roomId: number, userId: string, targetUserId: stri
 	// 방 정보 가져오기
 	const room = getRoom(roomId);
 	const user = getUserFromRoom(roomId, userId);
+	const nowTime = Date.now();
 	if (!room) throw new Error(`Room ${roomId} not found`);
 	if (!user) throw new Error(`User ${userId} not found`);
 
@@ -37,7 +38,7 @@ const cardFleaMarketEffect = (roomId: number, userId: string, targetUserId: stri
 
 	user.character!.stateInfo!.state = CharacterStateType.FLEA_MARKET_TURN;
 	user.character!.stateInfo!.nextState = CharacterStateType.FLEA_MARKET_WAIT;
-	((user.character!.stateInfo!.nextStateAt = '5'),
+	((user.character!.stateInfo!.nextStateAt = `${nowTime + 5}`),
 		(user.character!.stateInfo!.stateTargetUserId = '0'));
 
 	for (let i = 0; i < room.users.length; i++) {
@@ -46,7 +47,7 @@ const cardFleaMarketEffect = (roomId: number, userId: string, targetUserId: stri
 		}
 		room.users[i].character!.stateInfo!.state = CharacterStateType.FLEA_MARKET_WAIT;
 		room.users[i].character!.stateInfo!.nextState = CharacterStateType.FLEA_MARKET_TURN;
-		room.users[i].character!.stateInfo!.nextStateAt = '0';
+		room.users[i].character!.stateInfo!.nextStateAt = `${nowTime + 5}`;
 		room.users[i].character!.stateInfo!.stateTargetUserId = '0';
 	}
 
