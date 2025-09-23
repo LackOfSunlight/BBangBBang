@@ -32,7 +32,8 @@ export const cardSelectUseCase = (
 		return { success: false, failCode: GlobalFailCode.CHARACTER_NOT_FOUND };
 	}
 
-	if (user.character.stateInfo!.state !== CharacterStateType.ABSORBING) {
+	if (user.character.stateInfo!.state !== CharacterStateType.ABSORBING && 
+		user.character.stateInfo!.state !== CharacterStateType.HALLUCINATING) {
 		return { success: false, failCode: GlobalFailCode.CHARACTER_STATE_ERROR };
 	}
 
@@ -79,7 +80,12 @@ export const cardSelectUseCase = (
 	}
 
 	if (stolenCardType) {
-		addCardToUser(user, stolenCardType);
+		// 흡수 카드인 경우: 카드를 가져오기
+		if (user.character.stateInfo!.state === CharacterStateType.ABSORBING) {
+			addCardToUser(user, stolenCardType);
+		}
+		// 신기루 카드인 경우: 카드 삭제만 (가져오지 않음)
+		// stolenCardType은 이미 타겟에서 제거됨
 	} else {
 		return { success: false, failCode: GlobalFailCode.UNKNOWN_ERROR };
 	}
