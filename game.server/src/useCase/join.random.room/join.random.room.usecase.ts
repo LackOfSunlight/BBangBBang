@@ -8,7 +8,7 @@ import { getUserByUserId } from '../../services/prisma.service';
 import { User } from '../../models/user.model';
 import { broadcastDataToRoom } from '../../utils/notification.util';
 import { joinRandomRoomResponseForm, joinRoomNotificationForm } from '../../factory/packet.pactory';
-import roomManger from '../../managers/room.manger';
+import { getRooms, addUserToRoom } from '../../utils/room.utils';
 
 const joinRandomRoomUseCase = async (
 	socket: GameSocket,
@@ -25,7 +25,7 @@ const joinRandomRoomUseCase = async (
 	}
 
 	if (userInfo) {
-		const rooms: Room[] = roomManger.getRooms();
+		const rooms: Room[] = getRooms();
 
 		const availableRooms = rooms.filter((room) => room.users.length < room.maxUserNum);
 
@@ -35,7 +35,7 @@ const joinRandomRoomUseCase = async (
 
 			const user = new User(socket.userId!, userInfo.nickname);
 
-			roomManger.addUserToRoom(room.id, user);
+			addUserToRoom(room.id, user);
 
 			socket.roomId = room.id;
 

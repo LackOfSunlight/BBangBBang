@@ -6,7 +6,7 @@ import { getRoomListResponseForm } from '../../factory/packet.pactory.js';
 import roomManger from '../../managers/room.manger.js';
 
 const getRoomListUseCase = (socket: GameSocket, req: C2SGetRoomListRequest): GamePacket => {
-	const rooms = roomManger.getRooms();
+	const rooms = getRooms();
 
 	return getRoomListResponseForm(rooms);
 };

@@ -8,7 +8,7 @@ import { RoomStateType } from '../../generated/common/enums';
 import { User } from '../../models/user.model';
 import { broadcastDataToRoom } from '../../utils/notification.util';
 import { joinRoomNotificationForm, joinRoomResponseForm } from '../../factory/packet.pactory';
-import roomManger from '../../managers/room.manger';
+import { getRoom, addUserToRoom } from '../../utils/room.utils';
 
 const joinRoomUseCase = async (
 	socket: GameSocket,
@@ -19,7 +19,7 @@ const joinRoomUseCase = async (
 
 	try {
 		userInfo = await getUserByUserId(Number(socket.userId));
-		room = roomManger.getRoom(req.roomId);
+		room = getRoom(req.roomId);
 	} catch (err) {
 		console.log(`DB 에러 발생: ${err}`);
 		return joinRoomResponseForm(false, GlobalFailCode.JOIN_ROOM_FAILED);
@@ -32,7 +32,7 @@ const joinRoomUseCase = async (
 
 		const user = new User(socket.userId!, userInfo.nickname);
 
-		roomManger.addUserToRoom(req.roomId, user);
+		addUserToRoom(req.roomId, user);
 
 		socket.roomId = req.roomId;
 
