@@ -39,12 +39,14 @@ export class CardUseService {
     // 3. 액터 로딩
     const actors = this.loadActors(roomId, userId, targetUserId, cardType);
     if (!actors.ok) {
+      console.error(`[CardUseService] 액터 로딩 실패: ${actors.error}`);
       return { success: false, failcode: this.mapErrorToFailCode(actors.error) };
     }
 
     // 4. 이펙트 핸들러 실행 (순수 계산)
     const effectResult = this.executeEffect(effectHandler, actors.value); // actors.value = { user: UserData; target?: UserData; room: RoomData }
     if (!effectResult.ok) {
+      console.error(`[CardUseService] 이펙트 실행 실패: ${effectResult.error}`);
       return { success: false, failcode: this.mapErrorToFailCode(effectResult.error) };
     }
 
@@ -160,34 +162,52 @@ export class CardUseService {
 
   /**
    * 에러 메시지를 GlobalFailCode로 매핑합니다.
+   * 기존 enums.ts의 모든 에러 코드를 활용하여 세밀한 에러 처리를 제공합니다.
    */
   private mapErrorToFailCode(error: string): GlobalFailCode {
     switch (error) {
+      // 방 관련 에러
       case 'ROOM_NOT_FOUND':
         return GlobalFailCode.ROOM_NOT_FOUND;
+      case 'INVALID_ROOM_STATE':
+        return GlobalFailCode.INVALID_ROOM_STATE;
+      
+      // 캐릭터 관련 에러
+      case 'CHARACTER_NOT_FOUND':
       case 'USER_NOT_FOUND':
-        return GlobalFailCode.CHARACTER_NOT_FOUND;
       case 'TARGET_USER_NOT_FOUND':
         return GlobalFailCode.CHARACTER_NOT_FOUND;
-      case 'TARGET_USER_REQUIRED':
-        return GlobalFailCode.INVALID_REQUEST;
-      case 'LOAD_ACTORS_FAILED':
-        return GlobalFailCode.UNKNOWN_ERROR;
-      case 'EFFECT_EXECUTION_FAILED':
-        return GlobalFailCode.UNKNOWN_ERROR;
-      case 'CHARACTER_NOT_FOUND':
-        return GlobalFailCode.CHARACTER_NOT_FOUND;
-      case 'HP_ALREADY_MAX':
-        return GlobalFailCode.INVALID_REQUEST;
-      case 'TARGET_DEAD':
-        return GlobalFailCode.INVALID_REQUEST;
-      case 'TARGET_CONTAINED':
-        return GlobalFailCode.CHARACTER_CONTAINED;
-      case 'NO_BBANG_CARD':
-        return GlobalFailCode.CHARACTER_NO_CARD;
+      case 'CHARACTER_STATE_ERROR':
       case 'INVALID_BBANG_STATE':
         return GlobalFailCode.CHARACTER_STATE_ERROR;
+      case 'CHARACTER_NO_CARD':
+      case 'NO_BBANG_CARD':
+        return GlobalFailCode.CHARACTER_NO_CARD;
+      case 'TARGET_CONTAINED':
+        return GlobalFailCode.CHARACTER_CONTAINED;
+      
+      // 요청 관련 에러
+      case 'INVALID_REQUEST':
+      case 'TARGET_USER_REQUIRED':
+      case 'HP_ALREADY_MAX':
+      case 'TARGET_DEAD':
+      case 'CARD_ALREADY_USED':
+        return GlobalFailCode.INVALID_REQUEST;
+      
+      // 인증 관련 에러
+      case 'AUTHENTICATION_FAILED':
+        return GlobalFailCode.AUTHENTICATION_FAILED;
+      
+      // 시스템 에러
+      case 'LOAD_ACTORS_FAILED':
+      case 'EFFECT_EXECUTION_FAILED':
+      case 'ROOM_UPDATE_FAILED':
+      case 'NOTIFICATION_SEND_FAILED':
+        return GlobalFailCode.UNKNOWN_ERROR;
+      
+      // 기본값
       default:
+        console.warn(`[CardUseService] 알 수 없는 에러 코드: ${error}`);
         return GlobalFailCode.UNKNOWN_ERROR;
     }
   }

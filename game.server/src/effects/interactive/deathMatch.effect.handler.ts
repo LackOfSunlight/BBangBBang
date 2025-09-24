@@ -27,7 +27,7 @@ export const deathMatchEffectHandler: InteractiveEffectHandler = (
   // 가드 리턴: 사용자가 빵야 카드를 가지고 있지 않음
   const hasBbangCard = user.character.handCards?.some(card => card.type === CardType.BBANG);
   if (!hasBbangCard) {
-    return err('NO_BBANG_CARD');
+    return err('CHARACTER_NO_CARD');
   }
 
   // 가드 리턴: 타겟이 감옥 상태
