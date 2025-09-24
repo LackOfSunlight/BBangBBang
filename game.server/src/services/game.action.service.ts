@@ -88,7 +88,7 @@ export class GameActionService {
       }
 
       // 3. 상태별 비즈니스 로직 처리
-      const result = this.handleStateBasedReaction(user, room, reactionType);
+      const result = this.executeStateBasedReaction(user, room, reactionType);
       if (!result.ok) {
         return { success: false, failcode: this.mapErrorToFailCode(result.error) };
       }
@@ -191,9 +191,9 @@ export class GameActionService {
   }
 
   /**
-   * 상태 기반 반응을 처리합니다.
+   * 상태 기반 반응을 실행합니다.
    */
-  private handleStateBasedReaction(
+  private executeStateBasedReaction(
     user: UserData,
     room: RoomData,
     reactionType: number
