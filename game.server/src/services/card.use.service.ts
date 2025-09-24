@@ -3,7 +3,7 @@ import { UserData, RoomData } from '../generated/common/types';
 import { Result, ok, err } from '../types/result';
 import { UpdatePayload } from '../types/update.payload';
 import { getCardEffectHandler, isSoloCard, isInteractiveCard } from '../effects/card.effect.map';
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../utils/room.utils';
+import { getRoom, getUserFromRoom, updateCharacterFromRoom, updateRoomDataFromRoom } from '../utils/room.utils';
 import { sendNotificationGamePackets } from '../utils/notification.sender';
 
 /**
@@ -141,8 +141,7 @@ export class CardUseService {
 
       // 3. 방 데이터 업데이트 (덱, 페이즈 등)
       if (payload.roomUpdates && Object.keys(payload.roomUpdates).length > 0) {
-        // TODO: 방 데이터 업데이트 로직 구현
-        console.log('[CardUseService] 방 데이터 업데이트:', payload.roomUpdates);
+        updateRoomDataFromRoom(roomId, payload.roomUpdates);
       }
 
       // 4. 알림 전송
@@ -154,9 +153,10 @@ export class CardUseService {
 
     } catch (error) {
       console.error('[CardUseService] 상태 적용 실패:', error);
-      throw error; // 상위에서 처리하도록 에러 전파
+        throw error; // 상위에서 처리하도록 에러 전파
+      }
     }
-  }
+
 
   /**
    * 에러 메시지를 GlobalFailCode로 매핑합니다.

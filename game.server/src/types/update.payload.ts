@@ -20,11 +20,11 @@ export interface UpdatePayload {
   targetCharacterUpdates?: Partial<CharacterData>;
   
   /** 방 데이터 변경사항 (덱, 페이즈 등) */
-  roomUpdates?: Partial<{
-    deck: CardData[];
-    phaseType: number;
-    nextPhaseAt: string;
-  }>;
+  roomUpdates?: {
+    deck?: CardData[];
+    phaseType?: number;
+    nextPhaseAt?: string;
+  };
   
   /** 전송할 알림 패킷 목록 */
   notificationGamePackets: GamePacket[];

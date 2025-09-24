@@ -98,6 +98,39 @@ export const deleteRoom = (roomId: number): void => {
 	rooms.delete(roomId);
 };
 
+// 방 데이터 업데이트 (덱, 페이즈 등)
+export function updateRoomDataFromRoom(
+	roomId: number,
+	roomUpdates: {
+		deck?: any[];
+		phaseType?: number;
+		nextPhaseAt?: string;
+	}
+): void {
+	const room = rooms.get(roomId);
+	if (!room) throw new Error('Room not found');
+
+	// 덱 업데이트 (카드 매니저와 연동 필요)
+	if (roomUpdates.deck) {
+		// TODO: 카드 매니저의 덱 업데이트 로직 연동
+		console.log('[RoomUtils] 덱 업데이트 요청:', roomUpdates.deck.length, '장');
+	}
+
+	// 페이즈 업데이트 (게임 매니저와 연동 필요)
+	if (roomUpdates.phaseType !== undefined) {
+		// TODO: 게임 매니저의 페이즈 업데이트 로직 연동
+		console.log('[RoomUtils] 페이즈 업데이트 요청:', roomUpdates.phaseType);
+	}
+
+	// 다음 페이즈 시간 업데이트
+	if (roomUpdates.nextPhaseAt) {
+		// TODO: 게임 매니저의 타이머 업데이트 로직 연동
+		console.log('[RoomUtils] 다음 페이즈 시간 업데이트 요청:', roomUpdates.nextPhaseAt);
+	}
+
+	console.log(`[RoomUtils] 방 데이터 업데이트 요청 완료: roomId=${roomId}`);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // 방에서 특정 유저의 정보(아이디 제외한 속성값들) 배열로 가져오기
