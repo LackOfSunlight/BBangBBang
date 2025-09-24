@@ -1,5 +1,6 @@
 import { CardType, GlobalFailCode, CharacterStateType } from '../generated/common/enums';
 import { UserData, RoomData } from '../generated/common/types';
+import { GamePacket } from '../generated/gamePacket';
 import { Result, ok, err } from '../types/result';
 import { UpdatePayload } from '../types/update.payload';
 import { getCardEffectHandler, isSoloCard, isInteractiveCard } from '../effects/card.effect.map';
@@ -26,7 +27,7 @@ export class GameActionService {
     roomId: number,
     cardType: CardType,
     targetUserId?: string
-  ): { success: boolean; failcode: GlobalFailCode } {
+  ): { success: boolean; failcode: GlobalFailCode; notificationGamePackets?: GamePacket[] } {
     // 1. 카드 타입 검증
     if (cardType === CardType.NONE) {
       return { success: false, failcode: GlobalFailCode.INVALID_REQUEST };
@@ -52,10 +53,14 @@ export class GameActionService {
       return { success: false, failcode: this.mapErrorToFailCode(effectResult.error) };
     }
 
-    // 5. 상태 반영 및 알림 전송
-    this.applyChanges(roomId, effectResult.value);
+    // 5. 상태 반영 및 알림 패킷 생성
+    const notificationPackets = this.applyResults(roomId, effectResult.value);
 
-    return { success: true, failcode: GlobalFailCode.NONE_FAILCODE };
+    return { 
+      success: true, 
+      failcode: GlobalFailCode.NONE_FAILCODE,
+      notificationGamePackets: notificationPackets
+    };
   }
 
   /**
@@ -66,7 +71,7 @@ export class GameActionService {
     userId: string,
     roomId: number,
     reactionType: number
-  ): { success: boolean; failcode: GlobalFailCode } {
+  ): { success: boolean; failcode: GlobalFailCode; notificationGamePackets?: GamePacket[] } {
     try {
       // 1. 유효성 검증
       const validation = this.validateRequest(userId, roomId);
@@ -93,10 +98,14 @@ export class GameActionService {
         return { success: false, failcode: this.mapErrorToFailCode(result.error) };
       }
 
-      // 4. 상태 반영 및 알림 전송
-      this.applyChanges(roomId, result.value);
+      // 4. 상태 반영 및 알림 패킷 생성
+      const notificationPackets = this.applyResults(roomId, result.value);
 
-      return { success: true, failcode: GlobalFailCode.NONE_FAILCODE };
+      return { 
+        success: true, 
+        failcode: GlobalFailCode.NONE_FAILCODE,
+        notificationGamePackets: notificationPackets
+      };
 
     } catch (error) {
       console.error('[GameActionService] 반응 해결 실패:', error);
@@ -318,9 +327,9 @@ export class GameActionService {
   }
 
   /**
-   * 계산된 변경사항을 실제 상태에 적용하고 알림을 전송합니다.
+   * 계산된 결과를 실제 상태에 적용하고 알림 패킷을 생성합니다.
    */
-  private applyChanges(roomId: number, payload: UpdatePayload): void {
+  private applyResults(roomId: number, payload: UpdatePayload): GamePacket[] {
     try {
       // 1. 유저 캐릭터 데이터 업데이트
       if (payload.characterUpdates && Object.keys(payload.characterUpdates).length > 0) {
@@ -337,12 +346,10 @@ export class GameActionService {
         updateRoomDataFromRoom(roomId, payload.roomUpdates);
       }
 
-      // 4. 알림 전송
-      if (payload.notificationGamePackets && payload.notificationGamePackets.length > 0) {
-        sendNotificationGamePackets(roomId, payload.notificationGamePackets);
-      }
-
       console.log(`[GameActionService] 상태 적용 완료: roomId=${roomId}, userId=${payload.userId}, targetUserId=${payload.targetUserId}`);
+
+      // 4. 알림 패킷 반환 (전송하지 않음)
+      return payload.notificationGamePackets || [];
 
     } catch (error) {
       console.error('[GameActionService] 상태 적용 실패:', error);
