@@ -4,11 +4,11 @@ import { GameSocket } from '../../type/game.socket';
 import { GlobalFailCode } from '../../generated/common/enums';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { getUserByUserId } from '../../services/prisma.service';
-import { addUserToRoom, getRoom } from '../../utils/room.utils';
 import { RoomStateType } from '../../generated/common/enums';
 import { User } from '../../models/user.model';
 import { broadcastDataToRoom } from '../../utils/notification.util';
 import { joinRoomNotificationForm, joinRoomResponseForm } from '../../factory/packet.pactory';
+import roomManger from '../../managers/room.manger';
 
 const joinRoomUseCase = async (
 	socket: GameSocket,
@@ -19,7 +19,7 @@ const joinRoomUseCase = async (
 
 	try {
 		userInfo = await getUserByUserId(Number(socket.userId));
-		room = getRoom(req.roomId);
+		room = roomManger.getRoom(req.roomId);
 	} catch (err) {
 		console.log(`DB 에러 발생: ${err}`);
 		return joinRoomResponseForm(false, GlobalFailCode.JOIN_ROOM_FAILED);
@@ -32,7 +32,7 @@ const joinRoomUseCase = async (
 
 		const user = new User(socket.userId!, userInfo.nickname);
 
-		addUserToRoom(req.roomId, user);
+		roomManger.addUserToRoom(req.roomId, user);
 
 		socket.roomId = req.roomId;
 

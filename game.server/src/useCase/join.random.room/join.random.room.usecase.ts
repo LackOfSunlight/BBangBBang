@@ -5,10 +5,10 @@ import { Room } from '../../models/room.model';
 import { GlobalFailCode } from '../../generated/common/enums';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { getUserByUserId } from '../../services/prisma.service';
-import { addUserToRoom, getRooms } from '../../utils/room.utils';
 import { User } from '../../models/user.model';
 import { broadcastDataToRoom } from '../../utils/notification.util';
 import { joinRandomRoomResponseForm, joinRoomNotificationForm } from '../../factory/packet.pactory';
+import roomManger from '../../managers/room.manger';
 
 const joinRandomRoomUseCase = async (
 	socket: GameSocket,
@@ -25,7 +25,7 @@ const joinRandomRoomUseCase = async (
 	}
 
 	if (userInfo) {
-		const rooms: Room[] = getRooms();
+		const rooms: Room[] = roomManger.getRooms();
 
 		const availableRooms = rooms.filter((room) => room.users.length < room.maxUserNum);
 
@@ -35,7 +35,7 @@ const joinRandomRoomUseCase = async (
 
 			const user = new User(socket.userId!, userInfo.nickname);
 
-			addUserToRoom(room.id, user);
+			roomManger.addUserToRoom(room.id, user);
 
 			socket.roomId = room.id;
 

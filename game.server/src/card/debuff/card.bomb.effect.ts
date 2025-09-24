@@ -1,6 +1,6 @@
 // cardType = 22
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import { removeCard } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import { AnimationType, CardType, WarningType } from '../../generated/common/enums';
 import { GamePacket } from '../../generated/gamePacket';
 import { GamePacketType } from '../../enums/gamePacketType';
@@ -38,7 +38,7 @@ const cardBombEffect = (roomId: number, userId: string, targetUserId: string): b
 	}
 	
 	// 카드 제거
-	removeCard(user, room, CardType.BOMB);
+	cardManager.removeCard(user, room, CardType.BOMB);
 	target.character!.debuffs.push(CardType.BOMB);
 	const explosionTime = 30000; 
 	// 인게임 제한시간 : 30초 / 테스트 제한시간 : 10초

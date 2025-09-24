@@ -44,7 +44,7 @@ class GameManager {
 		// 위치 변화 플래그 초기화 (최초 시작 시에는 true로 설정)
 		roomPositionChanged.set(room.id, true);
 
-		const intervalId = setInterval(() => broadcastPositionUpdates(room), 100);
+		const intervalId = setInterval(() => broadcastPositionUpdates(room), 10000000);
 
 		positionUpdateIntervals.set(room.id, intervalId);
 		this.scheduleNextPhase(room.id, roomId);
