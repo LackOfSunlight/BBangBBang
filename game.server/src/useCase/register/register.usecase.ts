@@ -64,4 +64,3 @@ export const registerUseCase = async (
 		return registerResponseForm(false, '서버 에러', GlobalFailCode.REGISTER_FAILED);
 	}
 };
-

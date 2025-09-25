@@ -4,7 +4,7 @@ import getMaxHp from '../../init/character.Init';
 import { User } from '../../models/user.model';
 import { Room } from '../../models/room.model';
 
-const cardVaccineEffect = (room: Room, user: User, ): boolean => {
+const cardVaccineEffect = (room: Room, user: User): boolean => {
 	if (!user || !room) return false;
 
 	// 유효성 검증 (캐릭터 존재 여부)

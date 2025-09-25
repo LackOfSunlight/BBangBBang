@@ -29,7 +29,17 @@ describe('cardAutoShieldEffect', () => {
 		jest.clearAllMocks();
 
 		mockUser = new User(userId, 'Test User');
-		mockUser.character = new Character(CharacterType.RED, RoleType.NONE_ROLE, 4, 0, [], [], [], 1, 0);
+		mockUser.character = new Character(
+			CharacterType.RED,
+			RoleType.NONE_ROLE,
+			4,
+			0,
+			[],
+			[],
+			[],
+			1,
+			0,
+		);
 		mockRoom = new Room(roomId, mockUser.id, 'test-room', 2, RoomStateType.INGAME, [mockUser]);
 
 		mockGetRoom.mockReturnValue(mockRoom);

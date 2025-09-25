@@ -31,14 +31,14 @@ describe('cardHallucinationEffect', () => {
 
 		// Setup default user and target data
 		user = new User(userId, 'User');
-		user.character = { 
+		user.character = {
 			handCards: [],
 			stateInfo: {
 				state: CharacterStateType.NONE_CHARACTER_STATE,
 				nextState: CharacterStateType.NONE_CHARACTER_STATE,
 				nextStateAt: 0,
-				stateTargetUserId: '0'
-			}
+				stateTargetUserId: '0',
+			},
 		} as any;
 
 		target = new User(targetId, 'Target');
@@ -51,8 +51,8 @@ describe('cardHallucinationEffect', () => {
 				state: CharacterStateType.NONE_CHARACTER_STATE,
 				nextState: CharacterStateType.NONE_CHARACTER_STATE,
 				nextStateAt: 0,
-				stateTargetUserId: '0'
-			}
+				stateTargetUserId: '0',
+			},
 		} as any;
 
 		// Default mock implementation
@@ -101,13 +101,17 @@ describe('cardHallucinationEffect', () => {
 		const result = cardHallucinationEffect(roomId, userId, targetId);
 
 		expect(result).toBe(true);
-		expect(cardManager.removeCard).toHaveBeenCalledWith(user, expect.any(Object), CardType.HALLUCINATION);
-		
+		expect(cardManager.removeCard).toHaveBeenCalledWith(
+			user,
+			expect.any(Object),
+			CardType.HALLUCINATION,
+		);
+
 		// 상태 변경 확인
 		expect(user.character!.stateInfo!.state).toBe(CharacterStateType.HALLUCINATING);
 		expect(user.character!.stateInfo!.stateTargetUserId).toBe(targetId);
 		expect(target.character!.stateInfo!.state).toBe(CharacterStateType.HALLUCINATION_TARGET);
-		
+
 		// 업데이트 호출 확인
 		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledTimes(2);
 		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, user.character);

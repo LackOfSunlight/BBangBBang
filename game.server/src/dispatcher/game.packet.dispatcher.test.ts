@@ -75,7 +75,6 @@ describe('gamePacketDispatcher', () => {
 	it('registerRequest 패킷에 대해 올바른 핸들러를 호출해야 한다', () => {
 		const gamePacket: GamePacket = {
 			payload: {
-				
 				oneofKind: 'registerRequest',
 				registerRequest: { email: 'test@naver.com', nickname: 'testUser', password: 'qwer1234!!' },
 			},

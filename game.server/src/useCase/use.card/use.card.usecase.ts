@@ -2,7 +2,10 @@ import { GamePacketType } from '../../enums/gamePacketType';
 import { CardType, GlobalFailCode } from '../../generated/common/enums';
 import { applyCardEffect } from '../../dispatcher/apply.card.dispacher';
 import { broadcastDataToRoom } from '../../sockets/notification.js';
-import { fleaMarketNotificationForm, useCardNotificationPacketForm } from '../../converter/packet.form';
+import {
+	fleaMarketNotificationForm,
+	useCardNotificationPacketForm,
+} from '../../converter/packet.form';
 import { applyCardUseHandler } from '../../handlers/apply.card.use.handler';
 import { cardManager } from '../../managers/card.manager';
 
@@ -12,7 +15,7 @@ export const useCardUseCase = (
 	cardType: CardType,
 	targetUserId: string,
 ): { success: boolean; failcode: GlobalFailCode } => {
-	const { room, user, target} = applyCardUseHandler(roomId, userId, targetUserId);
+	const { room, user, target } = applyCardUseHandler(roomId, userId, targetUserId);
 	if (!room && !user) {
 		return { success: false, failcode: GlobalFailCode.ROOM_NOT_FOUND };
 	}
@@ -35,16 +38,14 @@ export const useCardUseCase = (
 	// useCardNotification 패킷 전달
 	const useCardNotificationPacket = useCardNotificationPacketForm(cardType, userId, targetUserId);
 
-	if(cardType === CardType.FLEA_MARKET){
-
+	if (cardType === CardType.FLEA_MARKET) {
 		const selectedCards = cardManager.roomFleaMarketCards.get(room.id);
 
-		if(selectedCards !== undefined){
+		if (selectedCards !== undefined) {
 			const gamePacket = fleaMarketNotificationForm(selectedCards, []);
 			broadcastDataToRoom(room.users, gamePacket, GamePacketType.fleaMarketNotification);
 		}
 	}
-
 
 	// 장착이 가능한가? equipCard : useCard
 	if (cardType >= 13 && cardType <= 20) {

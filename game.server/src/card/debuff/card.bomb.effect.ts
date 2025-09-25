@@ -1,5 +1,4 @@
 // cardType = 22
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { cardManager } from '../../managers/card.manager';
 import { AnimationType, CardType, WarningType } from '../../generated/common/enums';
 //import { GamePacket } from '../../generated/gamePacket';
@@ -12,7 +11,7 @@ import { playAnimationHandler } from '../../handlers/play.animation.handler';
 import { checkAndEndGameIfNeeded } from '../../services/game.end.service';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-
+import roomManger from '../../managers/room.manger';
 
 /** 폭탄 디버프 부여 */
 const cardBombEffect = (room: Room, user: User, target: User): boolean => {
@@ -35,117 +34,112 @@ const cardBombEffect = (room: Room, user: User, target: User): boolean => {
 		console.error(`[BOMB]이미 ${target.nickname} 유저는 폭탄을 보유중입니다.`);
 		return false;
 	}
-	
+
 	// 카드 제거
 	cardManager.removeCard(user, room, CardType.BOMB);
 	target.character.debuffs.push(CardType.BOMB);
-	
-	const explosionTime = Date.now() + 30000; 
+
+	const explosionTime = Date.now() + 30000;
 	// 시작전 패킷 송신
 	const warnExplosion = warnNotificationPacketForm(WarningType.BOMB_WANING, `${explosionTime}`);
- 	broadcastDataToRoom(room.users, warnExplosion, GamePacketType.warningNotification);
+	broadcastDataToRoom(room.users, warnExplosion, GamePacketType.warningNotification);
 	// 인게임 제한시간 : 30초 / 테스트 제한시간 : 10초
 	bombManager.startBombTimer(room.id, target.id, explosionTime);
-	
+
 	return true;
 };
 
-
 /**  폭탄 매니저*/
 class BombManager {
-  private static instance: BombManager;
+	private static instance: BombManager;
 
-  // 	key					value
-  // roomId:userId → { timer, explosionAt }
-  private bombTimers: Map<string, {timer:NodeJS.Timeout; explosionAt:number}>;
+	// 	key					value
+	// roomId:userId → { timer, explosionAt }
+	private bombTimers: Map<string, { timer: NodeJS.Timeout; explosionAt: number }>;
 
-  private constructor() {
-    this.bombTimers = new Map(); // 유저 + 타이머/폭발시간
-  }
+	private constructor() {
+		this.bombTimers = new Map(); // 유저 + 타이머/폭발시간
+	}
 
-  public static getInstance(): BombManager {
-    if (!BombManager.instance) {
-      BombManager.instance = new BombManager();
-    }
-    return BombManager.instance;
-  }
-
-  public startBombTimer(roomId: number, userId: string, explosionAt: number) {
-	const room = getRoom(roomId);
-	const bombUser = getUserFromRoom(roomId, userId);
-    const key = `${roomId}:${userId}`;
-    // 기존 타이머 제거
-    if (this.bombTimers.has(key)) {
-      clearInterval(this.bombTimers.get(key)!.timer);
-      this.bombTimers.delete(key);
-    }
-	
-    const timer = setInterval(() => {
-      const remain = Math.ceil((explosionAt - Date.now()) / 1000);
-      console.warn(`[BOMB][${bombUser.nickname}] 남은 시간: ${remain}s`);
-
-		if (remain <= 0) {
-			// 경고 패킷 초기화
-			const warnExplosionOver = warnNotificationPacketForm(WarningType.NO_WARNING, `0`);
-			broadcastDataToRoom(room.users, warnExplosionOver, GamePacketType.warningNotification);
-			// 타이머 제거
-			clearInterval(timer);
-			this.bombTimers.delete(key);
-			// 폭발 로직 처리
-			bombExplosion(roomId, userId);
-			
+	public static getInstance(): BombManager {
+		if (!BombManager.instance) {
+			BombManager.instance = new BombManager();
 		}
-		// else if(remain === 29){
-		// 	// 경고 패킷 활성화 
-		// 	const warnExplosion = warnNotificationPacketForm(WarningType.BOMB_WANING, `${remain}`);
-		// 	broadcastDataToRoom(room.users, warnExplosion, GamePacketType.warningNotification);
-		// }
+		return BombManager.instance;
+	}
 
-    }, 1000);
+	public startBombTimer(roomId: number, userId: string, explosionAt: number) {
+		const room = roomManger.getRoom(roomId);
+		const bombUser = roomManger.getUserFromRoom(roomId, userId);
+		const key = `${roomId}:${userId}`;
+		// 기존 타이머 제거
+		if (this.bombTimers.has(key)) {
+			clearInterval(this.bombTimers.get(key)!.timer);
+			this.bombTimers.delete(key);
+		}
 
-    this.bombTimers.set(key, {timer, explosionAt});
-  }
+		const timer = setInterval(() => {
+			const remain = Math.ceil((explosionAt - Date.now()) / 1000);
+			console.warn(`[BOMB][${bombUser.nickname}] 남은 시간: ${remain}s`);
 
-  // 타이머 초기화
-  public clearTimer(key: string) {
-    if (this.bombTimers.has(key)) {
-	  const leftTime = this.bombTimers.get(key)!.explosionAt;
-      clearInterval(this.bombTimers.get(key)!.timer);
-      this.bombTimers.delete(key);
-	  return leftTime;
-    }
-	return 0;
-  }
+			if (remain <= 0) {
+				// 경고 패킷 초기화
+				const warnExplosionOver = warnNotificationPacketForm(WarningType.NO_WARNING, `0`);
+				broadcastDataToRoom(room.users, warnExplosionOver, GamePacketType.warningNotification);
+				// 타이머 제거
+				clearInterval(timer);
+				this.bombTimers.delete(key);
+				// 폭발 로직 처리
+				bombExplosion(roomId, userId);
+			}
+			// else if(remain === 29){
+			// 	// 경고 패킷 활성화
+			// 	const warnExplosion = warnNotificationPacketForm(WarningType.BOMB_WANING, `${remain}`);
+			// 	broadcastDataToRoom(room.users, warnExplosion, GamePacketType.warningNotification);
+			// }
+		}, 1000);
 
-  // 방의 잔여 타이머 전부 초기화
-  public clearRoom(roomId: number) {
-    for (const key of this.bombTimers.keys()) {
-      if (key.startsWith(`${roomId}:`)) {
-        clearInterval(this.bombTimers.get(key)!.timer);
-        this.bombTimers.delete(key);
-      }
-    }
-    console.log(`[BOMB] Room ${roomId} 타이머 제거 완료`);
-  }
+		this.bombTimers.set(key, { timer, explosionAt });
+	}
+
+	// 타이머 초기화
+	public clearTimer(key: string) {
+		if (this.bombTimers.has(key)) {
+			const leftTime = this.bombTimers.get(key)!.explosionAt;
+			clearInterval(this.bombTimers.get(key)!.timer);
+			this.bombTimers.delete(key);
+			return leftTime;
+		}
+		return 0;
+	}
+
+	// 방의 잔여 타이머 전부 초기화
+	public clearRoom(roomId: number) {
+		for (const key of this.bombTimers.keys()) {
+			if (key.startsWith(`${roomId}:`)) {
+				clearInterval(this.bombTimers.get(key)!.timer);
+				this.bombTimers.delete(key);
+			}
+		}
+		console.log(`[BOMB] Room ${roomId} 타이머 제거 완료`);
+	}
 }
 export const bombManager = BombManager.getInstance();
 
-
 /** 폭발 처리 */
-export const bombExplosion = (roomId:number, bombUserId: string ) => {
-	const room = getRoom(roomId);
-	if(!roomId){
-
+export const bombExplosion = (roomId: number, bombUserId: string) => {
+	const room = roomManger.getRoom(roomId);
+	if (!roomId) {
 		return;
 	}
-	const userInExplode = getUserFromRoom(roomId, bombUserId);
-	if( !userInExplode || !userInExplode.character){
+	const userInExplode = roomManger.getUserFromRoom(roomId, bombUserId);
+	if (!userInExplode || !userInExplode.character) {
 		console.error(`[BOMB] 잘못된 유저 정보 입니다`);
 		return;
 	}
 
-	const bombCardIndex = userInExplode.character.debuffs.findIndex(c => c === CardType.BOMB);
-	if(bombCardIndex === -1){
+	const bombCardIndex = userInExplode.character.debuffs.findIndex((c) => c === CardType.BOMB);
+	if (bombCardIndex === -1) {
 		console.error('[BOMB] 폭탄 디버프가 존재하지 않습니다');
 		return;
 	}
@@ -158,12 +152,14 @@ export const bombExplosion = (roomId:number, bombUserId: string ) => {
 	userInExplode.character.debuffs.splice(bombCardIndex, 1);
 	checkAndEndGameIfNeeded(roomId);
 
-	const userUpdateNotificationPacket =  userUpdateNotificationPacketForm(room.users);
-    broadcastDataToRoom(room.users, userUpdateNotificationPacket, GamePacketType.userUpdateNotification);
-    console.log(`[BOMB] 폭탄이 ${userInExplode.nickname} 에서 폭발하였습니다`);
-
+	const userUpdateNotificationPacket = userUpdateNotificationPacketForm(room.users);
+	broadcastDataToRoom(
+		room.users,
+		userUpdateNotificationPacket,
+		GamePacketType.userUpdateNotification,
+	);
+	console.log(`[BOMB] 폭탄이 ${userInExplode.nickname} 에서 폭발하였습니다`);
 };
-
 
 // 경고 패킷 생성기
 /** 
@@ -188,6 +184,5 @@ export const bombExplosion = (roomId:number, bombUserId: string ) => {
 
 // 	return NotificationPacket;
 // };
-
 
 export default cardBombEffect;

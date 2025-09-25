@@ -80,7 +80,17 @@ describe('cardVaccineEffect', () => {
 
 	test('최대 체력이 3인 캐릭터(공룡)가 체력을 회복해야 합니다.', () => {
 		// 준비 (Given): 공룡 캐릭터의 현재 체력이 최대 체력보다 낮음 (2/3)
-		user.character = new Character(CharacterType.DINOSAUR, RoleType.NONE_ROLE, 2, 0, [], [], [], 1, 0);
+		user.character = new Character(
+			CharacterType.DINOSAUR,
+			RoleType.NONE_ROLE,
+			2,
+			0,
+			[],
+			[],
+			[],
+			1,
+			0,
+		);
 
 		// 실행 (When): 백신 카드 효과를 적용
 		const result = cardVaccineEffect(roomId, userId);
@@ -94,7 +104,17 @@ describe('cardVaccineEffect', () => {
 
 	test('최대 체력이 3인 캐릭터(공룡)가 최대 체력일 때 회복하지 않아야 합니다.', () => {
 		// 준비 (Given): 공룡 캐릭터의 현재 체력이 최대 체력과 같음 (3/3)
-		user.character = new Character(CharacterType.DINOSAUR, RoleType.NONE_ROLE, 3, 0, [], [], [], 1, 0);
+		user.character = new Character(
+			CharacterType.DINOSAUR,
+			RoleType.NONE_ROLE,
+			3,
+			0,
+			[],
+			[],
+			[],
+			1,
+			0,
+		);
 
 		// 실행 (When): 백신 카드 효과를 적용
 		const result = cardVaccineEffect(roomId, userId);

@@ -6,7 +6,6 @@ import { User } from '../../models/user.model';
 import { Room } from '../../models/room.model';
 
 const cardMaturedSavingsEffect = (room: Room, user: User): boolean => {
-	
 	// 유효성 검증
 	if (!user || !user.character) {
 		console.error('[MATURED_SAVINGS]잘못된 사용자 정보입니다');
@@ -32,7 +31,9 @@ const cardMaturedSavingsEffect = (room: Room, user: User): boolean => {
 
 	// 카드 2장 뽑기(메인 기믹) 공지
 	const cardYouDraw = cardManager.drawDeck(room.id, numberOfDraw);
-	console.log(`[MATURED_SAVINGS]유저 ${user.id}(이)가 카드 ${numberOfDraw}장을 획득하였습니다\n획득 카드 : `);
+	console.log(
+		`[MATURED_SAVINGS]유저 ${user.id}(이)가 카드 ${numberOfDraw}장을 획득하였습니다\n획득 카드 : `,
+	);
 
 	// 뽑은 카드 정리 및 공지
 	cardYouDraw.forEach((cardType) => {

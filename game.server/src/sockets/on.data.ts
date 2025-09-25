@@ -21,7 +21,7 @@ export const onData = (socket: Socket, chunk: Buffer) => {
 	try {
 		// ExtendedSocket으로 타입 캐스팅하여 타입 안전성 확보
 		const extendedSocket = socket as ExtendedSocket;
-		
+
 		// 기존 버퍼 가져오기 또는 새로 생성 (소켓 객체에 직접 저장)
 		let buffer = extendedSocket.buffer || Buffer.alloc(0);
 

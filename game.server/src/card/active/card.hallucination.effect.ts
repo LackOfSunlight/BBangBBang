@@ -6,11 +6,10 @@ import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 
 const cardHallucinationEffect = (room: Room, user: User, target: User): boolean => {
-
 	// 유효성 검증
 	if (!user || !user.character || !target || !target.character) return false;
 
-	if(target.character.stateInfo?.state === CharacterStateType.CONTAINED){
+	if (target.character.stateInfo?.state === CharacterStateType.CONTAINED) {
 		return false;
 	}
 
@@ -30,7 +29,6 @@ const cardHallucinationEffect = (room: Room, user: User, target: User): boolean 
 	target.character.stateInfo!.state = CharacterStateType.HALLUCINATION_TARGET;
 
 	return true;
-
 };
 
 export default cardHallucinationEffect;

@@ -8,7 +8,9 @@ jest.mock('../../managers/game.manager', () => ({
 	notificationCharacterPosition: new Map(),
 }));
 
-const mockNotificationCharacterPosition = notificationCharacterPosition as unknown as jest.Mocked<Map<string, Map<string, CharacterPositionData>>>;
+const mockNotificationCharacterPosition = notificationCharacterPosition as unknown as jest.Mocked<
+	Map<string, Map<string, CharacterPositionData>>
+>;
 
 beforeAll(() => {
 	jest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -136,10 +138,10 @@ describe('positionUpdateUseCase', () => {
 			const result = await positionUpdateUseCase(mockSocket, mockRequest);
 
 			expect(result).toBe(true);
-			
+
 			const roomMap = mockNotificationCharacterPosition.get(roomId);
 			expect(roomMap).toBeDefined();
-			
+
 			const positionData = roomMap!.get(userId);
 			expect(positionData).toBeDefined();
 			expect(positionData).toEqual({
@@ -164,7 +166,7 @@ describe('positionUpdateUseCase', () => {
 			const result = await positionUpdateUseCase(mockSocket, mockRequest);
 
 			expect(result).toBe(true);
-			
+
 			const roomMap = mockNotificationCharacterPosition.get(roomId);
 			const positionData = roomMap!.get(userId);
 			expect(positionData).toEqual({
@@ -189,7 +191,7 @@ describe('positionUpdateUseCase', () => {
 			const result = await positionUpdateUseCase(mockSocket, mockRequest);
 
 			expect(result).toBe(true);
-			
+
 			const roomMap = mockNotificationCharacterPosition.get(roomId);
 			const positionData = roomMap!.get(userId);
 			expect(positionData).toEqual({
@@ -214,7 +216,7 @@ describe('positionUpdateUseCase', () => {
 			const result = await positionUpdateUseCase(mockSocket, mockRequest);
 
 			expect(result).toBe(true);
-			
+
 			const roomMap = mockNotificationCharacterPosition.get(roomId);
 			const positionData = roomMap!.get(userId);
 			expect(positionData).toEqual({
@@ -239,7 +241,7 @@ describe('positionUpdateUseCase', () => {
 			const firstResult = await positionUpdateUseCase(mockSocket, firstRequest);
 
 			expect(firstResult).toBe(true);
-			
+
 			let roomMap = mockNotificationCharacterPosition.get(roomId);
 			let positionData = roomMap!.get(userId);
 			expect(positionData).toEqual({
@@ -256,7 +258,7 @@ describe('positionUpdateUseCase', () => {
 			const secondResult = await positionUpdateUseCase(mockSocket, secondRequest);
 
 			expect(secondResult).toBe(true);
-			
+
 			roomMap = mockNotificationCharacterPosition.get(roomId);
 			positionData = roomMap!.get(userId);
 			expect(positionData).toEqual({
@@ -294,16 +296,16 @@ describe('positionUpdateUseCase', () => {
 
 			expect(user1Result).toBe(true);
 			expect(user2Result).toBe(true);
-			
+
 			const roomMap = mockNotificationCharacterPosition.get(roomId);
-			
+
 			const user1Position = roomMap!.get('user1');
 			expect(user1Position).toEqual({
 				id: 'user1',
 				x: 100,
 				y: 200,
 			});
-			
+
 			const user2Position = roomMap!.get('user2');
 			expect(user2Position).toEqual({
 				id: 'user2',
@@ -344,7 +346,7 @@ describe('positionUpdateUseCase', () => {
 			const result = await positionUpdateUseCase(mockSocket, mockRequest);
 
 			expect(result).toBe(true);
-			
+
 			const roomMap = mockNotificationCharacterPosition.get(roomId);
 			const positionData = roomMap!.get(userId);
 			expect(positionData).toEqual({
@@ -369,7 +371,7 @@ describe('positionUpdateUseCase', () => {
 			const result = await positionUpdateUseCase(mockSocket, mockRequest);
 
 			expect(result).toBe(true);
-			
+
 			const roomMap = mockNotificationCharacterPosition.get(roomId);
 			const positionData = roomMap!.get(userId);
 			expect(positionData).toEqual({

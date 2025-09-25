@@ -87,7 +87,7 @@ describe('위성 타겟 효과 테스트', () => {
 			const result = cardSatelliteTargetEffect(mockRoomId, mockUserId, mockTargetUserId);
 
 			expect(result).toBe(true);
-			expect(cardManager.removeCard).toHaveBeenCalledTimes(1)
+			expect(cardManager.removeCard).toHaveBeenCalledTimes(1);
 			expect(mockTarget.character.debuffs).toContain(CardType.SATELLITE_TARGET);
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(
 				mockRoomId,
@@ -120,9 +120,11 @@ describe('위성 타겟 효과 테스트', () => {
 			const result = cardSatelliteTargetEffect(mockRoomId, mockUserId, mockTargetUserId);
 
 			expect(result).toBe(false);
-			expect(cardManager.removeCard).toHaveBeenCalledTimes(0)
+			expect(cardManager.removeCard).toHaveBeenCalledTimes(0);
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
-			expect(consoleErrorSpy).toHaveBeenCalledWith(`[SatelliteTarget] 위성 타겟 적용 중 오류 발생: ${notFoundError}`);
+			expect(consoleErrorSpy).toHaveBeenCalledWith(
+				`[SatelliteTarget] 위성 타겟 적용 중 오류 발생: ${notFoundError}`,
+			);
 			consoleErrorSpy.mockRestore();
 		});
 
@@ -133,7 +135,7 @@ describe('위성 타겟 효과 테스트', () => {
 			const result = cardSatelliteTargetEffect(mockRoomId, mockUserId, mockTargetUserId);
 
 			expect(result).toBe(false);
-			expect(cardManager.removeCard).toHaveBeenCalledTimes(0)
+			expect(cardManager.removeCard).toHaveBeenCalledTimes(0);
 			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
 		});
 
@@ -149,8 +151,10 @@ describe('위성 타겟 효과 테스트', () => {
 			const result = cardSatelliteTargetEffect(mockRoomId, mockUserId, mockTargetUserId);
 
 			expect(result).toBe(false);
-			expect(cardManager.removeCard).toHaveBeenCalledTimes(1)
-			expect(consoleErrorSpy).toHaveBeenCalledWith(`[SatelliteTarget] 위성 타겟 적용 중 오류 발생: ${updateError}`);
+			expect(cardManager.removeCard).toHaveBeenCalledTimes(1);
+			expect(consoleErrorSpy).toHaveBeenCalledWith(
+				`[SatelliteTarget] 위성 타겟 적용 중 오류 발생: ${updateError}`,
+			);
 			consoleErrorSpy.mockRestore();
 		});
 	});
@@ -244,8 +248,16 @@ describe('위성 타겟 효과 테스트', () => {
 			expect(mockUser1.character.debuffs).not.toContain(CardType.SATELLITE_TARGET);
 			expect(mockUser2.character.debuffs).toContain(CardType.SATELLITE_TARGET);
 			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledTimes(2);
-			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(mockRoomId, 'user1', mockUser1.character);
-			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(mockRoomId, 'user2', mockUser2.character);
+			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(
+				mockRoomId,
+				'user1',
+				mockUser1.character,
+			);
+			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(
+				mockRoomId,
+				'user2',
+				mockUser2.character,
+			);
 
 			Math.random = originalRandom;
 		});

@@ -2,7 +2,12 @@ import { CardType, CharacterStateType, RoomStateType } from '../../generated/com
 import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-import { getRoom, getUserFromRoom, saveRoom, updateCharacterFromRoom } from '../../utils/room.utils';
+import {
+	getRoom,
+	getUserFromRoom,
+	saveRoom,
+	updateCharacterFromRoom,
+} from '../../utils/room.utils';
 import cardBigBbangEffect from '../active/card.bigbbang.effect';
 
 // Mock dependencies

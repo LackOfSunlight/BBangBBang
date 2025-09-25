@@ -9,9 +9,9 @@ import { Room } from '../models/room.model';
 import { GameSocket } from '../type/game.socket';
 import { useCardUseCase } from '../useCase/use.card/use.card.usecase';
 import { broadcastDataToRoom } from '../sockets/notification';
-import { getRoom } from '../utils/room.utils';
 import { sendData } from '../sockets/send.data';
 import { getGamePacketType } from '../converter/type.form';
+import roomManger from '../managers/room.manger';
 
 const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	/// 1. DTO 생성 및 기본 유효성 검사
@@ -22,7 +22,7 @@ const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 		return;
 	}
 
-	const room: Room | null = getRoom(roomId);
+	const room: Room | null = roomManger.getRoom(roomId);
 	if (!room) {
 		is_invalid_request(socket, GlobalFailCode.ROOM_NOT_FOUND);
 		return;

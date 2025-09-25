@@ -6,10 +6,11 @@ import { C2SLeaveRoomRequest, S2CLeaveRoomResponse } from '../../generated/packe
 import { GameSocket } from '../../type/game.socket';
 import { broadcastDataToRoom } from '../../sockets/notification';
 import { User } from '../../models/user.model';
-import { leaveRoomResponsePacketForm, userLeftNotificationPacketForm } from '../../converter/packet.form';
+import {
+	leaveRoomResponsePacketForm,
+	userLeftNotificationPacketForm,
+} from '../../converter/packet.form';
 import roomManger from '../../managers/room.manger';
-
-
 
 export const leaveRoomUseCase = async (
 	socket: GameSocket,
