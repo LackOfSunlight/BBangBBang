@@ -4,7 +4,7 @@ import { checkSatelliteTargetEffect } from '../debuff/card.satellite_target.effe
 import cardSatelliteTargetEffect from '../debuff/card.satellite_target.effect';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { playAnimationHandler } from '../../handlers/play.animation.handler';
-import { checkAndEndGameIfNeeded } from '../../utils/game.end.util';
+import { checkAndEndGameIfNeeded } from '../../services/game.end.service';
 import { cardManager } from '../../managers/card.manager';
 
 // Mocks

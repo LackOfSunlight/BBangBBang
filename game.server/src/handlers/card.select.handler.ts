@@ -2,8 +2,8 @@ import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
 import { GamePacket } from '../generated/gamePacket';
 import { GameSocket } from '../type/game.socket';
 import { cardSelectUseCase } from '../useCase/card.select/card.select.usecase';
-import { sendData } from '../utils/send.data';
-import { getGamePacketType } from '../utils/type.converter';
+import { sendData } from '../sockets/send.data';
+import { getGamePacketType } from '../converter/type.form';
 
 const cardSelectHandler = (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.cardSelectRequest);

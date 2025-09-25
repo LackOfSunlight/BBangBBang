@@ -1,9 +1,9 @@
 import { GamePacketType } from '../../enums/gamePacketType';
 import { CardType, GlobalFailCode } from '../../generated/common/enums';
 import { getRoom } from '../../utils/room.utils';
-import { applyCardEffect } from '../../utils/apply.card.effect';
-import { broadcastDataToRoom } from '../../utils/notification.util.js';
-import { useCardNotificationPacketForm } from '../../factory/packet.pactory';
+import { applyCardEffect } from '../../dispatcher/apply.card.dispacher';
+import { broadcastDataToRoom } from '../../sockets/notification.js';
+import { useCardNotificationPacketForm } from '../../converter/packet.form';
 
 export const useCardUseCase = (
 	userId: string,

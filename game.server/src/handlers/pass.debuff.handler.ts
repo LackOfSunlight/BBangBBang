@@ -1,8 +1,8 @@
 import { GameSocket } from '../type/game.socket';
 import { GamePacket } from '../generated/gamePacket';
-import { getGamePacketType } from '../utils/type.converter';
+import { getGamePacketType } from '../converter/type.form';
 import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
-import { sendData } from '../utils/send.data';
+import { sendData } from '../sockets/send.data';
 import passDebuffUseCase from '../useCase/pass.debuff/pass.debuff.usecase';
 import { C2SPassDebuffRequest } from '../generated/packet/game_actions';
 

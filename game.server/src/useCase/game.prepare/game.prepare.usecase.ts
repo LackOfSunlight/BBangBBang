@@ -14,12 +14,12 @@ import { CharacterData } from '../../generated/common/types.js';
 import characterType from '../../data/characterType.json';
 import { CharacterInfo } from '../../type/character.info.js';
 import { GamePacketType } from '../../enums/gamePacketType.js';
-import { broadcastDataToRoom } from '../../utils/notification.util.js';
+import { broadcastDataToRoom } from '../../sockets/notification.js';
 import { getRoom, saveRoom } from '../../utils/room.utils.js';
 import {
 	gamePrepareNotificationPacketForm,
 	gamePrepareResponsePacketForm,
-} from '../../factory/packet.pactory.js';
+} from '../../converter/packet.form.js';
 
 export const gamePrepareUseCase = (socket: GameSocket, req: C2SGamePrepareRequest): GamePacket => {
 	if (!socket.roomId) {

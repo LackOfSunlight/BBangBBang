@@ -7,12 +7,12 @@ import {
 } from '../../generated/common/enums';
 import { C2SCardSelectRequest } from '../../generated/packet/game_actions';
 import { GameSocket } from '../../type/game.socket';
-import { broadcastDataToRoom } from '../../utils/notification.util';
+import { broadcastDataToRoom } from '../../sockets/notification';
 import { getRoom, getUserFromRoom } from '../../utils/room.utils';
 import {
 	cardSelectResponseForm,
 	userUpdateNotificationPacketForm,
-} from '../../factory/packet.pactory';
+} from '../../converter/packet.form';
 import { GamePacket } from '../../generated/gamePacket';
 import { cardManager } from '../../managers/card.manager';
 

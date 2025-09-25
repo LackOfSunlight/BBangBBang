@@ -5,10 +5,10 @@ import { CharacterStateType, GlobalFailCode } from '../../generated/common/enums
 import { GamePacketType } from '../../enums/gamePacketType';
 import { getRoom, getUserFromRoom } from '../../utils/room.utils';
 import { User } from '../../models/user.model';
-import { broadcastDataToRoom } from '../../utils/notification.util';
+import { broadcastDataToRoom } from '../../sockets/notification';
 import { C2SFleaMarketPickRequest } from '../../generated/packet/game_actions';
 import { cardManager } from '../../managers/card.manager';
-import { fleaMarketNotificationForm, fleaMarketResponseForm, userUpdateNotificationPacketForm } from '../../factory/packet.pactory';
+import { fleaMarketNotificationForm, fleaMarketResponseForm, userUpdateNotificationPacketForm } from '../../converter/packet.form';
 
 const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest): GamePacket => {
 	let userInfo: User;

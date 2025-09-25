@@ -7,7 +7,7 @@ import { GamePacketType } from '../../enums/gamePacketType';
 import checkUserPassword from '../../services/login/check.user.password';
 import { GameSocket } from '../../type/game.socket';
 import { addSocket } from '../../managers/socket.manger';
-import { loginResponseForm } from '../../factory/packet.pactory';
+import { loginResponseForm } from '../../converter/packet.form';
 
 const loginUseCase = async (socket: GameSocket, req: C2SLoginRequest): Promise<GamePacket> => {
 	const userInfo = await getUserByEmail(req.email);

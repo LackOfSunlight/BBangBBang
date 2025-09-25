@@ -3,7 +3,7 @@ import { C2SJoinRandomRoomRequest } from '../../generated/packet/room_actions';
 import { GameSocket } from '../../type/game.socket';
 import { getUserByUserId } from '../../services/prisma.service';
 import { addUserToRoom, getRooms } from '../../utils/room.utils';
-import { broadcastDataToRoom } from '../../utils/notification.util';
+import { broadcastDataToRoom } from '../../sockets/notification';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { GlobalFailCode, RoomStateType } from '../../generated/common/enums';
 import { Room } from '../../models/room.model';

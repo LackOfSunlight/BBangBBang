@@ -25,7 +25,7 @@ import {
 import { S2CLeaveRoomResponse } from '../generated/packet/room_actions';
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
-import { broadcastDataToRoom } from '../utils/notification.util';
+import { broadcastDataToRoom } from '../sockets/notification';
 
 
 /**

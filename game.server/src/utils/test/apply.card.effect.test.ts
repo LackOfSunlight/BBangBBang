@@ -1,4 +1,4 @@
-import { applyCardEffect } from '../apply.card.effect';
+import { applyCardEffect } from '../../dispatcher/apply.card.dispacher';
 import { getUserFromRoom, updateCharacterFromRoom } from '../room.utils';
 import { cardManager } from '../../managers/card.manager.js';
 

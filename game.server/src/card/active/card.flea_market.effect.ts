@@ -4,7 +4,7 @@ import { CardType, CharacterStateType } from '../../generated/common/enums.js';
 import { GamePacket } from '../../generated/gamePacket';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { cardManager } from '../../managers/card.manager';
-import { broadcastDataToRoom } from '../../utils/notification.util';
+import { broadcastDataToRoom } from '../../sockets/notification';
 
 const cardFleaMarketEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
 	// 방 정보 가져오기

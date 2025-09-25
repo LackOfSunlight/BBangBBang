@@ -6,8 +6,8 @@ import { GamePacketType } from '../../enums/gamePacketType';
 import { getUserByUserId } from '../../services/prisma.service';
 import { RoomStateType } from '../../generated/common/enums';
 import { User } from '../../models/user.model';
-import { broadcastDataToRoom } from '../../utils/notification.util';
-import { joinRoomNotificationForm, joinRoomResponseForm } from '../../factory/packet.pactory';
+import { broadcastDataToRoom } from '../../sockets/notification';
+import { joinRoomNotificationForm, joinRoomResponseForm } from '../../converter/packet.form';
 import { getRoom, addUserToRoom } from '../../utils/room.utils';
 
 const joinRoomUseCase = async (

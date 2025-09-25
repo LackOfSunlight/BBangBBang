@@ -1,14 +1,14 @@
 import { GameSocket } from '../type/game.socket';
 import { GamePacket } from '../generated/gamePacket';
-import { getGamePacketType } from '../utils/type.converter';
+import { getGamePacketType } from '../converter/type.form';
 import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
 import { reactionUpdateUseCase } from '../useCase/reaction.update/reaction.update.usecase';
-import { sendData } from '../utils/send.data';
-import { checkAndEndGameIfNeeded } from '../utils/game.end.util';
+import { sendData } from '../sockets/send.data';
+import { checkAndEndGameIfNeeded } from '../services/game.end.service';
 import { Room } from '../models/room.model';
 import { getRoom } from '../utils/room.utils';
 import { GlobalFailCode } from '../generated/common/enums';
-import { reactionResponsePacketForm } from '../factory/packet.pactory';
+import { reactionResponsePacketForm } from '../converter/packet.form';
 
 
 const reactionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket) => {

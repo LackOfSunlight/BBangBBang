@@ -1,6 +1,6 @@
 import { CardType } from '../../generated/common/enums';
 import { cardManager } from '../../managers/card.manager';
-import getMaxHp from '../../utils/character.util';
+import getMaxHp from '../../init/character.Init';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 
 const cardVaccineEffect = (roomId: number, userId: string): boolean => {

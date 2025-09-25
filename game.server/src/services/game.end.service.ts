@@ -1,10 +1,10 @@
-import { getRoom, saveRoom } from './room.utils';
+import { getRoom, saveRoom } from '../utils/room.utils';
 import { Room } from '../models/room.model';
 import { RoleType, WinType, RoomStateType } from '../generated/common/enums';
-import { broadcastDataToRoom } from './notification.util';
+import { broadcastDataToRoom } from '../sockets/notification';
 import { GamePacketType } from '../enums/gamePacketType';
 import gameManager from '../managers/game.manager';
-import { gameEndNotificationForm } from '../factory/packet.pactory';
+import { gameEndNotificationForm } from '../converter/packet.form';
 
 /**
  * 게임 종료 조건을 검사하고 필요시 게임을 종료하는 함수

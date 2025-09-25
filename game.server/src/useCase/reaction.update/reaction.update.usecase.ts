@@ -9,9 +9,9 @@ import { getRoom, saveRoom, updateCharacterFromRoom } from '../../utils/room.uti
 import { weaponDamageEffect } from '../../utils/weapon.util';
 import { CheckBigBbangService } from '../../services/bigbbang.check.service';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
-import { broadcastDataToRoom } from '../../utils/notification.util';
+import { broadcastDataToRoom } from '../../sockets/notification';
 import takeDamageService from '../../services/take.damage.service';
-import { userUpdateNotificationPacketForm } from '../../factory/packet.pactory';
+import { userUpdateNotificationPacketForm } from '../../converter/packet.form';
 
 
 export const reactionUpdateUseCase = async (

@@ -4,11 +4,11 @@ import { GlobalFailCode, CardType } from '../../generated/common/enums';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { GamePacket } from '../../generated/gamePacket';
 import { GameSocket } from '../../type/game.socket';
-import { passDebuffResponseForm } from '../../factory/packet.pactory';
+import { passDebuffResponseForm } from '../../converter/packet.form';
 import { bombManager } from '../../card/debuff/card.bomb.effect';
 //import { createUserUpdateNotificationPacket } from '../use.card/use.card.usecase';
-import { userUpdateNotificationPacketForm } from '../../factory/packet.pactory';
-import { broadcastDataToRoom } from '../../utils/notification.util';
+import { userUpdateNotificationPacketForm } from '../../converter/packet.form';
+import { broadcastDataToRoom } from '../../sockets/notification';
 
 const passDebuffUseCase = async (
 	socket: GameSocket,

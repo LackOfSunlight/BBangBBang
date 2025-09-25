@@ -1,8 +1,8 @@
 import loginHandler from '../login.handler';
 import { GameSocket } from '../../type/game.socket';
 import { GamePacket } from '../../generated/gamePacket';
-import { getGamePacketType } from '../../utils/type.converter';
-import { sendData } from '../../utils/send.data';
+import { getGamePacketType } from '../../converter/type.form';
+import { sendData } from '../../sockets/send.data';
 import loginUseCase from '../../useCase/login/login.usecase';
 import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType';
 import { C2SLoginRequest, S2CLoginResponse } from '../../generated/packet/auth';
