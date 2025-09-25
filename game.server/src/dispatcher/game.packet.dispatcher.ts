@@ -49,7 +49,7 @@ export function gamePacketDispatcher(socket: Socket, gamePacket: GamePacket) {
 		return;
 	}
 
-	const packetType = payload.oneofKind as GamePacketType;
+	const packetType = payload.oneofKind;
 	const handler = handlers[packetType as RequestPacketType];
 
 	if (handler) {
