@@ -4,61 +4,65 @@ import { CheckBigBbangService as checkBigBbangService } from '../../services/big
 import { User } from '../../models/user.model.js';
 import { cardManager } from '../../managers/card.manager.js';
 import { Room } from '../../models/room.model.js';
+import { stateChangeService } from '../../services/state.change.service.js';
 
 const cardShieldEffect = (room: Room, user: User, targetUser: User): boolean => {
+	if (!room || !user) return false;
 
-	if (!room) return false;
+	if (!user.character || !user.character.stateInfo) return false;
 
-
-	if (!user?.character) {
-		console.log('유저에 캐릭터 정보가 없다');
-		return false;
-	}
-
-	if (user.character.stateInfo!.state === CharacterStateType.NONE_CHARACTER_STATE||
-		user.character.stateInfo!.state === undefined
-	) {	
+	if (
+		user.character.stateInfo.state === CharacterStateType.NONE_CHARACTER_STATE ||
+		user.character.stateInfo.state === undefined
+	) {
 		return false;
 	}
 
 	cardManager.removeCard(user, room, CardType.SHIELD);
 
-	const stateInfo = user?.character?.stateInfo;
+	if (user.character.stateInfo.state === CharacterStateType.BBANG_TARGET) {
+		const shooter = room.users.find((u) => u.id === user.character?.stateInfo?.stateTargetUserId);
 
-	if (stateInfo) {
-		if (stateInfo.state === CharacterStateType.BBANG_TARGET) {
-			const shooter = room.users.find((u) => u.id === user.character?.stateInfo?.stateTargetUserId);
+		if (!shooter?.character) return false;
 
-			const isShark = shooter?.character?.characterType === CharacterType.SHARK;
-			const hasLaser = shooter?.character?.equips.includes(CardType.LASER_POINTER);
+		const isShark = shooter.character.characterType === CharacterType.SHARK;
+		const hasLaser = shooter.character.equips.includes(CardType.LASER_POINTER);
 
-			let requiredShields = 0;
-			if (isShark) requiredShields += 1;
-			if (hasLaser) requiredShields += 1;
-			if (isShark && hasLaser) requiredShields += 1;
+		let requiredShields = 0;
+		if (isShark) requiredShields += 1;
+		if (hasLaser) requiredShields += 1;
+		if (isShark && hasLaser) requiredShields += 1;
 
-			if (requiredShields > 0) {
-				removeShields(user, requiredShields);
-			}
-
-			stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
-			stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-			stateInfo.nextStateAt = '0';
-			stateInfo.stateTargetUserId = '0';
-
-			if (shooter?.character?.stateInfo) {
-				shooter.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
-				shooter.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-				shooter.character.stateInfo.nextStateAt = '0';
-				shooter.character.stateInfo.stateTargetUserId = '0';
-				shooter.character.bbangCount += 1;
-			}
-		} else {
-			stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
-			stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-			stateInfo.nextStateAt = '0';
-			stateInfo.stateTargetUserId = '0';
+		if (requiredShields > 0) {
+			removeShields(user, requiredShields);
 		}
+
+		stateChangeService(
+			user,
+			CharacterStateType.NONE_CHARACTER_STATE,
+			CharacterStateType.NONE_CHARACTER_STATE,
+			0,
+			'0',
+		);
+
+		if (shooter.character.stateInfo) {
+			stateChangeService(
+				shooter,
+				CharacterStateType.NONE_CHARACTER_STATE,
+				CharacterStateType.NONE_CHARACTER_STATE,
+				0,
+				'0',
+			);
+			shooter.character.bbangCount += 1;
+		}
+	} else {
+		stateChangeService(
+			user,
+			CharacterStateType.NONE_CHARACTER_STATE,
+			CharacterStateType.NONE_CHARACTER_STATE,
+			0,
+			'0',
+		);
 	}
 
 	room = checkBigBbangService(room);

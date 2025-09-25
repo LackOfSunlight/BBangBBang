@@ -7,14 +7,12 @@ import { cardManager } from '../../managers/card.manager';
 import { broadcastDataToRoom } from '../../sockets/notification';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
+import { stateChangeService } from '../../services/state.change.service';
 
 const cardFleaMarketEffect = (room: Room, user: User, targetUser: User): boolean => {
-
-
-
 	const nowTime = Date.now();
-	if (!room) throw new Error(`Room ${room} not found`);
-	if (!user) throw new Error(`User ${user} not found`);
+
+	if (!room || !user) return false;
 
 	// 방에 유저들 정보 가져오기
 	const users = room.users;
@@ -31,21 +29,32 @@ const cardFleaMarketEffect = (room: Room, user: User, targetUser: User): boolean
 	const selectedCards = cardManager.drawDeck(room.id, users.length - prisonCount);
 	cardManager.roomFleaMarketCards.set(room.id, selectedCards);
 	cardManager.fleaMarketPickIndex.set(room.id, []);
-	// const pickIndex = selectedCards.map((_, index) => index);
 
-	user.character!.stateInfo!.state = CharacterStateType.FLEA_MARKET_TURN;
-	user.character!.stateInfo!.nextState = CharacterStateType.FLEA_MARKET_WAIT;
-	((user.character!.stateInfo!.nextStateAt = `${nowTime + 5}`),
-		(user.character!.stateInfo!.stateTargetUserId = '0'));
+	if (user.character === undefined || user.character.stateInfo == undefined) return false;
+
+	stateChangeService(
+		user,
+		CharacterStateType.FLEA_MARKET_TURN,
+		CharacterStateType.FLEA_MARKET_WAIT,
+		5,
+		'0',
+	);
 
 	for (let i = 0; i < room.users.length; i++) {
-		if (room.users[i].id === user.id || room.users[i].character?.stateInfo?.state === CharacterStateType.CONTAINED) {
+		let user = room.users[i];
+
+		if (!user.character || !user.character.stateInfo) continue;
+
+		if (user.id === user.id || user.character.stateInfo.state === CharacterStateType.CONTAINED) {
 			continue;
 		}
-		room.users[i].character!.stateInfo!.state = CharacterStateType.FLEA_MARKET_WAIT;
-		room.users[i].character!.stateInfo!.nextState = CharacterStateType.FLEA_MARKET_TURN;
-		room.users[i].character!.stateInfo!.nextStateAt = `${nowTime + 5}`;
-		room.users[i].character!.stateInfo!.stateTargetUserId = '0';
+		stateChangeService(
+			user,
+			CharacterStateType.FLEA_MARKET_WAIT,
+			CharacterStateType.FLEA_MARKET_TURN,
+			5,
+			'0',
+		);
 	}
 
 	// 패킷으로 포장
