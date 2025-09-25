@@ -37,10 +37,12 @@ export function applyCardEffect(
 	// 유효성 검증 (119 카드 예외 처리)
 	if (!user || !user.character) return false;
 
+	if(!CardType) return false;
+	cardManager.removeCard(user, room, CardType);
 	// 소지한 카드 제거 후 효과 적용
 	switch (CardType) {
 		case 1: //'BBANG':
-			return cardBbangEffect(room, user, targetUser;
+			return cardBbangEffect(room, user, targetUser);
 		case 2: //'BIGBBANG':
 			return cardBigBbangEffect(room, user, targetUser);
 		case 3: //'SHIELD':

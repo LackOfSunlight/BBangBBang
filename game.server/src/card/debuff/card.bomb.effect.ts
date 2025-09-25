@@ -10,13 +10,12 @@ import { userUpdateNotificationPacketForm } from '../../converter/packet.form';
 import { broadcastDataToRoom } from '../../sockets/notification';
 import { playAnimationHandler } from '../../handlers/play.animation.handler';
 import { checkAndEndGameIfNeeded } from '../../services/game.end.service';
+import { Room } from '../../models/room.model';
+import { User } from '../../models/user.model';
 
 
 /** 폭탄 디버프 부여 */
-const cardBombEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
-	const user = getUserFromRoom(roomId, userId);
-	const target = getUserFromRoom(roomId, targetUserId);
-	const room = getRoom(roomId);
+const cardBombEffect = (room: Room, user: User, target: User): boolean => {
 	// 유효성 검증
 	if (!user || !user.character || !user.character.stateInfo) {
 		console.error('[BOMB]사용자 정보가 존재하지 않습니다');
@@ -46,20 +45,9 @@ const cardBombEffect = (roomId: number, userId: string, targetUserId: string): b
 	const warnExplosion = warnNotificationPacketForm(WarningType.BOMB_WANING, `${explosionTime}`);
  	broadcastDataToRoom(room.users, warnExplosion, GamePacketType.warningNotification);
 	// 인게임 제한시간 : 30초 / 테스트 제한시간 : 10초
-	bombManager.startBombTimer(roomId, targetUserId, explosionTime);
+	bombManager.startBombTimer(room.id, target.id, explosionTime);
 	
-
-	// 수정 정보 갱신
-	try {
-		updateCharacterFromRoom(roomId, userId, user.character);
-		updateCharacterFromRoom(roomId, targetUserId, target.character)
-		//saveRoom(room);
-		//console.log('[BOMB]로그 저장에 성공하였습니다');
-		return true;
-	} catch (error) {
-		console.error(`[BOMB]로그 저장에 실패하였습니다:[${error}]`);
-		return false;
-	}
+	return true;
 };
 
 
@@ -174,13 +162,6 @@ export const bombExplosion = (roomId:number, bombUserId: string ) => {
     broadcastDataToRoom(room.users, userUpdateNotificationPacket, GamePacketType.userUpdateNotification);
     console.log(`[BOMB] 폭탄이 ${userInExplode.nickname} 에서 폭발하였습니다`);
 
-// 수정 정보 갱신
-	try {
-		updateCharacterFromRoom(roomId, bombUserId, userInExplode.character);
-		//console.log('[BOMB]로그 저장에 성공하였습니다'); 
-	} catch (error) {
-		console.error(`[BOMB]로그 저장에 실패하였습니다:[${error}]`);
-	}
 };
 
 

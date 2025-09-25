@@ -2,16 +2,15 @@
 import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../utils/room.utils';
 import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { cardManager } from '../../managers/card.manager';
+import { Room } from '../../models/room.model';
+import { User } from '../../models/user.model';
 
 // 디버프 적용 처리 로직
 const cardContainmentUnitEffect = (
-	roomId: number,
-	userId: string,
-	targetUserId: string,
+	room: Room,
+	user: User,
+	target: User,
 ): boolean => {
-	const user = getUserFromRoom(roomId, userId);
-	const target = getUserFromRoom(roomId, targetUserId);
-	const room = getRoom(roomId);
 	// 유효성 검증
 	if (!user || !user.character || !user.character.stateInfo) {
 		console.error('[CONTAINMENT_UNIT]사용자 정보가 존재하지 않습니다');
@@ -32,21 +31,13 @@ const cardContainmentUnitEffect = (
 		return false;
 	}
 
-	// 카드 제거
-	cardManager.removeCard(user, room, CardType.CONTAINMENT_UNIT);
+	// 카드 제거 -> 상위 모듈에서 처리
+	//cardManager.removeCard(user, room, CardType.CONTAINMENT_UNIT);
 
 	target.character.debuffs.push(CardType.CONTAINMENT_UNIT);
 	//console.log(`유저 ${targetUserId}가 감금장치 카드에 맞았습니다.\n다음 차례부터 감금장치에 영향을 받습니다.`);
 
-	// 수정 정보 갱신
-	try {
-		updateCharacterFromRoom(roomId, targetUserId, target.character);
-		//console.log('[CONTAINMENT_UNIT]로그 저장에 성공하였습니다');
-		return true;
-	} catch (error) {
-		console.error(`[CONTAINMENT_UNIT]로그 저장에 실패하였습니다:[${error}]`);
-		return false;
-	}
+	return true;
 };
 
 // 효과 대상자 체크
@@ -100,13 +91,6 @@ export const debuffContainmentUnitEffect = (roomId: number, userId: string) => {
 				// 	`[debuffCONTAINMENT_UNIT] (${user.nickname}) : 디버프 감염 완료 : ${CharacterStateType[user.character.stateInfo!.state]}`,
 				// );
 
-				try {
-					updateCharacterFromRoom(roomId, userId, user.character);
-					//console.log(`[debuffCONTAINMENT_UNIT] (${user.nickname}) :  로그 저장에 성공하였습니다`);
-				} catch (error) {
-					console.error(`[debuffCONTAINMENT_UNIT]로그 저장에 실패하였습니다:[${error}]`);
-				}
-
 				break;
 			case CharacterStateType.CONTAINED:
 				const yourProb = Math.random() * 100;
@@ -125,12 +109,7 @@ export const debuffContainmentUnitEffect = (roomId: number, userId: string) => {
 					user.character.debuffs.splice(yourDebuffIndex, 1);
 					console.log(`[debuffCONTAINMENT_UNIT]${user.nickname} 유저가 감금 상태에서 탈출에 성공했습니다`);
 
-					try {
-						updateCharacterFromRoom(roomId, userId, user.character);
-						//console.log(`[debuffCONTAINMENT_UNIT] (${user.nickname}) :  로그 저장에 성공하였습니다`);
-					} catch (error) {
-						console.error(`[debuffCONTAINMENT_UNIT]로그 저장에 실패하였습니다:[${error}]`);
-					}
+					
 				}
 				break;
 			default:
