@@ -5,10 +5,10 @@ import {
 } from '../../utils/room.utils';
 import { CardType, CharacterStateType } from '../../generated/common/enums.js';
 import { cardManager } from '../../managers/card.manager.js';
+import { Room } from '../../models/room.model';
+import { User } from '../../models/user.model';
 
-const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
-	const room = getRoom(roomId);
-	const shooter = getUserFromRoom(roomId, userId);
+const cardBigBbangEffect = (room: Room , shooter: User , targetUser: User): boolean => {
 	const nowTime = Date.now();
 
 	if (!room || !shooter) {
@@ -32,11 +32,11 @@ const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string
 
 	for (let user of room.users) {
 		if (user.character?.stateInfo?.state != null) {
-			if (user.id === userId) {
+			if (user.id === shooter.id) {
 				user.character.stateInfo.state = CharacterStateType.BIG_BBANG_SHOOTER;
 				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 				user.character.stateInfo.nextStateAt = `${nowTime + 10}`;
-				user.character.stateInfo.stateTargetUserId = targetUserId;
+				user.character.stateInfo.stateTargetUserId = targetUser.id;
 
 				continue;
 			}
@@ -45,7 +45,7 @@ const cardBigBbangEffect = (roomId: number, userId: string, targetUserId: string
 				user.character.stateInfo.state = CharacterStateType.BIG_BBANG_TARGET;
 				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 				user.character.stateInfo.nextStateAt = `${nowTime + 10}`;
-				user.character.stateInfo.stateTargetUserId = userId;
+				user.character.stateInfo.stateTargetUserId = shooter.id;
 			}
 		}
 	}

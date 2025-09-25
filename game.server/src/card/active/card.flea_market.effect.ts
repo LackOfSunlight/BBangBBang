@@ -5,14 +5,16 @@ import { GamePacket } from '../../generated/gamePacket';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { cardManager } from '../../managers/card.manager';
 import { broadcastDataToRoom } from '../../sockets/notification';
+import { Room } from '../../models/room.model';
+import { User } from '../../models/user.model';
 
-const cardFleaMarketEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
-	// 방 정보 가져오기
-	const room = getRoom(roomId);
-	const user = getUserFromRoom(roomId, userId);
+const cardFleaMarketEffect = (room: Room, user: User, targetUser: User): boolean => {
+
+
+
 	const nowTime = Date.now();
-	if (!room) throw new Error(`Room ${roomId} not found`);
-	if (!user) throw new Error(`User ${userId} not found`);
+	if (!room) throw new Error(`Room ${room} not found`);
+	if (!user) throw new Error(`User ${user} not found`);
 
 	// 방에 유저들 정보 가져오기
 	const users = room.users;
@@ -27,8 +29,8 @@ const cardFleaMarketEffect = (roomId: number, userId: string, targetUserId: stri
 
 	// 방 수 만큼 카드 드로우
 	const selectedCards = cardManager.drawDeck(room.id, users.length - prisonCount);
-	cardManager.roomFleaMarketCards.set(roomId, selectedCards);
-	cardManager.fleaMarketPickIndex.set(roomId, []);
+	cardManager.roomFleaMarketCards.set(room.id, selectedCards);
+	cardManager.fleaMarketPickIndex.set(room.id, []);
 	// const pickIndex = selectedCards.map((_, index) => index);
 
 	user.character!.stateInfo!.state = CharacterStateType.FLEA_MARKET_TURN;
@@ -37,7 +39,7 @@ const cardFleaMarketEffect = (roomId: number, userId: string, targetUserId: stri
 		(user.character!.stateInfo!.stateTargetUserId = '0'));
 
 	for (let i = 0; i < room.users.length; i++) {
-		if (room.users[i].id === userId || room.users[i].character?.stateInfo?.state === CharacterStateType.CONTAINED) {
+		if (room.users[i].id === user.id || room.users[i].character?.stateInfo?.state === CharacterStateType.CONTAINED) {
 			continue;
 		}
 		room.users[i].character!.stateInfo!.state = CharacterStateType.FLEA_MARKET_WAIT;

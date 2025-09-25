@@ -13,7 +13,7 @@ export const useCardUseCase = (
 	targetUserId: string,
 ): { success: boolean; failcode: GlobalFailCode } => {
 	const { room, user, target} = applyCardUseHandler(roomId, userId, targetUserId);
-	if (!room) {
+	if (!room && !user) {
 		return { success: false, failcode: GlobalFailCode.ROOM_NOT_FOUND };
 	}
 
@@ -26,7 +26,7 @@ export const useCardUseCase = (
 	// 카드 사용 로직 처리
 
 	// 메인 로직
-	const isSuccess = applyCardEffect(roomId, cardType, userId, targetUserId!);
+	const isSuccess = applyCardEffect(room, cardType, user, target);
 	if (!isSuccess) {
 		console.log('사용 실패');
 		return { success: false, failcode: GlobalFailCode.INVALID_REQUEST };
