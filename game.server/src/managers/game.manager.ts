@@ -44,7 +44,7 @@ class GameManager {
 		// 위치 변화 플래그 초기화 (최초 시작 시에는 true로 설정)
 		roomPositionChanged.set(room.id, true);
 
-		const intervalId = setInterval(() => broadcastPositionUpdates(room), 100);
+		const intervalId = setInterval(() => broadcastPositionUpdates(room), 10000000);
 
 		positionUpdateIntervals.set(room.id, intervalId);
 		this.scheduleNextPhase(room.id, roomId);
@@ -52,7 +52,7 @@ class GameManager {
 
 	private scheduleNextPhase(roomId: number, roomTimerMapId: string) {
 		this.clearTimer(roomTimerMapId);
-		const dayInterval = 60000; // 1분
+		const dayInterval = 600000; // 1분
 		const eveningInterval = 30000; //30초
 
 		let nextPhase: PhaseType;

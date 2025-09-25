@@ -4,11 +4,11 @@ import { GameSocket } from '../../type/game.socket';
 import { GlobalFailCode } from '../../generated/common/enums';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { getUserByUserId } from '../../services/prisma.service';
-import { addUserToRoom, getRoom } from '../../utils/room.utils';
 import { RoomStateType } from '../../generated/common/enums';
 import { User } from '../../models/user.model';
 import { broadcastDataToRoom } from '../../utils/notification.util';
 import { joinRoomNotificationForm, joinRoomResponseForm } from '../../factory/packet.pactory';
+import { getRoom, addUserToRoom } from '../../utils/room.utils';
 
 const joinRoomUseCase = async (
 	socket: GameSocket,
