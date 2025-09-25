@@ -3,22 +3,27 @@ import { GameSocket } from '../../type/game.socket';
 import { Room } from '../../models/room.model';
 import { CharacterStateType, GlobalFailCode } from '../../generated/common/enums';
 import { GamePacketType } from '../../enums/gamePacketType';
-import { getRoom, getUserFromRoom } from '../../utils/room.utils';
 import { User } from '../../models/user.model';
 import { broadcastDataToRoom } from '../../sockets/notification';
 import { C2SFleaMarketPickRequest } from '../../generated/packet/game_actions';
 import { cardManager } from '../../managers/card.manager';
-import { fleaMarketNotificationForm, fleaMarketResponseForm, userUpdateNotificationPacketForm } from '../../converter/packet.form';
+import {
+	fleaMarketNotificationForm,
+	fleaMarketResponseForm,
+	userUpdateNotificationPacketForm,
+} from '../../converter/packet.form';
+import roomManger from '../../managers/room.manger';
+import { stateChangeService } from '../../services/state.change.service';
 
 const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest): GamePacket => {
 	let userInfo: User;
 	let room: Room;
 
 	try {
-		room = getRoom(Number(socket.roomId));
-		userInfo = getUserFromRoom(room.id, socket.userId!);
+		room = roomManger.getRoom(Number(socket.roomId));
+		userInfo = roomManger.getUserFromRoom(room.id, socket.userId!);
 	} catch (err) {
-		console.log(`DB 에러 발생: ${err}`);
+		console.log(`서버 에러 발생: ${err}`);
 		return fleaMarketResponseForm(false, GlobalFailCode.ROOM_NOT_FOUND);
 	}
 
@@ -43,9 +48,13 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 
 	userInfo.character!.handCardsCount += 1;
 
-	userInfo.character!.stateInfo!.state = CharacterStateType.FLEA_MARKET_WAIT;
-	userInfo.character!.stateInfo!.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-	userInfo.character!.stateInfo!.nextStateAt = '0';
+	stateChangeService(
+		userInfo,
+		CharacterStateType.FLEA_MARKET_WAIT,
+		CharacterStateType.NONE_CHARACTER_STATE,
+		0,
+		'0',
+	);
 
 	for (let i = 0; i < room.users.length; i++) {
 		if (room.users[i].id === userInfo.id) {
@@ -53,9 +62,13 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 			const nextUser = room.users[nextIndex];
 
 			if (nextUser.character?.stateInfo?.nextState !== CharacterStateType.NONE_CHARACTER_STATE) {
-				nextUser.character!.stateInfo!.state = CharacterStateType.FLEA_MARKET_TURN;
-				nextUser.character!.stateInfo!.nextState = CharacterStateType.FLEA_MARKET_WAIT;
-				nextUser.character!.stateInfo!.nextStateAt = '5';
+				stateChangeService(
+					nextUser,
+					CharacterStateType.FLEA_MARKET_TURN,
+					CharacterStateType.FLEA_MARKET_WAIT,
+					5,
+					'0',
+				);
 				break;
 			}
 		}
@@ -71,9 +84,13 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 			// 감옥에 있는 애들은 상태를 바꾸지 않음
 			if (u.character?.stateInfo?.state === CharacterStateType.CONTAINED) continue;
 
-			u.character!.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
-			u.character!.stateInfo!.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-			u.character!.stateInfo!.nextStateAt = '0';
+			stateChangeService(
+				u,
+				CharacterStateType.NONE_CHARACTER_STATE,
+				CharacterStateType.NONE_CHARACTER_STATE,
+				0,
+				'0',
+			);
 		}
 
 		cardManager.fleaMarketPickIndex.set(room.id, []);
@@ -89,6 +106,5 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 
 	return fleaMarketResponseForm(true, GlobalFailCode.NONE_FAILCODE);
 };
-
 
 export default fleaMarketPickUseCase;

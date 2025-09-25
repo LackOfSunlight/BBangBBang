@@ -1,5 +1,4 @@
 // cardType = 2
-import { getRoom, getUserFromRoom } from '../../utils/room.utils';
 import { CardType, CharacterStateType } from '../../generated/common/enums.js';
 import { cardManager } from '../../managers/card.manager.js';
 import { Room } from '../../models/room.model';

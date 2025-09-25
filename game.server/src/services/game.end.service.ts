@@ -1,17 +1,17 @@
-import { getRoom, saveRoom } from '../utils/room.utils';
 import { Room } from '../models/room.model';
 import { RoleType, WinType, RoomStateType } from '../generated/common/enums';
 import { broadcastDataToRoom } from '../sockets/notification';
 import { GamePacketType } from '../enums/gamePacketType';
 import gameManager from '../managers/game.manager';
 import { gameEndNotificationForm } from '../converter/packet.form';
+import roomManger from '../managers/room.manger';
 
 /**
  * 게임 종료 조건을 검사하고 필요시 게임을 종료하는 함수
  */
 export async function checkAndEndGameIfNeeded(roomId: number): Promise<void> {
 	try {
-		const room = getRoom(roomId);
+		const room = roomManger.getRoom(roomId);
 		if (!room) {
 			console.warn(`[GameEnd] 방을 찾을 수 없습니다: roomId=${roomId}`);
 			return;
@@ -137,7 +137,7 @@ async function endGame(room: Room, gameResult: GameEndResult): Promise<void> {
 	try {
 		// 방 상태를 종료로 변경
 		room.state = RoomStateType.WAIT; // 게임 종료 후 대기 상태로 변경
-		saveRoom(room);
+		// saveRoom(room);
 
 		// 게임 종료 알림 패킷 생성
 		const gameEndPacket = gameEndNotificationForm(gameResult.winners, gameResult.winType);

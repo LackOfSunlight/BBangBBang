@@ -8,13 +8,13 @@ import {
 import { C2SCardSelectRequest } from '../../generated/packet/game_actions';
 import { GameSocket } from '../../type/game.socket';
 import { broadcastDataToRoom } from '../../sockets/notification';
-import { getRoom, getUserFromRoom } from '../../utils/room.utils';
 import {
 	cardSelectResponseForm,
 	userUpdateNotificationPacketForm,
 } from '../../converter/packet.form';
 import { GamePacket } from '../../generated/gamePacket';
 import { cardManager } from '../../managers/card.manager';
+import roomManger from '../../managers/room.manger';
 
 export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest): GamePacket => {
 	const { userId, roomId } = socket;
@@ -22,12 +22,12 @@ export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest)
 		return cardSelectResponseForm(false, GlobalFailCode.AUTHENTICATION_FAILED);
 	}
 
-	const room = getRoom(roomId);
+	const room = roomManger.getRoom(roomId);
 	if (!room) {
 		return cardSelectResponseForm(false, GlobalFailCode.ROOM_NOT_FOUND);
 	}
 
-	const user = getUserFromRoom(roomId, userId);
+	const user = roomManger.getUserFromRoom(roomId, userId);
 	if (!user || !user.character) {
 		return cardSelectResponseForm(false, GlobalFailCode.CHARACTER_NOT_FOUND);
 	}
@@ -40,7 +40,7 @@ export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest)
 	}
 
 	const targetId = user.character.stateInfo!.stateTargetUserId;
-	const target = getUserFromRoom(roomId, targetId);
+	const target = roomManger.getUserFromRoom(roomId, targetId);
 	if (!target || !target.character) {
 		return cardSelectResponseForm(false, GlobalFailCode.CHARACTER_NOT_FOUND);
 	}

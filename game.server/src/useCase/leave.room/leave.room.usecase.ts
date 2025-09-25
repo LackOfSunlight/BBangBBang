@@ -4,10 +4,10 @@ import { GamePacket } from '../../generated/gamePacket';
 import { S2CLeaveRoomNotification } from '../../generated/packet/notifications';
 import { C2SLeaveRoomRequest, S2CLeaveRoomResponse } from '../../generated/packet/room_actions';
 import { GameSocket } from '../../type/game.socket';
-import { deleteRoom, getRoom, removeUserFromRoom } from '../../utils/room.utils';
 import { broadcastDataToRoom } from '../../sockets/notification';
 import { User } from '../../models/user.model';
 import { leaveRoomResponsePacketForm, userLeftNotificationPacketForm } from '../../converter/packet.form';
+import roomManger from '../../managers/room.manger';
 
 
 
@@ -28,7 +28,7 @@ export const leaveRoomUseCase = async (
 
 	try {
 		// 방 정보를 가져옴
-		const room = getRoom(roomId);
+		const room = roomManger.getRoom(roomId);
 		// 방이 존재하지 않는 경우
 		if (!room) {
 			return leaveRoomResponsePacketForm({
@@ -54,7 +54,7 @@ export const leaveRoomUseCase = async (
 			// 방에 있던 모든 유저 목록을 저장 (알림 전송용)
 			const allUsersInRoom = [...room.users];
 			// 방을 삭제
-			deleteRoom(roomId);
+			roomManger.deleteRoom(roomId);
 
 			// 방장에게 보낼 성공 응답 패킷
 			const ownerResponsePacket = leaveRoomResponsePacketForm({
@@ -80,7 +80,7 @@ export const leaveRoomUseCase = async (
 		} else {
 			// 일반 유저가 나가는 경우
 			// 방에서 해당 유저를 제거
-			removeUserFromRoom(roomId, userId);
+			roomManger.removeUserFromRoom(roomId, userId);
 			// 남은 유저 목록을 필터링
 			const remainingUsers = room.users.filter((u: User) => u.id !== userId);
 

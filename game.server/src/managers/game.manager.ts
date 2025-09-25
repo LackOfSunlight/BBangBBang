@@ -9,10 +9,10 @@ import { broadcastDataToRoom } from '../sockets/notification';
 import { User } from '../models/user.model';
 import { checkSatelliteTargetEffect } from '../card/debuff/card.satellite_target.effect';
 import { checkContainmentUnitTarget } from '../card/debuff/card.containment_unit.effect';
-import { deleteRoom, getRoom, roomPhase, roomTimers, saveRoom } from '../utils/room.utils';
 import { positionUpdateNotificationForm } from '../converter/packet.form';
 import { cardManager } from './card.manager';
 import { bombManager } from '../card/debuff/card.bomb.effect';
+import roomManger, { roomPhase, roomTimers } from './room.manger';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 const positionUpdateIntervals = new Map<number, NodeJS.Timeout>();
@@ -68,12 +68,12 @@ class GameManager {
 		const timer = setTimeout(async () => {
 			const timerExecutionTime = Date.now();
 			roomPhase.set(roomTimerMapId, nextPhase);
-			let room = getRoom(roomId);
+			let room = roomManger.getRoom(roomId);
 			if (!room) return;
 
 			if (nextPhase === PhaseType.DAY) {
 				// 1. 위성 타겟 디버프 효과 체크 (하루 시작 시)
-				room = (await checkSatelliteTargetEffect(room.id)) || room; // room 상태 변수 재갱신
+				room = (await checkSatelliteTargetEffect(room)) || room; // room 상태 변수 재갱신
 
 				room = (await checkContainmentUnitTarget(room.id)) || room;
 
@@ -165,7 +165,6 @@ class GameManager {
 
 			broadcastDataToRoom(room.users, phaseGamePacket, GamePacketType.phaseUpdateNotification);
 
-			saveRoom(room);
 
 			this.scheduleNextPhase(room.id, roomTimerMapId);
 		}, interval);
@@ -191,7 +190,7 @@ class GameManager {
 		// 위치 변화 플래그 정리
 		roomPositionChanged.delete(room.id);
 
-		deleteRoom(room.id);
+		roomManger.deleteRoom(room.id);
 	}
 
 	private clearTimer(roomId: string) {
