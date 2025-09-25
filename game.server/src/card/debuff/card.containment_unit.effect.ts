@@ -52,7 +52,7 @@ export const checkContainmentUnitTarget = (roomId: number) => {
 	// console.log(`[debuffCONTAINMENT_UNIT] 디버프를 가진 유저 수: ${usersWithDebuff.length}`);
 
 	for (const user of usersWithDebuff) {
-		debuffContainmentUnitEffect(roomId, user.id);
+		debuffContainmentUnitEffect(room, user);
 	}
 
 	// 업데이트된 방 정보 반환
@@ -60,9 +60,8 @@ export const checkContainmentUnitTarget = (roomId: number) => {
 };
 
 // 디버프 효과 처리 로직
-export const debuffContainmentUnitEffect = (roomId: number, userId: string) => {
+export const debuffContainmentUnitEffect = (room: Room, user: User) => {
 	// 이름은 user지만 일단은 debuff targetUser의 정보
-	const user = getUserFromRoom(roomId, userId);
 	if (!user || !user.character || !user.character.stateInfo) return;
 
 	//console.log(`[debuffCONTAINMENT_UNIT] (${user.nickname}) : 유저정보식별 성공`);
