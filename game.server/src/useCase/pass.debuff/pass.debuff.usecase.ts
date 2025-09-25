@@ -4,7 +4,7 @@ import { GamePacketType } from '../../enums/gamePacketType';
 import { GamePacket } from '../../generated/gamePacket';
 import { GameSocket } from '../../type/game.socket';
 import { passDebuffResponseForm, warnNotificationPacketForm } from '../../converter/packet.form';
-import { bombManager } from '../../card/debuff/card.bomb.effect';
+import { bombManager } from '../../services/bomb.service';
 //import { createUserUpdateNotificationPacket } from '../use.card/use.card.usecase';
 import { userUpdateNotificationPacketForm } from '../../converter/packet.form';
 import { broadcastDataToRoom } from '../../sockets/notification';
@@ -57,7 +57,7 @@ const passDebuffUseCase = async (
 
 		const timerKey = `${roomId}:${fromUser.id}`;
 		const explosionTime = bombManager.clearTimer(timerKey);
-		bombManager.startBombTimer(roomId, toUser.id, explosionTime);
+		bombManager.startBombTimer(room, toUser, explosionTime);
 
 		const remainTime = explosionTime - Date.now();
 		console.log(
