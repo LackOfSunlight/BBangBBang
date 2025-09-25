@@ -85,7 +85,7 @@ export const debuffContainmentUnitEffect = (roomId: number, userId: string) => {
 				// );
 
 				user.character.stateInfo.state = CharacterStateType.CONTAINED;
-				//user.character.stateInfo!.nextState = CharacterStateType.CONTAINED;
+				//user.character.stateInfo.nextState = CharacterStateType.CONTAINED;
 
 				// console.log(
 				// 	`[debuffCONTAINMENT_UNIT] (${user.nickname}) : 디버프 감염 완료 : ${CharacterStateType[user.character.stateInfo!.state]}`,
@@ -121,6 +121,6 @@ export const debuffContainmentUnitEffect = (roomId: number, userId: string) => {
 		// );
 	}
 
-	return user;
+	//return user;
 };
 export default cardContainmentUnitEffect;
