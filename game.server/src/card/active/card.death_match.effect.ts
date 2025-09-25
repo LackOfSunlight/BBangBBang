@@ -1,58 +1,42 @@
 // cardType = 6
-import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../utils/room.utils';
 import { CardType, CharacterStateType } from '../../generated/common/enums';
-import { cardManager } from '../../managers/card.manager.js';
+import { Room } from '../../models/room.model';
+import { User } from '../../models/user.model';
 
-const cardDeathMatchEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
-	const user = getUserFromRoom(roomId, userId);
-	const room = getRoom(roomId);
+const cardDeathMatchEffect = (room: Room, user: User, targetUser: User): boolean => {
 	const nowTime = Date.now();
 
 	// 유효성 검증
 	if (!user || !user.character || !room) return false;
-
-	const target = getUserFromRoom(roomId, targetUserId);
-
-	// 유효성 검증
-	if (!target || !target.character) return false;
+	if (!targetUser || !targetUser.character) return false;
 
 	const isBbangCard: boolean = user.character.handCards.some((c) => c.type === CardType.BBANG);
-	const isEnemyBbangCard: boolean = target.character.handCards.some((c) => c.type === CardType.BBANG);
 
-	if (!isBbangCard || target.character.stateInfo?.state === CharacterStateType.CONTAINED) {
+	if (!isBbangCard || (targetUser.character.stateInfo && targetUser.character.stateInfo.state === CharacterStateType.CONTAINED)) {
 		return false;
 	}
-
-
-	// 카드 제거
-	cardManager.removeCard(user, room, CardType.DEATH_MATCH);
 
 	// 현피 카드 효과: 현피 상태 설정
 	// 사용자: DEATH_MATCH_TURN_STATE (현피 차례)
 	// 대상: DEATH_MATCH_STATE (현피 대기)
 
-	user.character.stateInfo = {
-		state: CharacterStateType.DEATH_MATCH_TURN_STATE,
-		nextState: CharacterStateType.NONE_CHARACTER_STATE,
-		nextStateAt: `${nowTime + 10}`,
-		stateTargetUserId: targetUserId,
-	};
+	if (user.character && targetUser.character) {
+		user.character.stateInfo = {
+			state: CharacterStateType.DEATH_MATCH_TURN_STATE,
+			nextState: CharacterStateType.NONE_CHARACTER_STATE,
+			nextStateAt: `${nowTime + 10}`,
+			stateTargetUserId: targetUser.id,
+		};
 
-	target.character.stateInfo = {
-		state: CharacterStateType.DEATH_MATCH_STATE,
-		nextState: CharacterStateType.NONE_CHARACTER_STATE,
-		nextStateAt: `${nowTime + 10}`,
-		stateTargetUserId: userId,
-	};
-
-	// 방에 업데이트된 캐릭터 정보 저장
-	try {
-		updateCharacterFromRoom(roomId, userId, user.character);
-		updateCharacterFromRoom(roomId, targetUserId, target.character);
-		return true;
-	} catch (error) {
-		return false;
+		targetUser.character.stateInfo = {
+			state: CharacterStateType.DEATH_MATCH_STATE,
+			nextState: CharacterStateType.NONE_CHARACTER_STATE,
+			nextStateAt: `${nowTime + 10}`,
+			stateTargetUserId: user.id,
+		};
 	}
+
+	return true;
 };
 
 export default cardDeathMatchEffect;
