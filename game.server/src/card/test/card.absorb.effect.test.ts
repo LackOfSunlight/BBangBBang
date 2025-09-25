@@ -1,5 +1,7 @@
-import { CardType } from '../../generated/common/enums';
+import { CardType, CharacterType } from '../../generated/common/enums';
+import { Coordinate } from '../../generated/common/types';
 import { cardManager } from '../../managers/card.manager';
+import { Character } from '../../models/character.model';
 import { User } from '../../models/user.model';
 import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import cardAbsorbEffect from '../active/card.absorb.effect';
@@ -30,16 +32,16 @@ describe('cardAbsorbEffect', () => {
 		consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
 		// Setup default user and target data
+		const dummyPosition: Coordinate = { x: 0, y: 0 };
 		user = new User(userId, 'User');
-		user.character = { handCards: [] } as any;
+		user.character = new Character(CharacterType.SURVIVOR, dummyPosition);
 
 		target = new User(targetId, 'Target');
-		target.character = {
-			handCards: [
-				{ type: CardType.HAND_GUN, count: 1 },
-				{ type: CardType.SHIELD, count: 3 },
-			],
-		} as any;
+		target.character = new Character(CharacterType.SURVIVOR, dummyPosition);
+		target.character.handCards = [
+			{ type: CardType.HAND_GUN, count: 1 },
+			{ type: CardType.SHIELD, count: 3 },
+		];
 
 		// Default mock implementation
 		mockGetUserFromRoom.mockImplementation((roomId, id) => {
