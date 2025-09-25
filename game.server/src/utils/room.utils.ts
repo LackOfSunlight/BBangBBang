@@ -129,23 +129,27 @@ export function updateRoomDataFromRoom(
 	const room = rooms.get(roomId);
 	if (!room) throw new Error('Room not found');
 
-	// 덱 업데이트 (카드 매니저와 연동 필요)
+	// 덱 업데이트 (카드 매니저와 연동)
 	if (roomUpdates.deck) {
-		// TODO: 카드 매니저의 덱 업데이트 로직 연동
-		console.log('[RoomUtils] 덱 업데이트 요청:', roomUpdates.deck.length, '장');
+		// 카드 매니저의 덱을 새로운 덱으로 교체
+		const { cardManager } = require('../managers/card.manager');
+		cardManager.roomDecks.set(roomId, roomUpdates.deck);
+		console.log('[RoomUtils] 덱 업데이트 완료:', roomUpdates.deck.length, '장');
 	}
 
-	// 페이즈 업데이트 (게임 매니저와 연동 필요)
+	// 페이즈 업데이트 (게임 매니저와 연동)
 	if (roomUpdates.phaseType !== undefined) {
-		// TODO: 게임 매니저의 페이즈 업데이트 로직 연동
-		console.log('[RoomUtils] 페이즈 업데이트 요청:', roomUpdates.phaseType);
+		const roomTimerMapId = `room:${roomId}`;
+		roomPhase.set(roomTimerMapId, roomUpdates.phaseType);
+		console.log('[RoomUtils] 페이즈 업데이트 완료:', roomUpdates.phaseType);
 	}
 
 	// 다음 페이즈 시간 업데이트
 	if (roomUpdates.nextPhaseAt) {
-		// TODO: 게임 매니저의 타이머 업데이트 로직 연동
+		// TODO: 타이머 업데이트는 게임 매니저에서 처리 필요
+		// TODO: 타이머 스케줄링 로직 추가 필요
 		console.log('[RoomUtils] 다음 페이즈 시간 업데이트 요청:', roomUpdates.nextPhaseAt);
 	}
 
-	console.log(`[RoomUtils] 방 데이터 업데이트 요청 완료: roomId=${roomId}`);
+	console.log(`[RoomUtils] 방 데이터 업데이트 완료: roomId=${roomId}`);
 }
