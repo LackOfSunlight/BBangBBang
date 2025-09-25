@@ -67,7 +67,7 @@ export const checkContainmentUnitTarget = (roomId: number) => {
 export const debuffContainmentUnitEffect = (roomId: number, userId: string) => {
 	// 이름은 user지만 일단은 debuff targetUser의 정보
 	const user = getUserFromRoom(roomId, userId);
-	if (!user || !user.character) return;
+	if (!user || !user.character || !user.character.stateInfo) return;
 
 	//console.log(`[debuffCONTAINMENT_UNIT] (${user.nickname}) : 유저정보식별 성공`);
 
@@ -78,13 +78,13 @@ export const debuffContainmentUnitEffect = (roomId: number, userId: string) => {
 	if (user.character.debuffs.includes(CardType.CONTAINMENT_UNIT)) {
 		//console.log(`[debuffCONTAINMENT_UNIT] (${user.nickname}) : 디버프 카드 등록 상태 인지 성공`);
 
-		switch (user.character.stateInfo!.state) {
+		switch (user.character.stateInfo.state) {
 			case CharacterStateType.NONE_CHARACTER_STATE: // 첫날은 탈출 불가
 				// console.log(
 				// 	`[debuffCONTAINMENT_UNIT] (${user.nickname}) : 현재 상태 : ${CharacterStateType[user.character.stateInfo!.state]}`,
 				// );
 
-				user.character.stateInfo!.state = CharacterStateType.CONTAINED;
+				user.character.stateInfo.state = CharacterStateType.CONTAINED;
 				//user.character.stateInfo!.nextState = CharacterStateType.CONTAINED;
 
 				// console.log(
