@@ -2,7 +2,7 @@ import { GamePacketType } from '../enums/gamePacketType';
 import { CardType, GlobalFailCode } from '../generated/common/enums';
 import { GamePacket } from '../generated/gamePacket';
 import { GameSocket } from '../type/game.socket';
-import { GameActionService } from '../services/game.action.service';
+import { UseCardUseCase } from '../useCase/card/use.card.usecase';
 import { getGamePacketType } from '../utils/type.converter';
 import { sendData } from '../utils/send.data';
 import { broadcastDataToRoom } from '../utils/notification.util';
@@ -11,7 +11,7 @@ import { useCardResponsePacketForm, userUpdateNotificationPacketForm } from '../
 
 /**
  * 카드 사용 핸들러입니다.
- * 클라이언트의 카드 사용 요청을 처리하고 GameActionService를 통해 비즈니스 로직을 실행합니다.
+ * 클라이언트의 카드 사용 요청을 처리하고 UseCardUseCase를 통해 비즈니스 로직을 실행합니다.
  */
 const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
   // 1. DTO 생성 및 기본 유효성 검사
@@ -45,15 +45,15 @@ const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
     return;
   }
 
-  // 2. GameActionService 호출
-  const gameActionService = new GameActionService();
-  const result = gameActionService.useCard(userId, roomId, cardType, targetUserId);
+  // 2. UseCardUseCase 호출
+  const useCardUseCase = new UseCardUseCase();
+  const result = useCardUseCase.execute(userId, roomId, cardType, targetUserId);
 
   // 3. 결과에 따라 응답/알림 전송
   const useCardResponsePacket = useCardResponsePacketForm(result.success, result.failcode);
   sendData(socket, useCardResponsePacket, GamePacketType.useCardResponse);
 
-  // 4. 서비스에서 생성된 알림 패킷들 전송
+  // 4. UseCase에서 생성된 알림 패킷들 전송
   if (result.success && result.notificationGamePackets && result.notificationGamePackets.length > 0) {
     result.notificationGamePackets.forEach(packet => {
       if (packet.payload.oneofKind) {

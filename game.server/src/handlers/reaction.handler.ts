@@ -2,7 +2,7 @@ import { GamePacketType } from '../enums/gamePacketType';
 import { GlobalFailCode } from '../generated/common/enums';
 import { GamePacket } from '../generated/gamePacket';
 import { GameSocket } from '../type/game.socket';
-import { GameActionService } from '../services/game.action.service';
+import { ReactionUseCase } from '../useCase/card/reaction.usecase';
 import { getGamePacketType } from '../utils/type.converter';
 import { sendData } from '../utils/send.data';
 import { broadcastDataToRoom } from '../utils/notification.util';
@@ -12,7 +12,7 @@ import { checkAndEndGameIfNeeded } from '../utils/game.end.util';
 
 /**
  * 반응 핸들러입니다.
- * 클라이언트의 반응 요청을 처리하고 GameActionService를 통해 비즈니스 로직을 실행합니다.
+ * 클라이언트의 반응 요청을 처리하고 ReactionUseCase를 통해 비즈니스 로직을 실행합니다.
  */
 const reactionHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
   // 1. DTO 생성 및 기본 유효성 검사
@@ -38,15 +38,15 @@ const reactionHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
   const req = payload.reactionRequest;
   const reactionType = req.reactionType;
 
-  // 2. GameActionService 호출
-  const gameActionService = new GameActionService();
-  const result = gameActionService.resolveReaction(userId, roomId, reactionType);
+  // 2. ReactionUseCase 호출
+  const reactionUseCase = new ReactionUseCase();
+  const result = reactionUseCase.execute(userId, roomId, reactionType);
 
   // 3. 결과에 따라 응답/알림 전송
   const responsePacket = reactionResponsePacketForm(result.success, result.failcode);
   sendData(socket, responsePacket, GamePacketType.reactionResponse);
 
-  // 4. 서비스에서 생성된 알림 패킷들 전송
+  // 4. UseCase에서 생성된 알림 패킷들 전송
   if (result.success && result.notificationGamePackets && result.notificationGamePackets.length > 0) {
     result.notificationGamePackets.forEach(packet => {
       if (packet.payload.oneofKind) {
@@ -55,7 +55,7 @@ const reactionHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
     });
   }
 
-  // 4. 게임 종료 조건 검사
+  // 5. 게임 종료 조건 검사
   await checkAndEndGameIfNeeded(room.id);
 };
 
