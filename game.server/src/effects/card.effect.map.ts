@@ -8,7 +8,7 @@ import { deathMatchEffectHandler } from './interactive/deathMatch.effect.handler
  * 카드 타입별 이펙트 핸들러 매핑 테이블입니다.
  * 새로운 카드를 추가할 때 이 맵에 등록하면 자동으로 파이프라인에서 처리됩니다.
  */
-export const cardEffectHandlers: Record<string, EffectHandler> = {
+export const cardEffectHandlerMapper: Record<string, EffectHandler> = {
   // 파일럿 카드들
   [CardType.VACCINE.toString()]: vaccineEffectHandler,
   [CardType.BBANG.toString()]: bbangEffectHandler,
@@ -20,7 +20,7 @@ export const cardEffectHandlers: Record<string, EffectHandler> = {
  * 지원되지 않는 카드 타입인 경우 null을 반환합니다.
  */
 export function getCardEffectHandler(cardType: CardType): EffectHandler | null {
-  const handler = cardEffectHandlers[cardType.toString()];
+  const handler = cardEffectHandlerMapper[cardType.toString()];
   return handler || null;
 }
 
