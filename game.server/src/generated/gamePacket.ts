@@ -32,7 +32,7 @@ import { S2CUseCardNotification } from './packet/notifications';
 import { S2CUseCardResponse } from './packet/game_actions';
 import { C2SUseCardRequest } from './packet/game_actions';
 import { S2CPositionUpdateNotification } from './packet/notifications';
-import { C2SPositionUpdateRequest } from './packet/game_actions';
+import { S2CPositionUpdateResponse, C2SPositionUpdateRequest } from './packet/game_actions';
 import { S2CGameStartNotification } from './packet/notifications';
 import { S2CGameStartResponse } from './packet/game_actions';
 import { C2SGameStartRequest } from './packet/game_actions';
