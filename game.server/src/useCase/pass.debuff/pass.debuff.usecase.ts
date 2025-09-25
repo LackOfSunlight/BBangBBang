@@ -1,10 +1,10 @@
 import { C2SPassDebuffRequest } from '../../generated/packet/game_actions';
 import { getRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import { GlobalFailCode, CardType } from '../../generated/common/enums';
+import { GlobalFailCode, CardType,  WarningType } from '../../generated/common/enums';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { GamePacket } from '../../generated/gamePacket';
 import { GameSocket } from '../../type/game.socket';
-import { passDebuffResponseForm } from '../../factory/packet.pactory';
+import { passDebuffResponseForm, warnNotificationPacketForm } from '../../factory/packet.pactory';
 import { bombManager } from '../../card/debuff/card.bomb.effect';
 //import { createUserUpdateNotificationPacket } from '../use.card/use.card.usecase';
 import { userUpdateNotificationPacketForm } from '../../factory/packet.pactory';
@@ -56,8 +56,9 @@ const passDebuffUseCase = async (
 
 		const timerKey = `${roomId}:${fromUser.id}`;
 		const explosionTime = bombManager.clearTimer(timerKey);
+		bombManager.startBombTimer(roomId, toUser.id, explosionTime);
+		
 		const remainTime = explosionTime - Date.now();
-		bombManager.startBombTimer(roomId, toUser.id, remainTime);
 		console.log(`[BOMB] 폭탄이 ${fromUser.nickname} → ${toUser.nickname} 에게 전달됨 (남은 시간 ${remainTime}ms)`);
 
 		// 6. 유저 정보 업데이트
@@ -66,7 +67,9 @@ const passDebuffUseCase = async (
 
 		const updateClient = userUpdateNotificationPacketForm(room.users);
 		broadcastDataToRoom(room.users, updateClient, GamePacketType.userUpdateNotification);
-
+		// 남은 시간을 넘기기 위해 추가
+		const passBomb = warnNotificationPacketForm(WarningType.BOMB_WANING, `${explosionTime}`);
+		broadcastDataToRoom(room.users, passBomb, GamePacketType.warningNotification);
 		// 6. 성공 응답
 		return passDebuffResponseForm(true, GlobalFailCode.NONE_FAILCODE);
 	} catch (error) {
