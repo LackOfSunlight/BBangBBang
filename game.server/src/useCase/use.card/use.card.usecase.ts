@@ -1,12 +1,10 @@
 import { GamePacketType } from '../../enums/gamePacketType';
 import { CardType, GlobalFailCode } from '../../generated/common/enums';
-import { getRoom } from '../../utils/room.utils';
 import { applyCardEffect } from '../../dispatcher/apply.card.dispacher';
 import { broadcastDataToRoom } from '../../sockets/notification.js';
 import { fleaMarketNotificationForm, useCardNotificationPacketForm } from '../../converter/packet.form';
 import { applyCardUseHandler } from '../../handlers/apply.card.use.handler';
 import { cardManager } from '../../managers/card.manager';
-import { runInThisContext } from 'vm';
 
 export const useCardUseCase = (
 	userId: string,

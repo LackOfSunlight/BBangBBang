@@ -2,13 +2,11 @@
 
 import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { cardManager } from '../../managers/card.manager';
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
+import { Room } from '../../models/room.model';
+import { User } from '../../models/user.model';
 
-const cardHallucinationEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
-	const user = getUserFromRoom(roomId, userId);
-	const target = getUserFromRoom(roomId, targetUserId);
-	let room = getRoom(roomId);
-	
+const cardHallucinationEffect = (room: Room, user: User, target: User): boolean => {
+
 	// 유효성 검증
 	if (!user || !user.character || !target || !target.character) return false;
 
@@ -28,18 +26,11 @@ const cardHallucinationEffect = (roomId: number, userId: string, targetUserId: s
 
 	// 상태 변경
 	user.character.stateInfo!.state = CharacterStateType.HALLUCINATING;
-	user.character.stateInfo!.stateTargetUserId = targetUserId;
+	user.character.stateInfo!.stateTargetUserId = target.id;
 	target.character.stateInfo!.state = CharacterStateType.HALLUCINATION_TARGET;
 
-	// 변경된 두 유저의 정보를 업데이트
-	try {
-		updateCharacterFromRoom(roomId, userId, user.character);
-		updateCharacterFromRoom(roomId, targetUserId, target.character);
-		return true;
-	} catch (error) {
-		console.error(`[신기루] 업데이트 실패:`, error);
-		return false;
-	}
+	return true;
+
 };
 
 export default cardHallucinationEffect;

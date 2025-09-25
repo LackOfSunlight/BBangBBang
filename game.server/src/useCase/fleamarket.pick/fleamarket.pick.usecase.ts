@@ -3,7 +3,6 @@ import { GameSocket } from '../../type/game.socket';
 import { Room } from '../../models/room.model';
 import { CharacterStateType, GlobalFailCode } from '../../generated/common/enums';
 import { GamePacketType } from '../../enums/gamePacketType';
-import { getRoom, getUserFromRoom } from '../../utils/room.utils';
 import { User } from '../../models/user.model';
 import { broadcastDataToRoom } from '../../sockets/notification';
 import { C2SFleaMarketPickRequest } from '../../generated/packet/game_actions';

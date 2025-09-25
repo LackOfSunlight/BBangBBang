@@ -1,5 +1,4 @@
 // cardType = 10
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { CardType, CharacterStateType } from '../../generated/common/enums.js';
 import { GamePacket } from '../../generated/gamePacket';
 import { GamePacketType } from '../../enums/gamePacketType';
@@ -57,7 +56,7 @@ const cardFleaMarketEffect = (room: Room, user: User, targetUser: User): boolean
 			'0',
 		);
 	}
-	
+
 	return true;
 };
 

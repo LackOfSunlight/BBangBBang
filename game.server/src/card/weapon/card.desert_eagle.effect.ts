@@ -2,7 +2,7 @@ import { CardType } from '../../generated/common/enums';
 import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-import { updateCharacterFromRoom } from '../../utils/room.utils';
+
 const cardDesertEagleEffect = (room: Room, user: User): boolean => {
 	// 유효성 검증
 	if (!user || !user.character) return false;

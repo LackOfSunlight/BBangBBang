@@ -1,4 +1,3 @@
-import { Socket } from 'net';
 import CustomError from '../error/custom.error.js';
 import { handleError } from '../handlers/handleError.js';
 import { GameSocket } from '../type/game.socket.js';
