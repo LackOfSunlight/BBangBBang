@@ -11,8 +11,7 @@ const takeDamageService = (room: Room, user: User, shooter: User, damage: number
 	const hasShield = user.character!.equips.includes(CardType.AUTO_SHIELD);
 	const isFroggy = user.character!.characterType === CharacterType.FROGGY;
 
-	
-	const shieldRoll = hasShield &&  Math.random() < 0.25;
+	const shieldRoll = hasShield && Math.random() < 0.25;
 	const froggyRoll = isFroggy && Math.random() < 0.25;
 
 	if (shieldRoll || froggyRoll) {

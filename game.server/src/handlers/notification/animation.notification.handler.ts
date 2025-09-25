@@ -5,8 +5,6 @@
 // import { AnimationType } from '../../generated/common/enums';
 // import { UserData } from '../../generated/common/types';
 
-
-
 // const animationNotificationHandler = (socket: GameSocket, gamePacket: GamePacket) => {};
 
 // export default animationNotificationHandler;

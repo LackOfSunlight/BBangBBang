@@ -46,6 +46,4 @@ const loginUseCase = async (socket: GameSocket, req: C2SLoginRequest): Promise<G
 	return loginResponseForm(true, '로그인 성공', token, GlobalFailCode.NONE_FAILCODE, user);
 };
 
-
-
 export default loginUseCase;

@@ -5,7 +5,6 @@ import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 
 const cardRaderEffect = (room: Room, user: User): boolean => {
-
 	// 유효성 검증
 	if (!user || !user.character) return false;
 
@@ -17,7 +16,6 @@ const cardRaderEffect = (room: Room, user: User): boolean => {
 	}
 
 	return true;
-
 };
 
 export default cardRaderEffect;

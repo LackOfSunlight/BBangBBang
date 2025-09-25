@@ -30,13 +30,10 @@ const destroyCardUseCase = async (
 			0,
 		);
 
-
 		return destroyResponseForm(user.character.handCards);
 	} else {
 		return destroyResponseForm([]);
 	}
 };
-
-
 
 export default destroyCardUseCase;

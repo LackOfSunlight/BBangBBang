@@ -12,7 +12,11 @@ const cardDeathMatchEffect = (room: Room, user: User, targetUser: User): boolean
 
 	const isBbangCard: boolean = user.character.handCards.some((c) => c.type === CardType.BBANG);
 
-	if (!isBbangCard || (targetUser.character.stateInfo && targetUser.character.stateInfo.state === CharacterStateType.CONTAINED)) {
+	if (
+		!isBbangCard ||
+		(targetUser.character.stateInfo &&
+			targetUser.character.stateInfo.state === CharacterStateType.CONTAINED)
+	) {
 		return false;
 	}
 

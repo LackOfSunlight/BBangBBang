@@ -1,4 +1,9 @@
-import { CardType, CharacterStateType, CharacterType, RoomStateType } from '../../generated/common/enums';
+import {
+	CardType,
+	CharacterStateType,
+	CharacterType,
+	RoomStateType,
+} from '../../generated/common/enums';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import { CheckBigBbangService } from '../../services/bigbbang.check.service';
@@ -43,10 +48,7 @@ describe('cardShieldEffect', () => {
 			stateInfo: { state: CharacterStateType.NONE_CHARACTER_STATE },
 		} as any;
 
-		mockRoom = new Room(roomId, shooterId, 'Test Room', 8, RoomStateType.INGAME, [
-			user,
-			shooter,
-		]);
+		mockRoom = new Room(roomId, shooterId, 'Test Room', 8, RoomStateType.INGAME, [user, shooter]);
 
 		// Default mock implementations
 		mockGetRoom.mockReturnValue(mockRoom);

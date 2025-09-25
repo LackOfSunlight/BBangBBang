@@ -1,16 +1,12 @@
 // cardType = 21
-import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../utils/room.utils';
 import { CardType, CharacterStateType } from '../../generated/common/enums';
+import roomManger from '../../managers/room.manger';
 //import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 
 // 디버프 적용 처리 로직
-const cardContainmentUnitEffect = (
-	room: Room,
-	user: User,
-	target: User,
-): boolean => {
+const cardContainmentUnitEffect = (room: Room, user: User, target: User): boolean => {
 	// 유효성 검증
 	if (!user || !user.character || !user.character.stateInfo) {
 		console.error('[CONTAINMENT_UNIT]사용자 정보가 존재하지 않습니다');
@@ -42,7 +38,7 @@ const cardContainmentUnitEffect = (
 
 // 효과 대상자 체크
 export const checkContainmentUnitTarget = (roomId: number) => {
-	const room = getRoom(roomId);
+	const room = roomManger.getRoom(roomId);
 	if (!room || !room.users) {
 		console.error(`[debuffCONTAINMENT_UNIT] 방을 찾을 수 없습니다: roomId=${roomId}`);
 		return room;
@@ -60,20 +56,20 @@ export const checkContainmentUnitTarget = (roomId: number) => {
 	}
 
 	// 업데이트된 방 정보 반환
-	return getRoom(roomId);
+	return roomManger.getRoom(roomId);
 };
 
 // 디버프 효과 처리 로직
 export const debuffContainmentUnitEffect = (roomId: number, userId: string) => {
 	// 이름은 user지만 일단은 debuff targetUser의 정보
-	const user = getUserFromRoom(roomId, userId);
+	const user = roomManger.getUserFromRoom(roomId, userId);
 	if (!user || !user.character || !user.character.stateInfo) return;
 
 	//console.log(`[debuffCONTAINMENT_UNIT] (${user.nickname}) : 유저정보식별 성공`);
 
 	// 탈출 확률
-	const escapeProb = 25; 
-	// 실제확률 25; // 테스트용 99; 
+	const escapeProb = 25;
+	// 실제확률 25; // 테스트용 99;
 
 	if (user.character.debuffs.includes(CardType.CONTAINMENT_UNIT)) {
 		//console.log(`[debuffCONTAINMENT_UNIT] (${user.nickname}) : 디버프 카드 등록 상태 인지 성공`);
@@ -107,9 +103,9 @@ export const debuffContainmentUnitEffect = (roomId: number, userId: string) => {
 						(c) => c === CardType.CONTAINMENT_UNIT,
 					);
 					user.character.debuffs.splice(yourDebuffIndex, 1);
-					console.log(`[debuffCONTAINMENT_UNIT]${user.nickname} 유저가 감금 상태에서 탈출에 성공했습니다`);
-
-					
+					console.log(
+						`[debuffCONTAINMENT_UNIT]${user.nickname} 유저가 감금 상태에서 탈출에 성공했습니다`,
+					);
 				}
 				break;
 			default:

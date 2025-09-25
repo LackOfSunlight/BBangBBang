@@ -35,10 +35,7 @@ const cardWinLotteryEffect = (room: Room, user: User): boolean => {
 		});
 
 		// handCardsCount 업데이트 (실제 카드 개수)
-		character.handCardsCount = character.handCards.reduce(
-			(total, card) => total + card.count,
-			0,
-		);
+		character.handCardsCount = character.handCards.reduce((total, card) => total + card.count, 0);
 	}
 
 	console.log(

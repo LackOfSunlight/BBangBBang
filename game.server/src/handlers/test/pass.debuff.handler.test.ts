@@ -26,18 +26,18 @@ afterAll(() => {
 });
 
 describe('passDebuffHandler', () => {
-    let mockSocket: Partial<GameSocket>;
-    let mockGamePacket: GamePacket;
+	let mockSocket: Partial<GameSocket>;
+	let mockGamePacket: GamePacket;
 
-    beforeEach(() => {
-        // Mock 소켓 설정 (다른 테스트들과 동일하게 Partial 사용)
-        mockSocket = {
-            userId: 'user-123',
-            roomId: 1,
-        };
+	beforeEach(() => {
+		// Mock 소켓 설정 (다른 테스트들과 동일하게 Partial 사용)
+		mockSocket = {
+			userId: 'user-123',
+			roomId: 1,
+		};
 
 		// Mock 패킷 설정
-        mockGamePacket = {
+		mockGamePacket = {
 			payload: {
 				oneofKind: GamePacketType.passDebuffRequest,
 				passDebuffRequest: {
@@ -48,7 +48,7 @@ describe('passDebuffHandler', () => {
 		} as GamePacket;
 
 		jest.clearAllMocks();
-        mockSendData.mockImplementation(() => {});
+		mockSendData.mockImplementation(() => {});
 	});
 
 	describe('성공 케이스', () => {
@@ -75,7 +75,11 @@ describe('passDebuffHandler', () => {
 				targetUserId: 'user-456',
 				debuffCardType: CardType.DEATH_MATCH,
 			});
-			expect(mockSendData).toHaveBeenCalledWith(mockSocket, mockUseCaseResult, GamePacketType.passDebuffResponse);
+			expect(mockSendData).toHaveBeenCalledWith(
+				mockSocket,
+				mockUseCaseResult,
+				GamePacketType.passDebuffResponse,
+			);
 		});
 	});
 
@@ -100,7 +104,11 @@ describe('passDebuffHandler', () => {
 
 			// Then
 			expect(mockPassDebuffUseCase).toHaveBeenCalled();
-			expect(mockSendData).toHaveBeenCalledWith(mockSocket, mockUseCaseResult, GamePacketType.passDebuffResponse);
+			expect(mockSendData).toHaveBeenCalledWith(
+				mockSocket,
+				mockUseCaseResult,
+				GamePacketType.passDebuffResponse,
+			);
 		});
 
 		it('디버프 카드를 가지고 있지 않은 경우 실패해야 함', async () => {
@@ -123,7 +131,11 @@ describe('passDebuffHandler', () => {
 
 			// Then
 			expect(mockPassDebuffUseCase).toHaveBeenCalled();
-			expect(mockSendData).toHaveBeenCalledWith(mockSocket, mockUseCaseResult, GamePacketType.passDebuffResponse);
+			expect(mockSendData).toHaveBeenCalledWith(
+				mockSocket,
+				mockUseCaseResult,
+				GamePacketType.passDebuffResponse,
+			);
 		});
 
 		it('payload가 없으면 아무 작업도 수행하지 않아야 함', async () => {
@@ -146,7 +158,9 @@ describe('passDebuffHandler', () => {
 
 			// When & Then
 			mockGetGamePacketType.mockReturnValue(mockGamePacket.payload);
-			await expect(passDebuffHandler(mockSocket as GameSocket, mockGamePacket)).rejects.toThrow('Database error');
+			await expect(passDebuffHandler(mockSocket as GameSocket, mockGamePacket)).rejects.toThrow(
+				'Database error',
+			);
 			expect(mockPassDebuffUseCase).toHaveBeenCalled();
 		});
 	});
