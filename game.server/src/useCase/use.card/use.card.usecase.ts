@@ -4,6 +4,7 @@ import { getRoom } from '../../utils/room.utils';
 import { applyCardEffect } from '../../dispatcher/apply.card.dispacher';
 import { broadcastDataToRoom } from '../../sockets/notification.js';
 import { useCardNotificationPacketForm } from '../../converter/packet.form';
+import { applyCardUseHandler } from '../../handlers/apply.card.use.handler';
 
 export const useCardUseCase = (
 	userId: string,
@@ -11,7 +12,7 @@ export const useCardUseCase = (
 	cardType: CardType,
 	targetUserId: string,
 ): { success: boolean; failcode: GlobalFailCode } => {
-	const room = getRoom(roomId);
+	const { room, user, target} = applyCardUseHandler(roomId, userId, targetUserId);
 	if (!room) {
 		return { success: false, failcode: GlobalFailCode.ROOM_NOT_FOUND };
 	}
