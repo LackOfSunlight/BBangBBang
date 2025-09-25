@@ -1,10 +1,6 @@
 import { GameSocket } from '../../type/game.socket';
 import { GamePacketType } from '../../enums/gamePacketType';
-import {
-	ReactionType,
-	GlobalFailCode,
-	CharacterStateType
-} from '../../generated/common/enums';
+import { ReactionType, GlobalFailCode, CharacterStateType } from '../../generated/common/enums';
 import { getRoom, saveRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { weaponDamageEffect } from '../../utils/weapon.util';
 import { CheckBigBbangService } from '../../services/bigbbang.check.service';
@@ -12,7 +8,6 @@ import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
 import { broadcastDataToRoom } from '../../sockets/notification';
 import takeDamageService from '../../services/take.damage.service';
 import { userUpdateNotificationPacketForm } from '../../converter/packet.form';
-
 
 export const reactionUpdateUseCase = async (
 	socket: GameSocket,
@@ -45,7 +40,7 @@ export const reactionUpdateUseCase = async (
 					let damage = 1; // 기본 데미지
 					damage = weaponDamageEffect(damage, shooter.character);
 					takeDamageService(room, user, shooter, damage);
-                    
+
 					// 4. 공통: 처리 후 상태 복구
 					if (user.character.stateInfo) {
 						user.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;

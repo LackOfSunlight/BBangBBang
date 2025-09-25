@@ -139,12 +139,12 @@ class GameManager {
 			if (roomMap) {
 				// 🎯 페이즈 변경 시에는 모든 플레이어 위치를 새로 할당
 				roomMap.clear(); // 기존 데이터 정리
-				
+
 				for (let i = 0; i < room.users.length; i++) {
 					// 모든 플레이어(죽은 플레이어 포함)에게 새로운 위치 할당
 					roomMap.set(room.users[i].id, characterPosition[i]);
 				}
-				
+
 				// 🚀 페이즈 변경으로 인한 위치 변화 플래그 설정
 				roomPositionChanged.set(room.id, true);
 			}
@@ -184,9 +184,9 @@ class GameManager {
 			positionUpdateIntervals.delete(room.id); // Map에서 제거
 		}
 		this.clearTimer(roomId);
-		
+
 		// 방 종료 시 폭탄 타이머 정리
-    	bombManager.clearRoom(room.id);
+		bombManager.clearRoom(room.id);
 
 		// 위치 변화 플래그 정리
 		roomPositionChanged.delete(room.id);
@@ -252,10 +252,10 @@ export const broadcastPositionUpdates = (room: Room) => {
 	// 간단한 최적화: notificationCharacterPosition에 있는 데이터만 브로드캐스트
 	// (position.update.usecase에서 이미 변화된 플레이어만 추가했으므로)
 	const characterPositions: CharacterPositionData[] = [];
-	
+
 	for (const [userId, positionData] of roomMap.entries()) {
 		characterPositions.push({
-			id: userId,  // 🔑 핵심: ID 포함
+			id: userId, // 🔑 핵심: ID 포함
 			x: positionData.x,
 			y: positionData.y,
 		});

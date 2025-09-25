@@ -30,7 +30,7 @@ const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 		return false;
 	}
 
-	if(target.character.stateInfo.state === CharacterStateType.CONTAINED ){
+	if (target.character.stateInfo.state === CharacterStateType.CONTAINED) {
 		console.error('[BBANG]타킷 유저의 상태가 감옥 상태입니다.');
 		return false;
 	}
@@ -47,16 +47,16 @@ const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 
 		target.character.stateInfo.state = CharacterStateType.BBANG_TARGET; // 빵야 카드 대상자는 BBANG_TARGET 상태가 됩니다
 		target.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-		target.character.stateInfo.nextStateAt = `${nowTime +10}`; //ms
+		target.character.stateInfo.nextStateAt = `${nowTime + 10}`; //ms
 		target.character.stateInfo.stateTargetUserId = user.id;
 	} else if (user.character.stateInfo.state === CharacterStateType.DEATH_MATCH_TURN_STATE) {
 		// 상태 설정
 		user.character.stateInfo.state = CharacterStateType.DEATH_MATCH_STATE;
 		user.character.stateInfo.nextState = CharacterStateType.DEATH_MATCH_TURN_STATE;
 		user.character.stateInfo.nextStateAt = `${nowTime + 10}`; //ms
-		user.character.stateInfo.stateTargetUserId = target.id; 
+		user.character.stateInfo.stateTargetUserId = target.id;
 
-		target.character.stateInfo.state = CharacterStateType.DEATH_MATCH_TURN_STATE; 
+		target.character.stateInfo.state = CharacterStateType.DEATH_MATCH_TURN_STATE;
 		target.character.stateInfo.nextState = CharacterStateType.DEATH_MATCH_STATE;
 		target.character.stateInfo.nextStateAt = `${nowTime + 10}`; //ms
 		target.character.stateInfo.stateTargetUserId = user.id;

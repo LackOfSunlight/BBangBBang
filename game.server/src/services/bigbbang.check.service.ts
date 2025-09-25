@@ -15,7 +15,6 @@ export const CheckBigBbangService = (room: Room): Room => {
 		return false;
 	});
 
-
 	// 타겟이 없으면 슈터도 풀기
 	if (!hasValidTarget) {
 		for (const u of users) {

@@ -8,11 +8,11 @@ const cardHallucinationEffect = (roomId: number, userId: string, targetUserId: s
 	const user = getUserFromRoom(roomId, userId);
 	const target = getUserFromRoom(roomId, targetUserId);
 	let room = getRoom(roomId);
-	
+
 	// 유효성 검증
 	if (!user || !user.character || !target || !target.character) return false;
 
-	if(target.character.stateInfo?.state === CharacterStateType.CONTAINED){
+	if (target.character.stateInfo?.state === CharacterStateType.CONTAINED) {
 		return false;
 	}
 

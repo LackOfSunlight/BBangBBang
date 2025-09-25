@@ -38,6 +38,4 @@ const destroyCardUseCase = async (
 	}
 };
 
-
-
 export default destroyCardUseCase;

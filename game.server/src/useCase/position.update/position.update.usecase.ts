@@ -30,13 +30,12 @@ const positionUpdateUseCase = async (
 	if (!roomMap) {
 		return false;
 	}
-	
+
 	// 🎯 간단한 최적화: 위치가 변경된 경우만 Map에 추가
 	const currentPosition = roomMap.get(userId);
-	const isPositionChanged = !currentPosition || 
-		currentPosition.x !== req.x || 
-		currentPosition.y !== req.y;
-	
+	const isPositionChanged =
+		!currentPosition || currentPosition.x !== req.x || currentPosition.y !== req.y;
+
 	// 위치가 변경되었을 때만 Map에 추가하고 플래그 설정
 	if (isPositionChanged) {
 		roomMap.set(userId, positionData);

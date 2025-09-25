@@ -7,9 +7,10 @@ import { GameSocket } from '../../type/game.socket';
 import { deleteRoom, getRoom, removeUserFromRoom } from '../../utils/room.utils';
 import { broadcastDataToRoom } from '../../sockets/notification';
 import { User } from '../../models/user.model';
-import { leaveRoomResponsePacketForm, userLeftNotificationPacketForm } from '../../converter/packet.form';
-
-
+import {
+	leaveRoomResponsePacketForm,
+	userLeftNotificationPacketForm,
+} from '../../converter/packet.form';
 
 export const leaveRoomUseCase = async (
 	socket: GameSocket,

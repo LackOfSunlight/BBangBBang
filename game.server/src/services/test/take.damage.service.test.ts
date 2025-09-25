@@ -53,7 +53,11 @@ describe('takeDamageService', () => {
 			takeDamageService(mockRoom, user, shooter, damage);
 
 			expect(user.character!.hp).toBe(4); // HP should not change
-			expect(mockPlayAnimationHandler).toHaveBeenCalledWith(mockRoom.users, user.id, AnimationType.SHIELD_ANIMATION);
+			expect(mockPlayAnimationHandler).toHaveBeenCalledWith(
+				mockRoom.users,
+				user.id,
+				AnimationType.SHIELD_ANIMATION,
+			);
 		});
 
 		it('개구리 특성으로 방어에 성공해야 한다', () => {

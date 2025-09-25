@@ -55,10 +55,7 @@ const cardCall119Effect = (room: Room, user: User, targetUser: User): boolean =>
 };
 
 // 체력 회복 로직을 별도 함수로 분리
-const healCharacter = (
-	targetUser: { id: string; nickname: string },
-	character: CharacterData,
-) => {
+const healCharacter = (targetUser: { id: string; nickname: string }, character: CharacterData) => {
 	// 최대 체력 확인
 	const maxHp = getMaxHp(character.characterType);
 

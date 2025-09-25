@@ -56,5 +56,4 @@
 // 	broadcastDataToRoom(room.users, gamePacket, GamePacketType.positionUpdateNotification);
 // };
 
-
 // export default positionUpdateNotificationHandler;

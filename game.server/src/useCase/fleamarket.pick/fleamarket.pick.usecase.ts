@@ -8,7 +8,11 @@ import { User } from '../../models/user.model';
 import { broadcastDataToRoom } from '../../sockets/notification';
 import { C2SFleaMarketPickRequest } from '../../generated/packet/game_actions';
 import { cardManager } from '../../managers/card.manager';
-import { fleaMarketNotificationForm, fleaMarketResponseForm, userUpdateNotificationPacketForm } from '../../converter/packet.form';
+import {
+	fleaMarketNotificationForm,
+	fleaMarketResponseForm,
+	userUpdateNotificationPacketForm,
+} from '../../converter/packet.form';
 
 const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest): GamePacket => {
 	let userInfo: User;
@@ -89,6 +93,5 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 
 	return fleaMarketResponseForm(true, GlobalFailCode.NONE_FAILCODE);
 };
-
 
 export default fleaMarketPickUseCase;

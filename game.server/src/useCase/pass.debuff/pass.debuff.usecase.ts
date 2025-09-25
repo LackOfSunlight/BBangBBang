@@ -1,6 +1,6 @@
 import { C2SPassDebuffRequest } from '../../generated/packet/game_actions';
 import { getRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import { GlobalFailCode, CardType,  WarningType } from '../../generated/common/enums';
+import { GlobalFailCode, CardType, WarningType } from '../../generated/common/enums';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { GamePacket } from '../../generated/gamePacket';
 import { GameSocket } from '../../type/game.socket';
@@ -43,27 +43,30 @@ const passDebuffUseCase = async (
 		const hasDebuff = fromUser.character!!.debuffs.includes(CardType.BOMB);
 		// 4. 대상자가 이미 해당 디버프를 가지고 있는지 확인
 		const alreadyDebuffed = toUser.character!.debuffs.includes(CardType.BOMB);
-		if (!hasDebuff || alreadyDebuffed) { // 사용자는 해당 디버프 소지 , 대상자는 해당 디버프가 없어야 실행
+		if (!hasDebuff || alreadyDebuffed) {
+			// 사용자는 해당 디버프 소지 , 대상자는 해당 디버프가 없어야 실행
 			return passDebuffResponseForm(false, GlobalFailCode.CHARACTER_NO_CARD);
 		}
-		 
+
 		// 5. 디버프 전달 실행
 		const idx = fromUser.character!.debuffs.findIndex((c) => c === CardType.BOMB);
 		if (idx !== undefined && idx >= 0) {
-		fromUser.character!.debuffs.splice(idx, 1);
+			fromUser.character!.debuffs.splice(idx, 1);
 		}
 		toUser.character!.debuffs.push(CardType.BOMB);
 
 		const timerKey = `${roomId}:${fromUser.id}`;
 		const explosionTime = bombManager.clearTimer(timerKey);
 		bombManager.startBombTimer(roomId, toUser.id, explosionTime);
-		
+
 		const remainTime = explosionTime - Date.now();
-		console.log(`[BOMB] 폭탄이 ${fromUser.nickname} → ${toUser.nickname} 에게 전달됨 (남은 시간 ${remainTime}ms)`);
+		console.log(
+			`[BOMB] 폭탄이 ${fromUser.nickname} → ${toUser.nickname} 에게 전달됨 (남은 시간 ${remainTime}ms)`,
+		);
 
 		// 6. 유저 정보 업데이트
 		updateCharacterFromRoom(roomId, fromUser.id, fromUser.character!);
-    	updateCharacterFromRoom(roomId, toUser.id, toUser.character!);
+		updateCharacterFromRoom(roomId, toUser.id, toUser.character!);
 
 		const updateClient = userUpdateNotificationPacketForm(room.users);
 		broadcastDataToRoom(room.users, updateClient, GamePacketType.userUpdateNotification);
@@ -77,7 +80,5 @@ const passDebuffUseCase = async (
 		return passDebuffResponseForm(false, GlobalFailCode.UNKNOWN_ERROR);
 	}
 };
-
-
 
 export default passDebuffUseCase;

@@ -18,7 +18,6 @@ const fleaMarketPickHandler = async (socket: GameSocket, gamePacket: GamePacket)
 	const res = fleaMarketPickUseCase(socket, req);
 
 	sendData(socket, res, GamePacketType.fleaMarketPickResponse);
-
 };
 
 export default fleaMarketPickHandler;

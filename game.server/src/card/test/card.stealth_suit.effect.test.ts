@@ -62,7 +62,11 @@ describe('cardStealthSuitEffect', () => {
 		// Assert
 		expect(result).toBe(true);
 		// 원래의 슈트가 제거되고 끝에 새로운 슈트가 추가됩니다
-		expect(mockUser.character!.equips).toEqual([CardType.SHIELD, CardType.VACCINE, CardType.STEALTH_SUIT]);
+		expect(mockUser.character!.equips).toEqual([
+			CardType.SHIELD,
+			CardType.VACCINE,
+			CardType.STEALTH_SUIT,
+		]);
 		expect(mockUpdateCharacterFromRoom).toHaveBeenCalledTimes(1);
 	});
 
@@ -93,7 +97,9 @@ describe('cardStealthSuitEffect', () => {
 		// Assert
 		expect(result).toBe(false);
 		expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
-		expect(consoleWarnSpy).toHaveBeenCalledWith(`[스텔스 장치] 유저의 캐릭터 정보가 없습니다: ${USER_ID}`);
+		expect(consoleWarnSpy).toHaveBeenCalledWith(
+			`[스텔스 장치] 유저의 캐릭터 정보가 없습니다: ${USER_ID}`,
+		);
 		consoleWarnSpy.mockRestore();
 	});
 

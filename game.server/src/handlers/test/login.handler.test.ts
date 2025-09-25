@@ -13,57 +13,60 @@ jest.mock('../../useCase/login/login.usecase.js');
 jest.mock('../../utils/send.data.js');
 
 describe('loginHandler', () => {
-  let mockSocket: Partial<GameSocket>;
-  let mockGamePacket: GamePacket;
-  let mockLoginRequest: C2SLoginRequest;
-  let mockLoginResponse: S2CLoginResponse;
+	let mockSocket: Partial<GameSocket>;
+	let mockGamePacket: GamePacket;
+	let mockLoginRequest: C2SLoginRequest;
+	let mockLoginResponse: S2CLoginResponse;
 
-  beforeEach(() => {
-    mockSocket = {
-    };
+	beforeEach(() => {
+		mockSocket = {};
 
-    mockLoginRequest = {
-        email: 'test@naver.com',
-        password: 'qwer1234!'
-    };
+		mockLoginRequest = {
+			email: 'test@naver.com',
+			password: 'qwer1234!',
+		};
 
-    mockGamePacket = {
-      payload: {
-        oneofKind: GamePacketType.loginRequest,
-        loginRequest: mockLoginRequest,
-      },
-    };
+		mockGamePacket = {
+			payload: {
+				oneofKind: GamePacketType.loginRequest,
+				loginRequest: mockLoginRequest,
+			},
+		};
 
-    mockLoginResponse = {
-            success: true,
-            message: '로그인 성공하였습니다',
-            token: 'abc123',
-            failCode: GlobalFailCode.NONE_FAILCODE,
-    };
+		mockLoginResponse = {
+			success: true,
+			message: '로그인 성공하였습니다',
+			token: 'abc123',
+			failCode: GlobalFailCode.NONE_FAILCODE,
+		};
 
-    (getGamePacketType as jest.Mock).mockReturnValue(mockGamePacket.payload);
-    (loginUseCase as jest.Mock).mockResolvedValue(mockLoginResponse);
-    (sendData as jest.Mock).mockImplementation(() => {});
-  });
+		(getGamePacketType as jest.Mock).mockReturnValue(mockGamePacket.payload);
+		(loginUseCase as jest.Mock).mockResolvedValue(mockLoginResponse);
+		(sendData as jest.Mock).mockImplementation(() => {});
+	});
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
+	afterEach(() => {
+		jest.clearAllMocks();
+	});
 
-  it('요청을 성공적으로 처리하고 응답을 전송해야 함', async () => {
-    await loginHandler(mockSocket as GameSocket, mockGamePacket);
+	it('요청을 성공적으로 처리하고 응답을 전송해야 함', async () => {
+		await loginHandler(mockSocket as GameSocket, mockGamePacket);
 
-    expect(getGamePacketType).toHaveBeenCalledWith(mockGamePacket, gamePackTypeSelect.loginRequest);
-    expect(loginUseCase).toHaveBeenCalledWith(mockSocket, mockLoginRequest);
-    expect(sendData).toHaveBeenCalledWith(mockSocket, mockLoginResponse, GamePacketType.loginResponse);
-  });
+		expect(getGamePacketType).toHaveBeenCalledWith(mockGamePacket, gamePackTypeSelect.loginRequest);
+		expect(loginUseCase).toHaveBeenCalledWith(mockSocket, mockLoginRequest);
+		expect(sendData).toHaveBeenCalledWith(
+			mockSocket,
+			mockLoginResponse,
+			GamePacketType.loginResponse,
+		);
+	});
 
-  it('payload가 없으면 아무 작업도 수행하지 않아야 함', async () => {
-    (getGamePacketType as jest.Mock).mockReturnValue(null);
+	it('payload가 없으면 아무 작업도 수행하지 않아야 함', async () => {
+		(getGamePacketType as jest.Mock).mockReturnValue(null);
 
-    await loginHandler(mockSocket as GameSocket, mockGamePacket);
+		await loginHandler(mockSocket as GameSocket, mockGamePacket);
 
-    expect(loginUseCase).not.toHaveBeenCalled();
-    expect(sendData).not.toHaveBeenCalled();
-  });
+		expect(loginUseCase).not.toHaveBeenCalled();
+		expect(sendData).not.toHaveBeenCalled();
+	});
 });

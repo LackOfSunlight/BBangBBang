@@ -50,6 +50,4 @@ const createRoomUseCase = async (
 	}
 };
 
-
-
 export default createRoomUseCase;

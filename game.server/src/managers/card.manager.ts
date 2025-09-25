@@ -115,7 +115,10 @@ class CardManager {
 		} else {
 			user.character.handCards.push({ type: cardType, count: 1 });
 		}
-		user.character.handCardsCount = user.character.handCards.reduce((sum, card) => sum + card.count, 0);
+		user.character.handCardsCount = user.character.handCards.reduce(
+			(sum, card) => sum + card.count,
+			0,
+		);
 	}
 }
 

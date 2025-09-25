@@ -55,7 +55,6 @@ describe('registerHandler', () => {
 		(sendData as jest.Mock).mockImplementation(() => {});
 	});
 
-  
 	afterEach(() => {
 		jest.clearAllMocks();
 	});

@@ -6,11 +6,7 @@ import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 
 // 디버프 적용 처리 로직
-const cardContainmentUnitEffect = (
-	room: Room,
-	user: User,
-	target: User,
-): boolean => {
+const cardContainmentUnitEffect = (room: Room, user: User, target: User): boolean => {
 	// 유효성 검증
 	if (!user || !user.character || !user.character.stateInfo) {
 		console.error('[CONTAINMENT_UNIT]사용자 정보가 존재하지 않습니다');
@@ -72,8 +68,8 @@ export const debuffContainmentUnitEffect = (roomId: number, userId: string) => {
 	//console.log(`[debuffCONTAINMENT_UNIT] (${user.nickname}) : 유저정보식별 성공`);
 
 	// 탈출 확률
-	const escapeProb = 25; 
-	// 실제확률 25; // 테스트용 99; 
+	const escapeProb = 25;
+	// 실제확률 25; // 테스트용 99;
 
 	if (user.character.debuffs.includes(CardType.CONTAINMENT_UNIT)) {
 		//console.log(`[debuffCONTAINMENT_UNIT] (${user.nickname}) : 디버프 카드 등록 상태 인지 성공`);
@@ -107,9 +103,9 @@ export const debuffContainmentUnitEffect = (roomId: number, userId: string) => {
 						(c) => c === CardType.CONTAINMENT_UNIT,
 					);
 					user.character.debuffs.splice(yourDebuffIndex, 1);
-					console.log(`[debuffCONTAINMENT_UNIT]${user.nickname} 유저가 감금 상태에서 탈출에 성공했습니다`);
-
-					
+					console.log(
+						`[debuffCONTAINMENT_UNIT]${user.nickname} 유저가 감금 상태에서 탈출에 성공했습니다`,
+					);
 				}
 				break;
 			default:
