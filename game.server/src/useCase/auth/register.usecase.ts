@@ -1,4 +1,5 @@
 import { GlobalFailCode } from '../../generated/common/enums';
+import { AuthService } from '../../services/auth.service';
 
 /**
  * 회원가입 UseCase입니다.
@@ -20,7 +21,7 @@ export class RegisterUseCase {
       }
 
       // 2. 중복 사용자 검증
-      const { authService } = require('../../services/auth.service');
+      const authService = new AuthService();
       const userExistsResult = await authService.checkUserExists(email, nickname);
       
       if (!userExistsResult.ok || userExistsResult.value) {

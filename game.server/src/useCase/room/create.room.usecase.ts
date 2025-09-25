@@ -1,4 +1,5 @@
 import { GlobalFailCode } from '../../generated/common/enums';
+import { prisma } from '../../utils/db';
 
 /**
  * 방 생성 UseCase입니다.
@@ -20,7 +21,7 @@ export class CreateRoomUseCase {
       }
 
       // 2. 중복 방 이름 검증
-      const { prisma } = require('../../utils/db');
+      // prisma는 이미 import됨
       const existingRoom = await prisma.room.findFirst({
         where: { name: roomName }
       });

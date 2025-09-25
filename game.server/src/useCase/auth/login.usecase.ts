@@ -1,5 +1,6 @@
 import { GlobalFailCode } from '../../generated/common/enums';
 import { GamePacket } from '../../generated/gamePacket';
+import { AuthService } from '../../services/auth.service';
 
 /**
  * 로그인 UseCase입니다.
@@ -20,7 +21,7 @@ export class LoginUseCase {
       }
 
       // 2. 사용자 데이터 조회
-      const { authService } = require('../../services/auth.service');
+      const authService = new AuthService();
       const userResult = await authService.getUserByEmail(email);
       
       if (!userResult.ok) {

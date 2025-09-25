@@ -19,4 +19,10 @@
 		"esModuleInterop": true
 	},
 	"include": ["game.server/src/**/*.ts"]
+	,
+	"exclude": [
+		"game.server/src/**/*.test.ts",
+		"game.server/src/test/**",
+		"game.server/src/handlers/test/**"
+	]
 }

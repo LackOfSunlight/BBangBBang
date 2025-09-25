@@ -1,4 +1,5 @@
 import { GlobalFailCode } from '../../generated/common/enums';
+import { prisma } from '../../utils/db';
 
 /**
  * 방 참가 UseCase입니다.
@@ -18,7 +19,7 @@ export class JoinRoomUseCase {
         return { success: false, failcode: GlobalFailCode.INVALID_REQUEST };
       }
 
-      const { prisma } = require('../../utils/db');
+      // prisma는 이미 import됨
 
       // 2. 방 존재 여부 확인
       const room = await prisma.room.findUnique({

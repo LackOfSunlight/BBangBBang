@@ -1,4 +1,5 @@
 import { GlobalFailCode } from '../../generated/common/enums';
+import { prisma } from '../../utils/db';
 
 /**
  * 방 목록 조회 UseCase입니다.
@@ -10,7 +11,7 @@ export class GetRoomListUseCase {
    */
   async execute(): Promise<{ success: boolean; failcode: GlobalFailCode; roomList?: any[] }> {
     try {
-      const { prisma } = require('../../utils/db');
+      // prisma는 이미 import됨
       
       // DB에서 방 목록 조회 (대기 중인 방만)
       const rooms = await prisma.room.findMany({

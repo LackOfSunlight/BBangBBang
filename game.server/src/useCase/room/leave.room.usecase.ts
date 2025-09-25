@@ -1,4 +1,5 @@
 import { GlobalFailCode } from '../../generated/common/enums';
+import { prisma } from '../../utils/db';
 import { GamePacket } from '../../generated/gamePacket';
 
 /**
@@ -19,7 +20,7 @@ export class LeaveRoomUseCase {
         return { success: false, failcode: GlobalFailCode.INVALID_REQUEST };
       }
 
-      const { prisma } = require('../../utils/db');
+      // prisma는 이미 import됨
 
       // 2. 사용자 방 참가 여부 확인
       const userData = await prisma.userData.findUnique({

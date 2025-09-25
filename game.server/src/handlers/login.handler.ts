@@ -28,7 +28,13 @@ const loginHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
     const loginUseCase = new LoginUseCase();
     const result = await loginUseCase.execute(req.email, req.password);
 
-    // 2. 응답 패킷 전송
+    // 2. 로그인 성공 시 사용자 ID를 소켓에 저장
+    if (result.success && result.userData) {
+      socket.userId = result.userData.id.toString();
+      console.log(`[LoginHandler] 사용자 ID 저장: ${socket.userId}`);
+    }
+
+    // 3. 응답 패킷 전송
     const response = loginResponseForm(
       result.success, 
       result.success ? '로그인 성공' : '로그인 실패', 
