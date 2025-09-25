@@ -4,8 +4,8 @@ import { GamePacket } from '../../generated/gamePacket';
 import { C2SLeaveRoomRequest } from '../../generated/packet/room_actions';
 import { GameSocket } from '../../type/game.socket';
 import { leaveRoomUseCase } from '../../useCase/leave.room/leave.room.usecase';
-import { sendData } from '../../utils/send.data';
-import { getGamePacketType } from '../../utils/type.converter';
+import { sendData } from '../../sockets/send.data';
+import { getGamePacketType } from '../../converter/type.form';
 import leaveRoomHandler from '../leave.room.handler';
 
 // 의존성 Mock 처리

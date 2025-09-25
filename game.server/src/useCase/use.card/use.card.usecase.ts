@@ -1,9 +1,10 @@
 import { GamePacketType } from '../../enums/gamePacketType';
 import { CardType, GlobalFailCode } from '../../generated/common/enums';
 import { getRoom } from '../../utils/room.utils';
-import { applyCardEffect } from '../../utils/apply.card.effect';
-import { broadcastDataToRoom } from '../../utils/notification.util.js';
-import { useCardNotificationPacketForm } from '../../factory/packet.pactory';
+import { applyCardEffect } from '../../dispatcher/apply.card.dispacher';
+import { broadcastDataToRoom } from '../../sockets/notification.js';
+import { useCardNotificationPacketForm } from '../../converter/packet.form';
+import { applyCardUseHandler } from '../../handlers/apply.card.use.handler';
 
 export const useCardUseCase = (
 	userId: string,
@@ -11,8 +12,8 @@ export const useCardUseCase = (
 	cardType: CardType,
 	targetUserId: string,
 ): { success: boolean; failcode: GlobalFailCode } => {
-	const room = getRoom(roomId);
-	if (!room) {
+	const { room, user, target} = applyCardUseHandler(roomId, userId, targetUserId);
+	if (!room && !user) {
 		return { success: false, failcode: GlobalFailCode.ROOM_NOT_FOUND };
 	}
 
@@ -25,7 +26,7 @@ export const useCardUseCase = (
 	// 카드 사용 로직 처리
 
 	// 메인 로직
-	const isSuccess = applyCardEffect(roomId, cardType, userId, targetUserId!);
+	const isSuccess = applyCardEffect(room, cardType, user, target);
 	if (!isSuccess) {
 		console.log('사용 실패');
 		return { success: false, failcode: GlobalFailCode.INVALID_REQUEST };

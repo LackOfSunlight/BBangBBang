@@ -1,8 +1,8 @@
 import destroyCardHandler from '../destroy.card.handler';
 import { GameSocket } from '../../type/game.socket.js';
 import { GamePacket } from '../../generated/gamePacket.js';
-import { getGamePacketType } from '../../utils/type.converter.js';
-import { sendData } from '../../utils/send.data.js';
+import { getGamePacketType } from '../../converter/type.form.js';
+import { sendData } from '../../sockets/send.data.js';
 import destroyCardUseCase from '../../useCase/destroy.card/destroy.card.usecase';
 import { GamePacketType } from '../../enums/gamePacketType.js';
 import { CardType, CharacterType, RoleType } from '../../generated/common/enums';

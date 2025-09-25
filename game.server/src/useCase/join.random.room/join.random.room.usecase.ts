@@ -6,8 +6,8 @@ import { GlobalFailCode } from '../../generated/common/enums';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { getUserByUserId } from '../../services/prisma.service';
 import { User } from '../../models/user.model';
-import { broadcastDataToRoom } from '../../utils/notification.util';
-import { joinRandomRoomResponseForm, joinRoomNotificationForm } from '../../factory/packet.pactory';
+import { broadcastDataToRoom } from '../../sockets/notification';
+import { joinRandomRoomResponseForm, joinRoomNotificationForm } from '../../converter/packet.form';
 import { getRooms, addUserToRoom } from '../../utils/room.utils';
 
 const joinRandomRoomUseCase = async (

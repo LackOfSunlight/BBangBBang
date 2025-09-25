@@ -1,15 +1,16 @@
 // cardType = 7
 import { CardType, CharacterStateType } from '../../generated/common/enums.js';
 import { cardManager } from '../../managers/card.manager.js';
+import { Room } from '../../models/room.model.js';
+import { User } from '../../models/user.model.js';
 import {
 	getRoom,
 	getUserFromRoom,
 	saveRoom,
 } from '../../utils/room.utils.js';
 
-const cardGuerrillaEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
-	const room = getRoom(roomId);
-	const shooter = getUserFromRoom(roomId, userId);
+const cardGuerrillaEffect = (room: Room, shooter: User, targetUser: User): boolean => {
+
 	const nowTime = Date.now();
 
 	if (!room || !shooter) return false;
@@ -28,11 +29,11 @@ const cardGuerrillaEffect = (roomId: number, userId: string, targetUserId: strin
 
 	for (let user of room.users) {
 		if (user.character?.stateInfo?.state != null) {
-			if (user.id === userId) {
+			if (user.id === shooter.id) {
 				user.character.stateInfo.state = CharacterStateType.GUERRILLA_SHOOTER;
 				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 				user.character.stateInfo.nextStateAt = `${nowTime + 10}`;
-				user.character.stateInfo.stateTargetUserId = targetUserId;
+				user.character.stateInfo.stateTargetUserId = targetUser.id;
 
 				continue;
 			}
@@ -41,7 +42,7 @@ const cardGuerrillaEffect = (roomId: number, userId: string, targetUserId: strin
 				user.character.stateInfo.state = CharacterStateType.GUERRILLA_TARGET;
 				user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 				user.character.stateInfo.nextStateAt = `${nowTime + 10}`;
-				user.character.stateInfo.stateTargetUserId = userId;
+				user.character.stateInfo.stateTargetUserId = shooter.id;
 			}
 		}
 	}

@@ -1,8 +1,8 @@
 import getRoomListRequestHandler from '../get.room.list.handler';
 import { GameSocket } from '../../type/game.socket.js';
 import { GamePacket } from '../../generated/gamePacket.js';
-import { getGamePacketType } from '../../utils/type.converter.js';
-import { sendData } from '../../utils/send.data.js';
+import { getGamePacketType } from '../../converter/type.form.js';
+import { sendData } from '../../sockets/send.data.js';
 import getRoomListUseCase from '../../useCase/get.room.list/get.room.list.usecase.js';
 import { GamePacketType } from '../../enums/gamePacketType.js';
 import { C2SGetRoomListRequest, S2CGetRoomListResponse } from '../../generated/packet/room_actions';

@@ -4,7 +4,7 @@ import { C2SLeaveRoomRequest } from '../../generated/packet/room_actions';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import { GameSocket } from '../../type/game.socket';
-import { broadcastDataToRoom } from '../../utils/notification.util';
+import { broadcastDataToRoom } from '../../sockets/notification';
 import { deleteRoom, getRoom, removeUserFromRoom } from '../../utils/room.utils';
 import { leaveRoomUseCase } from './leave.room.usecase';
 

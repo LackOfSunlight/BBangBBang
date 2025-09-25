@@ -4,8 +4,8 @@ import { C2SGamePrepareRequest } from '../../generated/packet/game_actions';
 import { GlobalFailCode } from '../../generated/common/enums';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { gamePrepareUseCase } from '../../useCase/game.prepare/game.prepare.usecase';
-import { sendData } from '../../utils/send.data';
-import { getGamePacketType } from '../../utils/type.converter';
+import { sendData } from '../../sockets/send.data';
+import { getGamePacketType } from '../../converter/type.form';
 import gamePrepareHandler from '../game.prepare.handler';
 
 // 의존성 Mock 처리

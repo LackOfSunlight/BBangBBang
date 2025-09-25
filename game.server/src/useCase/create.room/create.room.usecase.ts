@@ -6,7 +6,7 @@ import { Room } from '../../models/room.model.js';
 import { RoomStateType } from '../../generated/common/enums.js';
 import { User } from '../../models/user.model.js';
 import { createRoomDB, getUserByUserId } from '../../services/prisma.service.js';
-import { createRoomResponseForm } from '../../factory/packet.pactory';
+import { createRoomResponseForm } from '../../converter/packet.form';
 import roomManger from '../../managers/room.manger';
 import { saveRoom } from '../../utils/room.utils';
 

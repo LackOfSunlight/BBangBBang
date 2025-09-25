@@ -1,6 +1,6 @@
 import { GamePacket } from '../generated/gamePacket';
 import { GamePacketType } from '../enums/gamePacketType';
-import { broadcastDataToRoom } from '../utils/notification.util';
+import { broadcastDataToRoom } from '../sockets/notification';
 import { AnimationType } from '../generated/common/enums';
 import { UserData } from '../generated/common/types';
 

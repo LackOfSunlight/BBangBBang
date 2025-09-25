@@ -8,8 +8,8 @@ import { GamePacketType } from "../../enums/gamePacketType";
 import { GlobalFailCode, ReactionType, CharacterStateType } from "../../generated/common/enums";
 
 import * as roomUtils from "../../utils/room.utils";
-import * as sendDataUtil from "../../utils/send.data";
-import * as notificationUtil from "../../utils/notification.util";
+import * as sendDataUtil from "../../sockets/send.data";
+import * as notificationUtil from "../../sockets/notification";
 
 // Mock utils
 jest.mock("dotenv", () => ({

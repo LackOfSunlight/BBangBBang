@@ -5,11 +5,11 @@ import { AnimationType, CardType, WarningType } from '../../generated/common/enu
 import { GamePacket } from '../../generated/gamePacket';
 import { GamePacketType } from '../../enums/gamePacketType';
 //import { createUserUpdateNotificationPacket } from '../../useCase/use.card/use.card.usecase';
-import { warnNotificationPacketForm } from '../../factory/packet.pactory';
-import { userUpdateNotificationPacketForm } from '../../factory/packet.pactory';
-import { broadcastDataToRoom } from '../../utils/notification.util';
+import { warnNotificationPacketForm } from '../../converter/packet.form';
+import { userUpdateNotificationPacketForm } from '../../converter/packet.form';
+import { broadcastDataToRoom } from '../../sockets/notification';
 import { playAnimationHandler } from '../../handlers/play.animation.handler';
-import { checkAndEndGameIfNeeded } from '../../utils/game.end.util';
+import { checkAndEndGameIfNeeded } from '../../services/game.end.service';
 
 
 /** 폭탄 디버프 부여 */

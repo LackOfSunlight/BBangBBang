@@ -32,7 +32,7 @@ jest.mock('../../managers/game.manager', () => ({
 
 // Imports for the use case and mocks
 import { getRoom, saveRoom } from '../../utils/room.utils';
-import { broadcastDataToRoom } from '../../utils/notification.util';
+import { broadcastDataToRoom } from '../../sockets/notification';
 import { shuffle } from '../../utils/shuffle.util';
 import { cardManager } from '../../managers/card.manager';
 import gameManager, { notificationCharacterPosition } from '../../managers/game.manager';

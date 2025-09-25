@@ -11,7 +11,7 @@ import { GamePacketType } from '../../enums/gamePacketType.js';
 import { getRoom, saveRoom } from '../../utils/room.utils.js';
 import { Room } from '../../models/room.model.js';
 import { CharacterPositionData, GameStateData } from '../../generated/common/types.js';
-import { broadcastDataToRoom } from '../../utils/notification.util.js';
+import { broadcastDataToRoom } from '../../sockets/notification.js';
 import { shuffle } from '../../utils/shuffle.util.js';
 import { cardManager } from '../../managers/card.manager.js';
 import gameManager, { notificationCharacterPosition } from '../../managers/game.manager.js';
@@ -19,7 +19,7 @@ import characterSpawnPosition from '../../data/character.spawn.position.json';
 import {
 	gameStartNotificationPacketForm,
 	gameStartResponsePacketForm,
-} from '../../factory/packet.pactory.js';
+} from '../../converter/packet.form.js';
 
 export const gameStartUseCase = async (
 	socket: GameSocket,

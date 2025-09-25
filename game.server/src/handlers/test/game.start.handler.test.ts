@@ -18,8 +18,8 @@ jest.mock('../../utils/type.converter', () => ({
 
 // 모킹된 함수 임포트
 import { gameStartUseCase } from '../../useCase/game.start/game.start.usecase';
-import { sendData } from '../../utils/send.data';
-import { getGamePacketType } from '../../utils/type.converter';
+import { sendData } from '../../sockets/send.data';
+import { getGamePacketType } from '../../converter/type.form';
 
 // 모의 함수 타입 캐스팅
 const mockGameStartUseCase = gameStartUseCase as jest.Mock;

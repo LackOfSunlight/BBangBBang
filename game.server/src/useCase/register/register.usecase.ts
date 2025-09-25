@@ -6,7 +6,7 @@ import checkUserDbService from '../../services/register/check.user.db.service';
 import { C2SRegisterRequest } from '../../generated/packet/auth';
 import { createUserDB } from '../../services/prisma.service';
 import { GameSocket } from '../../type/game.socket';
-import { registerResponseForm } from '../../factory/packet.pactory';
+import { registerResponseForm } from '../../converter/packet.form';
 
 export const registerUseCase = async (
 	socket: GameSocket,

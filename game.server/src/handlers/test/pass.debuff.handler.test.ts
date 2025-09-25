@@ -4,8 +4,8 @@ import { GamePacket } from '../../generated/gamePacket';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { CardType, GlobalFailCode } from '../../generated/common/enums';
 import passDebuffUseCase from '../../useCase/pass.debuff/pass.debuff.usecase';
-import { getGamePacketType } from '../../utils/type.converter';
-import { sendData } from '../../utils/send.data';
+import { getGamePacketType } from '../../converter/type.form';
+import { sendData } from '../../sockets/send.data';
 
 // Mock 설정
 jest.mock('../../useCase/pass.debuff/pass.debuff.usecase');

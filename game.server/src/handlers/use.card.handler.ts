@@ -2,16 +2,16 @@ import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
 import {
 	useCardResponsePacketForm,
 	userUpdateNotificationPacketForm,
-} from '../factory/packet.pactory';
+} from '../converter/packet.form';
 import { CardType, GlobalFailCode } from '../generated/common/enums';
 import { GamePacket } from '../generated/gamePacket';
 import { Room } from '../models/room.model';
 import { GameSocket } from '../type/game.socket';
 import { useCardUseCase } from '../useCase/use.card/use.card.usecase';
-import { broadcastDataToRoom } from '../utils/notification.util';
+import { broadcastDataToRoom } from '../sockets/notification';
 import { getRoom } from '../utils/room.utils';
-import { sendData } from '../utils/send.data';
-import { getGamePacketType } from '../utils/type.converter';
+import { sendData } from '../sockets/send.data';
+import { getGamePacketType } from '../converter/type.form';
 
 const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	/// 1. DTO 생성 및 기본 유효성 검사

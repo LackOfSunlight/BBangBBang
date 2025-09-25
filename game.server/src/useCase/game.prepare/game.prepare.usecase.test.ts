@@ -9,7 +9,7 @@ import {
 	CharacterType,
 } from '../../generated/common/enums.js';
 import { GamePacketType } from '../../enums/gamePacketType.js';
-import { broadcastDataToRoom } from '../../utils/notification.util.js';
+import { broadcastDataToRoom } from '../../sockets/notification.js';
 import { gamePrepareUseCase } from './game.prepare.usecase.js';
 import characterType from '../../data/characterType.json';
 import { getRoom, saveRoom } from '../../utils/room.utils.js';

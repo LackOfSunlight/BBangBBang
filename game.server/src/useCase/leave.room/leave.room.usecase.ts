@@ -5,9 +5,9 @@ import { S2CLeaveRoomNotification } from '../../generated/packet/notifications';
 import { C2SLeaveRoomRequest, S2CLeaveRoomResponse } from '../../generated/packet/room_actions';
 import { GameSocket } from '../../type/game.socket';
 import { deleteRoom, getRoom, removeUserFromRoom } from '../../utils/room.utils';
-import { broadcastDataToRoom } from '../../utils/notification.util';
+import { broadcastDataToRoom } from '../../sockets/notification';
 import { User } from '../../models/user.model';
-import { leaveRoomResponsePacketForm, userLeftNotificationPacketForm } from '../../factory/packet.pactory';
+import { leaveRoomResponsePacketForm, userLeftNotificationPacketForm } from '../../converter/packet.form';
 
 
 

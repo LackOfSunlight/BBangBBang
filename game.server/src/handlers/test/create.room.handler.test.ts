@@ -1,8 +1,8 @@
 import createRoomRequestHandler from '../create.room.handler';
 import { GameSocket } from '../../type/game.socket.js';
 import { GamePacket } from '../../generated/gamePacket.js';
-import { getGamePacketType } from '../../utils/type.converter.js';
-import { sendData } from '../../utils/send.data.js';
+import { getGamePacketType } from '../../converter/type.form.js';
+import { sendData } from '../../sockets/send.data.js';
 import createRoomUseCase from '../../useCase/create.room/create.room.usecase.js';
 import { GamePacketType } from '../../enums/gamePacketType.js';
 import { GlobalFailCode, RoomStateType } from '../../generated/common/enums';

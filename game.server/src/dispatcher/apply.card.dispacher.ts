@@ -1,4 +1,4 @@
-import { getUserFromRoom } from './room.utils';
+import { getUserFromRoom } from '../utils/room.utils';
 import cardAbsorbEffect from '../card/active/card.absorb.effect';
 import cardAutoRifleEffect from '../card/weapon/card.auto_rifle.effect';
 import cardAutoShieldEffect from '../card/equip/card.auto_shield.effect';
@@ -23,15 +23,16 @@ import cardStealthSuitEffect from '../card/equip/card.stealth_suit.effect';
 import cardVaccineEffect from '../card/active/card.vaccine.effect';
 import cardWinLotteryEffect from '../card/active/card.win_lottery.effect';
 import { cardManager } from '../managers/card.manager';
+import { User } from '../models/user.model';
+import { Room } from '../models/room.model';
 
 // 카드 효과 적용 함수
 export function applyCardEffect(
-	roomId: number,
+	room: Room,
 	CardType: number,
-	userId: string,
-	targetUserId: string,
+	user: User,
+	targetUser: User | null,
 ): boolean {
-	const user = getUserFromRoom(roomId, userId);
 
 	// 유효성 검증 (119 카드 예외 처리)
 	if (!user || !user.character) return false;
@@ -39,57 +40,57 @@ export function applyCardEffect(
 	// 소지한 카드 제거 후 효과 적용
 	switch (CardType) {
 		case 1: //'BBANG':
-			return cardBbangEffect(roomId, userId, targetUserId);
+			return cardBbangEffect(room, user, targetUser;
 		case 2: //'BIGBBANG':
-			return cardBigBbangEffect(roomId, userId, targetUserId);
+			return cardBigBbangEffect(room, user, targetUser);
 		case 3: //'SHIELD':
-			return cardShieldEffect(roomId, userId, targetUserId);
+			return cardShieldEffect(room, user, targetUser);
 		case 4: // 'VACCINE':
-			return cardVaccineEffect(roomId, userId);
+			return cardVaccineEffect(room, user);
 		case 5: // 'CALL_119':
-			return cardCall119Effect(roomId, userId, targetUserId);
+			return cardCall119Effect(room, user, targetUser);
 		case 6: // 'DEATH_MATCH':
-			return cardDeathMatchEffect(roomId, userId, targetUserId);
+			return cardDeathMatchEffect(room, user, targetUser);
 		case 7: // 'GUIRRILLA':
-			return cardGuerrillaEffect(roomId, userId, targetUserId);
+			return cardGuerrillaEffect(room, user, targetUser);
 		case 8: // 'ABSORB':
-			return cardAbsorbEffect(roomId, userId, targetUserId);
+			return cardAbsorbEffect(room, user, targetUser);
 		case 9: // 'HALLUCINATION':
-			return cardHallucinationEffect(roomId, userId, targetUserId);
+			return cardHallucinationEffect(room, user, targetUser);
 		case 10: // 'FLEA_MARKET':
-			return cardFleaMarketEffect(roomId, userId, targetUserId);
+			return cardFleaMarketEffect(room, user, targetUser);
 		case 11: // 'MATURED_SAVINGS':
-			return cardMaturedSavingsEffect(roomId, userId);
+			return cardMaturedSavingsEffect(room, user);
 		case 12: // 'WIN_LOTTERY':
-			return cardWinLotteryEffect(roomId, userId);
+			return cardWinLotteryEffect(room, user);
 
 		// 무기 카드
 		case 13: // 'SNIPER_GUN':
-			return cardSniperGunEffect(roomId, userId);
+			return cardSniperGunEffect(room, user);
 		case 14: // 'HAND_GUN':
-			return cardHandGunEffect(roomId, userId);
+			return cardHandGunEffect(room, user);
 		case 15: // 'DESERT_EAGLE':
-			return cardDesertEagleEffect(roomId, userId);
+			return cardDesertEagleEffect(room, user);
 		case 16: // 'AUTO_RIFLE':
-			return cardAutoRifleEffect(roomId, userId);
+			return cardAutoRifleEffect(room, user);
 
 		// 장비 카드
 		case 17: // 'LASER_POINTER':
-			return cardLaserPointerEffect(roomId, userId);
+			return cardLaserPointerEffect(room, user);
 		case 18: // 'RADER':
-			return cardRaderEffect(roomId, userId);
+			return cardRaderEffect(room, user);
 		case 19: // 'AUTO_SHIELD':
-			return cardAutoShieldEffect(roomId, userId);
+			return cardAutoShieldEffect(room, user);
 		case 20: // 'STEATLH_SUIT':
-			return cardStealthSuitEffect(roomId, userId);
+			return cardStealthSuitEffect(room, user);
 
 		// 디버프 카드
 		case 21: // 'CONTAINMENT_UNIT':
-			return cardContainmentUnitEffect(roomId, userId, targetUserId);
+			return cardContainmentUnitEffect(room, user, targetUser);
 		case 22: // 'SATELLITE_TARGET':
-			return cardSatelliteTargetEffect(roomId, userId, targetUserId);
+			return cardSatelliteTargetEffect(room, user, targetUser);
 		case 23: // 'BOMB':
-			return cardBombEffect(roomId, userId, targetUserId);
+			return cardBombEffect(room, user, targetUser);
 		default:
 			console.log('Unknown card type');
 			return false;

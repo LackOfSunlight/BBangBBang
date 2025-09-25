@@ -3,11 +3,11 @@ import { removeSocket } from '../managers/socket.manger.js';
 import { GameSocket } from '../type/game.socket.js';
 import { removeTokenUserDB } from '../services/prisma.service.js';
 import { deleteRoom, getRoom, removeUserFromRoom, saveRoom } from '../utils/room.utils.js';
-import { checkAndEndGameIfNeeded } from '../utils/game.end.util.js';
-import { broadcastDataToRoom } from '../utils/notification.util.js';
+import { checkAndEndGameIfNeeded } from '../services/game.end.service.js';
+import { broadcastDataToRoom } from './notification.js';
 import { GamePacketType } from '../enums/gamePacketType.js';
 import { RoomStateType } from '../generated/common/enums.js';
-import { userUpdateNotificationPacketForm } from '../factory/packet.pactory.js';
+import { userUpdateNotificationPacketForm } from '../converter/packet.form.js';
 
 
 const onEnd = (socket: GameSocket) => async () => {

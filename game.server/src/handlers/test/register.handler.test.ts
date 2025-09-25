@@ -1,7 +1,7 @@
 import registerHandler from '../register.handler';
-import { getGamePacketType } from '../../utils/type.converter';
+import { getGamePacketType } from '../../converter/type.form';
 import { registerUseCase } from '../../useCase/register/register.usecase';
-import { sendData } from '../../utils/send.data';
+import { sendData } from '../../sockets/send.data';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { GameSocket } from '../../type/game.socket';
 import { GamePacket } from '../../generated/gamePacket';
