@@ -2,7 +2,7 @@
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { cardManager } from '../../managers/card.manager';
 import { AnimationType, CardType, WarningType } from '../../generated/common/enums';
-import { GamePacket } from '../../generated/gamePacket';
+//import { GamePacket } from '../../generated/gamePacket';
 import { GamePacketType } from '../../enums/gamePacketType';
 //import { createUserUpdateNotificationPacket } from '../../useCase/use.card/use.card.usecase';
 import { warnNotificationPacketForm } from '../../converter/packet.form';
@@ -38,7 +38,7 @@ const cardBombEffect = (room: Room, user: User, target: User): boolean => {
 	
 	// 카드 제거
 	cardManager.removeCard(user, room, CardType.BOMB);
-	target.character!.debuffs.push(CardType.BOMB);
+	target.character.debuffs.push(CardType.BOMB);
 	
 	const explosionTime = Date.now() + 30000; 
 	// 시작전 패킷 송신

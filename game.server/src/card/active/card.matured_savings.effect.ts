@@ -1,5 +1,5 @@
 // cardType = 11
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
+//import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { CardType } from '../../generated/common/enums.js';
 import { cardManager } from '../../managers/card.manager.js';
 import { User } from '../../models/user.model';
@@ -47,7 +47,7 @@ const cardMaturedSavingsEffect = (room: Room, user: User): boolean => {
 
 	// handCardsCount 업데이트
 	// user.character!.handCardsCount += numberOfDraw;
-	user.character!.handCardsCount = user.character!.handCards.reduce(
+	user.character.handCardsCount = user.character!.handCards.reduce(
 		(sum, card) => sum + card.count,
 		0,
 	);

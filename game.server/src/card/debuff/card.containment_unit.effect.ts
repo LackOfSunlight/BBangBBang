@@ -1,7 +1,7 @@
 // cardType = 21
 import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../utils/room.utils';
 import { CardType, CharacterStateType } from '../../generated/common/enums';
-import { cardManager } from '../../managers/card.manager';
+//import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 
@@ -99,10 +99,10 @@ export const debuffContainmentUnitEffect = (roomId: number, userId: string) => {
 					`[debuffCONTAINMENT_UNIT] (${user.nickname}) : 탈출에 성공하면 디버프 상태 해제`,
 				);
 
-				if (yourProb < escapeProb) {
+				if (yourProb < escapeProb && user.character.stateInfo) {
 					// 탈출에 성공하면 디버프 상태 해제
-					user.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
-					//user.character.stateInfo!.nextState = CharacterStateType.NONE_CHARACTER_STATE;
+					user.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
+					//user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 					const yourDebuffIndex = user.character.debuffs.findIndex(
 						(c) => c === CardType.CONTAINMENT_UNIT,
 					);
