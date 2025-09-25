@@ -82,7 +82,14 @@ class GameManager {
       if (!room) return;
 
       if (nextPhase === PhaseType.DAY) {
-        // 1. 카드 처리
+        // 1. 특수 디버프 효과 체크 (하루 시작 시)
+        // TODO: 위성 타겟 디버프 효과 체크 로직 구현 필요
+        // room = (await checkSatelliteTargetEffect(room.id)) || room;
+        
+        // TODO: 감옥 디버프 효과 체크 로직 구현 필요  
+        // room = (await checkContainmentUnitTarget(room.id)) || room;
+
+        // 2. 카드 처리
         for (let user of room.users) {
           if (user.character != null) {
             console.log(
@@ -188,6 +195,9 @@ class GameManager {
       positionUpdateIntervals.delete(room.id);
     }
     this.clearTimer(roomId);
+    
+    // TODO: 폭탄 타이머 정리 로직 구현 필요
+    // bombManager.clearRoom(room.id);
     
     // 위치 변화 플래그 정리
     roomPositionChanged.delete(room.id);

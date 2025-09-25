@@ -642,3 +642,22 @@ export const cardSelectResponseForm = (success: boolean, failCode: GlobalFailCod
 	};
 	return newGamePacket;
 };
+
+/**
+ * 위치 업데이트 응답 패킷 생성 (알림으로 대체)
+ * @param success
+ * @param failCode
+ * @returns
+ */
+export const positionUpdateResponseForm = (success: boolean, failCode: GlobalFailCode): GamePacket => {
+	// 위치 업데이트는 응답이 없고 알림만 있으므로 빈 패킷 반환
+	const newGamePacket: GamePacket = {
+		payload: {
+			oneofKind: GamePacketType.positionUpdateNotification,
+			positionUpdateNotification: {
+				characterPositions: [] // TODO: 실제 위치 데이터 추가
+			},
+		},
+	};
+	return newGamePacket;
+};
