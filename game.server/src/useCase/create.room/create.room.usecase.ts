@@ -42,8 +42,6 @@ const createRoomUseCase = async (
 
 		socket.roomId = room.id;
 
-		saveRoom(room);
-
 		return createRoomResponseForm(true, GlobalFailCode.NONE_FAILCODE, room);
 	} else {
 		return createRoomResponseForm(false, GlobalFailCode.CREATE_ROOM_FAILED);

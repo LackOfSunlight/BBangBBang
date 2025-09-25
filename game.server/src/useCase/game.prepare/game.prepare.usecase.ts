@@ -15,11 +15,11 @@ import characterType from '../../data/characterType.json';
 import { CharacterInfo } from '../../type/character.info.js';
 import { GamePacketType } from '../../enums/gamePacketType.js';
 import { broadcastDataToRoom } from '../../sockets/notification.js';
-import { getRoom, saveRoom } from '../../utils/room.utils.js';
 import {
 	gamePrepareNotificationPacketForm,
 	gamePrepareResponsePacketForm,
 } from '../../converter/packet.form.js';
+import roomManger from '../../managers/room.manger.js';
 
 export const gamePrepareUseCase = (socket: GameSocket, req: C2SGamePrepareRequest): GamePacket => {
 	if (!socket.roomId) {
@@ -30,7 +30,7 @@ export const gamePrepareUseCase = (socket: GameSocket, req: C2SGamePrepareReques
 	}
 
 	try {
-		const room: Room | null = getRoom(socket.roomId);
+		const room: Room | null = roomManger.getRoom(socket.roomId);
 
 		if (!room) {
 			return gamePrepareResponsePacketForm({
@@ -117,8 +117,6 @@ export const gamePrepareUseCase = (socket: GameSocket, req: C2SGamePrepareReques
 
 		// 방 상태를 INGAME으로 변경
 		room.state = RoomStateType.INGAME;
-
-		saveRoom(room);
 
 		// 모든 유저에게 게임 준비 완료 알림 전송
 		const notificationPacket = gamePrepareNotificationPacketForm(room);

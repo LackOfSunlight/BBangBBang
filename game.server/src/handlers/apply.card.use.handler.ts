@@ -1,6 +1,6 @@
+import roomManger from '../managers/room.manger';
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
-import { getRoom, getUserFromRoom } from '../utils/room.utils';
 
 export const applyCardUseHandler = (
 	roomId: number,
@@ -9,16 +9,16 @@ export const applyCardUseHandler = (
 ): { room: Room; user: User; target: User} => {
 	let target : User;
 
-	const room = getRoom(roomId);
-	const user = getUserFromRoom(roomId, userId);
+	const room = roomManger.getRoom(roomId);
+	const user = roomManger.getUserFromRoom(roomId, userId);
 	if (targetId) {
-		target = getUserFromRoom(roomId, targetId);
+		target = roomManger.getUserFromRoom(roomId, targetId);
 	} else {
 		target = {
 			id: '0',
    			nickname: 'none',
 		};
 	}
-	
+
 	return { room, user, target };
 };

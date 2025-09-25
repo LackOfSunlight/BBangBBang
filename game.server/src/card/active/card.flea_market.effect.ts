@@ -8,6 +8,7 @@ import { broadcastDataToRoom } from '../../sockets/notification';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import { stateChangeService } from '../../services/state.change.service';
+import { fleaMarketNotificationForm } from '../../converter/packet.form';
 
 const cardFleaMarketEffect = (room: Room, user: User, targetUser: User): boolean => {
 	const nowTime = Date.now();
@@ -56,27 +57,8 @@ const cardFleaMarketEffect = (room: Room, user: User, targetUser: User): boolean
 			'0',
 		);
 	}
-
-	// 패킷으로 포장
-	const gamePacket = setFleaMarketNotification(selectedCards, []);
-
-	// 전체 방에 공지
-	broadcastDataToRoom(users, gamePacket, GamePacketType.fleaMarketNotification);
+	
 	return true;
 };
 
 export default cardFleaMarketEffect;
-
-const setFleaMarketNotification = (cardTypes: CardType[], pickIndex: number[]): GamePacket => {
-	const newGamePacket: GamePacket = {
-		payload: {
-			oneofKind: GamePacketType.fleaMarketNotification,
-			fleaMarketNotification: {
-				cardTypes,
-				pickIndex,
-			},
-		},
-	};
-
-	return newGamePacket;
-};
