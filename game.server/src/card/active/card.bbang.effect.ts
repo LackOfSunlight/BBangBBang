@@ -2,13 +2,12 @@
 import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../utils/room.utils';
 import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
-import { cardManager } from '../../managers/card.manager';
+// import { cardManager } from '../../managers/card.manager';
+import { Room } from '../../models/room.model';
+import { User } from '../../models/user.model';
 
-const cardBbangEffect = (roomId: number, userId: string, targetUserId: string): boolean => {
+const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 	// 정보값 가져오기
-	const user = getUserFromRoom(roomId, userId);
-	const target = getUserFromRoom(roomId, targetUserId);
-	const room = getRoom(roomId);
 	const nowTime = Date.now();
 
 	// 유효성 검증
@@ -36,53 +35,54 @@ const cardBbangEffect = (roomId: number, userId: string, targetUserId: string): 
 		return false;
 	}
 
-	// 카드 제거
-	cardManager.removeCard(user, room, CardType.BBANG);
+	// 카드 제거 -> 상위 모듈에서 처리
+	//cardManager.removeCard(user, room, CardType.BBANG);
 
 	if (user.character.stateInfo.state === CharacterStateType.NONE_CHARACTER_STATE) {
 		// 상태 설정
 		user.character.stateInfo.state = CharacterStateType.BBANG_SHOOTER; // 빵야 카드 사용자는 BBANG_SHOOTER 상태가 되고
 		user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 		user.character.stateInfo.nextStateAt = `${nowTime + 10}`; //ms
-		user.character.stateInfo.stateTargetUserId = targetUserId; // 빵야 카드 사용자는 targetId에 대상자 ID를 기록
+		user.character.stateInfo.stateTargetUserId = target.id; // 빵야 카드 사용자는 targetId에 대상자 ID를 기록
 
 		target.character.stateInfo.state = CharacterStateType.BBANG_TARGET; // 빵야 카드 대상자는 BBANG_TARGET 상태가 됩니다
 		target.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 		target.character.stateInfo.nextStateAt = `${nowTime +10}`; //ms
-		target.character.stateInfo.stateTargetUserId = userId;
+		target.character.stateInfo.stateTargetUserId = user.id;
 	} else if (user.character.stateInfo.state === CharacterStateType.DEATH_MATCH_TURN_STATE) {
 		// 상태 설정
 		user.character.stateInfo.state = CharacterStateType.DEATH_MATCH_STATE;
 		user.character.stateInfo.nextState = CharacterStateType.DEATH_MATCH_TURN_STATE;
 		user.character.stateInfo.nextStateAt = `${nowTime + 10}`; //ms
-		user.character.stateInfo.stateTargetUserId = targetUserId; 
+		user.character.stateInfo.stateTargetUserId = target.id; 
 
 		target.character.stateInfo.state = CharacterStateType.DEATH_MATCH_TURN_STATE; 
 		target.character.stateInfo.nextState = CharacterStateType.DEATH_MATCH_STATE;
 		target.character.stateInfo.nextStateAt = `${nowTime + 10}`; //ms
-		target.character.stateInfo.stateTargetUserId = userId;
+		target.character.stateInfo.stateTargetUserId = user.id;
 	} else if (user.character.stateInfo.state === CharacterStateType.GUERRILLA_TARGET) {
 		user.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
 		user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 		user.character.stateInfo.nextStateAt = '0'; //ms
 		user.character.stateInfo.stateTargetUserId = '0';
 
-		updateCharacterFromRoom(roomId, userId, user.character);
-		const updatedRoom = getRoom(roomId);
+		updateCharacterFromRoom(room.id, user.id, user.character);
+		const updatedRoom = getRoom(room.id);
 		if (updatedRoom) CheckGuerrillaService(updatedRoom);
 		return true;
 	}
+	return true;
 
 	// 수정 정보 갱신
-	try {
-		updateCharacterFromRoom(roomId, userId, user.character);
-		updateCharacterFromRoom(roomId, targetUserId, target.character);
-		return true;
-		//console.log('[BBANG]로그 저장에 성공하였습니다');
-	} catch (error) {
-		console.error(`[BBANG]로그 저장에 실패하였습니다:[${error}]`);
-		return false;
-	}
+	// try {
+	// 	updateCharacterFromRoom(roomId, userId, user.character);
+	// 	updateCharacterFromRoom(roomId, targetUserId, target.character);
+	// 	return true;
+	// 	//console.log('[BBANG]로그 저장에 성공하였습니다');
+	// } catch (error) {
+	// 	console.error(`[BBANG]로그 저장에 실패하였습니다:[${error}]`);
+	// 	return false;
+	// }
 };
 
 export default cardBbangEffect;
