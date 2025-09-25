@@ -40,7 +40,11 @@ const cardBombEffect = (roomId: number, userId: string, targetUserId: string): b
 	// 카드 제거
 	cardManager.removeCard(user, room, CardType.BOMB);
 	target.character!.debuffs.push(CardType.BOMB);
-	const explosionTime = 30000; 
+	
+	const explosionTime = Date.now() + 30000; 
+	// 시작전 패킷 송신
+	const warnExplosion = warnNotificationPacketForm(WarningType.BOMB_WANING, `${explosionTime}`);
+ 	broadcastDataToRoom(room.users, warnExplosion, GamePacketType.warningNotification);
 	// 인게임 제한시간 : 30초 / 테스트 제한시간 : 10초
 	bombManager.startBombTimer(roomId, targetUserId, explosionTime);
 	
@@ -78,7 +82,7 @@ class BombManager {
     return BombManager.instance;
   }
 
-  public startBombTimer(roomId: number, userId: string, durationMs: number) {
+  public startBombTimer(roomId: number, userId: string, explosionAt: number) {
 	const room = getRoom(roomId);
 	const bombUser = getUserFromRoom(roomId, userId);
     const key = `${roomId}:${userId}`;
@@ -87,8 +91,6 @@ class BombManager {
       clearInterval(this.bombTimers.get(key)!.timer);
       this.bombTimers.delete(key);
     }
-
-    const explosionAt = Date.now() + durationMs;
 	
     const timer = setInterval(() => {
       const remain = Math.ceil((explosionAt - Date.now()) / 1000);
@@ -105,11 +107,11 @@ class BombManager {
 			bombExplosion(roomId, userId);
 			
 		}
-		else if(remain === 10){
-			// 경고 패킷 활성화 
-			const warnExplosion = warnNotificationPacketForm(WarningType.BOMB_WANING, `${remain}`);
-			broadcastDataToRoom(room.users, warnExplosion, GamePacketType.warningNotification);
-		}
+		// else if(remain === 29){
+		// 	// 경고 패킷 활성화 
+		// 	const warnExplosion = warnNotificationPacketForm(WarningType.BOMB_WANING, `${remain}`);
+		// 	broadcastDataToRoom(room.users, warnExplosion, GamePacketType.warningNotification);
+		// }
 
     }, 1000);
 
