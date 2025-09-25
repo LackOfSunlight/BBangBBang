@@ -1,6 +1,7 @@
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
 import { CharacterStateType } from '../generated/common/enums';
+import { stateChangeService } from './state.change.service';
 
 export const CheckBigBbangService = (room: Room): Room => {
 	const users: User[] = room.users;
@@ -19,10 +20,13 @@ export const CheckBigBbangService = (room: Room): Room => {
 	if (!hasValidTarget) {
 		for (const u of users) {
 			if (u.character?.stateInfo?.state === CharacterStateType.BIG_BBANG_SHOOTER) {
-				u.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
-				u.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-				u.character.stateInfo.nextStateAt = '0';
-				u.character.stateInfo.stateTargetUserId = '0';
+				stateChangeService(
+					u,
+					CharacterStateType.NONE_CHARACTER_STATE,
+					CharacterStateType.NONE_CHARACTER_STATE,
+					0,
+					'0',
+				);
 			}
 		}
 	}

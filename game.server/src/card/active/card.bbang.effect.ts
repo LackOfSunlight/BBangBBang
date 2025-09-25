@@ -1,10 +1,10 @@
 // cardType = 1
-import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../utils/room.utils';
 import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
 // import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
+import roomManger from '../../managers/room.manger';
 
 const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 	// 정보값 가져오기
@@ -66,8 +66,7 @@ const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 		user.character.stateInfo.nextStateAt = '0'; //ms
 		user.character.stateInfo.stateTargetUserId = '0';
 
-		updateCharacterFromRoom(room.id, user.id, user.character);
-		const updatedRoom = getRoom(room.id);
+		const updatedRoom = roomManger.getRoom(room.id);
 		if (updatedRoom) CheckGuerrillaService(updatedRoom);
 		return true;
 	}

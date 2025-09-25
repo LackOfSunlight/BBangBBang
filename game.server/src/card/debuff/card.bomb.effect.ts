@@ -1,5 +1,4 @@
 // cardType = 22
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { cardManager } from '../../managers/card.manager';
 import { AnimationType, CardType, WarningType } from '../../generated/common/enums';
 //import { GamePacket } from '../../generated/gamePacket';
@@ -12,6 +11,7 @@ import { playAnimationHandler } from '../../handlers/play.animation.handler';
 import { checkAndEndGameIfNeeded } from '../../services/game.end.service';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
+import roomManger from '../../managers/room.manger';
 import { bombManager } from '../../services/bomb.service';
 
 /** 폭탄 디버프 부여 */

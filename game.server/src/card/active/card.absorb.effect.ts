@@ -5,7 +5,7 @@ import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 
-const cardAbsorbEffect = (user: User, room: Room, targetUser: User): boolean => {
+const cardAbsorbEffect = (room: Room, user: User, targetUser: User): boolean => {
 	// 유효성 검증
 	if (!user || !user.character || !targetUser || !targetUser.character) return false;
 

@@ -3,7 +3,6 @@ import { getUserByEmail, setTokenService } from '../../services/prisma.service';
 import { GlobalFailCode } from '../../generated/common/enums';
 import { GamePacket } from '../../generated/gamePacket';
 import { UserData } from '../../generated/common/types';
-import { GamePacketType } from '../../enums/gamePacketType';
 import checkUserPassword from '../../services/login/check.user.password';
 import { GameSocket } from '../../type/game.socket';
 import { addSocket } from '../../managers/socket.manger';

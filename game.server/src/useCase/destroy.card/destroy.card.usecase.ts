@@ -1,14 +1,14 @@
 import { GamePacket } from '../../generated/gamePacket';
 import { C2SDestroyCardRequest } from '../../generated/packet/game_actions';
 import { GameSocket } from '../../type/game.socket';
-import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { destroyResponseForm } from '../../converter/packet.form';
+import roomManger from '../../managers/room.manger';
 
 const destroyCardUseCase = async (
 	socket: GameSocket,
 	req: C2SDestroyCardRequest,
 ): Promise<GamePacket> => {
-	const user = getUserFromRoom(socket.roomId!, socket.userId!);
+	const user = roomManger.getUserFromRoom(socket.roomId!, socket.userId!);
 
 	if (user && user.character) {
 		for (const destroyCard of req.destroyCards) {
@@ -29,8 +29,6 @@ const destroyCardUseCase = async (
 			(sum, card) => sum + card.count,
 			0,
 		);
-
-		updateCharacterFromRoom(socket.roomId!, user.id, user.character);
 
 		return destroyResponseForm(user.character.handCards);
 	} else {

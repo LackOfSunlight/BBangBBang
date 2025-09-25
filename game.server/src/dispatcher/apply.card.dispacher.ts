@@ -1,4 +1,3 @@
-import { getUserFromRoom } from '../utils/room.utils';
 import cardAbsorbEffect from '../card/active/card.absorb.effect';
 import cardAutoRifleEffect from '../card/weapon/card.auto_rifle.effect';
 import cardAutoShieldEffect from '../card/equip/card.auto_shield.effect';

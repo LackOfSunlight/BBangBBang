@@ -1,5 +1,4 @@
 import { C2SPassDebuffRequest } from '../../generated/packet/game_actions';
-import { getRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { GlobalFailCode, CardType, WarningType } from '../../generated/common/enums';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { GamePacket } from '../../generated/gamePacket';
@@ -9,6 +8,7 @@ import { bombManager } from '../../card/debuff/card.bomb.effect';
 //import { createUserUpdateNotificationPacket } from '../use.card/use.card.usecase';
 import { userUpdateNotificationPacketForm } from '../../converter/packet.form';
 import { broadcastDataToRoom } from '../../sockets/notification';
+import roomManger from '../../managers/room.manger';
 
 const passDebuffUseCase = async (
 	socket: GameSocket,
@@ -22,7 +22,7 @@ const passDebuffUseCase = async (
 
 	try {
 		// 1. 방 존재 확인
-		const room = getRoom(roomId);
+		const room = roomManger.getRoom(roomId);
 	} catch (error) {
 		// 방을 찾을 수 없는 경우
 		return passDebuffResponseForm(false, GlobalFailCode.ROOM_NOT_FOUND);
@@ -30,7 +30,7 @@ const passDebuffUseCase = async (
 
 	try {
 		// 1. 방 존재 확인 (재시도)
-		const room = getRoom(roomId);
+		const room = roomManger.getRoom(roomId);
 
 		// 2. 요청자와 대상자가 같은 방에 있는지 확인
 		const fromUser = room.users.find((u) => u.id === userId);
@@ -65,8 +65,8 @@ const passDebuffUseCase = async (
 		);
 
 		// 6. 유저 정보 업데이트
-		updateCharacterFromRoom(roomId, fromUser.id, fromUser.character!);
-		updateCharacterFromRoom(roomId, toUser.id, toUser.character!);
+		// updateCharacterFromRoom(roomId, fromUser.id, fromUser.character!);
+		// updateCharacterFromRoom(roomId, toUser.id, toUser.character!);
 
 		const updateClient = userUpdateNotificationPacketForm(room.users);
 		broadcastDataToRoom(room.users, updateClient, GamePacketType.userUpdateNotification);

@@ -1,7 +1,7 @@
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
 import { CharacterStateType } from '../generated/common/enums';
-import { updateCharacterFromRoom } from '../utils/room.utils';
+import { stateChangeService } from './state.change.service';
 
 export const CheckGuerrillaService = (room: Room): Room => {
 	const users: User[] = room.users;
@@ -20,12 +20,13 @@ export const CheckGuerrillaService = (room: Room): Room => {
 	if (!hasValidTarget) {
 		for (const u of users) {
 			if (u.character?.stateInfo?.state === CharacterStateType.GUERRILLA_SHOOTER) {
-				u.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
-				u.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-				u.character.stateInfo.nextStateAt = '0';
-				u.character.stateInfo.stateTargetUserId = '0';
-
-				updateCharacterFromRoom(room.id, u.id, u.character);
+				stateChangeService(
+					u,
+					CharacterStateType.NONE_CHARACTER_STATE,
+					CharacterStateType.NONE_CHARACTER_STATE,
+					0,
+					'0',
+				);
 			}
 		}
 	}

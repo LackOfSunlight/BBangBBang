@@ -6,9 +6,9 @@ import { reactionUpdateUseCase } from '../useCase/reaction.update/reaction.updat
 import { sendData } from '../sockets/send.data';
 import { checkAndEndGameIfNeeded } from '../services/game.end.service';
 import { Room } from '../models/room.model';
-import { getRoom } from '../utils/room.utils';
 import { GlobalFailCode } from '../generated/common/enums';
 import { reactionResponsePacketForm } from '../converter/packet.form';
+import roomManger from '../managers/room.manger';
 
 const reactionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const { userId, roomId } = socket;
@@ -18,7 +18,7 @@ const reactionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket)
 		return;
 	}
 
-	const room: Room | null = getRoom(roomId);
+	const room: Room | null = roomManger.getRoom(roomId);
 	if (!room) {
 		is_invalid_request(socket, GlobalFailCode.ROOM_NOT_FOUND);
 		return;

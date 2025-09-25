@@ -8,7 +8,6 @@ import {
 	RoomStateType,
 } from '../../generated/common/enums.js';
 import { GamePacketType } from '../../enums/gamePacketType.js';
-import { getRoom, saveRoom } from '../../utils/room.utils.js';
 import { Room } from '../../models/room.model.js';
 import { CharacterPositionData, GameStateData } from '../../generated/common/types.js';
 import { broadcastDataToRoom } from '../../sockets/notification.js';
@@ -20,6 +19,7 @@ import {
 	gameStartNotificationPacketForm,
 	gameStartResponsePacketForm,
 } from '../../converter/packet.form.js';
+import roomManger from '../../managers/room.manger.js';
 
 export const gameStartUseCase = async (
 	socket: GameSocket,
@@ -33,7 +33,7 @@ export const gameStartUseCase = async (
 	}
 
 	try {
-		const room: Room | null = getRoom(socket.roomId);
+		const room: Room | null = roomManger.getRoom(socket.roomId);
 		if (!room) {
 			return gameStartResponsePacketForm({
 				success: false,
@@ -110,7 +110,6 @@ export const gameStartUseCase = async (
 
 		// 방 상태 변경 및 저장
 		room.state = RoomStateType.INGAME;
-		saveRoom(room);
 
 		// 게임 매니저를 통해 게임 시작 (타이머 등)
 		gameManager.startGame(room);

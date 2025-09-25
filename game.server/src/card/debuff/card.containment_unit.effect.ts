@@ -1,6 +1,6 @@
 // cardType = 21
-import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../utils/room.utils';
 import { CardType, CharacterStateType } from '../../generated/common/enums';
+import roomManger from '../../managers/room.manger';
 //import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
@@ -38,7 +38,7 @@ const cardContainmentUnitEffect = (room: Room, user: User, target: User): boolea
 
 // 효과 대상자 체크
 export const checkContainmentUnitTarget = (roomId: number) => {
-	const room = getRoom(roomId);
+	const room = roomManger.getRoom(roomId);
 	if (!room || !room.users) {
 		console.error(`[debuffCONTAINMENT_UNIT] 방을 찾을 수 없습니다: roomId=${roomId}`);
 		return room;
@@ -56,7 +56,7 @@ export const checkContainmentUnitTarget = (roomId: number) => {
 	}
 
 	// 업데이트된 방 정보 반환
-	return getRoom(roomId);
+	return roomManger.getRoom(roomId);
 };
 
 // 디버프 효과 처리 로직

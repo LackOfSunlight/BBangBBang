@@ -1,13 +1,14 @@
 import { GameSocket } from '../../type/game.socket';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { ReactionType, GlobalFailCode, CharacterStateType } from '../../generated/common/enums';
-import { getRoom, saveRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import { weaponDamageEffect } from '../../utils/weapon.util';
+import { weaponDamageEffect } from '../../init/weapon.Init';
 import { CheckBigBbangService } from '../../services/bigbbang.check.service';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
 import { broadcastDataToRoom } from '../../sockets/notification';
 import takeDamageService from '../../services/take.damage.service';
 import { userUpdateNotificationPacketForm } from '../../converter/packet.form';
+import roomManger from '../../managers/room.manger';
+import { stateChangeService } from '../../services/state.change.service';
 
 export const reactionUpdateUseCase = async (
 	socket: GameSocket,
@@ -20,7 +21,7 @@ export const reactionUpdateUseCase = async (
 		return { success: false, failcode: GlobalFailCode.ROOM_NOT_FOUND };
 	}
 
-	let room = getRoom(roomId);
+	let room = roomManger.getRoom(roomId);
 	if (!room) {
 		return { success: false, failcode: GlobalFailCode.ROOM_NOT_FOUND };
 	}
@@ -43,14 +44,22 @@ export const reactionUpdateUseCase = async (
 
 					// 4. 공통: 처리 후 상태 복구
 					if (user.character.stateInfo) {
-						user.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
-						user.character.stateInfo.nextStateAt = '0';
-						user.character.stateInfo.stateTargetUserId = '0';
+						stateChangeService(
+							user,
+							CharacterStateType.NONE_CHARACTER_STATE,
+							CharacterStateType.NONE_CHARACTER_STATE,
+							0,
+							'0',
+						);
 					}
 					if (shooter.character.stateInfo) {
-						shooter.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
-						shooter.character.stateInfo.nextStateAt = '0';
-						shooter.character.stateInfo.stateTargetUserId = '0';
+						stateChangeService(
+							user,
+							CharacterStateType.NONE_CHARACTER_STATE,
+							CharacterStateType.NONE_CHARACTER_STATE,
+							0,
+							'0',
+						);
 						shooter.character.bbangCount += 1;
 					}
 
@@ -62,9 +71,14 @@ export const reactionUpdateUseCase = async (
 					const shooter = room.users.find((u) => u.id === shooterId);
 					takeDamageService(room, user, shooter!, 1);
 					// user.character.hp -= 1;
-					user.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
-					user.character.stateInfo.nextStateAt = '0';
-					user.character.stateInfo.stateTargetUserId = '0';
+					stateChangeService(
+						user,
+						CharacterStateType.NONE_CHARACTER_STATE,
+						CharacterStateType.NONE_CHARACTER_STATE,
+						0,
+						'0',
+					);
+
 					room = await CheckBigBbangService(room);
 					break;
 				}
@@ -73,9 +87,13 @@ export const reactionUpdateUseCase = async (
 					const shooter = room.users.find((u) => u.id === shooterId);
 					takeDamageService(room, user, shooter!, 1);
 					// user.character.hp -= 1;
-					user.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
-					user.character.stateInfo.nextStateAt = '0';
-					user.character.stateInfo.stateTargetUserId = '0';
+					stateChangeService(
+						user,
+						CharacterStateType.NONE_CHARACTER_STATE,
+						CharacterStateType.NONE_CHARACTER_STATE,
+						0,
+						'0',
+					);
 					room = await CheckGuerrillaService(room);
 					break;
 				}
@@ -89,7 +107,6 @@ export const reactionUpdateUseCase = async (
 			}
 		}
 	}
-	saveRoom(room);
 
 	const userUpdateNotificationPacket = userUpdateNotificationPacketForm(room.users);
 	broadcastDataToRoom(
@@ -121,16 +138,5 @@ const handleDeathMatchFailure = async (room: any, user: any) => {
 		// 대상 상태 초기화
 		target.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
 		target.character.stateInfo.stateTargetUserId = '0';
-
-		// Redis 업데이트
-		try {
-			updateCharacterFromRoom(room.id, user.id, user.character);
-			updateCharacterFromRoom(room.id, target.id, target.character);
-			console.log(
-				`[현피] ${user.nickname} 패배! 체력: ${user.character.hp + 1} → ${user.character.hp}`,
-			);
-		} catch (error) {
-			console.error(`[현피] Redis 업데이트 실패:`, error);
-		}
 	}
 };
