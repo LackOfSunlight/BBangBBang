@@ -31,7 +31,7 @@ export function applyCardEffect(
 	room: Room,
 	CardType: number,
 	user: User,
-	targetUser: User | null,
+	targetUser: User,
 ): boolean {
 
 	// 유효성 검증 (119 카드 예외 처리)
