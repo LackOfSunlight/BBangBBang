@@ -1,7 +1,6 @@
 import { handleError } from '../handlers/handleError.js';
 import { removeSocket } from '../managers/socket.manger.js';
 import { GameSocket } from '../type/game.socket.js';
-import { removeTokenUserDB } from '../services/prisma.service.js';
 import { deleteRoom, getRoom, removeUserFromRoom, saveRoom } from '../utils/room.utils.js';
 import { checkAndEndGameIfNeeded } from '../utils/game.end.util.js';
 import { broadcastDataToRoom } from '../utils/notification.util.js';
@@ -15,9 +14,10 @@ const onEnd = (socket: GameSocket) => async () => {
 		console.log('클라이언트 연결이 종료되었습니다.');
 		removeSocket(socket);
 
-		if (socket.userId) {
-			await removeTokenUserDB(Number(socket.userId));
-		}
+		// TODO: 사용자 토큰 제거 로직 구현 필요
+		// if (socket.userId) {
+		// 	await removeTokenUserDB(Number(socket.userId));
+		// }
 
 		if (socket.roomId) {
 			const room = getRoom(Number(socket.roomId));

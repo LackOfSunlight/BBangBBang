@@ -1,7 +1,7 @@
 // server.ts
 import { createServer } from 'net';
 import onConnection from './sockets/on.connection.js';
-import { cleanupAllTokens } from './services/token.cleanup.service.js';
+import { authService } from './services/auth.service.js';
 
 const PORT = 3000;
 
@@ -10,8 +10,9 @@ const server = createServer(onConnection);
 // 서버 시작 시 토큰 정리
 const initializeServer = async () => {
 	try {
-		await cleanupAllTokens();
+		await authService.cleanupAllTokens();
 	} catch (error) {
+		console.error('[App] 서버 초기화 실패:', error);
 		process.exit(1);
 	}
 };

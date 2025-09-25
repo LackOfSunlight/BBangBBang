@@ -1,61 +1,87 @@
-// game.server/src/handlers/gamePacketHandler.ts
-import { Socket } from 'net';
+import { GameSocket } from '../type/game.socket';
 import { GamePacket } from '../generated/gamePacket';
-import { GamePacketType, RequestPacketType } from '../enums/gamePacketType';
-import registerHandler from '../handlers/register.handler';
+import { GamePacketType } from '../enums/gamePacketType';
+
+// 핸들러 임포트
+import useCardHandler from '../handlers/use.card.handler';
+import reactionHandler from '../handlers/reaction.handler';
 import loginHandler from '../handlers/login.handler';
+import registerHandler from '../handlers/register.handler';
 import createRoomHandler from '../handlers/create.room.handler';
 import getRoomListHandler from '../handlers/get.room.list.handler';
 import joinRoomHandler from '../handlers/join.room.handler';
+import joinRandomRoomHandler from '../handlers/join.random.room.handler';
 import leaveRoomHandler from '../handlers/leave.room.handler';
 import gamePrepareHandler from '../handlers/game.prepare.handler';
-import positionUpdateHandler from '../handlers/position.update.handler';
-import useCardHandler from '../handlers/use.card.handler';
-import passDebuffHandler from '../handlers/pass.debuff.handler';
 import gameStartHandler from '../handlers/game.start.handler';
-import fleaMarketPickHandler from '../handlers/fleamarket.pick.handler';
+import fleamarketPickHandler from '../handlers/fleamarket.pick.handler';
 import destroyCardHandler from '../handlers/destroy.card.handler';
 import cardSelectHandler from '../handlers/card.select.handler';
-import reactionUpdateHandler from '../handlers/reaction.update.handler';
-import joinRandomRoomHandler from '../handlers/join.random.room.handler';
+import passDebuffHandler from '../handlers/pass.debuff.handler';
+import positionUpdateHandler from '../handlers/position.update.handler';
 
-// Request Handlers
+/**
+ * 게임 패킷 디스패처입니다.
+ * 클라이언트로부터 받은 패킷을 타입에 따라 적절한 핸들러로 라우팅합니다.
+ * 
+ * 리팩토링된 구조에 따라:
+ * - 패킷 타입별 핸들러 매핑
+ * - 핸들러 호출 및 에러 처리
+ * - 일관된 패턴 적용
+ */
+const gamePacketDispatcher = (socket: GameSocket, gamePacket: GamePacket) => {
+  try {
+    // 패킷 타입별 핸들러 매핑
+    const handlers = {
+      // 카드 관련
+      [GamePacketType.useCardRequest]: useCardHandler,
+      [GamePacketType.reactionRequest]: reactionHandler,
+      [GamePacketType.fleaMarketPickRequest]: fleamarketPickHandler,
+      [GamePacketType.destroyCardRequest]: destroyCardHandler,
+      [GamePacketType.cardSelectRequest]: cardSelectHandler,
+      
+      // 인증 관련
+      [GamePacketType.loginRequest]: loginHandler,
+      [GamePacketType.registerRequest]: registerHandler,
+      
+      // 방 관련
+      [GamePacketType.createRoomRequest]: createRoomHandler,
+      [GamePacketType.getRoomListRequest]: getRoomListHandler,
+      [GamePacketType.joinRoomRequest]: joinRoomHandler,
+      [GamePacketType.joinRandomRoomRequest]: joinRandomRoomHandler,
+      [GamePacketType.leaveRoomRequest]: leaveRoomHandler,
+      
+      // 게임 관련
+      [GamePacketType.gamePrepareRequest]: gamePrepareHandler,
+      [GamePacketType.gameStartRequest]: gameStartHandler,
+      
+      // 기타
+      [GamePacketType.passDebuffRequest]: passDebuffHandler,
+      [GamePacketType.positionUpdateRequest]: positionUpdateHandler,
+    };
 
-const handlers: Record<RequestPacketType, (socket: Socket, gamePacket: GamePacket) => void> = {
-	// Requests
-	[GamePacketType.registerRequest]: registerHandler,
-	[GamePacketType.loginRequest]: loginHandler,
-	[GamePacketType.createRoomRequest]: createRoomHandler,
-	[GamePacketType.getRoomListRequest]: getRoomListHandler,
-	[GamePacketType.joinRoomRequest]: joinRoomHandler,
-	[GamePacketType.joinRandomRoomRequest]: joinRandomRoomHandler,
-	[GamePacketType.leaveRoomRequest]: leaveRoomHandler,
-	[GamePacketType.gamePrepareRequest]: gamePrepareHandler,
-	[GamePacketType.gameStartRequest]: gameStartHandler,
-	[GamePacketType.positionUpdateRequest]: positionUpdateHandler,
-	[GamePacketType.useCardRequest]: useCardHandler,
-	[GamePacketType.fleaMarketPickRequest]: fleaMarketPickHandler,
-	[GamePacketType.reactionRequest]: reactionUpdateHandler,
-	[GamePacketType.destroyCardRequest]: destroyCardHandler,
-	[GamePacketType.cardSelectRequest]: cardSelectHandler,
-	[GamePacketType.passDebuffRequest]: passDebuffHandler,
+    // 패킷 타입 확인
+    const packetType = gamePacket.payload.oneofKind;
+    if (!packetType) {
+      console.warn('[GamePacketDispatcher] 패킷 타입이 없습니다.');
+      return;
+    }
+
+    // 핸들러 찾기
+    const handler = handlers[packetType as keyof typeof handlers];
+    if (!handler) {
+      console.warn(`[GamePacketDispatcher] 지원하지 않는 패킷 타입: ${packetType}`);
+      return;
+    }
+
+    // 핸들러 실행
+    console.log(`[GamePacketDispatcher] 패킷 처리 시작: ${packetType}`);
+    handler(socket, gamePacket);
+    console.log(`[GamePacketDispatcher] 패킷 처리 완료: ${packetType}`);
+
+  } catch (error) {
+    console.error('[GamePacketDispatcher] 패킷 처리 중 오류:', error);
+  }
 };
 
-export function gamePacketDispatcher(socket: Socket, gamePacket: GamePacket) {
-	const { payload } = gamePacket;
-
-	if (!payload.oneofKind) {
-		console.warn('Received packet with no oneofKind payload.');
-		return;
-	}
-
-	const packetType = payload.oneofKind as GamePacketType;
-	const handler = handlers[packetType as RequestPacketType];
-
-	if (handler) {
-		// The handler function is called with the socket and the specific payload
-		handler(socket, gamePacket);
-	} else {
-		console.log(`Ignoring packet with no handler: ${packetType}`);
-	}
-}
+export default gamePacketDispatcher;
