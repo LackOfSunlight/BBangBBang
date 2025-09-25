@@ -38,7 +38,7 @@ const cardBombEffect = (room: Room, user: User, target: User): boolean => {
 	}
 	
 	// 카드 제거
-	cardManager.removeCard(user, room, CardType.BOMB);
+	//cardManager.removeCard(user, room, CardType.BOMB);
 	target.character.debuffs.push(CardType.BOMB);
 	
 	const explosionTime = Date.now() + 30000; 
@@ -46,7 +46,7 @@ const cardBombEffect = (room: Room, user: User, target: User): boolean => {
 	const warnExplosion = warnNotificationPacketForm(WarningType.BOMB_WANING, `${explosionTime}`);
  	broadcastDataToRoom(room.users, warnExplosion, GamePacketType.warningNotification);
 	// 인게임 제한시간 : 30초 / 테스트 제한시간 : 10초
-	bombManager.startBombTimer(room.id, target.id, explosionTime);
+	bombManager.startBombTimer(room, target, explosionTime);
 	
 	return true;
 };
@@ -56,13 +56,8 @@ const cardBombEffect = (room: Room, user: User, target: User): boolean => {
 
 
 /** 폭발 처리 */
-export const bombExplosion = (roomId:number, bombUserId: string ) => {
-	const room = getRoom(roomId);
-	if(!roomId){
+export const bombExplosion = (room:Room, userInExplode: User ) => {
 
-		return;
-	}
-	const userInExplode = getUserFromRoom(roomId, bombUserId);
 	if( !userInExplode || !userInExplode.character){
 		console.error(`[BOMB] 잘못된 유저 정보 입니다`);
 		return;
@@ -75,12 +70,12 @@ export const bombExplosion = (roomId:number, bombUserId: string ) => {
 	}
 
 	//animation 추후 추가 예정
-	playAnimationHandler(room.users, bombUserId, AnimationType.BOMB_ANIMATION);
+	playAnimationHandler(room.users,  userInExplode.id, AnimationType.BOMB_ANIMATION);
 	//await new Promise((resolve) => setTimeout(resolve, 3000)); // 3초 대기
 
 	userInExplode.character.hp -= 2;
 	userInExplode.character.debuffs.splice(bombCardIndex, 1);
-	checkAndEndGameIfNeeded(roomId);
+	checkAndEndGameIfNeeded(room.id);
 
 	const userUpdateNotificationPacket =  userUpdateNotificationPacketForm(room.users);
     broadcastDataToRoom(room.users, userUpdateNotificationPacket, GamePacketType.userUpdateNotification);

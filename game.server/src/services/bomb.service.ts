@@ -4,6 +4,8 @@ import { broadcastDataToRoom } from "../sockets/notification";
 import { WarningType } from "../generated/common/enums";
 import { GamePacketType } from "../enums/gamePacketType";
 import { bombExplosion } from "../card/debuff/card.bomb.effect";
+import { Room } from "../models/room.model";
+import { User } from "../models/user.model";
 
 /**  폭탄 매니저*/
 class BombManager {
@@ -24,10 +26,8 @@ class BombManager {
     return BombManager.instance;
   }
 
-  public startBombTimer(roomId: number, userId: string, explosionAt: number) {
-    const room = getRoom(roomId);
-    const bombUser = getUserFromRoom(roomId, userId);
-    const key = `${roomId}:${userId}`;
+  public startBombTimer(room: Room, bombUser: User, explosionAt: number) {
+    const key = `${room.id}:${bombUser.id}`;
     // 기존 타이머 제거
     if (this.bombTimers.has(key)) {
       clearInterval(this.bombTimers.get(key)!.timer);
@@ -46,7 +46,7 @@ class BombManager {
             clearInterval(timer);
             this.bombTimers.delete(key);
             // 폭발 로직 처리
-            bombExplosion(roomId, userId);
+            bombExplosion(room, bombUser);
             
         }
         // else if(remain === 29){
