@@ -34,7 +34,6 @@ const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 		return false;
 	}
 
-
 	if (user.character.stateInfo.state === CharacterStateType.NONE_CHARACTER_STATE) {
 		// 상태 설정
 		user.character.stateInfo.state = CharacterStateType.BBANG_SHOOTER; // 빵야 카드 사용자는 BBANG_SHOOTER 상태가 되고

@@ -16,7 +16,6 @@ const cardLaserPointerEffect = (room: Room, user: User): boolean => {
 
 	if (!user.character.equips.includes(CardType.LASER_POINTER)) {
 		user.character.equips.push(CardType.LASER_POINTER);
-
 	} else {
 		// 중복 착용 중일 경우
 		return false;

@@ -92,7 +92,7 @@ export const reactionUpdateUseCase = async (
 						0,
 						'0',
 					);
-					room = await CheckGuerrillaService(room);
+					room = CheckGuerrillaService(room);
 					break;
 				}
 				case CharacterStateType.DEATH_MATCH_TURN_STATE:

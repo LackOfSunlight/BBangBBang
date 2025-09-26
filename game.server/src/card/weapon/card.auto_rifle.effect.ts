@@ -16,7 +16,6 @@ const cardAutoRifleEffect = (room: Room, user: User): boolean => {
 
 	if (user.character.weapon !== CardType.AUTO_RIFLE) {
 		user.character.weapon = CardType.AUTO_RIFLE;
-		
 	} else {
 		return false;
 	}

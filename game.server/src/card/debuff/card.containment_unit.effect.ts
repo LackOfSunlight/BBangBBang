@@ -26,7 +26,6 @@ const cardContainmentUnitEffect = (room: Room, user: User, target: User): boolea
 		return false;
 	}
 
-
 	target.character.debuffs.push(CardType.CONTAINMENT_UNIT);
 
 	return true;
@@ -63,10 +62,8 @@ export const debuffContainmentUnitEffect = (room: Room, user: User) => {
 	// 실제확률 25; // 테스트용 99;
 
 	if (user.character.debuffs.includes(CardType.CONTAINMENT_UNIT)) {
-
 		switch (user.character.stateInfo.state) {
 			case CharacterStateType.NONE_CHARACTER_STATE: // 첫날은 탈출 불가
-
 				user.character.stateInfo.state = CharacterStateType.CONTAINED;
 
 				break;
@@ -90,7 +87,6 @@ export const debuffContainmentUnitEffect = (room: Room, user: User) => {
 				}
 				break;
 		}
-
 	}
 };
 export default cardContainmentUnitEffect;
