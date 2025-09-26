@@ -1,3 +1,5 @@
+// src/effects/stat.effects.ts
+
 import { User } from '../../models/user.model';
 import getMaxHp from '../../init/character.Init';
 

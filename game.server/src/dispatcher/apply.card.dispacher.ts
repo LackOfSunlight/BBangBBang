@@ -21,7 +21,6 @@ import cardSniperGunEffect from '../card/weapon/card.sniper_gun.effect';
 import cardStealthSuitEffect from '../card/equip/card.stealth_suit.effect';
 import cardVaccineEffect from '../card/active/card.vaccine.effect';
 import cardWinLotteryEffect from '../card/active/card.win_lottery.effect';
-import { cardManager } from '../managers/card.manager';
 import { User } from '../models/user.model';
 import { Room } from '../models/room.model';
 
@@ -33,7 +32,6 @@ export function applyCardEffect(
 	targetUser: User,
 ): boolean {
 
-	cardManager.removeCard(user, room, CardType);
 	// 소지한 카드 제거 후 효과 적용
 	switch (CardType) {
 		case 1: //'BBANG':

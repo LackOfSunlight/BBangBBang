@@ -11,11 +11,12 @@ export const applyCardUseHandler = (
 
 	const room = roomManager.getRoom(roomId);
 	const user = roomManager.getUserFromRoom(roomId, userId);
-	if (targetId) {
+	const nonTarget = '0'
+	if (targetId != '0') {
 		target = roomManager.getUserFromRoom(roomId, targetId);
 	} else {
 		target = {
-			id: '0',
+			id: nonTarget,
 			nickname: 'none',
 		};
 	}

@@ -12,14 +12,11 @@ const cardCall119Effect = (room: Room, user: User, targetUser: User): boolean =>
 	if (targetUser.id !== '0') {
 		return applyHeal(user, HEAL_AMOUNT);
 	}
-	// '모두에게 사용'
 	else {
-		// 자신을 제외한 모든 유저를 순회하며 회복 시도
-		const result = room.users
-			.filter((u) => u.id !== user.id)
-			.map((otherUser) => applyHeal(otherUser, HEAL_AMOUNT));
+		const usersToHeal = room.users.filter((u) => u.id !== user.id);
+		const result = usersToHeal.map((otherUser) => applyHeal(otherUser, HEAL_AMOUNT));
 
-		return result.some((success) => success === true);
+		return true;
 	}
 };
 
