@@ -9,23 +9,24 @@ import { Room } from '../models/room.model';
 import { GlobalFailCode } from '../generated/common/enums';
 import { reactionResponsePacketForm } from '../converter/packet.form';
 import roomManger from '../managers/room.manger';
+import { invalidRequest } from '../utils/invalid.request';
 
 const reactionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	if (!socket.roomId) {
 		// DTO가 유효하지 않으면 즉시 에러 응답
-		invalidRequest(socket, GlobalFailCode.INVALID_REQUEST);
+		invalidRequest(socket, GlobalFailCode.INVALID_REQUEST, GamePacketType.reactionResponse);
 		return;
 	}
 
 	const room: Room | null = roomManger.getRoom(socket.roomId);
 	if (!room) {
-		invalidRequest(socket, GlobalFailCode.ROOM_NOT_FOUND);
+		invalidRequest(socket, GlobalFailCode.ROOM_NOT_FOUND, GamePacketType.reactionResponse);
 		return;
 	}
 
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.reactionRequest);
 	if (!payload) {
-		invalidRequest(socket, GlobalFailCode.INVALID_REQUEST);
+		invalidRequest(socket, GlobalFailCode.INVALID_REQUEST, GamePacketType.reactionResponse);
 		return;
 	}
 
@@ -40,12 +41,6 @@ const reactionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket)
 
 	// 게임 종료 조건 검사
 	await checkAndEndGameIfNeeded(room.id);
-};
-
-/** 오류코드:잘못된요청 을 일괄 처리하기 위한 함수 */
-const invalidRequest = (socket: GameSocket, failcode: GlobalFailCode) => {
-	const wrongDTO = reactionResponsePacketForm(false, failcode);
-	sendData(socket, wrongDTO, GamePacketType.useCardResponse);
 };
 
 export default reactionUpdateHandler;
