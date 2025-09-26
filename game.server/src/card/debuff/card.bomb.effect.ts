@@ -1,9 +1,6 @@
 // cardType = 22
-import { cardManager } from '../../managers/card.manager';
 import { AnimationType, CardType, WarningType } from '../../generated/common/enums';
-//import { GamePacket } from '../../generated/gamePacket';
 import { GamePacketType } from '../../enums/gamePacketType';
-//import { createUserUpdateNotificationPacket } from '../../useCase/use.card/use.card.usecase';
 import { warnNotificationPacketForm } from '../../converter/packet.form';
 import { userUpdateNotificationPacketForm } from '../../converter/packet.form';
 import { broadcastDataToRoom } from '../../sockets/notification';
@@ -11,7 +8,6 @@ import { playAnimationHandler } from '../../handlers/play.animation.handler';
 import { checkAndEndGameIfNeeded } from '../../services/game.end.service';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-import roomManger from '../../managers/room.manger';
 import { bombManager } from '../../services/bomb.service';
 
 /** 폭탄 디버프 부여 */
@@ -36,8 +32,6 @@ const cardBombEffect = (room: Room, user: User, target: User): boolean => {
 		return false;
 	}
 
-	// 카드 제거
-	//cardManager.removeCard(user, room, CardType.BOMB);
 	target.character.debuffs.push(CardType.BOMB);
 
 	const explosionTime = Date.now() + 30000;
@@ -67,7 +61,6 @@ export const bombExplosion = (room: Room, userInExplode: User) => {
 
 	//animation 추후 추가 예정
 	playAnimationHandler(room.users, userInExplode.id, AnimationType.BOMB_ANIMATION);
-	//await new Promise((resolve) => setTimeout(resolve, 3000)); // 3초 대기
 
 	userInExplode.character.hp -= 2;
 	userInExplode.character.debuffs.splice(bombCardIndex, 1);

@@ -1,5 +1,4 @@
 // cardType = 11
-//import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { CardType } from '../../generated/common/enums.js';
 import { cardManager } from '../../managers/card.manager.js';
 import { User } from '../../models/user.model';
@@ -15,9 +14,6 @@ const cardMaturedSavingsEffect = (room: Room, user: User): boolean => {
 		console.error('[MATURED_SAVINGS]방이 존재하지 않습니다.');
 		return false;
 	}
-
-	// 카드 제거 -> 상위 모듈에서 처리
-	//cardManager.removeCard(user, room, CardType.MATURED_SAVINGS)
 
 	// 뽑을 카드 매수
 	const numberOfDraw = 2;
@@ -47,7 +43,6 @@ const cardMaturedSavingsEffect = (room: Room, user: User): boolean => {
 	});
 
 	// handCardsCount 업데이트
-	// user.character!.handCardsCount += numberOfDraw;
 	user.character.handCardsCount = user.character!.handCards.reduce(
 		(sum, card) => sum + card.count,
 		0,

@@ -1,8 +1,5 @@
 // cardType = 16
-
 import { CardType } from '../../generated/common/enums';
-//import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-//import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 
@@ -19,7 +16,7 @@ const cardAutoRifleEffect = (room: Room, user: User): boolean => {
 
 	if (user.character.weapon !== CardType.AUTO_RIFLE) {
 		user.character.weapon = CardType.AUTO_RIFLE;
-		// cardManager.removeCard(user, room, CardType.AUTO_RIFLE);
+		
 	} else {
 		return false;
 	}
