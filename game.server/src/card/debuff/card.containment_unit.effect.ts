@@ -107,8 +107,6 @@ export const debuffContainmentUnitEffect = (room: Room, user: User) => {
 					);
 				}
 				break;
-			default:
-				break;
 		}
 
 		// console.log(
