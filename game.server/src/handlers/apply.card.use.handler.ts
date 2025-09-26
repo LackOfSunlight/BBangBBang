@@ -7,18 +7,16 @@ export const applyCardUseHandler = (
 	userId: string,
 	targetId: string,
 ): { room: Room; user: User; target: User } => {
-	let target: User;
-
 	const room = roomManger.getRoom(roomId);
 	const user = roomManger.getUserFromRoom(roomId, userId);
 	if (targetId != '0') {
-		target = roomManger.getUserFromRoom(roomId, targetId);
+		const target = roomManger.getUserFromRoom(roomId, targetId);
+		return { room, user, target };
 	} else {
-		target = {
+		const target = {
 			id: '0',
 			nickname: 'none',
 		};
+		return { room, user, target };
 	}
-
-	return { room, user, target };
 };

@@ -35,7 +35,6 @@ const cardGuerrillaEffect = (room: Room, shooter: User, targetUser: User): boole
 		}
 
 		if (
-			user.character &&
 			user.character.hp > 0 &&
 			user.character.stateInfo.state != CharacterStateType.CONTAINED
 		) {

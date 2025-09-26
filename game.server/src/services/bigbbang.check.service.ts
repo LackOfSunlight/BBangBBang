@@ -20,13 +20,7 @@ export const CheckBigBbangService = (room: Room): Room => {
 	if (!hasValidTarget) {
 		for (const u of users) {
 			if (u.character?.stateInfo?.state === CharacterStateType.BIG_BBANG_SHOOTER) {
-				stateChangeService(
-					u,
-					CharacterStateType.NONE_CHARACTER_STATE,
-					CharacterStateType.NONE_CHARACTER_STATE,
-					0,
-					'0',
-				);
+				stateChangeService(u);
 			}
 		}
 	}

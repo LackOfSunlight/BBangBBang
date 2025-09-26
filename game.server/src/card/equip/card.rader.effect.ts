@@ -8,12 +8,10 @@ const cardRaderEffect = (room: Room, user: User): boolean => {
 	// 유효성 검증
 	if (!user || !user.character) return false;
 
-	if (!user.character.equips.includes(CardType.RADAR)) {
-		user.character.equips.push(CardType.RADAR);
-		cardManager.removeCard(user, room, CardType.RADAR);
-	} else {
-		return false;
-	}
+	if (user.character.equips.includes(CardType.RADAR)) return false;
+
+	user.character.equips.push(CardType.RADAR);
+	cardManager.removeCard(user, room, CardType.RADAR);
 
 	return true;
 };

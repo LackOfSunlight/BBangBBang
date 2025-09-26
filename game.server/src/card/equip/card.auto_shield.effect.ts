@@ -16,14 +16,10 @@ const cardAutoShieldEffect = (room: Room, user: User): boolean => {
 		return false;
 	}
 
-	if (!user.character.equips.includes(CardType.AUTO_SHIELD)) {
-		// 자동 방패 장착
-		user.character.equips.push(CardType.AUTO_SHIELD);
-		// 조건 만족 시 카드 제거
-		cardManager.removeCard(user, room, CardType.AUTO_SHIELD);
-	} else {
-		return false;
-	}
+	// 자동 방패 장착
+	user.character.equips.push(CardType.AUTO_SHIELD);
+	// 조건 만족 시 카드 제거
+	cardManager.removeCard(user, room, CardType.AUTO_SHIELD);
 
 	// 정보 업데이트
 	console.log(`[자동 방패] ${user.nickname}님이 자동 방패를 장착했습니다.`);

@@ -8,9 +8,11 @@ const destroyCardUseCase = async (
 	socket: GameSocket,
 	req: C2SDestroyCardRequest,
 ): Promise<GamePacket> => {
-	const user = roomManger.getUserFromRoom(socket.roomId!, socket.userId!);
+	try {
+		const user = roomManger.getUserFromRoom(socket.roomId!, socket.userId!);
 
-	if (user && user.character) {
+		if (!user || !user.character) return destroyResponseForm([]);
+
 		for (const destroyCard of req.destroyCards) {
 			const idx = user.character.handCards.findIndex((c) => c.type === destroyCard.type);
 
@@ -31,7 +33,9 @@ const destroyCardUseCase = async (
 		);
 
 		return destroyResponseForm(user.character.handCards);
-	} else {
+
+	} catch (error) {
+		
 		return destroyResponseForm([]);
 	}
 };
