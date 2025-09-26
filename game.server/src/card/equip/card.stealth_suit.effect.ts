@@ -5,9 +5,7 @@ import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 
 const cardStealthSuitEffect = (room: Room, user: User): boolean => {
-	// 유효성 검증
 	if (!user || !user.character) {
-		console.warn(`[스텔스 장치] 유저의 캐릭터 정보가 없습니다: ${user.id}`);
 		return false;
 	}
 
