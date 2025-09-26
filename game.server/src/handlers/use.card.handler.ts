@@ -11,7 +11,7 @@ import { useCardUseCase } from '../useCase/use.card/use.card.usecase';
 import { broadcastDataToRoom } from '../sockets/notification';
 import { sendData } from '../sockets/send.data';
 import { getGamePacketType } from '../converter/type.form';
-import roomManger from '../managers/room.manger';
+import roomManger from '../managers/room.manager';
 import { invalidRequest } from '../utils/invalid.request';
 
 const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {

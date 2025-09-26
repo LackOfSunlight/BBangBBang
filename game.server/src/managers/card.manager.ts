@@ -120,6 +120,38 @@ class CardManager {
 			0,
 		);
 	}
+
+	public trashCards(room: Room, user: User): User {
+		if (!user || !user.character) return user;
+
+		const excess = user.character.handCardsCount - user.character.hp;
+		let toRemove = excess;
+
+		const removedCards: { type: CardType; count: number }[] = [];
+
+		for (let i = 0; i < user.character.handCards.length && toRemove > 0; i++) {
+			const card = user.character.handCards[i];
+
+			if (card.count <= toRemove) {
+				removedCards.push({ type: card.type, count: card.count });
+				toRemove -= card.count;
+				card.count = 0;
+			} else {
+				removedCards.push({ type: card.type, count: toRemove });
+				card.count -= toRemove;
+				toRemove = 0;
+			}
+		}
+
+		user.character.handCards = user.character.handCards.filter((c) => c.count > 0);
+		removedCards.forEach((c) => {
+			for (let i = 0; i < c.count; i++) {
+				cardManager.repeatDeck(room.id, [c.type]);
+			}
+		});
+
+		return user;
+	}
 }
 
 export const cardManager = CardManager.getInstance();

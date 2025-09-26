@@ -6,12 +6,12 @@ import { User } from '../../models/user.model.js';
 import { stateChangeService } from '../../services/state.change.service.js';
 
 const cardGuerrillaEffect = (room: Room, shooter: User, targetUser: User): boolean => {
-	const nowTime = Date.now();
 
+	//방어 코드
 	if (!room || !shooter || !targetUser) return false;
 
 	const isBlockedStateUsers = room.users.some(
-		(s) => s.character && s.character.stateInfo?.state !== CharacterStateType.NONE_CHARACTER_STATE, // NONE이 아닌데
+		(s) => s.character && s.character.stateInfo?.state !== CharacterStateType.NONE_CHARACTER_STATE,
 	);
 
 	if (isBlockedStateUsers) {
@@ -29,14 +29,12 @@ const cardGuerrillaEffect = (room: Room, shooter: User, targetUser: User): boole
 				CharacterStateType.GUERRILLA_SHOOTER,
 				CharacterStateType.NONE_CHARACTER_STATE,
 				5,
-				targetUser.id,
 			);
 
 			continue;
 		}
 
 		if (
-			user.character &&
 			user.character.hp > 0 &&
 			user.character.stateInfo.state != CharacterStateType.CONTAINED
 		) {
@@ -45,7 +43,7 @@ const cardGuerrillaEffect = (room: Room, shooter: User, targetUser: User): boole
 				CharacterStateType.GUERRILLA_TARGET,
 				CharacterStateType.NONE_CHARACTER_STATE,
 				5,
-				shooter.id,
+				shooter.id
 			);
 		}
 	}

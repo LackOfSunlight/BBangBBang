@@ -7,5 +7,4 @@ export function getGamePacketType<T extends GamePacket['payload']['oneofKind']>(
 	if (gamePacket.payload.oneofKind === type) {
 		return gamePacket.payload as Extract<GamePacket['payload'], { oneofKind: T }>;
 	}
-	return undefined;
 }

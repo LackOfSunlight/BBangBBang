@@ -7,7 +7,7 @@ import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
 import { broadcastDataToRoom } from '../../sockets/notification';
 import takeDamageService from '../../services/take.damage.service';
 import { userUpdateNotificationPacketForm } from '../../converter/packet.form';
-import roomManger from '../../managers/room.manger';
+import roomManger from '../../managers/room.manager';
 import { stateChangeService } from '../../services/state.change.service';
 
 export const reactionUpdateUseCase = async (
@@ -54,7 +54,7 @@ export const reactionUpdateUseCase = async (
 					}
 					if (shooter.character.stateInfo) {
 						stateChangeService(
-							user,
+							shooter,
 							CharacterStateType.NONE_CHARACTER_STATE,
 							CharacterStateType.NONE_CHARACTER_STATE,
 							0,

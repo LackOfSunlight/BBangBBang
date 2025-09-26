@@ -8,8 +8,9 @@ import { checkAndEndGameIfNeeded } from '../services/game.end.service';
 import { Room } from '../models/room.model';
 import { GlobalFailCode } from '../generated/common/enums';
 import { reactionResponsePacketForm } from '../converter/packet.form';
-import roomManger from '../managers/room.manger';
+import roomManger from '../managers/room.manager';
 import { invalidRequest } from '../utils/invalid.request';
+
 
 const reactionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	if (!socket.roomId) {

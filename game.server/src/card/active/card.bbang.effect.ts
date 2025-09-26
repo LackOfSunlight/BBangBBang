@@ -3,7 +3,7 @@ import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-import roomManger from '../../managers/room.manger';
+import roomManger from '../../managers/room.manager';
 
 const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 	// 정보값 가져오기

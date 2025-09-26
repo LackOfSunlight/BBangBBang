@@ -14,7 +14,7 @@ import {
 } from '../../converter/packet.form';
 import { GamePacket } from '../../generated/gamePacket';
 import { cardManager } from '../../managers/card.manager';
-import roomManger from '../../managers/room.manger';
+import roomManger from '../../managers/room.manager';
 
 const DEFAULT_TARGET_USER_ID = '0';
 

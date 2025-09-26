@@ -1,5 +1,5 @@
 import { handleError } from '../handlers/handleError.js';
-import { removeSocket } from '../managers/socket.manger.js';
+import socketManger from '../managers/socket.manger.js';
 import { GameSocket } from '../type/game.socket.js';
 import { removeTokenUserDB } from '../services/prisma.service.js';
 import { checkAndEndGameIfNeeded } from '../services/game.end.service.js';
@@ -7,12 +7,12 @@ import { broadcastDataToRoom } from './notification.js';
 import { GamePacketType } from '../enums/gamePacketType.js';
 import { RoomStateType } from '../generated/common/enums.js';
 import { userUpdateNotificationPacketForm } from '../converter/packet.form.js';
-import roomManger from '../managers/room.manger.js';
+import roomManger from '../managers/room.manager.js';
 
 const onEnd = (socket: GameSocket) => async () => {
 	try {
 		console.log('클라이언트 연결이 종료되었습니다.');
-		removeSocket(socket);
+		socketManger.removeSocket(socket);
 
 		if (socket.userId) {
 			await removeTokenUserDB(Number(socket.userId));
