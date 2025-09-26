@@ -18,19 +18,19 @@ const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const { userId, roomId } = socket;
 	if (!userId || !roomId) {
 		// DTO가 유효하지 않으면 즉시 에러 응답
-		InvalidRequest(socket, GlobalFailCode.INVALID_REQUEST);
+		invalidRequest(socket, GlobalFailCode.INVALID_REQUEST);
 		return;
 	}
 
 	const room: Room | null = roomManger.getRoom(roomId);
 	if (!room) {
-		InvalidRequest(socket, GlobalFailCode.ROOM_NOT_FOUND);
+		invalidRequest(socket, GlobalFailCode.ROOM_NOT_FOUND);
 		return;
 	}
 
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.useCardRequest);
 	if (!payload) {
-		InvalidRequest(socket, GlobalFailCode.INVALID_REQUEST);
+		invalidRequest(socket, GlobalFailCode.INVALID_REQUEST);
 		return;
 	}
 
@@ -41,7 +41,7 @@ const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	// 카드 타입 검증
 	if (req.cardType === CardType.NONE) {
 		console.warn(`[useCardRequestHandler] 잘못된 카드 타입 요청: NONE`);
-		InvalidRequest(socket, GlobalFailCode.INVALID_REQUEST);
+		invalidRequest(socket, GlobalFailCode.INVALID_REQUEST);
 		return;
 	}
 
@@ -63,7 +63,7 @@ const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 };
 
 /** 오류코드:잘못된요청을 일괄 처리하기 위한 함수 */
-const InvalidRequest = (socket: GameSocket, failcode: GlobalFailCode) => {
+const invalidRequest = (socket: GameSocket, failcode: GlobalFailCode) => {
 	const wrongDTO = useCardResponsePacketForm(false, failcode);
 	sendData(socket, wrongDTO, GamePacketType.useCardResponse);
 };
