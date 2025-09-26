@@ -1,7 +1,7 @@
 // cardType = 21
 import { CardType, CharacterStateType } from '../../generated/common/enums';
 import roomManger from '../../managers/room.manager';
-//import { cardManager } from '../../managers/card.manager';
+import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 
@@ -27,6 +27,7 @@ const cardContainmentUnitEffect = (room: Room, user: User, target: User): boolea
 		return false;
 	}
 
+	cardManager.removeCard(user, room, CardType.CONTAINMENT_UNIT);
 	target.character.debuffs.push(CardType.CONTAINMENT_UNIT);
 
 	return true;

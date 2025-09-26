@@ -4,6 +4,7 @@ import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import roomManger from '../../managers/room.manager';
+import { cardManager } from '../../managers/card.manager';
 
 const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 	// 정보값 가져오기
@@ -34,6 +35,7 @@ const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 		return false;
 	}
 
+	cardManager.removeCard(user, room, CardType.BBANG);
 	if (user.character.stateInfo.state === CharacterStateType.NONE_CHARACTER_STATE) {
 		// 상태 설정
 		user.character.stateInfo.state = CharacterStateType.BBANG_SHOOTER; // 빵야 카드 사용자는 BBANG_SHOOTER 상태가 되고
