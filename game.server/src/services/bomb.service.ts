@@ -47,11 +47,6 @@ class BombManager {
 				// 폭발 로직 처리
 				bombExplosion(room, bombUser);
 			}
-			// else if(remain === 29){
-			// 	// 경고 패킷 활성화
-			// 	const warnExplosion = warnNotificationPacketForm(WarningType.BOMB_WANING, `${remain}`);
-			// 	broadcastDataToRoom(room.users, warnExplosion, GamePacketType.warningNotification);
-			// }
 		}, 1000);
 
 		this.bombTimers.set(key, { timer, explosionAt });

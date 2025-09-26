@@ -70,7 +70,6 @@ export const reactionUpdateUseCase = async (
 					const shooterId = user.character.stateInfo.stateTargetUserId;
 					const shooter = room.users.find((u) => u.id === shooterId);
 					takeDamageService(room, user, shooter!, 1);
-					// user.character.hp -= 1;
 					stateChangeService(
 						user,
 						CharacterStateType.NONE_CHARACTER_STATE,
@@ -79,14 +78,13 @@ export const reactionUpdateUseCase = async (
 						'0',
 					);
 
-					room = await CheckBigBbangService(room);
+					room = CheckBigBbangService(room);
 					break;
 				}
 				case CharacterStateType.GUERRILLA_TARGET: {
 					const shooterId = user.character.stateInfo.stateTargetUserId;
 					const shooter = room.users.find((u) => u.id === shooterId);
 					takeDamageService(room, user, shooter!, 1);
-					// user.character.hp -= 1;
 					stateChangeService(
 						user,
 						CharacterStateType.NONE_CHARACTER_STATE,
@@ -94,7 +92,7 @@ export const reactionUpdateUseCase = async (
 						0,
 						'0',
 					);
-					room = await CheckGuerrillaService(room);
+					room = CheckGuerrillaService(room);
 					break;
 				}
 				case CharacterStateType.DEATH_MATCH_TURN_STATE:
@@ -108,6 +106,8 @@ export const reactionUpdateUseCase = async (
 		}
 	}
 
+
+	
 	const userUpdateNotificationPacket = userUpdateNotificationPacketForm(room.users);
 	broadcastDataToRoom(
 		room.users,

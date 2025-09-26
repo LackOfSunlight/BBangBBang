@@ -1,7 +1,6 @@
 // cardType = 1
 import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
-// import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import roomManger from '../../managers/room.manger';
@@ -34,9 +33,6 @@ const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 		console.error('[BBANG]타킷 유저의 상태가 감옥 상태입니다.');
 		return false;
 	}
-
-	// 카드 제거 -> 상위 모듈에서 처리
-	//cardManager.removeCard(user, room, CardType.BBANG);
 
 	if (user.character.stateInfo.state === CharacterStateType.NONE_CHARACTER_STATE) {
 		// 상태 설정
@@ -71,17 +67,6 @@ const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 		return true;
 	}
 	return true;
-
-	// 수정 정보 갱신
-	// try {
-	// 	updateCharacterFromRoom(roomId, userId, user.character);
-	// 	updateCharacterFromRoom(roomId, targetUserId, target.character);
-	// 	return true;
-	// 	//console.log('[BBANG]로그 저장에 성공하였습니다');
-	// } catch (error) {
-	// 	console.error(`[BBANG]로그 저장에 실패하였습니다:[${error}]`);
-	// 	return false;
-	// }
 };
 
 export default cardBbangEffect;

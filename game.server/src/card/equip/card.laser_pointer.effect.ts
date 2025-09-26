@@ -1,7 +1,5 @@
 // cardType = 17
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { CardType } from '../../generated/common/enums';
-import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 
@@ -18,9 +16,6 @@ const cardLaserPointerEffect = (room: Room, user: User): boolean => {
 
 	if (!user.character.equips.includes(CardType.LASER_POINTER)) {
 		user.character.equips.push(CardType.LASER_POINTER);
-
-		// 카드 제거
-		//cardManager.removeCard(user, room, CardType.LASER_POINTER);
 	} else {
 		// 중복 착용 중일 경우
 		return false;

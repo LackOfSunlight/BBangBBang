@@ -5,7 +5,6 @@ import { GamePacket } from '../../generated/gamePacket';
 import { GameSocket } from '../../type/game.socket';
 import { passDebuffResponseForm, warnNotificationPacketForm } from '../../converter/packet.form';
 import { bombManager } from '../../services/bomb.service';
-//import { createUserUpdateNotificationPacket } from '../use.card/use.card.usecase';
 import { userUpdateNotificationPacketForm } from '../../converter/packet.form';
 import { broadcastDataToRoom } from '../../sockets/notification';
 import roomManger from '../../managers/room.manger';
@@ -63,10 +62,6 @@ const passDebuffUseCase = async (
 		console.log(
 			`[BOMB] 폭탄이 ${fromUser.nickname} → ${toUser.nickname} 에게 전달됨 (남은 시간 ${remainTime}ms)`,
 		);
-
-		// 6. 유저 정보 업데이트
-		// updateCharacterFromRoom(roomId, fromUser.id, fromUser.character!);
-		// updateCharacterFromRoom(roomId, toUser.id, toUser.character!);
 
 		const updateClient = userUpdateNotificationPacketForm(room.users);
 		broadcastDataToRoom(room.users, updateClient, GamePacketType.userUpdateNotification);

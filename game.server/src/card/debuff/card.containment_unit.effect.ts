@@ -1,7 +1,6 @@
 // cardType = 21
 import { CardType, CharacterStateType } from '../../generated/common/enums';
 import roomManger from '../../managers/room.manger';
-//import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 
@@ -27,11 +26,7 @@ const cardContainmentUnitEffect = (room: Room, user: User, target: User): boolea
 		return false;
 	}
 
-	// 카드 제거 -> 상위 모듈에서 처리
-	//cardManager.removeCard(user, room, CardType.CONTAINMENT_UNIT);
-
 	target.character.debuffs.push(CardType.CONTAINMENT_UNIT);
-	//console.log(`유저 ${targetUserId}가 감금장치 카드에 맞았습니다.\n다음 차례부터 감금장치에 영향을 받습니다.`);
 
 	return true;
 };
@@ -49,8 +44,6 @@ export const checkContainmentUnitTarget = (roomId: number) => {
 		(user) => user.character && user.character.debuffs.includes(CardType.CONTAINMENT_UNIT),
 	);
 
-	// console.log(`[debuffCONTAINMENT_UNIT] 디버프를 가진 유저 수: ${usersWithDebuff.length}`);
-
 	for (const user of usersWithDebuff) {
 		debuffContainmentUnitEffect(room, user);
 	}
@@ -64,27 +57,14 @@ export const debuffContainmentUnitEffect = (room: Room, user: User) => {
 	// 이름은 user지만 일단은 debuff targetUser의 정보
 	if (!user || !user.character || !user.character.stateInfo) return;
 
-	//console.log(`[debuffCONTAINMENT_UNIT] (${user.nickname}) : 유저정보식별 성공`);
-
 	// 탈출 확률
 	const escapeProb = 25;
 	// 실제확률 25; // 테스트용 99;
 
 	if (user.character.debuffs.includes(CardType.CONTAINMENT_UNIT)) {
-		//console.log(`[debuffCONTAINMENT_UNIT] (${user.nickname}) : 디버프 카드 등록 상태 인지 성공`);
-
 		switch (user.character.stateInfo.state) {
 			case CharacterStateType.NONE_CHARACTER_STATE: // 첫날은 탈출 불가
-				// console.log(
-				// 	`[debuffCONTAINMENT_UNIT] (${user.nickname}) : 현재 상태 : ${CharacterStateType[user.character.stateInfo!.state]}`,
-				// );
-
 				user.character.stateInfo.state = CharacterStateType.CONTAINED;
-				//user.character.stateInfo.nextState = CharacterStateType.CONTAINED;
-
-				// console.log(
-				// 	`[debuffCONTAINMENT_UNIT] (${user.nickname}) : 디버프 감염 완료 : ${CharacterStateType[user.character.stateInfo!.state]}`,
-				// );
 
 				break;
 			case CharacterStateType.CONTAINED:
@@ -97,7 +77,6 @@ export const debuffContainmentUnitEffect = (room: Room, user: User) => {
 				if (yourProb < escapeProb && user.character.stateInfo) {
 					// 탈출에 성공하면 디버프 상태 해제
 					user.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
-					//user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
 					const yourDebuffIndex = user.character.debuffs.findIndex(
 						(c) => c === CardType.CONTAINMENT_UNIT,
 					);
@@ -107,15 +86,7 @@ export const debuffContainmentUnitEffect = (room: Room, user: User) => {
 					);
 				}
 				break;
-			default:
-				break;
 		}
-
-		// console.log(
-		// 	`[debuffCONTAINMENT_UNIT] (${user.nickname}) : 로직 종료 : ${CharacterStateType[user.character.stateInfo!.state]}`,
-		// );
 	}
-
-	//return user;
 };
 export default cardContainmentUnitEffect;
