@@ -1,6 +1,5 @@
 import { cardManager } from '../../managers/card.manager';
 import cardVaccineEffect from '../active/card.vaccine.effect';
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import getMaxHp from '../../init/character.Init';
 import { User } from '../../models/user.model';
 import { Character } from '../../models/character.model';

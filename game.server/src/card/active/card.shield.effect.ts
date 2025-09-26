@@ -6,8 +6,8 @@ import { cardManager } from '../../managers/card.manager.js';
 import { Room } from '../../models/room.model.js';
 import { stateChangeService } from '../../services/state.change.service.js';
 
-const cardShieldEffect = (room: Room, user: User, targetUser: User): boolean => {
-	if (!room || !user) return false;
+const cardShieldEffect = (room: Room, user: User, shooter: User): boolean => {
+	if (!room || !user || !shooter) return false;
 
 	if (!user.character || !user.character.stateInfo) return false;
 
@@ -21,48 +21,24 @@ const cardShieldEffect = (room: Room, user: User, targetUser: User): boolean => 
 	cardManager.removeCard(user, room, CardType.SHIELD);
 
 	if (user.character.stateInfo.state === CharacterStateType.BBANG_TARGET) {
-		const shooter = room.users.find((u) => u.id === user.character?.stateInfo?.stateTargetUserId);
+		// const shooter = room.users.find((u) => u.id === user.character?.stateInfo?.stateTargetUserId);
 
-		if (!shooter?.character) return false;
+		if (!shooter.character) return false;
 
-		const isShark = shooter.character.characterType === CharacterType.SHARK;
-		const hasLaser = shooter.character.equips.includes(CardType.LASER_POINTER);
-
-		let requiredShields = 0;
-		if (isShark) requiredShields += 1;
-		if (hasLaser) requiredShields += 1;
-		if (isShark && hasLaser) requiredShields += 1;
+		const requiredShields = requiredShieldCount(shooter);
 
 		if (requiredShields > 0) {
 			removeShields(user, requiredShields);
 		}
 
-		stateChangeService(
-			user,
-			CharacterStateType.NONE_CHARACTER_STATE,
-			CharacterStateType.NONE_CHARACTER_STATE,
-			0,
-			'0',
-		);
+		stateChangeService(user);
 
 		if (shooter.character.stateInfo) {
-			stateChangeService(
-				shooter,
-				CharacterStateType.NONE_CHARACTER_STATE,
-				CharacterStateType.NONE_CHARACTER_STATE,
-				0,
-				'0',
-			);
+			stateChangeService(shooter);
 			shooter.character.bbangCount += 1;
 		}
 	} else {
-		stateChangeService(
-			user,
-			CharacterStateType.NONE_CHARACTER_STATE,
-			CharacterStateType.NONE_CHARACTER_STATE,
-			0,
-			'0',
-		);
+		stateChangeService(user);
 	}
 
 	room = checkBigBbangService(room);
@@ -81,5 +57,20 @@ const removeShields = (user: User, count: number) => {
 		user.character!.handCards = user.character!.handCards.filter((c) => c.type !== CardType.SHIELD);
 	}
 };
+
+const requiredShieldCount = (shooter: User) : number =>{
+
+	// 이전에 shooter 상태를 체크해서 shooter는 undefined 일 수 없음
+	// 그리고 이 함수는 여기서만 사용함
+	const isShark = shooter!.character!.characterType === CharacterType.SHARK;
+	const hasLaser = shooter!.character!.equips.includes(CardType.LASER_POINTER);
+
+	let requiredShields = 0;
+	if (isShark) requiredShields += 1;
+	if (hasLaser) requiredShields += 1;
+	if(isShark && hasLaser) requiredShields +=1;
+
+	return requiredShields;
+}
 
 export default cardShieldEffect;

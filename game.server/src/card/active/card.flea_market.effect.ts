@@ -10,13 +10,13 @@ import { stateChangeService } from '../../services/state.change.service';
 import { fleaMarketNotificationForm } from '../../converter/packet.form';
 
 const cardFleaMarketEffect = (room: Room, user: User, targetUser: User): boolean => {
-	const nowTime = Date.now();
-
+	
+	// 방어 코드
 	if (!room || !user) return false;
 
 	// 방에 유저들 정보 가져오기
 	const users = room.users;
-	if (!users || users.length === 0) throw new Error('No users in room');
+	if (!users || users.length === 0) return  false;
 
 	cardManager.removeCard(user, room, CardType.FLEA_MARKET);
 
@@ -37,23 +37,21 @@ const cardFleaMarketEffect = (room: Room, user: User, targetUser: User): boolean
 		CharacterStateType.FLEA_MARKET_TURN,
 		CharacterStateType.FLEA_MARKET_WAIT,
 		5,
-		'0',
 	);
 
 	for (let i = 0; i < room.users.length; i++) {
-		let user = room.users[i];
+		const otherUser = room.users[i];
 
-		if (!user.character || !user.character.stateInfo) continue;
+		if (!otherUser.character || !otherUser.character.stateInfo) continue;
 
-		if (user.id === user.id || user.character.stateInfo.state === CharacterStateType.CONTAINED) {
+		if (otherUser.id === user.id || otherUser.character.stateInfo.state === CharacterStateType.CONTAINED) {
 			continue;
 		}
 		stateChangeService(
-			user,
+			otherUser,
 			CharacterStateType.FLEA_MARKET_WAIT,
 			CharacterStateType.FLEA_MARKET_TURN,
 			5,
-			'0',
 		);
 	}
 

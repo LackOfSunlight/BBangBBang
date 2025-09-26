@@ -14,7 +14,9 @@ import {
 } from '../../converter/packet.form';
 import { GamePacket } from '../../generated/gamePacket';
 import { cardManager } from '../../managers/card.manager';
-import roomManger from '../../managers/room.manger';
+import roomManger from '../../managers/room.manager';
+
+const DEFAULT_TARGET_USER_ID = '0';
 
 export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest): GamePacket => {
 	const { userId, roomId } = socket;
@@ -48,54 +50,56 @@ export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest)
 	const { selectType, selectCardType } = req;
 	let stolenCardType: CardType | undefined;
 
-	if (selectType === SelectCardType.HAND) {
-		const targetHand = target.character.handCards;
-		const randomIndex = Math.floor(Math.random() * targetHand.length);
-		const targetCard = targetHand[randomIndex];
-		if (targetCard) {
-			// 찾은 카드 타입 저장
-			stolenCardType = targetCard.type;
-			if (targetCard.count > 1) {
-				// 여러 장 있으면 개수만 줄임
-				targetCard.count -= 1;
-			} else {
-				// 1장뿐이면 배열에서 제거
-				const index = targetHand.indexOf(targetCard);
-				targetHand.splice(index, 1);
+	switch (selectType) {
+		case SelectCardType.HAND: {
+			const targetHand = target.character.handCards;
+			const randomIndex = Math.floor(Math.random() * targetHand.length);
+			const targetCard = targetHand[randomIndex];
+			if (targetCard) {
+				stolenCardType = targetCard.type;
+				if (targetCard.count > 1) {
+					targetCard.count -= 1;
+				} else {
+					const index = targetHand.indexOf(targetCard);
+					targetHand.splice(index, 1);
+				}
 			}
+			break;
 		}
-	} else if (selectType === SelectCardType.EQUIP) {
-		const cardIndex = target.character.equips.findIndex((cardType) => cardType === selectCardType);
-		if (cardIndex > -1) {
-			stolenCardType = target.character.equips.splice(cardIndex, 1)[0];
+		case SelectCardType.EQUIP: {
+			const cardIndex = target.character.equips.findIndex((cardType) => cardType === selectCardType);
+			if (cardIndex > -1) {
+				stolenCardType = target.character.equips.splice(cardIndex, 1)[0];
+			}
+			break;
 		}
-	} else if (selectType === SelectCardType.WEAPON) {
-		if (target.character.weapon === selectCardType) {
-			stolenCardType = target.character.weapon;
-			target.character.weapon = 0;
+		case SelectCardType.WEAPON: {
+			if (target.character.weapon === selectCardType) {
+				stolenCardType = target.character.weapon;
+				target.character.weapon = 0;
+			}
+			break;
 		}
-	} else if (selectType === SelectCardType.DEBUFF) {
-		const cardIndex = target.character.debuffs.findIndex((cardType) => cardType === selectCardType);
-		if (cardIndex > -1) {
-			stolenCardType = target.character.debuffs.splice(cardIndex, 1)[0];
+		case SelectCardType.DEBUFF: {
+			const cardIndex = target.character.debuffs.findIndex((cardType) => cardType === selectCardType);
+			if (cardIndex > -1) {
+				stolenCardType = target.character.debuffs.splice(cardIndex, 1)[0];
+			}
+			break;
 		}
 	}
 
 	if (stolenCardType) {
-		// 흡수 카드인 경우: 카드를 가져오기
 		if (user.character.stateInfo!.state === CharacterStateType.ABSORBING) {
 			cardManager.addCardToUser(user, stolenCardType);
 		}
-		// 신기루 카드인 경우: 카드 삭제만 (가져오지 않음)
-		// stolenCardType은 이미 타겟에서 제거됨
+		
+		user.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
+		user.character.stateInfo!.stateTargetUserId = DEFAULT_TARGET_USER_ID;
+		target.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
 	} else {
 		return cardSelectResponseForm(false, GlobalFailCode.UNKNOWN_ERROR);
 	}
-
-	// Reset states
-	user.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
-	user.character.stateInfo!.stateTargetUserId = '0';
-	target.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
 
 	const userUpdateNotificationPacket = userUpdateNotificationPacketForm(room.users);
 	broadcastDataToRoom(

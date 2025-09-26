@@ -16,7 +16,7 @@ export const useCardUseCase = (
 	targetUserId: string,
 ): { success: boolean; failcode: GlobalFailCode } => {
 	const { room, user, target } = applyCardUseHandler(roomId, userId, targetUserId);
-	if (!room && !user) {
+	if (!room && !user && !target) {
 		return { success: false, failcode: GlobalFailCode.ROOM_NOT_FOUND };
 	}
 

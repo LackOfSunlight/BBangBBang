@@ -5,7 +5,7 @@ import { checkAndEndGameIfNeeded } from '../../services/game.end.service';
 import { cardManager } from '../../managers/card.manager';
 import { User } from '../../models/user.model';
 import { Room } from '../../models/room.model';
-import roomManger from '../../managers/room.manger';
+import roomManger from '../../managers/room.manager';
 
 // 위성 타겟 카드 사용 시 디버프 추가
 const cardSatelliteTargetEffect = (room: Room, user: User, targetUser: User): boolean => {

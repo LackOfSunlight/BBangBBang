@@ -11,8 +11,8 @@ import { checkSatelliteTargetEffect } from '../card/debuff/card.satellite_target
 import { checkContainmentUnitTarget } from '../card/debuff/card.containment_unit.effect';
 import { positionUpdateNotificationForm } from '../converter/packet.form';
 import { cardManager } from './card.manager';
+import roomManger, { roomPhase, roomTimers } from './room.manager';
 import { bombManager } from '../services/bomb.service';
-import roomManger, { roomPhase, roomTimers } from './room.manger';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 const positionUpdateIntervals = new Map<number, NodeJS.Timeout>();
@@ -44,7 +44,7 @@ class GameManager {
 		// 위치 변화 플래그 초기화 (최초 시작 시에는 true로 설정)
 		roomPositionChanged.set(room.id, true);
 
-		const intervalId = setInterval(() => broadcastPositionUpdates(room), 10000000);
+		const intervalId = setInterval(() => broadcastPositionUpdates(room), 100);
 
 		positionUpdateIntervals.set(room.id, intervalId);
 		this.scheduleNextPhase(room.id, roomId);
@@ -52,7 +52,7 @@ class GameManager {
 
 	private scheduleNextPhase(roomId: number, roomTimerMapId: string) {
 		this.clearTimer(roomTimerMapId);
-		const dayInterval = 600000; // 1분
+		const dayInterval = 60000; // 1분
 		const eveningInterval = 30000; //30초
 
 		let nextPhase: PhaseType;
@@ -86,7 +86,7 @@ class GameManager {
 
 						//카드 삭제
 						if (user.character.handCardsCount > user.character.hp) {
-							user = removedCard(room, user);
+							user = cardManager.trashCards(room, user);
 						}
 
 						if (user.character!.stateInfo?.state !== CharacterStateType.CONTAINED) {
@@ -202,37 +202,6 @@ class GameManager {
 	}
 }
 
-const removedCard = (room: Room, user: User): User => {
-	if (!user || !user.character) return user;
-
-	const excess = user.character.handCardsCount - user.character.hp;
-	let toRemove = excess;
-
-	const removedCards: { type: CardType; count: number }[] = [];
-
-	for (let i = 0; i < user.character.handCards.length && toRemove > 0; i++) {
-		const card = user.character.handCards[i];
-
-		if (card.count <= toRemove) {
-			removedCards.push({ type: card.type, count: card.count });
-			toRemove -= card.count;
-			card.count = 0;
-		} else {
-			removedCards.push({ type: card.type, count: toRemove });
-			card.count -= toRemove;
-			toRemove = 0;
-		}
-	}
-
-	user.character.handCards = user.character.handCards.filter((c) => c.count > 0);
-	removedCards.forEach((c) => {
-		for (let i = 0; i < c.count; i++) {
-			cardManager.repeatDeck(room.id, [c.type]);
-		}
-	});
-
-	return user;
-};
 
 export const broadcastPositionUpdates = (room: Room) => {
 	const roomMap = notificationCharacterPosition.get(room.id);

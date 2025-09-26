@@ -20,13 +20,7 @@ export const CheckGuerrillaService = (room: Room): Room => {
 	if (!hasValidTarget) {
 		for (const u of users) {
 			if (u.character?.stateInfo?.state === CharacterStateType.GUERRILLA_SHOOTER) {
-				stateChangeService(
-					u,
-					CharacterStateType.NONE_CHARACTER_STATE,
-					CharacterStateType.NONE_CHARACTER_STATE,
-					0,
-					'0',
-				);
+				stateChangeService(u);
 			}
 		}
 	}
