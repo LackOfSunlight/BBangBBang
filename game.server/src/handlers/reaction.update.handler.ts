@@ -11,14 +11,13 @@ import { reactionResponsePacketForm } from '../converter/packet.form';
 import roomManger from '../managers/room.manger';
 
 const reactionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
-	const { userId, roomId } = socket;
-	if (!userId || !roomId) {
+	if (!socket.roomId) {
 		// DTO가 유효하지 않으면 즉시 에러 응답
 		invalidRequest(socket, GlobalFailCode.INVALID_REQUEST);
 		return;
 	}
 
-	const room: Room | null = roomManger.getRoom(roomId);
+	const room: Room | null = roomManger.getRoom(socket.roomId);
 	if (!room) {
 		invalidRequest(socket, GlobalFailCode.ROOM_NOT_FOUND);
 		return;
@@ -30,8 +29,7 @@ const reactionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket)
 		return;
 	}
 
-	const req = payload.reactionRequest;
-	const reactionType = req.reactionType;
+	const reactionType = payload.reactionRequest.reactionType;
 
 	/// 2. 유즈케이스 호출
 	const res = await reactionUpdateUseCase(socket, reactionType);
