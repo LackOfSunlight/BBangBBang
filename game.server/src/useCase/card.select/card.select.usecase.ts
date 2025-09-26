@@ -50,36 +50,42 @@ export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest)
 	const { selectType, selectCardType } = req;
 	let stolenCardType: CardType | undefined;
 
-	if (selectType === SelectCardType.HAND) {
-		const targetHand = target.character.handCards;
-		const randomIndex = Math.floor(Math.random() * targetHand.length);
-		const targetCard = targetHand[randomIndex];
-		if (targetCard) {
-			// 찾은 카드 타입 저장
-			stolenCardType = targetCard.type;
-			if (targetCard.count > 1) {
-				// 여러 장 있으면 개수만 줄임
-				targetCard.count -= 1;
-			} else {
-				// 1장뿐이면 배열에서 제거
-				const index = targetHand.indexOf(targetCard);
-				targetHand.splice(index, 1);
+	switch (selectType) {
+		case SelectCardType.HAND: {
+			const targetHand = target.character.handCards;
+			const randomIndex = Math.floor(Math.random() * targetHand.length);
+			const targetCard = targetHand[randomIndex];
+			if (targetCard) {
+				stolenCardType = targetCard.type;
+				if (targetCard.count > 1) {
+					targetCard.count -= 1;
+				} else {
+					const index = targetHand.indexOf(targetCard);
+					targetHand.splice(index, 1);
+				}
 			}
+			break;
 		}
-	} else if (selectType === SelectCardType.EQUIP) {
-		const cardIndex = target.character.equips.findIndex((cardType) => cardType === selectCardType);
-		if (cardIndex > -1) {
-			stolenCardType = target.character.equips.splice(cardIndex, 1)[0];
+		case SelectCardType.EQUIP: {
+			const cardIndex = target.character.equips.findIndex((cardType) => cardType === selectCardType);
+			if (cardIndex > -1) {
+				stolenCardType = target.character.equips.splice(cardIndex, 1)[0];
+			}
+			break;
 		}
-	} else if (selectType === SelectCardType.WEAPON) {
-		if (target.character.weapon === selectCardType) {
-			stolenCardType = target.character.weapon;
-			target.character.weapon = 0;
+		case SelectCardType.WEAPON: {
+			if (target.character.weapon === selectCardType) {
+				stolenCardType = target.character.weapon;
+				target.character.weapon = 0;
+			}
+			break;
 		}
-	} else if (selectType === SelectCardType.DEBUFF) {
-		const cardIndex = target.character.debuffs.findIndex((cardType) => cardType === selectCardType);
-		if (cardIndex > -1) {
-			stolenCardType = target.character.debuffs.splice(cardIndex, 1)[0];
+		case SelectCardType.DEBUFF: {
+			const cardIndex = target.character.debuffs.findIndex((cardType) => cardType === selectCardType);
+			if (cardIndex > -1) {
+				stolenCardType = target.character.debuffs.splice(cardIndex, 1)[0];
+			}
+			break;
 		}
 	}
 
