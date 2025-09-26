@@ -4,6 +4,8 @@ import { CharacterData } from '../../generated/common/types';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 
+const DEFAULT_TARGET_USER_ID = '0'; // 119 카드의 기본 타켓 대상은 
+
 const getMaxHp = (characterType: CharacterType): number => {
 	switch (characterType) {
 		case CharacterType.RED:
@@ -26,7 +28,7 @@ const cardCall119Effect = (room: Room, user: User, targetUser: User): boolean =>
 	// 유효성 검증
 	if (!user || !user.character || !room) return false;
 
-	if (targetUser.id !== '0') {
+	if (targetUser.id !== DEFAULT_TARGET_USER_ID) {
 		const maxHp = getMaxHp(user.character.characterType);
 		if (user.character.hp >= maxHp) {
 			return false;

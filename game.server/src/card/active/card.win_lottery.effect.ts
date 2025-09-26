@@ -4,6 +4,8 @@ import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 
+const LOTTERY_CARD_COUNT = 3;
+
 const cardWinLotteryEffect = (room: Room, user: User): boolean => {
 	// 유효성 검증
 	if (!user || !user.character || !room) return false;
@@ -13,7 +15,7 @@ const cardWinLotteryEffect = (room: Room, user: User): boolean => {
 	// targetUserId는 필요 없음 (isTargetSelect: false)
 
 	// 덱에서 카드 3장 뽑기 (CardType[] 반환)
-	const newCardTypes = cardManager.drawDeck(room.id, 3);
+	const newCardTypes = cardManager.drawDeck(room.id, LOTTERY_CARD_COUNT);
 
 	if (newCardTypes.length === 0) {
 		return false;

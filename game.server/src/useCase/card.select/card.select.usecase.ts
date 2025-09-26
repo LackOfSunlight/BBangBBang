@@ -16,6 +16,8 @@ import { GamePacket } from '../../generated/gamePacket';
 import { cardManager } from '../../managers/card.manager';
 import roomManger from '../../managers/room.manger';
 
+const DEFAULT_TARGET_USER_ID = '0';
+
 export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest): GamePacket => {
 	const { userId, roomId } = socket;
 	if (!userId || !roomId) {
@@ -94,7 +96,7 @@ export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest)
 
 	// Reset states
 	user.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
-	user.character.stateInfo!.stateTargetUserId = '0';
+	user.character.stateInfo!.stateTargetUserId = DEFAULT_TARGET_USER_ID;
 	target.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
 
 	const userUpdateNotificationPacket = userUpdateNotificationPacketForm(room.users);
