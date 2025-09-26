@@ -90,17 +90,12 @@ export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest)
 	}
 
 	if (stolenCardType) {
-		// 흡수 카드인 경우: 카드를 가져오기
 		if (user.character.stateInfo!.state === CharacterStateType.ABSORBING) {
 			cardManager.addCardToUser(user, stolenCardType);
 		}
-		// 신기루 카드인 경우: 카드 삭제만 (가져오지 않음)
-		// stolenCardType은 이미 타겟에서 제거됨
 	} else {
 		return cardSelectResponseForm(false, GlobalFailCode.UNKNOWN_ERROR);
 	}
-
-	// Reset states
 	user.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
 	user.character.stateInfo!.stateTargetUserId = DEFAULT_TARGET_USER_ID;
 	target.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
