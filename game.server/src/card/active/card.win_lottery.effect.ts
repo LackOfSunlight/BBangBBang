@@ -30,7 +30,6 @@ const cardWinLotteryEffect = (room: Room, user: User): boolean => {
 		character.handCardsCount = character.handCards.reduce((total, card) => total + card.count, 0);
 	}
 
-
 	return true;
 };
 

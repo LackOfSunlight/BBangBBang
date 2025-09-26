@@ -4,7 +4,7 @@ import { CharacterData } from '../../generated/common/types';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 
-const DEFAULT_TARGET_USER_ID = '0'; // 119 카드의 기본 타켓 대상은 
+const DEFAULT_TARGET_USER_ID = '0'; 
 
 const getMaxHp = (characterType: CharacterType): number => {
 	switch (characterType) {
