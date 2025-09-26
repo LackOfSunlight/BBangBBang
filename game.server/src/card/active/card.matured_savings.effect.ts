@@ -30,16 +30,16 @@ const cardMaturedSavingsEffect = (room: Room, user: User): boolean => {
 	}
 
 	// 카드 2장 뽑기(메인 기믹) 공지
-	const cardYouDraw = cardManager.drawDeck(room.id, numberOfDraw);
+	const drawnCards = cardManager.drawDeck(room.id, numberOfDraw);
 	console.log(
 		`[MATURED_SAVINGS]유저 ${user.id}(이)가 카드 ${numberOfDraw}장을 획득하였습니다\n획득 카드 : `,
 	);
 
 	// 뽑은 카드 정리 및 공지
-	cardYouDraw.forEach((cardType) => {
-		const cardYouHave = user.character!.handCards.find((c) => c.type === cardType);
+	drawnCards.forEach((cardType) => {
+		const ownedCards = user.character!.handCards.find((c) => c.type === cardType);
 		// 소지중인 카드와 겹친다면 해당 카드 수에 가산
-		if (cardYouHave) cardYouHave.count += 1;
+		if (ownedCards) ownedCards.count += 1;
 		// 없다면 카드를 소지 카드 목록에 추가
 		else user.character!.handCards.push({ type: cardType, count: 1 });
 
