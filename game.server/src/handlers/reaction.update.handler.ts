@@ -11,27 +11,25 @@ import { reactionResponsePacketForm } from '../converter/packet.form';
 import roomManger from '../managers/room.manager';
 
 const reactionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
-	const { userId, roomId } = socket;
-	if (!userId || !roomId) {
+	if (!socket.roomId) {
 		// DTO가 유효하지 않으면 즉시 에러 응답
-		is_invalid_request(socket, GlobalFailCode.INVALID_REQUEST);
+		invalidRequest(socket, GlobalFailCode.INVALID_REQUEST);
 		return;
 	}
 
-	const room: Room | null = roomManger.getRoom(roomId);
+	const room: Room | null = roomManger.getRoom(socket.roomId);
 	if (!room) {
-		is_invalid_request(socket, GlobalFailCode.ROOM_NOT_FOUND);
+		invalidRequest(socket, GlobalFailCode.ROOM_NOT_FOUND);
 		return;
 	}
 
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.reactionRequest);
 	if (!payload) {
-		is_invalid_request(socket, GlobalFailCode.INVALID_REQUEST);
+		invalidRequest(socket, GlobalFailCode.INVALID_REQUEST);
 		return;
 	}
 
-	const req = payload.reactionRequest;
-	const reactionType = req.reactionType;
+	const reactionType = payload.reactionRequest.reactionType;
 
 	/// 2. 유즈케이스 호출
 	const res = await reactionUpdateUseCase(socket, reactionType);
@@ -45,7 +43,7 @@ const reactionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket)
 };
 
 /** 오류코드:잘못된요청 을 일괄 처리하기 위한 함수 */
-const is_invalid_request = (socket: GameSocket, failcode: GlobalFailCode) => {
+const invalidRequest = (socket: GameSocket, failcode: GlobalFailCode) => {
 	const wrongDTO = reactionResponsePacketForm(false, failcode);
 	sendData(socket, wrongDTO, GamePacketType.useCardResponse);
 };

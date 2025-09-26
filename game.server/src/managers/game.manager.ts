@@ -11,8 +11,8 @@ import { checkSatelliteTargetEffect } from '../card/debuff/card.satellite_target
 import { checkContainmentUnitTarget } from '../card/debuff/card.containment_unit.effect';
 import { positionUpdateNotificationForm } from '../converter/packet.form';
 import { cardManager } from './card.manager';
-import { bombManager } from '../card/debuff/card.bomb.effect';
 import roomManger, { roomPhase, roomTimers } from './room.manager';
+import { bombManager } from '../services/bomb.service';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 const positionUpdateIntervals = new Map<number, NodeJS.Timeout>();

@@ -1,5 +1,4 @@
 // cardType = 11
-//import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { CardType } from '../../generated/common/enums.js';
 import { cardManager } from '../../managers/card.manager.js';
 import { User } from '../../models/user.model';
@@ -16,9 +15,6 @@ const cardMaturedSavingsEffect = (room: Room, user: User): boolean => {
 		return false;
 	}
 
-	// 카드 제거 -> 상위 모듈에서 처리
-	//cardManager.removeCard(user, room, CardType.MATURED_SAVINGS)
-
 	// 뽑을 카드 매수
 	const numberOfDraw = 2;
 	// 덱에 남은 카드 매수
@@ -30,16 +26,16 @@ const cardMaturedSavingsEffect = (room: Room, user: User): boolean => {
 	}
 
 	// 카드 2장 뽑기(메인 기믹) 공지
-	const cardYouDraw = cardManager.drawDeck(room.id, numberOfDraw);
+	const drawnCards = cardManager.drawDeck(room.id, numberOfDraw);
 	console.log(
 		`[MATURED_SAVINGS]유저 ${user.id}(이)가 카드 ${numberOfDraw}장을 획득하였습니다\n획득 카드 : `,
 	);
 
 	// 뽑은 카드 정리 및 공지
-	cardYouDraw.forEach((cardType) => {
-		const cardYouHave = user.character!.handCards.find((c) => c.type === cardType);
+	drawnCards.forEach((cardType) => {
+		const ownedCards = user.character!.handCards.find((c) => c.type === cardType);
 		// 소지중인 카드와 겹친다면 해당 카드 수에 가산
-		if (cardYouHave) cardYouHave.count += 1;
+		if (ownedCards) ownedCards.count += 1;
 		// 없다면 카드를 소지 카드 목록에 추가
 		else user.character!.handCards.push({ type: cardType, count: 1 });
 
@@ -47,7 +43,6 @@ const cardMaturedSavingsEffect = (room: Room, user: User): boolean => {
 	});
 
 	// handCardsCount 업데이트
-	// user.character!.handCardsCount += numberOfDraw;
 	user.character.handCardsCount = user.character!.handCards.reduce(
 		(sum, card) => sum + card.count,
 		0,
