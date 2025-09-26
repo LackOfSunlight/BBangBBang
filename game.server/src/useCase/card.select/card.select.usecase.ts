@@ -93,12 +93,13 @@ export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest)
 		if (user.character.stateInfo!.state === CharacterStateType.ABSORBING) {
 			cardManager.addCardToUser(user, stolenCardType);
 		}
+		
+		user.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
+		user.character.stateInfo!.stateTargetUserId = DEFAULT_TARGET_USER_ID;
+		target.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
 	} else {
 		return cardSelectResponseForm(false, GlobalFailCode.UNKNOWN_ERROR);
 	}
-	user.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
-	user.character.stateInfo!.stateTargetUserId = DEFAULT_TARGET_USER_ID;
-	target.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
 
 	const userUpdateNotificationPacket = userUpdateNotificationPacketForm(room.users);
 	broadcastDataToRoom(
