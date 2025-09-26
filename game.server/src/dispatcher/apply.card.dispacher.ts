@@ -33,7 +33,6 @@ export function applyCardEffect(
 	targetUser: User,
 ): boolean {
 
-	cardManager.removeCard(user, room, CardType);
 	// 소지한 카드 제거 후 효과 적용
 	switch (CardType) {
 		case 1: //'BBANG':

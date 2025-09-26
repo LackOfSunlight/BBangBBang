@@ -15,6 +15,7 @@ const cardMaturedSavingsEffect = (room: Room, user: User): boolean => {
 		return false;
 	}
 
+	cardManager.removeCard(user, room, CardType.MATURED_SAVINGS);
 	// 뽑을 카드 매수
 	const numberOfDraw = 2;
 	// 덱에 남은 카드 매수
