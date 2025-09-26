@@ -16,7 +16,6 @@ const cardWinLotteryEffect = (room: Room, user: User): boolean => {
 	const newCardTypes = cardManager.drawDeck(room.id, 3);
 
 	if (newCardTypes.length === 0) {
-		console.log(`[복권 당첨] ${user.nickname}: 덱에 카드가 없습니다.`);
 		return false;
 	}
 
@@ -38,10 +37,6 @@ const cardWinLotteryEffect = (room: Room, user: User): boolean => {
 		character.handCardsCount = character.handCards.reduce((total, card) => total + card.count, 0);
 	}
 
-	console.log(
-		`[복권 당첨] ${user.nickname}이 카드 ${newCardTypes.length}장을 획득했습니다:`,
-		newCardTypes.map((type) => CardType[type]).join(', '),
-	);
 
 	return true;
 };

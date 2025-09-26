@@ -9,7 +9,6 @@ const cardSelectHandler = (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.cardSelectRequest);
 
 	if (!payload || !socket.userId || !socket.roomId) {
-		console.error('소켓과 패킷이 전달되지 않았습니다.');
 		return;
 	}
 
