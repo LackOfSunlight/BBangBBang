@@ -3,25 +3,8 @@ import { CharacterType, CardType } from '../../generated/common/enums';
 import { CharacterData } from '../../generated/common/types';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
+import getMaxHp from '../../init/character.Init';
 
-// 캐릭터 타입별 최대 체력 정의
-const getMaxHp = (characterType: CharacterType): number => {
-	switch (characterType) {
-		case CharacterType.RED:
-		case CharacterType.SHARK:
-		case CharacterType.MALANG:
-		case CharacterType.FROGGY:
-		case CharacterType.PINK:
-		case CharacterType.SWIM_GLASSES:
-		case CharacterType.MASK:
-			return 4;
-		case CharacterType.DINOSAUR:
-		case CharacterType.PINK_SLIME:
-			return 3;
-		default:
-			return 4; // 기본값
-	}
-};
 
 const cardCall119Effect = (room: Room, user: User, targetUser: User): boolean => {
 	// 유효성 검증

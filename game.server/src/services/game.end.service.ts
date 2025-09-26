@@ -4,7 +4,7 @@ import { broadcastDataToRoom } from '../sockets/notification';
 import { GamePacketType } from '../enums/gamePacketType';
 import gameManager from '../managers/game.manager';
 import { gameEndNotificationForm } from '../converter/packet.form';
-import roomManger from '../managers/room.manger';
+import roomManger from '../managers/room.manager';
 
 /**
  * 게임 종료 조건을 검사하고 필요시 게임을 종료하는 함수

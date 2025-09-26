@@ -7,6 +7,7 @@ import { RoomStateType } from '../../generated/common/enums.js';
 import { User } from '../../models/user.model.js';
 import { createRoomDB, getUserByUserId } from '../../services/prisma.service.js';
 import { createRoomResponseForm } from '../../converter/packet.form';
+import roomManger from '../../managers/room.manager';
 
 const createRoomUseCase = async (
 	socket: GameSocket,
@@ -39,6 +40,8 @@ const createRoomUseCase = async (
 		);
 
 		socket.roomId = room.id;
+
+		roomManger.saveRoom(room);
 
 		return createRoomResponseForm(true, GlobalFailCode.NONE_FAILCODE, room);
 	} else {

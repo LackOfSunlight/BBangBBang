@@ -2,7 +2,7 @@ import { GamePacket } from '../../generated/gamePacket';
 import { C2SDestroyCardRequest } from '../../generated/packet/game_actions';
 import { GameSocket } from '../../type/game.socket';
 import { destroyResponseForm } from '../../converter/packet.form';
-import roomManger from '../../managers/room.manger';
+import roomManger from '../../managers/room.manager';
 
 const destroyCardUseCase = async (
 	socket: GameSocket,

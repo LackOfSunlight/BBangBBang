@@ -12,7 +12,7 @@ import {
 	fleaMarketResponseForm,
 	userUpdateNotificationPacketForm,
 } from '../../converter/packet.form';
-import roomManger from '../../managers/room.manger';
+import roomManger from '../../managers/room.manager';
 import { stateChangeService } from '../../services/state.change.service';
 
 const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest): GamePacket => {

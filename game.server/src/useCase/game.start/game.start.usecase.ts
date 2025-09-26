@@ -19,7 +19,7 @@ import {
 	gameStartNotificationPacketForm,
 	gameStartResponsePacketForm,
 } from '../../converter/packet.form.js';
-import roomManger from '../../managers/room.manger.js';
+import roomManger from '../../managers/room.manager.js';
 
 export const gameStartUseCase = async (
 	socket: GameSocket,

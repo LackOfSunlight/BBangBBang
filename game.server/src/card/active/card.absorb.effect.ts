@@ -13,7 +13,7 @@ const cardAbsorbEffect = (room: Room, user: User, targetUser: User): boolean => 
 		return false;
 	}
 
-	// 대상의 손에 카드가 있는지 확인s
+	// 대상의 손에 카드가 있는지 확인
 	const targetHand = targetUser.character.handCards;
 	if (targetHand.length === 0) {
 		console.log(`[흡수 실패] ${targetUser.character}이 카드를 가지고 있지 않음:`);

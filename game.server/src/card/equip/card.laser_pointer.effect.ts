@@ -1,5 +1,4 @@
 // cardType = 17
-import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
 import { CardType } from '../../generated/common/enums';
 import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';

@@ -7,7 +7,7 @@ import { Room } from '../../models/room.model.js';
 import { stateChangeService } from '../../services/state.change.service.js';
 
 const cardShieldEffect = (room: Room, user: User, targetUser: User): boolean => {
-	if (!room || !user) return false;
+	if (!room || !user || !targetUser) return false;
 
 	if (!user.character || !user.character.stateInfo) return false;
 
@@ -31,38 +31,19 @@ const cardShieldEffect = (room: Room, user: User, targetUser: User): boolean => 
 		let requiredShields = 0;
 		if (isShark) requiredShields += 1;
 		if (hasLaser) requiredShields += 1;
-		if (isShark && hasLaser) requiredShields += 1;
 
 		if (requiredShields > 0) {
 			removeShields(user, requiredShields);
 		}
 
-		stateChangeService(
-			user,
-			CharacterStateType.NONE_CHARACTER_STATE,
-			CharacterStateType.NONE_CHARACTER_STATE,
-			0,
-			'0',
-		);
+		stateChangeService(user);
 
 		if (shooter.character.stateInfo) {
-			stateChangeService(
-				shooter,
-				CharacterStateType.NONE_CHARACTER_STATE,
-				CharacterStateType.NONE_CHARACTER_STATE,
-				0,
-				'0',
-			);
+			stateChangeService(shooter);
 			shooter.character.bbangCount += 1;
 		}
 	} else {
-		stateChangeService(
-			user,
-			CharacterStateType.NONE_CHARACTER_STATE,
-			CharacterStateType.NONE_CHARACTER_STATE,
-			0,
-			'0',
-		);
+		stateChangeService(user);
 	}
 
 	room = checkBigBbangService(room);

@@ -8,7 +8,7 @@ import { bombManager } from '../../card/debuff/card.bomb.effect';
 //import { createUserUpdateNotificationPacket } from '../use.card/use.card.usecase';
 import { userUpdateNotificationPacketForm } from '../../converter/packet.form';
 import { broadcastDataToRoom } from '../../sockets/notification';
-import roomManger from '../../managers/room.manger';
+import roomManger from '../../managers/room.manager';
 
 const passDebuffUseCase = async (
 	socket: GameSocket,

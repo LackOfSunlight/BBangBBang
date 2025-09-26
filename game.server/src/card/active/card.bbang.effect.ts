@@ -4,7 +4,7 @@ import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
 // import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-import roomManger from '../../managers/room.manger';
+import roomManger from '../../managers/room.manager';
 
 const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 	// 정보값 가져오기
@@ -72,16 +72,6 @@ const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 	}
 	return true;
 
-	// 수정 정보 갱신
-	// try {
-	// 	updateCharacterFromRoom(roomId, userId, user.character);
-	// 	updateCharacterFromRoom(roomId, targetUserId, target.character);
-	// 	return true;
-	// 	//console.log('[BBANG]로그 저장에 성공하였습니다');
-	// } catch (error) {
-	// 	console.error(`[BBANG]로그 저장에 실패하였습니다:[${error}]`);
-	// 	return false;
-	// }
 };
 
 export default cardBbangEffect;

@@ -10,7 +10,7 @@ import {
 	leaveRoomResponsePacketForm,
 	userLeftNotificationPacketForm,
 } from '../../converter/packet.form';
-import roomManger from '../../managers/room.manger';
+import roomManger from '../../managers/room.manager';
 
 export const leaveRoomUseCase = async (
 	socket: GameSocket,

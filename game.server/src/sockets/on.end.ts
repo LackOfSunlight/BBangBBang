@@ -7,7 +7,7 @@ import { broadcastDataToRoom } from './notification.js';
 import { GamePacketType } from '../enums/gamePacketType.js';
 import { RoomStateType } from '../generated/common/enums.js';
 import { userUpdateNotificationPacketForm } from '../converter/packet.form.js';
-import roomManger from '../managers/room.manger.js';
+import roomManger from '../managers/room.manager.js';
 
 const onEnd = (socket: GameSocket) => async () => {
 	try {

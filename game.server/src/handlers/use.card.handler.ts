@@ -11,7 +11,7 @@ import { useCardUseCase } from '../useCase/use.card/use.card.usecase';
 import { broadcastDataToRoom } from '../sockets/notification';
 import { sendData } from '../sockets/send.data';
 import { getGamePacketType } from '../converter/type.form';
-import roomManger from '../managers/room.manger';
+import roomManger from '../managers/room.manager';
 
 const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	/// 1. DTO 생성 및 기본 유효성 검사

@@ -19,7 +19,7 @@ import {
 	gamePrepareNotificationPacketForm,
 	gamePrepareResponsePacketForm,
 } from '../../converter/packet.form.js';
-import roomManger from '../../managers/room.manger.js';
+import roomManger from '../../managers/room.manager.js';
 
 export const gamePrepareUseCase = (socket: GameSocket, req: C2SGamePrepareRequest): GamePacket => {
 	if (!socket.roomId) {
@@ -43,20 +43,20 @@ export const gamePrepareUseCase = (socket: GameSocket, req: C2SGamePrepareReques
 		const roles: Record<number, RoleType[]> = {
 			2: [RoleType.TARGET, RoleType.HITMAN],
 			3: [RoleType.TARGET, RoleType.PSYCHOPATH, RoleType.HITMAN],
-			4: [RoleType.TARGET, RoleType.PSYCHOPATH, RoleType.BODYGUARD, RoleType.HITMAN],
+			4: [RoleType.TARGET, RoleType.PSYCHOPATH, RoleType.HITMAN, RoleType.HITMAN],
 			5: [
 				RoleType.TARGET,
 				RoleType.PSYCHOPATH,
 				RoleType.HITMAN,
-				RoleType.BODYGUARD,
+				RoleType.HITMAN,
 				RoleType.BODYGUARD,
 			],
 			6: [
 				RoleType.TARGET,
 				RoleType.PSYCHOPATH,
 				RoleType.HITMAN,
-				RoleType.BODYGUARD,
-				RoleType.BODYGUARD,
+				RoleType.HITMAN,
+				RoleType.HITMAN,
 				RoleType.BODYGUARD,
 			],
 			7: [
@@ -64,7 +64,7 @@ export const gamePrepareUseCase = (socket: GameSocket, req: C2SGamePrepareReques
 				RoleType.PSYCHOPATH,
 				RoleType.HITMAN,
 				RoleType.HITMAN,
-				RoleType.BODYGUARD,
+				RoleType.HITMAN,
 				RoleType.BODYGUARD,
 				RoleType.BODYGUARD,
 			],

@@ -11,7 +11,7 @@ import { playAnimationHandler } from '../../handlers/play.animation.handler';
 import { checkAndEndGameIfNeeded } from '../../services/game.end.service';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-import roomManger from '../../managers/room.manger';
+import roomManger from '../../managers/room.manager';
 
 /** 폭탄 디버프 부여 */
 const cardBombEffect = (room: Room, user: User, target: User): boolean => {

@@ -1,4 +1,4 @@
-import roomManger from '../managers/room.manger';
+import roomManger from '../managers/room.manager';
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
 
@@ -11,7 +11,7 @@ export const applyCardUseHandler = (
 
 	const room = roomManger.getRoom(roomId);
 	const user = roomManger.getUserFromRoom(roomId, userId);
-	if (targetId) {
+	if (targetId != '0') {
 		target = roomManger.getUserFromRoom(roomId, targetId);
 	} else {
 		target = {
