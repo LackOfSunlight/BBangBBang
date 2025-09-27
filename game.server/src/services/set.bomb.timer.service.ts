@@ -7,8 +7,8 @@ import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
 
 /**  폭탄 매니저*/
-class BombManager {
-	private static instance: BombManager;
+class SetBombTimer {
+	private static instance: SetBombTimer;
 
 	// 	key					value
 	// roomId:userId → { timer, explosionAt }
@@ -18,11 +18,11 @@ class BombManager {
 		this.bombTimers = new Map(); // 유저 + 타이머/폭발시간
 	}
 
-	public static getInstance(): BombManager {
-		if (!BombManager.instance) {
-			BombManager.instance = new BombManager();
+	public static getInstance(): SetBombTimer {
+		if (!SetBombTimer.instance) {
+			SetBombTimer.instance = new SetBombTimer();
 		}
-		return BombManager.instance;
+		return SetBombTimer.instance;
 	}
 
 	public startBombTimer(room: Room, bombUser: User, explosionAt: number) {
@@ -74,4 +74,4 @@ class BombManager {
 		console.log(`[BOMB] Room ${roomId} 타이머 제거 완료`);
 	}
 }
-export const bombManager = BombManager.getInstance();
+export const setBombTimer = SetBombTimer.getInstance();
