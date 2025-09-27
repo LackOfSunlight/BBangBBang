@@ -1,11 +1,7 @@
 import { AnimationType, CardType, CharacterStateType, CharacterType } from '../generated/common/enums';
 import { CharacterData } from '../generated/common/types';
-import { playAnimationHandler } from '../handlers/play.animation.handler';
-import { cardManager } from '../managers/card.manager';
 import roomManager from '../managers/room.manager';
 import { Character } from '../models/character.model';
-import { Room } from '../models/room.model';
-import { User } from '../models/user.model';
 
 const takeDamageService = (userId: string,character: CharacterData, shooter: Character ,damage: number) => {
 	let isDefended = false;
@@ -33,7 +29,7 @@ const takeDamageService = (userId: string,character: CharacterData, shooter: Cha
 		character.hp -= damage;
 		// 덱에서 카드 1장 뽑기 (CardType[] 반환)
 
-		const newCardTypes = cardManager.drawDeck(room.id, 1);
+		const newCardTypes = room.drawDeck(1);
 
 		if (newCardTypes.length === 0) {
 			// console.log(`[말랑이 특수능력] ${character.nickname}: 덱에 카드가 없습니다.`);

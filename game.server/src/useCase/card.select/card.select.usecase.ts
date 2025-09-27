@@ -13,7 +13,6 @@ import {
 	userUpdateNotificationPacketForm,
 } from '../../converter/packet.form';
 import { GamePacket } from '../../generated/gamePacket';
-import { cardManager } from '../../managers/card.manager';
 import roomManger from '../../managers/room.manager';
 
 const DEFAULT_TARGET_USER_ID = '0';
@@ -91,7 +90,7 @@ export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest)
 
 	if (stolenCardType) {
 		if (user.character.stateInfo!.state === CharacterStateType.ABSORBING) {
-			cardManager.addCardToUser(user, stolenCardType);
+			user.addCardToUser(stolenCardType);
 		}
 		
 		user.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;

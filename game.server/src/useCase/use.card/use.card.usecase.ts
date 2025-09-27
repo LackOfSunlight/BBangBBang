@@ -7,7 +7,6 @@ import {
 	useCardNotificationPacketForm,
 } from '../../converter/packet.form';
 import { applyCardUseHandler } from '../../handlers/apply.card.use.handler';
-import { cardManager } from '../../managers/card.manager';
 
 export const useCardUseCase = (
 	userId: string,
@@ -39,7 +38,7 @@ export const useCardUseCase = (
 	const useCardNotificationPacket = useCardNotificationPacketForm(cardType, userId, targetUserId);
 
 	if (cardType === CardType.FLEA_MARKET) {
-		const selectedCards = cardManager.roomFleaMarketCards.get(room.id);
+		const selectedCards = room.roomFleaMarketCards;
 
 		if (selectedCards !== undefined) {
 			const gamePacket = fleaMarketNotificationForm(selectedCards, []);

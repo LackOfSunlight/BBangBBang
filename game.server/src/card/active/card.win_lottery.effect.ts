@@ -1,6 +1,4 @@
 // cardType = 12
-import { CardType } from '../../generated/common/enums';
-import { cardManager } from '../../managers/card.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 
@@ -10,7 +8,7 @@ const cardWinLotteryEffect = (room: Room, user: User): boolean => {
 	// 유효성 검증
 	if (!user || !user.character || !room) return false;
 
-	const newCardTypes = cardManager.drawDeck(room.id, LOTTERY_CARD_COUNT);
+	const newCardTypes = room.drawDeck(LOTTERY_CARD_COUNT);
 
 	if (newCardTypes.length === 0) {
 		return false;

@@ -18,9 +18,9 @@ export class Room implements RoomData {
 	state: RoomStateType;
 	users: User[];
 
-	roomDecks: CardType[] | undefined;
-	roomFleaMarketCards: CardType[] | undefined;
-	fleaMarketPickIndex: number[] | undefined;
+	roomDecks: CardType[] = [];
+	roomFleaMarketCards: CardType[] = [];
+	fleaMarketPickIndex: number[] = [];
 
 	constructor(
 		id: number,

@@ -1,6 +1,5 @@
 // cardType = 7
 import { CardType, CharacterStateType } from '../../generated/common/enums.js';
-import { cardManager } from '../../managers/card.manager.js';
 import { Room } from '../../models/room.model.js';
 import { User } from '../../models/user.model.js';
 import { stateChangeService } from '../../services/state.change.service.js';
@@ -18,7 +17,7 @@ const cardGuerrillaEffect = (room: Room, shooter: User, targetUser: User): boole
 		return false;
 	}
 
-	cardManager.removeCard(shooter, room, CardType.GUERRILLA);
+	room.removeCard(shooter, CardType.GUERRILLA);
 
 	for (let user of room.users) {
 		if (!user.character || !user.character.stateInfo) continue;

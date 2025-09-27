@@ -3,8 +3,7 @@ import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-import roomManger from '../../managers/room.manager';
-import { cardManager } from '../../managers/card.manager';
+
 
 const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 	// 정보값 가져오기
@@ -35,7 +34,7 @@ const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 		return false;
 	}
 
-	cardManager.removeCard(user, room, CardType.BBANG);
+	room.removeCard(user, CardType.BBANG);
 	if (user.character.stateInfo.state === CharacterStateType.NONE_CHARACTER_STATE) {
 		// 상태 설정
 		user.changeState(

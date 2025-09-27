@@ -2,7 +2,6 @@
 import { CardType, AnimationType } from '../../generated/common/enums';
 import { playAnimationHandler } from '../../handlers/play.animation.handler';
 import { checkAndEndGameIfNeeded } from '../../services/game.end.service';
-import { cardManager } from '../../managers/card.manager';
 import { User } from '../../models/user.model';
 import { Room } from '../../models/room.model';
 import roomManger from '../../managers/room.manager';
@@ -18,7 +17,7 @@ const cardSatelliteTargetEffect = (room: Room, user: User, targetUser: User): bo
 		return true;
 	}
 
-	cardManager.removeCard(user, room, CardType.SATELLITE_TARGET);
+	room.removeCard(user, CardType.SATELLITE_TARGET);
 
 	// 디버프 추가
 	targetUser.character.debuffs.push(CardType.SATELLITE_TARGET);

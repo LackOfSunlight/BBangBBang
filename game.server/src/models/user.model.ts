@@ -3,7 +3,6 @@ import { applyHeal } from '../card/CardService/applyHeal';
 import { CardType, CharacterStateType } from '../generated/common/enums';
 import { UserData } from '../generated/common/types';
 import { CharacterData } from '../generated/common/types';
-import { cardManager } from '../managers/card.manager';
 import takeDamageService from '../services/take.damage.service';
 import { Room } from './room.model';
 import roomManager from '../managers/room.manager';
@@ -66,7 +65,7 @@ export class User implements UserData {
 
 		if (usedCard != undefined) {
 			usedCard.count -= 1;
-			cardManager.repeatDeck(room.id, [cardType]);
+			room.repeatDeck([cardType]);
 
 			if (usedCard.count <= 0) {
 				this.character.handCards = this.character!.handCards.filter((c) => c.count > 0);
@@ -78,10 +77,10 @@ export class User implements UserData {
 		}
 	}
 
-	public trashCards(): User {
+	public trashCards(){
 		const room = roomManager.getRoomByUser(this.id);
 
-		if (!room || !this.character) return this;
+		if (!room || !this.character) return;
 
 		const excess = this.character.handCardsCount - this.character.hp;
 		let toRemove = excess;
@@ -109,8 +108,6 @@ export class User implements UserData {
 				room.repeatDeck([c.type]);
 			}
 		});
-
-		return this;
 	}
 
 	public setUserData(id: string, nickName: string, character: CharacterData) {

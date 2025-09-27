@@ -12,7 +12,6 @@ import { Room } from '../../models/room.model.js';
 import { CharacterPositionData, GameStateData } from '../../generated/common/types.js';
 import { broadcastDataToRoom } from '../../sockets/notification.js';
 import { shuffle } from '../../utils/shuffle.util.js';
-import { cardManager } from '../../managers/card.manager.js';
 import gameManager, { notificationCharacterPosition } from '../../managers/game.manager.js';
 import characterSpawnPosition from '../../data/character.spawn.position.json';
 import {
@@ -54,7 +53,7 @@ export const gameStartUseCase = async (
 		};
 
 		// 카드 덱 초기화
-		cardManager.initializeDeck(room.id);
+		room.initializeDeck();
 
 		// 캐릭터 위치 정보 저장을 위한 Map 초기화
 		if (!notificationCharacterPosition.has(room.id)) {
@@ -70,7 +69,7 @@ export const gameStartUseCase = async (
 			posMap.set(user.id, characterPositionsData[i]); // 위치 정보 저장
 
 			if (character) {
-				const drawCards: CardType[] = cardManager.drawDeck(room.id, character.hp);
+				const drawCards: CardType[] = room.drawDeck(character.hp);
 				drawCards.forEach((type) => {
 					const existCard = character.handCards.find((card) => card.type === type);
 					if (existCard) {
@@ -81,28 +80,28 @@ export const gameStartUseCase = async (
 				});
 
 				character.handCards = [
-					// { type: CardType.HALLUCINATION, count: 3 },
-					// { type: CardType.SHIELD, count: 3 },
-					// { type: CardType.SNIPER_GUN, count: 1 },
+					{ type: CardType.HALLUCINATION, count: 3 },
+					{ type: CardType.SHIELD, count: 3 },
+					{ type: CardType.SNIPER_GUN, count: 1 },
 					{ type: CardType.BBANG, count: 10 },
-					// { type: CardType.BIG_BBANG, count: 3 },
-					// { type: CardType.ABSORB, count: 3 },
+					{ type: CardType.BIG_BBANG, count: 3 },
+					{ type: CardType.ABSORB, count: 3 },
 					{ type: CardType.AUTO_RIFLE, count: 3 },
-					// { type: CardType.AUTO_SHIELD, count: 3 },
+					{ type: CardType.AUTO_SHIELD, count: 3 },
 					{ type: CardType.CALL_119, count: 3 },
 					{ type: CardType.CONTAINMENT_UNIT, count: 3 },
 					{ type: CardType.DEATH_MATCH, count: 3 },
-					// { type: CardType.DESERT_EAGLE, count: 3 },
-					// { type: CardType.FLEA_MARKET, count: 3 },
-					// { type: CardType.HAND_GUN, count: 3 },
-					// { type: CardType.GUERRILLA, count: 3 },
-					// { type: CardType.LASER_POINTER, count: 3 },
-					// { type: CardType.MATURED_SAVINGS, count: 3 },
-					// { type: CardType.RADAR, count: 3 },
-					// { type: CardType.SATELLITE_TARGET, count: 3 },
-					// { type: CardType.STEALTH_SUIT, count: 3 },
+					{ type: CardType.DESERT_EAGLE, count: 3 },
+					{ type: CardType.FLEA_MARKET, count: 3 },
+					{ type: CardType.HAND_GUN, count: 3 },
+					{ type: CardType.GUERRILLA, count: 3 },
+					{ type: CardType.LASER_POINTER, count: 3 },
+					{ type: CardType.MATURED_SAVINGS, count: 3 },
+					{ type: CardType.RADAR, count: 3 },
+					{ type: CardType.SATELLITE_TARGET, count: 3 },
+					{ type: CardType.STEALTH_SUIT, count: 3 },
 					{ type: CardType.VACCINE, count: 3 },
-					// { type: CardType.WIN_LOTTERY, count: 3 },
+					{ type: CardType.WIN_LOTTERY, count: 3 },
 				];
 				character.handCardsCount = character.handCards.reduce((sum, card) => sum + card.count, 0);
 			}

@@ -2,7 +2,6 @@
 import { CardType, CharacterStateType, CharacterType } from '../../generated/common/enums.js';
 import { CheckBigBbangService as checkBigBbangService } from '../../services/bigbbang.check.service.js';
 import { User } from '../../models/user.model.js';
-import { cardManager } from '../../managers/card.manager.js';
 import { Room } from '../../models/room.model.js';
 import { stateChangeService } from '../../services/state.change.service.js';
 
@@ -18,7 +17,7 @@ const cardShieldEffect = (room: Room, user: User, shooter: User): boolean => {
 		return false;
 	}
 
-	cardManager.removeCard(user, room, CardType.SHIELD);
+	room.removeCard(user, CardType.SHIELD);
 
 	if (user.character.stateInfo.state === CharacterStateType.BBANG_TARGET) {
 		// const shooter = room.users.find((u) => u.id === user.character?.stateInfo?.stateTargetUserId);

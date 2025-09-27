@@ -2,7 +2,6 @@
 import { CardType } from '../../generated/common/enums';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-import { cardManager } from '../../managers/card.manager';
 
 const cardAutoRifleEffect = (room: Room, user: User): boolean => {
 	// 유효성 검증
@@ -16,7 +15,7 @@ const cardAutoRifleEffect = (room: Room, user: User): boolean => {
 	}
 
 	if (user.character.weapon !== CardType.AUTO_RIFLE) {
-		cardManager.removeCard(user, room, CardType.AUTO_RIFLE);
+		room.removeCard(user, CardType.AUTO_RIFLE);
 		user.character.weapon = CardType.AUTO_RIFLE;
 	} else {
 		return false;

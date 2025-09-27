@@ -2,7 +2,6 @@
 import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-import { cardManager } from '../../managers/card.manager';
 
 const DEATH_MATCH_DURATION_MS = 10;
 
@@ -23,7 +22,7 @@ const cardDeathMatchEffect = (room: Room, user: User, targetUser: User): boolean
 		return false;
 	}
 
-	cardManager.removeCard(user, room, CardType.BIG_BBANG);
+	room.removeCard(user, CardType.BIG_BBANG);
 	if (user.character && targetUser.character) {
 		user.character.stateInfo = {
 			state: CharacterStateType.DEATH_MATCH_TURN_STATE,

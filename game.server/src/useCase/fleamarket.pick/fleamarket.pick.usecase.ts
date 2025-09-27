@@ -6,7 +6,6 @@ import { GamePacketType } from '../../enums/gamePacketType';
 import { User } from '../../models/user.model';
 import { broadcastDataToRoom } from '../../sockets/notification';
 import { C2SFleaMarketPickRequest } from '../../generated/packet/game_actions';
-import { cardManager } from '../../managers/card.manager';
 import {
 	fleaMarketNotificationForm,
 	fleaMarketResponseForm,
@@ -24,8 +23,8 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 			return fleaMarketResponseForm(false, GlobalFailCode.ROOM_NOT_FOUND);
 		}
 
-		const fleaMarketCards = cardManager.roomFleaMarketCards.get(room.id);
-		const pickNumbers = cardManager.fleaMarketPickIndex.get(room.id);
+		const fleaMarketCards = room.roomFleaMarketCards;
+		const pickNumbers = room.fleaMarketPickIndex;
 
 		if (fleaMarketCards === undefined || pickNumbers === undefined) {
 			console.log('플리마켓 카드덱에서 에러 발생');
@@ -87,8 +86,8 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 				stateChangeService(u);
 			}
 
-			cardManager.fleaMarketPickIndex.set(room.id, []);
-			cardManager.roomFleaMarketCards.set(room.id, []);
+			room.fleaMarketPickIndex = [];
+			room.roomFleaMarketCards = [];
 		}
 
 		const fleaMarketGamePacket = fleaMarketNotificationForm(fleaMarketCards, pickNumbers);

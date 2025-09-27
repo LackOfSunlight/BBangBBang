@@ -1,6 +1,5 @@
 // cardType = 2
 import { CardType, CharacterStateType } from '../../generated/common/enums.js';
-import { cardManager } from '../../managers/card.manager.js';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import { stateChangeService } from '../../services/state.change.service';
@@ -20,7 +19,7 @@ const cardBigBbangEffect = (room: Room, shooter: User, targetUser: User): boolea
 		return false;
 	}
 
-	cardManager.removeCard(shooter, room, CardType.BIG_BBANG);
+	room.removeCard(shooter, CardType.BIG_BBANG);
 
 	for (let user of room.users) {
 		// 타입 가드

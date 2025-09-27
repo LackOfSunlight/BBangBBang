@@ -9,6 +9,7 @@ const cardHandGunEffect = (room: Room, user: User): boolean => {
 
 	if (user.character.weapon !== CardType.HAND_GUN) {
 		user.character.weapon = CardType.HAND_GUN;
+		room.removeCard(user, CardType.HAND_GUN);
 	} else {
 		return false;
 	}

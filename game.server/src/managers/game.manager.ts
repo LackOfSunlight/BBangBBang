@@ -10,7 +10,6 @@ import { User } from '../models/user.model';
 import { checkSatelliteTargetEffect } from '../card/debuff/card.satellite_target.effect';
 import { checkContainmentUnitTarget } from '../card/debuff/card.containment_unit.effect';
 import { positionUpdateNotificationForm } from '../converter/packet.form';
-import { cardManager } from './card.manager';
 import roomManger, { roomPhase, roomTimers } from './room.manager';
 import { bombManager } from '../services/bomb.service';
 
@@ -92,11 +91,11 @@ class GameManager {
 
 						//카드 삭제
 						if (user.character.handCardsCount > user.character.hp) {
-							user = cardManager.trashCards(room, user);
+							user.trashCards();
 						}
 
 						if (user.character!.stateInfo?.state !== CharacterStateType.CONTAINED) {
-							const drawCards = cardManager.drawDeck(room.id, 2);
+							const drawCards = room.drawDeck(2);
 							drawCards.forEach((type) => {
 								const existCard = user.character?.handCards.find((card) => card.type === type);
 								if (existCard) {
