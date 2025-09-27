@@ -102,7 +102,7 @@ export const gameStartUseCase = async (
 					{ type: CardType.STEALTH_SUIT, count: 3 },
 					{ type: CardType.VACCINE, count: 3 },
 					// { type: CardType.WIN_LOTTERY, count: 3 },
-					{ type: CardType.BOMB, count: 3}
+					{ type: CardType.BOMB, count: 3 },
 				];
 				character.handCardsCount = character.handCards.reduce((sum, card) => sum + card.count, 0);
 			}
@@ -120,7 +120,10 @@ export const gameStartUseCase = async (
 			room.users,
 			characterPositionsData,
 		);
-		broadcastDataToRoom(room.users, notificationPacket, GamePacketType.gameStartNotification);
+
+		const toRoom = room.toData();
+
+		broadcastDataToRoom(toRoom.users, notificationPacket, GamePacketType.gameStartNotification);
 
 		// 요청자에게 성공 응답 반환
 		return gameStartResponsePacketForm({ success: true, failCode: GlobalFailCode.NONE_FAILCODE });

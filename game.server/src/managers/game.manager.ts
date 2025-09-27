@@ -21,11 +21,11 @@ export const notificationCharacterPosition = new Map<
 	Map<string, CharacterPositionData> // userId → 위치 배열
 >();
 
-const prisonPosition : CharacterPositionData = {
-	id:'21',
+const prisonPosition: CharacterPositionData = {
+	id: '21',
 	x: 22,
-	y: -4
-} 
+	y: -4,
+};
 
 // 위치 변화 감지 플래그 (성능 최적화용)
 export const roomPositionChanged = new Map<number, boolean>();
@@ -91,7 +91,13 @@ class GameManager {
 
 						//카드 삭제
 						if (user.character.handCardsCount > user.character.hp) {
-							user.trashCards();
+							const removedCards = user.character.trashCards();
+
+							removedCards.forEach((c) => {
+								for (let i = 0; i < c.count; i++) {
+									room.repeatDeck([c.type]);
+								}
+							});
 						}
 
 						if (user.character!.stateInfo?.state !== CharacterStateType.CONTAINED) {
@@ -134,7 +140,9 @@ class GameManager {
 					},
 				};
 
-				broadcastDataToRoom(room.users, userGamePacket, GamePacketType.userUpdateNotification);
+				const toRoom = room.toData();
+
+				broadcastDataToRoom(toRoom.users, userGamePacket, GamePacketType.userUpdateNotification);
 			}
 
 			const characterPosition = shuffle(spawnPositions);
@@ -146,8 +154,7 @@ class GameManager {
 				roomMap.clear(); // 기존 데이터 정리
 
 				for (let i = 0; i < room.users.length; i++) {
-
-					if(room.users[i].character?.stateInfo?.state === CharacterStateType.CONTAINED){
+					if (room.users[i].character?.stateInfo?.state === CharacterStateType.CONTAINED) {
 						roomMap.set(room.users[i].id, prisonPosition);
 						continue;
 					}
@@ -173,7 +180,9 @@ class GameManager {
 				},
 			};
 
-			broadcastDataToRoom(room.users, phaseGamePacket, GamePacketType.phaseUpdateNotification);
+			const toRoom = room.toData();
+
+			broadcastDataToRoom(toRoom.users, phaseGamePacket, GamePacketType.phaseUpdateNotification);
 
 			this.scheduleNextPhase(room.id, roomTimerMapId);
 		}, interval);
@@ -212,7 +221,6 @@ class GameManager {
 	}
 }
 
-
 export const broadcastPositionUpdates = (room: Room) => {
 	const roomMap = notificationCharacterPosition.get(room.id);
 	if (!roomMap) return; // 해당 방의 위치 정보가 없으면 종료
@@ -243,8 +251,10 @@ export const broadcastPositionUpdates = (room: Room) => {
 		// 위치 업데이트 패킷 생성
 		const gamePacket = positionUpdateNotificationForm(characterPositions);
 
+		const toRoom = room.toData();
+
 		// 방의 모든 유저에게 전송
-		broadcastDataToRoom(room.users, gamePacket, GamePacketType.positionUpdateNotification);
+		broadcastDataToRoom(toRoom.users, gamePacket, GamePacketType.positionUpdateNotification);
 
 		// 🎯 핵심: 브로드캐스트 후 Map 비우기 (다음 변화까지 대기)
 		roomMap.clear();

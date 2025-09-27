@@ -36,9 +36,11 @@ const cardBombEffect = (room: Room, user: User, target: User): boolean => {
 	target.character.debuffs.push(CardType.BOMB);
 
 	const explosionTime = Date.now() + 30000;
+
+	const toRoom = room.toData();
 	// 시작전 패킷 송신
 	const warnExplosion = warnNotificationPacketForm(WarningType.BOMB_WANING, `${explosionTime}`);
-	broadcastDataToRoom(room.users, warnExplosion, GamePacketType.warningNotification);
+	broadcastDataToRoom(toRoom.users, warnExplosion, GamePacketType.warningNotification);
 	// 인게임 제한시간 : 30초 / 테스트 제한시간 : 10초
 	setBombTimer.startBombTimer(room, target, explosionTime);
 
@@ -60,16 +62,18 @@ export const bombExplosion = (room: Room, userInExplode: User) => {
 		return;
 	}
 
+	const toRoom = room.toData();
+
 	//animation 추후 추가 예정
-	playAnimationHandler(room.users, userInExplode.id, AnimationType.BOMB_ANIMATION);
+	playAnimationHandler(toRoom.users, userInExplode.id, AnimationType.BOMB_ANIMATION);
 
 	userInExplode.character.hp -= 2;
 	userInExplode.character.debuffs.splice(bombCardIndex, 1);
 	checkAndEndGameIfNeeded(room.id);
 
-	const userUpdateNotificationPacket = userUpdateNotificationPacketForm(room.users);
+	const userUpdateNotificationPacket = userUpdateNotificationPacketForm(toRoom.users);
 	broadcastDataToRoom(
-		room.users,
+		toRoom.users,
 		userUpdateNotificationPacket,
 		GamePacketType.userUpdateNotification,
 	);

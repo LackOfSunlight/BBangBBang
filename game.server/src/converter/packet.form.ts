@@ -116,7 +116,7 @@ export const createRoomResponseForm = (
  * @param rooms
  * @returns
  */
-export const getRoomListResponseForm = (rooms: Room[]): GamePacket => {
+export const getRoomListResponseForm = (rooms: RoomData[]): GamePacket => {
 	const newGamaPacket: GamePacket = {
 		payload: {
 			oneofKind: GamePacketType.getRoomListResponse,
@@ -139,7 +139,7 @@ export const getRoomListResponseForm = (rooms: Room[]): GamePacket => {
 export const joinRandomRoomResponseForm = (
 	success: boolean,
 	failCode: GlobalFailCode,
-	room?: Room,
+	room?: RoomData,
 ): GamePacket => {
 	const newGamePacket: GamePacket = {
 		payload: {
@@ -160,7 +160,7 @@ export const joinRandomRoomResponseForm = (
  * @param joinUser
  * @returns
  */
-export const joinRoomNotificationForm = (joinUser: User): GamePacket => {
+export const joinRoomNotificationForm = (joinUser: UserData): GamePacket => {
 	const newGamePacket: GamePacket = {
 		payload: {
 			oneofKind: GamePacketType.joinRoomNotification,
@@ -183,7 +183,7 @@ export const joinRoomNotificationForm = (joinUser: User): GamePacket => {
 export const joinRoomResponseForm = (
 	success: boolean,
 	failCode: GlobalFailCode,
-	room?: Room,
+	room?: RoomData,
 ): GamePacket => {
 	const newGamePacket: GamePacket = {
 		payload: {
@@ -245,7 +245,7 @@ export const gamePrepareResponsePacketForm = (payload: S2CGamePrepareResponse): 
  * @param room
  * @returns
  */
-export const gamePrepareNotificationPacketForm = (room: Room): GamePacket => {
+export const gamePrepareNotificationPacketForm = (room: RoomData): GamePacket => {
 	const notificationPayload: S2CGamePrepareNotification = {
 		room: room,
 	};
@@ -281,7 +281,7 @@ export const gameStartResponsePacketForm = (payload: S2CGameStartResponse): Game
  */
 export const gameStartNotificationPacketForm = (
 	gameState: GameStateData,
-	users: User[],
+	users: UserData[],
 	characterPositions: CharacterPositionData[],
 ): GamePacket => {
 	const payload: S2CGameStartNotification = {
@@ -437,7 +437,7 @@ export const useCardNotificationPacketForm = (
  * @param user
  * @returns
  */
-export const userUpdateNotificationPacketForm = (user: User[]): GamePacket => {
+export const userUpdateNotificationPacketForm = (user: UserData[]): GamePacket => {
 	const NotificationPacket: GamePacket = {
 		payload: {
 			oneofKind: GamePacketType.userUpdateNotification,

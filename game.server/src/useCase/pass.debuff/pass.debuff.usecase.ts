@@ -63,11 +63,13 @@ const passDebuffUseCase = async (
 			`[BOMB] 폭탄이 ${fromUser.nickname} → ${toUser.nickname} 에게 전달됨 (남은 시간 ${remainTime}ms)`,
 		);
 
-		const updateClient = userUpdateNotificationPacketForm(room.users);
-		broadcastDataToRoom(room.users, updateClient, GamePacketType.userUpdateNotification);
+		const toRoom = room.toData();
+
+		const updateClient = userUpdateNotificationPacketForm(toRoom.users);
+		broadcastDataToRoom(toRoom.users, updateClient, GamePacketType.userUpdateNotification);
 		// 남은 시간을 넘기기 위해 추가
 		const passBomb = warnNotificationPacketForm(WarningType.BOMB_WANING, `${explosionTime}`);
-		broadcastDataToRoom(room.users, passBomb, GamePacketType.warningNotification);
+		broadcastDataToRoom(toRoom.users, passBomb, GamePacketType.warningNotification);
 		// 6. 성공 응답
 		return passDebuffResponseForm(true, GlobalFailCode.NONE_FAILCODE);
 	} catch (error) {

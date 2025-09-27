@@ -77,17 +77,23 @@ export class Room implements RoomData {
 		const userIndex = this.users.findIndex((u) => u.id === userId);
 		if (userIndex === -1) throw new Error('User not found');
 
-		// 기존 유저 데이터
 		const user = this.users[userIndex];
 
-		// 업데이트 (얕은 병합)
-		const updatedUser = {
-			...user,
-			character: { ...user.character, ...updateData } as CharacterData,
-		};
+		if (user.character) {
+			Object.assign(user.character, updateData);
+		}
 
-		// 배열에 반영
-		this.users[userIndex].setUserData(updatedUser.id, updatedUser.nickname, updatedUser.character);
+		// // 기존 유저 데이터
+		// const user = this.users[userIndex];
+
+		// // 업데이트 (얕은 병합)
+		// const updatedUser = {
+		// 	...user,
+		// 	character: { ...user.character, ...updateData } as CharacterData,
+		// };
+
+		// // 배열에 반영
+		// this.users[userIndex].setUserData(updatedUser.id, updatedUser.nickname, updatedUser.character);
 	}
 
 	// 방에서 특정 유저의 정보(아이디 제외한 속성값들) 배열로 가져오기
@@ -120,7 +126,7 @@ export class Room implements RoomData {
 		shuffle<CardType>(this.roomDecks);
 	}
 
-	public drawDeck(count: number): CardType[] {
+	public drawDeck(count: number = 1): CardType[] {
 		if (this.roomDecks) {
 			if (count > this.roomDecks.length) {
 				count = this.roomDecks.length;
@@ -170,5 +176,14 @@ export class Room implements RoomData {
 		}
 	}
 
-
+	public toData(): RoomData {
+		return {
+			id: this.id,
+			ownerId: this.ownerId,
+			name: this.name,
+			maxUserNum: this.maxUserNum,
+			state: this.state,
+			users: this.users.map((u) => u.toData()),
+		};
+	}
 }

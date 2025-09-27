@@ -40,9 +40,12 @@ const joinRoomUseCase = async (
 		roomManager.addUserToRoom(req.roomId, user);
 		socket.roomId = req.roomId;
 
+		const toUser = user.toData();
+		const toRoom = room.toData();
+
 		// 5. 방 참여 알림 브로드캐스트
-		const notificationPacket = joinRoomNotificationForm(user);
-		broadcastDataToRoom(room.users, notificationPacket, GamePacketType.joinRoomNotification);
+		const notificationPacket = joinRoomNotificationForm(toUser);
+		broadcastDataToRoom(toRoom.users, notificationPacket, GamePacketType.joinRoomNotification);
 
 		// 6. 성공 응답
 		return joinRoomResponseForm(true, GlobalFailCode.NONE_FAILCODE, room);

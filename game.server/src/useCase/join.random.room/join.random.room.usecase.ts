@@ -37,11 +37,14 @@ const joinRandomRoomUseCase = async (
 
 		socket.roomId = room.id;
 
-		const notificationPacket = joinRoomNotificationForm(user);
+		const toUser = user.toData();
+		const toRoom = room.toData();
 
-		broadcastDataToRoom(room.users, notificationPacket, GamePacketType.joinRoomNotification);
+		const notificationPacket = joinRoomNotificationForm(toUser);
 
-		return joinRandomRoomResponseForm(true, GlobalFailCode.NONE_FAILCODE, room);
+		broadcastDataToRoom(toRoom.users, notificationPacket, GamePacketType.joinRoomNotification);
+
+		return joinRandomRoomResponseForm(true, GlobalFailCode.NONE_FAILCODE, toRoom);
 	} catch (err) {
 		return joinRandomRoomResponseForm(false, GlobalFailCode.UNKNOWN_ERROR);
 	}

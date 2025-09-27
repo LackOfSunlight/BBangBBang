@@ -19,7 +19,7 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 		const room = roomManger.getRoom(Number(socket.roomId));
 		const userInfo = roomManger.getUserFromRoom(room.id, socket.userId!);
 
-		if(!room || !userInfo || !userInfo.character){
+		if (!room || !userInfo || !userInfo.character) {
 			return fleaMarketResponseForm(false, GlobalFailCode.ROOM_NOT_FOUND);
 		}
 
@@ -55,7 +55,7 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 				const nextIndex = (i + 1) % room.users.length;
 				const nextUser = room.users[nextIndex];
 
-				if(!nextUser || !nextUser.character || !nextUser.character.stateInfo)
+				if (!nextUser || !nextUser.character || !nextUser.character.stateInfo)
 					return fleaMarketResponseForm(false, GlobalFailCode.CHARACTER_NOT_FOUND);
 
 				if (nextUser.character.stateInfo.nextState !== CharacterStateType.NONE_CHARACTER_STATE) {
@@ -77,7 +77,7 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 
 		if (allWaiting) {
 			for (const u of room.users) {
-				if(!u || !u.character || !u.character.stateInfo)
+				if (!u || !u.character || !u.character.stateInfo)
 					return fleaMarketResponseForm(false, GlobalFailCode.CHARACTER_NOT_FOUND);
 
 				// 감옥에 있는 애들은 상태를 바꾸지 않음
@@ -90,8 +90,10 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 			room.roomFleaMarketCards = [];
 		}
 
+		const toRoom = room.toData();
+
 		const fleaMarketGamePacket = fleaMarketNotificationForm(fleaMarketCards, pickNumbers);
-		const userUpdateGamePacket = userUpdateNotificationPacketForm(room.users);
+		const userUpdateGamePacket = userUpdateNotificationPacketForm(toRoom.users);
 
 		broadcastDataToRoom(room.users, fleaMarketGamePacket, GamePacketType.fleaMarketNotification);
 

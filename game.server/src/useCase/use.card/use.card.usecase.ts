@@ -34,6 +34,8 @@ export const useCardUseCase = (
 		return { success: false, failcode: GlobalFailCode.INVALID_REQUEST };
 	}
 
+	const toRoom = room.toData();
+
 	// useCardNotification 패킷 전달
 	const useCardNotificationPacket = useCardNotificationPacketForm(cardType, userId, targetUserId);
 
@@ -42,19 +44,23 @@ export const useCardUseCase = (
 
 		if (selectedCards !== undefined) {
 			const gamePacket = fleaMarketNotificationForm(selectedCards, []);
-			broadcastDataToRoom(room.users, gamePacket, GamePacketType.fleaMarketNotification);
+			broadcastDataToRoom(toRoom.users, gamePacket, GamePacketType.fleaMarketNotification);
 		}
 	}
 
 	// 장착이 가능한가? equipCard : useCard
 	if (cardType >= 13 && cardType <= 20) {
 		broadcastDataToRoom(
-			room.users,
+			toRoom.users,
 			useCardNotificationPacket,
 			GamePacketType.equipCardNotification,
 		);
 	} else
-		broadcastDataToRoom(room.users, useCardNotificationPacket, GamePacketType.useCardNotification);
+		broadcastDataToRoom(
+			toRoom.users,
+			useCardNotificationPacket,
+			GamePacketType.useCardNotification,
+		);
 
 	// userUpdateNotification 패킷 전달
 

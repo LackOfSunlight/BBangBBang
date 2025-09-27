@@ -9,7 +9,9 @@ const cardVaccineEffect = (room: Room, user: User): boolean => {
 
 	room.removeCard(user, CardType.VACCINE);
 
-	return user.heal(HEAL_AMOUNT);
+	if (!user.character) return false;
+
+	return user.character.heal(HEAL_AMOUNT);
 };
 
 export default cardVaccineEffect;

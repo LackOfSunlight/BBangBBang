@@ -26,7 +26,11 @@ const cardFleaMarketEffect = (room: Room, user: User, targetUser: User): boolean
 
 	if (user.character === undefined || user.character.stateInfo == undefined) return false;
 
-	user.changeState(CharacterStateType.FLEA_MARKET_TURN, CharacterStateType.FLEA_MARKET_WAIT, 5);
+	user.character.changeState(
+		CharacterStateType.FLEA_MARKET_TURN,
+		CharacterStateType.FLEA_MARKET_WAIT,
+		5,
+	);
 
 	for (let i = 0; i < room.users.length; i++) {
 		const otherUser = room.users[i];
@@ -40,7 +44,7 @@ const cardFleaMarketEffect = (room: Room, user: User, targetUser: User): boolean
 			continue;
 		}
 
-		otherUser.changeState(
+		otherUser.character.changeState(
 			CharacterStateType.FLEA_MARKET_WAIT,
 			CharacterStateType.FLEA_MARKET_TURN,
 			5,

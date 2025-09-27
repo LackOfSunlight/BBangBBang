@@ -6,7 +6,7 @@ import { UserData } from '../generated/common/types';
 import { User } from '../models/user.model';
 
 export const playAnimationHandler = (
-	users: User[],
+	users: UserData[],
 	userId: string,
 	animationType: AnimationType,
 ) => {

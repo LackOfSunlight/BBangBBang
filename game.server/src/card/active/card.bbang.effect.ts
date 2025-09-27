@@ -3,7 +3,7 @@ import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-
+import { Character } from '../../models/character.model';
 
 const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 	// 정보값 가져오기
@@ -37,14 +37,16 @@ const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 	room.removeCard(user, CardType.BBANG);
 	if (user.character.stateInfo.state === CharacterStateType.NONE_CHARACTER_STATE) {
 		// 상태 설정
-		user.changeState(
+		console.log('character instanceof Character?', user.character instanceof Character);
+		console.log('constructor:', user.character?.constructor?.name);
+		user.character.changeState(
 			CharacterStateType.BBANG_SHOOTER,
 			CharacterStateType.NONE_CHARACTER_STATE,
 			10,
 			target.id,
 		);
 
-		target.changeState(
+		target.character.changeState(
 			CharacterStateType.BBANG_TARGET,
 			CharacterStateType.NONE_CHARACTER_STATE,
 			10,
@@ -52,25 +54,25 @@ const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 		);
 	} else if (user.character.stateInfo.state === CharacterStateType.DEATH_MATCH_TURN_STATE) {
 		// 상태 설정
-		user.changeState(
+
+		user.character.changeState(
 			CharacterStateType.DEATH_MATCH_STATE,
 			CharacterStateType.DEATH_MATCH_TURN_STATE,
 			10,
 			target.id,
 		);
 
-		target.changeState(
+		target.character.changeState(
 			CharacterStateType.DEATH_MATCH_TURN_STATE,
 			CharacterStateType.DEATH_MATCH_STATE,
 			10,
 			user.id,
 		);
 	} else if (user.character.stateInfo.state === CharacterStateType.GUERRILLA_TARGET) {
-
-		user.changeState();
+		user.character.changeState();
 
 		CheckGuerrillaService(room);
-		
+
 		return true;
 	}
 	return true;
