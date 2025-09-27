@@ -38,34 +38,40 @@ const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 	cardManager.removeCard(user, room, CardType.BBANG);
 	if (user.character.stateInfo.state === CharacterStateType.NONE_CHARACTER_STATE) {
 		// 상태 설정
-		user.character.stateInfo.state = CharacterStateType.BBANG_SHOOTER; // 빵야 카드 사용자는 BBANG_SHOOTER 상태가 되고
-		user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-		user.character.stateInfo.nextStateAt = `${nowTime + 10}`; //ms
-		user.character.stateInfo.stateTargetUserId = target.id; // 빵야 카드 사용자는 targetId에 대상자 ID를 기록
+		user.changeState(
+			CharacterStateType.BBANG_SHOOTER,
+			CharacterStateType.NONE_CHARACTER_STATE,
+			10,
+			target.id,
+		);
 
-		target.character.stateInfo.state = CharacterStateType.BBANG_TARGET; // 빵야 카드 대상자는 BBANG_TARGET 상태가 됩니다
-		target.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-		target.character.stateInfo.nextStateAt = `${nowTime + 10}`; //ms
-		target.character.stateInfo.stateTargetUserId = user.id;
+		target.changeState(
+			CharacterStateType.BBANG_TARGET,
+			CharacterStateType.NONE_CHARACTER_STATE,
+			10,
+			user.id,
+		);
 	} else if (user.character.stateInfo.state === CharacterStateType.DEATH_MATCH_TURN_STATE) {
 		// 상태 설정
-		user.character.stateInfo.state = CharacterStateType.DEATH_MATCH_STATE;
-		user.character.stateInfo.nextState = CharacterStateType.DEATH_MATCH_TURN_STATE;
-		user.character.stateInfo.nextStateAt = `${nowTime + 10}`; //ms
-		user.character.stateInfo.stateTargetUserId = target.id;
+		user.changeState(
+			CharacterStateType.DEATH_MATCH_STATE,
+			CharacterStateType.DEATH_MATCH_TURN_STATE,
+			10,
+			target.id,
+		);
 
-		target.character.stateInfo.state = CharacterStateType.DEATH_MATCH_TURN_STATE;
-		target.character.stateInfo.nextState = CharacterStateType.DEATH_MATCH_STATE;
-		target.character.stateInfo.nextStateAt = `${nowTime + 10}`; //ms
-		target.character.stateInfo.stateTargetUserId = user.id;
+		target.changeState(
+			CharacterStateType.DEATH_MATCH_TURN_STATE,
+			CharacterStateType.DEATH_MATCH_STATE,
+			10,
+			user.id,
+		);
 	} else if (user.character.stateInfo.state === CharacterStateType.GUERRILLA_TARGET) {
-		user.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
-		user.character.stateInfo.nextState = CharacterStateType.NONE_CHARACTER_STATE;
-		user.character.stateInfo.nextStateAt = '0'; //ms
-		user.character.stateInfo.stateTargetUserId = '0';
 
-		const updatedRoom = roomManger.getRoom(room.id);
-		if (updatedRoom) CheckGuerrillaService(updatedRoom);
+		user.changeState();
+
+		CheckGuerrillaService(room);
+		
 		return true;
 	}
 	return true;

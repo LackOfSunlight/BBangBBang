@@ -1,60 +1,67 @@
-import { AnimationType, CardType, CharacterType } from '../generated/common/enums';
+import { AnimationType, CardType, CharacterStateType, CharacterType } from '../generated/common/enums';
+import { CharacterData } from '../generated/common/types';
 import { playAnimationHandler } from '../handlers/play.animation.handler';
 import { cardManager } from '../managers/card.manager';
+import roomManager from '../managers/room.manager';
+import { Character } from '../models/character.model';
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
 
-const takeDamageService = (room: Room, user: User, shooter: User, damage: number) => {
+const takeDamageService = (userId: string,character: CharacterData, shooter: Character ,damage: number) => {
 	let isDefended = false;
 
+	const room = roomManager.getRoomByUser(userId);
+
+	if(!room) return;
+
 	//방어 시도
-	const hasShield = user.character!.equips.includes(CardType.AUTO_SHIELD);
-	const isFroggy = user.character!.characterType === CharacterType.FROGGY;
+	const hasShield = character.equips.includes(CardType.AUTO_SHIELD);
+	const isFroggy = character.characterType === CharacterType.FROGGY;
 
 	const shieldRoll = hasShield && Math.random() < 0.25;
 	const froggyRoll = isFroggy && Math.random() < 0.25;
 
-	if (shieldRoll || froggyRoll) {
+	if ((shieldRoll || froggyRoll) && character.stateInfo?.state != CharacterStateType.DEATH_MATCH_TURN_STATE) {
 		isDefended = true; // 둘 중 하나라도 성공하면 방어됨
-		playAnimationHandler(room.users, user.id, AnimationType.SHIELD_ANIMATION);
+		// playAnimationHandler(room.users, character.id, AnimationType.SHIELD_ANIMATION);
 	}
 
 	if (isDefended) return;
 
 	//데미지 처리
-	if (user.character?.characterType === CharacterType.MALANG) {
-		user.character.hp -= damage;
+	if (character.characterType === CharacterType.MALANG) {
+		character.hp -= damage;
 		// 덱에서 카드 1장 뽑기 (CardType[] 반환)
+
 		const newCardTypes = cardManager.drawDeck(room.id, 1);
 
 		if (newCardTypes.length === 0) {
-			console.log(`[말랑이 특수능력] ${user.nickname}: 덱에 카드가 없습니다.`);
+			// console.log(`[말랑이 특수능력] ${character.nickname}: 덱에 카드가 없습니다.`);
 			return false;
 		}
 
 		// 게임 로직에 따라 같은 타입의 카드가 있으면 count 증가, 없으면 새로 추가
 		newCardTypes.forEach((cardType) => {
-			const existingCard = user.character!.handCards.find((card) => card.type === cardType);
+			const existingCard = character.handCards.find((card) => card.type === cardType);
 			if (existingCard) {
 				// 같은 타입의 카드가 이미 있으면 count 증가
 				existingCard.count += 1;
 			} else {
 				// 새로운 타입의 카드면 배열에 새로 추가
-				user.character!.handCards.push({ type: cardType, count: 1 });
+				character.handCards.push({ type: cardType, count: 1 });
 			}
 		});
 
 		// handCardsCount 업데이트 (실제 카드 개수)
-		user.character!.handCardsCount = user.character!.handCards.reduce(
+		character.handCardsCount = character.handCards.reduce(
 			(total, card) => total + card.count,
 			0,
 		);
-	} else if (user.character?.characterType == CharacterType.PINK_SLIME) {
-		user.character.hp -= damage;
+	} else if (character.characterType == CharacterType.PINK_SLIME) {
+		character.hp -= damage;
 		// 대상의 손에 카드가 있는지 확인s
-		const shooterHand = shooter.character!.handCards;
+		const shooterHand = shooter.handCards;
 		if (shooterHand.length === 0) {
-			console.log(`[핑크슬라임 특수능력] ${shooter.character}이 카드를 가지고 있지 않음:`);
 			// 대상이 카드를 가지고 있지 않으면 효과가 발동하지 않음
 			return false;
 		}
@@ -67,14 +74,14 @@ const takeDamageService = (room: Room, user: User, shooter: User, damage: number
 			// 여러 장 있으면 1장만 빼오기
 			stolenCard.count -= 1;
 			// 시전자 손패에 추가
-			user.character.handCards.push({ type: stolenCard.type, count: 1 });
+			character.handCards.push({ type: stolenCard.type, count: 1 });
 		} else {
 			// 1장뿐이면 배열에서 제거
 			const removed = shooterHand.splice(randomIndex, 1)[0];
-			user.character.handCards.push(removed);
+			character.handCards.push(removed);
 		}
 	} else {
-		user.character!.hp -= damage;
+		character.hp -= damage;
 	}
 };
 

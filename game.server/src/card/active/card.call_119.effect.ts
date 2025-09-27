@@ -10,12 +10,12 @@ const cardCall119Effect = (room: Room, user: User, targetUser: User): boolean =>
 	const HEAL_AMOUNT = 1;
 
 	if (targetUser.id !== '0') {
-		return applyHeal(user, HEAL_AMOUNT);
+		return user.heal(HEAL_AMOUNT);
 	}
 	else {
-		const usersToHeal = room.users.filter((u) => u.id !== user.id);
-		const result = usersToHeal.map((otherUser) => applyHeal(otherUser, HEAL_AMOUNT));
 
+		const usersToHeal = room.users.filter((u) => u.id !== user.id);	
+		usersToHeal.map((otherUser) => otherUser.heal(HEAL_AMOUNT));
 		return true;
 	}
 };

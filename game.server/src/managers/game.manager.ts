@@ -22,6 +22,12 @@ export const notificationCharacterPosition = new Map<
 	Map<string, CharacterPositionData> // userId → 위치 배열
 >();
 
+const prisonPosition : CharacterPositionData = {
+	id:'21',
+	x: 22,
+	y: -4
+} 
+
 // 위치 변화 감지 플래그 (성능 최적화용)
 export const roomPositionChanged = new Map<number, boolean>();
 
@@ -44,7 +50,7 @@ class GameManager {
 		// 위치 변화 플래그 초기화 (최초 시작 시에는 true로 설정)
 		roomPositionChanged.set(room.id, true);
 
-		const intervalId = setInterval(() => broadcastPositionUpdates(room), 100);
+		const intervalId = setInterval(() => broadcastPositionUpdates(room), 1000000);
 
 		positionUpdateIntervals.set(room.id, intervalId);
 		this.scheduleNextPhase(room.id, roomId);
@@ -52,7 +58,7 @@ class GameManager {
 
 	private scheduleNextPhase(roomId: number, roomTimerMapId: string) {
 		this.clearTimer(roomTimerMapId);
-		const dayInterval = 60000; // 1분
+		const dayInterval = 600000; // 1분
 		const eveningInterval = 30000; //30초
 
 		let nextPhase: PhaseType;
@@ -141,6 +147,11 @@ class GameManager {
 				roomMap.clear(); // 기존 데이터 정리
 
 				for (let i = 0; i < room.users.length; i++) {
+
+					if(room.users[i].character?.stateInfo?.state === CharacterStateType.CONTAINED){
+						roomMap.set(room.users[i].id, prisonPosition);
+						continue;
+					}
 					// 모든 플레이어(죽은 플레이어 포함)에게 새로운 위치 할당
 					roomMap.set(room.users[i].id, characterPosition[i]);
 				}

@@ -146,7 +146,7 @@ class CardManager {
 		user.character.handCards = user.character.handCards.filter((c) => c.count > 0);
 		removedCards.forEach((c) => {
 			for (let i = 0; i < c.count; i++) {
-				cardManager.repeatDeck(room.id, [c.type]);
+				this.repeatDeck(room.id, [c.type]);
 			}
 		});
 
