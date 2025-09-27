@@ -8,7 +8,7 @@ import { playAnimationHandler } from '../../handlers/play.animation.handler';
 import { checkAndEndGameIfNeeded } from '../../services/game.end.service';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-import { bombManager } from '../../services/bomb.service';
+import { setBombTimer } from '../../services/set.bomb.timer.service';
 
 /** 폭탄 디버프 부여 */
 const cardBombEffect = (room: Room, user: User, target: User): boolean => {
@@ -40,12 +40,12 @@ const cardBombEffect = (room: Room, user: User, target: User): boolean => {
 	const warnExplosion = warnNotificationPacketForm(WarningType.BOMB_WANING, `${explosionTime}`);
 	broadcastDataToRoom(room.users, warnExplosion, GamePacketType.warningNotification);
 	// 인게임 제한시간 : 30초 / 테스트 제한시간 : 10초
-	bombManager.startBombTimer(room, target, explosionTime);
+	setBombTimer.startBombTimer(room, target, explosionTime);
 
 	return true;
 };
 
-// bombManager 분리 후 ../../services/bomb.service 에 배치
+// setBombTimer 분리 후 ../../services/bomb.service 에 배치
 
 /** 폭발 처리 */
 export const bombExplosion = (room: Room, userInExplode: User) => {
