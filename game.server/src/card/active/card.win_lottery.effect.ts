@@ -6,7 +6,7 @@ const LOTTERY_CARD_COUNT = 3;
 
 const cardWinLotteryEffect = (room: Room, user: User): boolean => {
 	// 유효성 검증
-	if (!user || !user.character || !room) return false;
+	if (!user.character) return false;
 
 	const newCardTypes = room.drawDeck(LOTTERY_CARD_COUNT);
 

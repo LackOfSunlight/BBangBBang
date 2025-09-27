@@ -5,12 +5,8 @@ import { Room } from '../../models/room.model';
 
 const cardMaturedSavingsEffect = (room: Room, user: User): boolean => {
 	// 유효성 검증
-	if (!user || !user.character) {
+	if (!user.character) {
 		console.error('[MATURED_SAVINGS]잘못된 사용자 정보입니다');
-		return false;
-	}
-	if (!room) {
-		console.error('[MATURED_SAVINGS]방이 존재하지 않습니다.');
 		return false;
 	}
 

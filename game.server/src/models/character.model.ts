@@ -3,13 +3,13 @@ import { CardData, CharacterData, CharacterStateInfoData } from '../generated/co
 import getMaxHp from '../init/character.Init';
 import { Room } from './room.model';
 
-export class Character implements CharacterData {
+export class Character {
 	characterType: CharacterType;
 	roleType: RoleType;
 	hp: number;
 	weapon: number;
 
-	stateInfo?: CharacterStateInfoData | undefined;
+	stateInfo: CharacterStateInfoData;
 
 	equips: number[];
 	debuffs: number[];
@@ -41,7 +41,7 @@ export class Character implements CharacterData {
 		this.handCardsCount = handCardsCount;
 	}
 
-	public heal(value: number): boolean {
+	public addHealth(value: number): boolean {
 		if (!this) return false;
 
 		const maxHp = getMaxHp(this.characterType);
@@ -54,8 +54,11 @@ export class Character implements CharacterData {
 	}
 
 	public takeDamage(value: number = 1) {
-		if (this.hp <= 0) return;
 		this.hp -= value;
+
+		if (this.hp <= 0) {
+			this.hp = 0;
+		}
 	}
 
 	public changeState(

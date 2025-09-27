@@ -10,7 +10,7 @@ const cardDefinitions: CardData[] = (cardData as any[]).map((card) => ({
 	type: CardType[card.type as keyof typeof CardType],
 }));
 
-export class Room implements RoomData {
+export class Room {
 	id: number;
 	ownerId: string;
 	name: string;

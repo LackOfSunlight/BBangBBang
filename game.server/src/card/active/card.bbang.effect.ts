@@ -10,15 +10,11 @@ const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 	const nowTime = Date.now();
 
 	// 유효성 검증
-	if (!room) {
-		console.error('[BBANG]방이 존재하지 않습니다.');
-		return false;
-	}
-	if (!user || !user.character || !user.character.stateInfo) {
+	if (!user.character || !user.character.stateInfo) {
 		console.error('[BBANG]사용자 정보가 존재하지 않습니다');
 		return false;
 	}
-	if (!target || !target.character || !target.character.stateInfo) {
+	if (!target.character || !target.character.stateInfo) {
 		console.error('[BBANG]타깃 유저의 정보가 존재하지 않습니다 ');
 		return false;
 	}

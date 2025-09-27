@@ -5,7 +5,7 @@ import { User } from '../../models/user.model';
 
 const cardHandGunEffect = (room: Room, user: User): boolean => {
 	// 유효성 검증
-	if (!user || !user.character) return false;
+	if (!user.character) return false;
 
 	if (user.character.weapon !== CardType.HAND_GUN) {
 		user.character.weapon = CardType.HAND_GUN;

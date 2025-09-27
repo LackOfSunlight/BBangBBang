@@ -6,7 +6,7 @@ import { User } from '../../models/user.model';
 
 const cardHallucinationEffect = (room: Room, user: User, target: User): boolean => {
 	// 유효성 검증
-	if (!user || !user.character || !target || !target.character) return false;
+	if (!user.character || !target.character) return false;
 
 	if (target.character.stateInfo?.state === CharacterStateType.CONTAINED) {
 		return false;

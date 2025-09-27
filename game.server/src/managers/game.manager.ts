@@ -12,9 +12,15 @@ import { checkContainmentUnitTarget } from '../card/debuff/card.containment_unit
 import { positionUpdateNotificationForm } from '../converter/packet.form';
 import roomManger, { roomPhase, roomTimers } from './room.manager';
 import { setBombTimer } from '../services/set.bomb.timer.service';
+import { ContainmentUnitCard } from '../card/class/card.containment.unit';
+import { SatelliteTargetCard } from '../card/class/card.satellite.target';
+import { stat } from 'fs';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 const positionUpdateIntervals = new Map<number, NodeJS.Timeout>();
+
+const containmentCard = new ContainmentUnitCard();
+const satelliteCard = new SatelliteTargetCard();
 
 export const notificationCharacterPosition = new Map<
 	number, // roomId
@@ -78,9 +84,9 @@ class GameManager {
 
 			if (nextPhase === PhaseType.DAY) {
 				// 1. 위성 타겟 디버프 효과 체크 (하루 시작 시)
-				room = (await checkSatelliteTargetEffect(room)) || room; // room 상태 변수 재갱신
+				room = (await satelliteCard.checkSatelliteTargetEffect(room)) || room; // room 상태 변수 재갱신
 
-				room = (await checkContainmentUnitTarget(room.id)) || room;
+				room = (await containmentCard.checkContainmentUnitTarget(room.id)) || room;
 
 				// 2. 카드 처리
 				for (let user of room.users) {

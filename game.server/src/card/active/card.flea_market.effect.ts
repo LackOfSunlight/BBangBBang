@@ -5,11 +5,9 @@ import { User } from '../../models/user.model';
 import { stateChangeService } from '../../services/state.change.service';
 
 const cardFleaMarketEffect = (room: Room, user: User, targetUser: User): boolean => {
-	// 방어 코드
-	if (!room || !user) return false;
-
 	// 방에 유저들 정보 가져오기
 	const users = room.users;
+
 	if (!users || users.length === 0) return false;
 
 	room.removeCard(user, CardType.FLEA_MARKET);

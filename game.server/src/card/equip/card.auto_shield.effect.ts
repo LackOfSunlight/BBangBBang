@@ -3,7 +3,7 @@ import { User } from '../../models/user.model';
 import { Room } from '../../models/room.model';
 
 const cardAutoShieldEffect = (room: Room, user: User): boolean => {
-	if (!user || !user.character) {
+	if (!user.character) {
 		console.warn(`[자동 방패] 유저 또는 캐릭터 정보를 찾을 수 없습니다: ${user}`);
 		return false;
 	}

@@ -5,12 +5,8 @@ import { User } from '../../models/user.model';
 
 const cardLaserPointerEffect = (room: Room, user: User): boolean => {
 	// 유효성 검증
-	if (!user || !user.character) {
+	if (!user.character) {
 		console.log('[LASER_POINTER]사용자 정보가 존재하지 않습니다');
-		return false;
-	}
-	if (!room) {
-		console.log('[LASER_POINTER]방이 존재하지 않습니다.');
 		return false;
 	}
 

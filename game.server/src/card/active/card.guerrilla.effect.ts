@@ -5,10 +5,6 @@ import { User } from '../../models/user.model.js';
 import { stateChangeService } from '../../services/state.change.service.js';
 
 const cardGuerrillaEffect = (room: Room, shooter: User, targetUser: User): boolean => {
-
-	//방어 코드
-	if (!room || !shooter || !targetUser) return false;
-
 	const isBlockedStateUsers = room.users.some(
 		(s) => s.character && s.character.stateInfo?.state !== CharacterStateType.NONE_CHARACTER_STATE,
 	);
@@ -33,16 +29,13 @@ const cardGuerrillaEffect = (room: Room, shooter: User, targetUser: User): boole
 			continue;
 		}
 
-		if (
-			user.character.hp > 0 &&
-			user.character.stateInfo.state != CharacterStateType.CONTAINED
-		) {
+		if (user.character.hp > 0 && user.character.stateInfo.state != CharacterStateType.CONTAINED) {
 			stateChangeService(
 				user,
 				CharacterStateType.GUERRILLA_TARGET,
 				CharacterStateType.NONE_CHARACTER_STATE,
 				5,
-				shooter.id
+				shooter.id,
 			);
 		}
 	}

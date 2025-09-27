@@ -4,7 +4,6 @@ import { GameSocket } from '../type/game.socket';
 export const connectedSockets = new Map<string, GameSocket>();
 
 class SocketManager {
-
 	private static instance: SocketManager;
 
 	public static getInstance(): SocketManager {
@@ -13,7 +12,6 @@ class SocketManager {
 		}
 		return SocketManager.instance;
 	}
-
 
 	public addSocket(socket: GameSocket) {
 		// 사용자가 로그인하여 userId가 확정된 후에 호출되어야 합니다.
@@ -30,7 +28,7 @@ class SocketManager {
 	}
 
 	// userId를 통해 특정 소켓을 가져오는 함수
-	public getSocketByUserId(userId: string): GameSocket | undefined {
+	public getSocketByUserId(userId: string): GameSocket | void {
 		return connectedSockets.get(userId);
 	}
 }

@@ -2,10 +2,10 @@ import { UserData } from '../generated/common/types';
 import { CharacterData } from '../generated/common/types';
 import { Character } from './character.model';
 
-export class User implements UserData {
+export class User {
 	id: string;
 	nickname: string;
-	character?: Character | undefined;
+	character?: Character;
 
 	constructor(id: string, nickName: string) {
 		this.id = id;

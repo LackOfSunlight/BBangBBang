@@ -1,11 +1,29 @@
+import { CardCategory } from '../enums/card.category';
 import { CardType } from '../generated/common/enums';
+import { Room } from '../models/room.model';
+import { User } from '../models/user.model';
 
-export interface Card {
+export interface ICard {
 	type: CardType;
-	isUsable: boolean;
-	defCard: CardType;
-	isDirectUse: boolean;
-	isTargetSelect: boolean;
-	isTargetCardSelection: boolean;
-	useTag: string;
+	cardCategory: CardCategory;
+}
+
+export interface IActiveTargetCard extends ICard {
+	useCard(room: Room, user: User, target: User): boolean;
+}
+
+export interface IActiveNonTargetCard extends ICard {
+	useCard(room: Room, user: User): boolean;
+}
+
+export interface IEquipCard extends ICard {
+	useCard(room: Room, user: User): boolean;
+}
+
+export interface IBuffCard extends ICard {
+	useCard(room: Room, user: User): boolean;
+}
+
+export interface IDebuffCard extends ICard {
+	useCard(room: Room, user: User, target: User): boolean;
 }

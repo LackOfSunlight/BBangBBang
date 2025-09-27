@@ -5,6 +5,7 @@ import { GamePacketType } from '../enums/gamePacketType';
 import { bombExplosion } from '../card/debuff/card.bomb.effect';
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
+import { BombCard } from '../card/class/card.bomb';
 
 /**  폭탄 매니저*/
 class SetBombTimer {
@@ -45,7 +46,8 @@ class SetBombTimer {
 				clearInterval(timer);
 				this.bombTimers.delete(key);
 				// 폭발 로직 처리
-				bombExplosion(room, bombUser);
+				const bomb = new BombCard();
+				bomb.bombExplosion(room, bombUser);
 			}
 		}, 1000);
 

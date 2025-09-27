@@ -4,7 +4,7 @@ import { User } from '../../models/user.model';
 
 const cardDesertEagleEffect = (room: Room, user: User): boolean => {
 	// 유효성 검증
-	if (!user || !user.character) return false;
+	if (!user.character) return false;
 
 	if (user.character.weapon !== CardType.DESERT_EAGLE) {
 		user.character.weapon = CardType.DESERT_EAGLE;

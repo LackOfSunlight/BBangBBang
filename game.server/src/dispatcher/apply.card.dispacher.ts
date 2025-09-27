@@ -23,14 +23,41 @@ import cardVaccineEffect from '../card/active/card.vaccine.effect';
 import cardWinLotteryEffect from '../card/active/card.win_lottery.effect';
 import { User } from '../models/user.model';
 import { Room } from '../models/room.model';
+import {
+	IActiveNonTargetCard,
+	IActiveTargetCard,
+	IBuffCard,
+	ICard,
+	IDebuffCard,
+	IEquipCard,
+} from '../type/card';
+import cardMap from '../card/class/card.map';
+import { CardType } from '../generated/common/enums';
+import { CardCategory } from '../enums/card.category';
 
 // 카드 효과 적용 함수
 export function applyCardEffect(
 	room: Room,
-	CardType: number,
+	CardType: CardType,
 	user: User,
 	targetUser: User,
 ): boolean {
+	const card = cardMap[CardType];
+
+	if (!card) return false;
+
+	switch (card.cardCategory) {
+		case CardCategory.activeTargetCard:
+			return (card as IActiveTargetCard).useCard(room, user, targetUser);
+		case CardCategory.activeNonTargetCard:
+			return (card as IActiveNonTargetCard).useCard(room, user);
+		case CardCategory.buffCard:
+			return (card as IBuffCard).useCard(room, user);
+		case CardCategory.debuffCard:
+			return (card as IDebuffCard).useCard(room, user, targetUser);
+		case CardCategory.equipCard:
+			return (card as IEquipCard).useCard(room, user);
+	}
 
 	// 소지한 카드 제거 후 효과 적용
 	switch (CardType) {

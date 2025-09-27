@@ -4,7 +4,7 @@ import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 
 const cardStealthSuitEffect = (room: Room, user: User): boolean => {
-	if (!user || !user.character) {
+	if (!user.character) {
 		return false;
 	}
 

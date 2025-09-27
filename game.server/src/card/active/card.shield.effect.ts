@@ -6,8 +6,6 @@ import { Room } from '../../models/room.model.js';
 import { stateChangeService } from '../../services/state.change.service.js';
 
 const cardShieldEffect = (room: Room, user: User, shooter: User): boolean => {
-	if (!room || !user || !shooter) return false;
-
 	if (!user.character || !user.character.stateInfo) return false;
 
 	if (
@@ -57,8 +55,7 @@ const removeShields = (user: User, count: number) => {
 	}
 };
 
-const requiredShieldCount = (shooter: User) : number =>{
-
+const requiredShieldCount = (shooter: User): number => {
 	// 이전에 shooter 상태를 체크해서 shooter는 undefined 일 수 없음
 	// 그리고 이 함수는 여기서만 사용함
 	const isShark = shooter!.character!.characterType === CharacterType.SHARK;
@@ -67,9 +64,9 @@ const requiredShieldCount = (shooter: User) : number =>{
 	let requiredShields = 0;
 	if (isShark) requiredShields += 1;
 	if (hasLaser) requiredShields += 1;
-	if(isShark && hasLaser) requiredShields +=1;
+	if (isShark && hasLaser) requiredShields += 1;
 
 	return requiredShields;
-}
+};
 
 export default cardShieldEffect;

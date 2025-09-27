@@ -9,8 +9,7 @@ const cardDeathMatchEffect = (room: Room, user: User, targetUser: User): boolean
 	const nowTime = Date.now();
 
 	// 유효성 검증
-	if (!user || !user.character || !room) return false;
-	if (!targetUser || !targetUser.character) return false;
+	if (!user.character || !targetUser.character) return false;
 
 	const isBbangCard: boolean = user.character.handCards.some((c) => c.type === CardType.BBANG);
 
