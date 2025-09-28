@@ -122,8 +122,7 @@ export class Room {
 			}
 		});
 
-		this.roomDecks = deck;
-		shuffle<CardType>(this.roomDecks);
+		this.roomDecks = shuffle<CardType>(deck);
 	}
 
 	public drawDeck(count: number = 1): CardType[] {

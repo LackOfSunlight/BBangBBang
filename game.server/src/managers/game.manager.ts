@@ -109,19 +109,7 @@ class GameManager {
 
 						if (user.character!.stateInfo?.state !== CharacterStateType.CONTAINED) {
 							const drawCards = room.drawDeck(2);
-							drawCards.forEach((type) => {
-								const existCard = user.character?.handCards.find((card) => card.type === type);
-								if (existCard) {
-									existCard.count += 1;
-								} else {
-									user.character?.handCards.push({ type, count: 1 });
-								}
-							});
-
-							user.character!.handCardsCount = user.character!.handCards.reduce(
-								(sum, card) => sum + card.count,
-								0,
-							);
+							drawCards.forEach((type) => user.character?.addCardToUser(type));
 						}
 
 						user.character!.bbangCount = 0;
