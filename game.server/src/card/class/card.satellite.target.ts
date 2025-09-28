@@ -31,7 +31,7 @@ export class SatelliteTargetCard implements ICard, IPeriodicEffectCard {
 	}
 
 	// 하루가 시작될 때 호출되는 효과
-	async onNewDay(room: Room): Promise<Room> {
+	public async onNewDay(room: Room): Promise<Room> {
 		return this.checkSatelliteTargetEffect(room);
 	}
 

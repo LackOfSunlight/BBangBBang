@@ -10,8 +10,6 @@ import { positionUpdateNotificationForm } from '../converter/packet.form';
 import roomManger, { roomPhase, roomTimers } from './room.manager';
 import { setBombTimer } from '../services/set.bomb.timer.service';
 import { cardPool, getCard } from '../dispatcher/apply.card.dispacher';
-import { SatelliteTargetCard } from '../card/class/card.satellite.target';
-import { ContainmentUnitCard } from '../card/class/card.containment.unit';
 import { IPeriodicEffectCard } from '../type/card';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
@@ -50,7 +48,7 @@ class GameManager {
 		// 위치 변화 플래그 초기화 (최초 시작 시에는 true로 설정)
 		roomPositionChanged.set(room.id, true);
 
-		const intervalId = setInterval(() => broadcastPositionUpdates(room), 1000000);
+		const intervalId = setInterval(() => broadcastPositionUpdates(room), 100);
 
 		positionUpdateIntervals.set(room.id, intervalId);
 		this.scheduleNextPhase(room.id, roomId);
@@ -58,7 +56,7 @@ class GameManager {
 
 	private scheduleNextPhase(roomId: number, roomTimerMapId: string) {
 		this.clearTimer(roomTimerMapId);
-		const dayInterval = 60000; // 1분
+		const dayInterval = 30000; // 1분
 		const eveningInterval = 10000; //30초
 
 		let nextPhase: PhaseType;
@@ -80,8 +78,9 @@ class GameManager {
 			if (nextPhase === PhaseType.DAY) {
 				// 1. 위성 타겟 디버프 효과 체크 (하루 시작 시)
 
-				for (const card of cardPool) {
+				for (const card of cardPool.values()) {
 					if ('onNewDay' in card) {
+						console.log('이거 실행되지는 확인');
 						await (card as IPeriodicEffectCard).onNewDay(room);
 					}
 				}
@@ -154,6 +153,7 @@ class GameManager {
 			}
 
 			const characterPosition = shuffle(spawnPositions);
+			const resultPosition: CharacterPositionData[] = [];
 
 			const roomMap = notificationCharacterPosition.get(room.id);
 
@@ -164,10 +164,12 @@ class GameManager {
 				for (let i = 0; i < room.users.length; i++) {
 					if (room.users[i].character?.stateInfo?.state === CharacterStateType.CONTAINED) {
 						roomMap.set(room.users[i].id, prisonPosition);
+						resultPosition.push(prisonPosition);
 						continue;
 					}
 					// 모든 플레이어(죽은 플레이어 포함)에게 새로운 위치 할당
 					roomMap.set(room.users[i].id, characterPosition[i]);
+					resultPosition.push(characterPosition[i]);
 				}
 
 				// 🚀 페이즈 변경으로 인한 위치 변화 플래그 설정
@@ -183,7 +185,7 @@ class GameManager {
 					phaseUpdateNotification: {
 						phaseType: nextPhase,
 						nextPhaseAt: `${remainingTime > 0 ? remainingTime : 0}`,
-						characterPositions: characterPosition,
+						characterPositions: resultPosition,
 					},
 				},
 			};

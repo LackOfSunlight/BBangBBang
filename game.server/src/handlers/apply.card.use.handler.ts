@@ -11,8 +11,6 @@ export const applyCardUseHandler = (
 ): { room: Room; user: User; target: User } => {
 	const room = roomManager.getRoom(roomId);
 	const user = roomManager.getUserFromRoom(roomId, userId);
-	console.log('character instanceof Character?', user.character instanceof Character);
-	console.log('constructor:', user.character?.constructor?.name);
 	const nonTarget = '0';
 	if (targetId != '0') {
 		const target = roomManager.getUserFromRoom(roomId, targetId);

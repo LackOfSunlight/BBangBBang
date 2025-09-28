@@ -33,8 +33,6 @@ const cardBbangEffect = (room: Room, user: User, target: User): boolean => {
 	room.removeCard(user, CardType.BBANG);
 	if (user.character.stateInfo.state === CharacterStateType.NONE_CHARACTER_STATE) {
 		// 상태 설정
-		console.log('character instanceof Character?', user.character instanceof Character);
-		console.log('constructor:', user.character?.constructor?.name);
 		user.character.changeState(
 			CharacterStateType.BBANG_SHOOTER,
 			CharacterStateType.NONE_CHARACTER_STATE,

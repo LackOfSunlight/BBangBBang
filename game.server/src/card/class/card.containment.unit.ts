@@ -33,7 +33,7 @@ export class ContainmentUnitCard implements ICard, IPeriodicEffectCard {
 	}
 
 	// 하루가 시작될 때 호출되는 효과
-	async onNewDay(room: Room): Promise<Room> {
+	public async onNewDay(room: Room): Promise<Room> {
 		return this.checkContainmentUnitTarget(room.id);
 	}
 
@@ -64,7 +64,7 @@ export class ContainmentUnitCard implements ICard, IPeriodicEffectCard {
 		if (!user || !user.character || !user.character.stateInfo) return;
 
 		// 탈출 확률
-		const escapeProb = 25;
+		const escapeProb = 50;
 		// 실제확률 25; // 테스트용 99;
 
 		if (user.character.debuffs.includes(CardType.CONTAINMENT_UNIT)) {
@@ -80,7 +80,7 @@ export class ContainmentUnitCard implements ICard, IPeriodicEffectCard {
 						`[debuffCONTAINMENT_UNIT] (${user.nickname}) : 탈출에 성공하면 디버프 상태 해제`,
 					);
 
-					if (yourProb < escapeProb && user.character.stateInfo) {
+					if (yourProb < escapeProb) {
 						// 탈출에 성공하면 디버프 상태 해제
 						user.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
 						const yourDebuffIndex = user.character.debuffs.findIndex(
