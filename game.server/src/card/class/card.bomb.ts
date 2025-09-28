@@ -68,14 +68,14 @@ export class BombCard implements ICard {
 			return;
 		}
 
+		userInExplode.character.takeDamage(2);
+		userInExplode.character.debuffs.splice(bombCardIndex, 1);
+		checkAndEndGameIfNeeded(room.id);
+
 		const toRoom = room.toData();
 
 		//animation 추후 추가 예정
 		playAnimationHandler(toRoom.users, userInExplode.id, AnimationType.BOMB_ANIMATION);
-
-		userInExplode.character.hp -= 2;
-		userInExplode.character.debuffs.splice(bombCardIndex, 1);
-		checkAndEndGameIfNeeded(room.id);
 
 		const userUpdateNotificationPacket = userUpdateNotificationPacketForm(toRoom.users);
 		broadcastDataToRoom(
