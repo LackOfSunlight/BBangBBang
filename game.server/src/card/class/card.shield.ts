@@ -3,11 +3,11 @@ import { CardType, CharacterStateType, CharacterType } from '../../generated/com
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import { CheckBigBbangService } from '../../services/bigbbang.check.service';
-import { IActiveTargetCard } from '../../type/card';
+import { ICard } from '../../type/card';
 
-export class ShieldCard implements IActiveTargetCard {
+export class ShieldCard implements ICard {
 	type: CardType = CardType.SHIELD;
-	cardCategory: CardCategory = CardCategory.activeTargetCard;
+	cardCategory: CardCategory = CardCategory.targetCard;
 
 	public useCard(room: Room, user: User, target: User): boolean {
 		if (!user.character || !user.character.stateInfo) return false;

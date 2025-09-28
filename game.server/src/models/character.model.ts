@@ -1,3 +1,4 @@
+import { threadCpuUsage } from 'process';
 import { CardType, CharacterStateType, CharacterType, RoleType } from '../generated/common/enums';
 import { CardData, CharacterData, CharacterStateInfoData } from '../generated/common/types';
 import getMaxHp from '../init/character.Init';
@@ -16,6 +17,8 @@ export class Character {
 	handCards: CardData[];
 	bbangCount: number;
 	handCardsCount: number;
+
+	maxHp: number = 4;
 
 	constructor(
 		characterType: CharacterType,
@@ -39,18 +42,12 @@ export class Character {
 		this.bbangCount = bbangCount;
 		this.handCards = handCards;
 		this.handCardsCount = handCardsCount;
+
+		this.maxHp = getMaxHp(this.characterType);
 	}
 
-	public addHealth(value: number): boolean {
-		if (!this) return false;
-
-		const maxHp = getMaxHp(this.characterType);
-		if (this.hp >= maxHp) {
-			return false;
-		}
-
-		this.hp = Math.min(this.hp + value, maxHp);
-		return true;
+	public addHealth(value: number) {
+		this.hp = Math.min(this.hp + value, this.maxHp);
 	}
 
 	public takeDamage(value: number = 1) {
@@ -87,14 +84,11 @@ export class Character {
 		this.handCardsCount = this.handCards.reduce((sum, card) => sum + card.count, 0);
 	}
 
-	public removeHandCard(room: Room, cardType: CardType) {
-		if (!this || !this.stateInfo) return;
-
+	public removeHandCard(cardType: CardType) {
 		const usedCard = this.handCards.find((c) => c.type === cardType);
 
 		if (usedCard != undefined) {
 			usedCard.count -= 1;
-			room.repeatDeck([cardType]);
 
 			if (usedCard.count <= 0) {
 				this.handCards = this!.handCards.filter((c) => c.count > 0);

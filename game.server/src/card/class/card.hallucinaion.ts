@@ -2,11 +2,11 @@ import { CardCategory } from '../../enums/card.category';
 import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-import { IActiveTargetCard, ICard } from '../../type/card';
+import { ICard } from '../../type/card';
 
-export class HallucinationCard implements IActiveTargetCard {
+export class HallucinationCard implements ICard {
 	type: CardType = CardType.BBANG;
-	cardCategory: CardCategory = CardCategory.activeTargetCard;
+	cardCategory: CardCategory = CardCategory.targetCard;
 
 	public useCard(room: Room, user: User, target: User): boolean {
 		// 유효성 검증

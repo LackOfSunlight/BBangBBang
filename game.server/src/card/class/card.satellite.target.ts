@@ -5,11 +5,11 @@ import roomManager from '../../managers/room.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import { checkAndEndGameIfNeeded } from '../../services/game.end.service';
-import { IActiveTargetCard, IEquipCard as IEquipCard } from '../../type/card';
+import { ICard, IPeriodicEffectCard } from '../../type/card';
 
-export class SatelliteTargetCard implements IActiveTargetCard {
+export class SatelliteTargetCard implements ICard, IPeriodicEffectCard {
 	type: CardType = CardType.SATELLITE_TARGET;
-	cardCategory: CardCategory = CardCategory.activeTargetCard;
+	cardCategory: CardCategory = CardCategory.targetCard;
 
 	public useCard(room: Room, user: User, target: User): boolean {
 		if (!target.character) {
@@ -28,6 +28,11 @@ export class SatelliteTargetCard implements IActiveTargetCard {
 
 		console.log(`[위성 타겟] ${user.nickname}님이 위성타겟을 사용했습니다.`);
 		return true;
+	}
+
+	// 하루가 시작될 때 호출되는 효과
+	async onNewDay(room: Room): Promise<Room> {
+		return this.checkSatelliteTargetEffect(room);
 	}
 
 	// 위성 타겟 효과 체크 (하루 시작 시 호출)

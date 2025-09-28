@@ -2,12 +2,11 @@ import { CardCategory } from '../../enums/card.category';
 import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
-import { IActiveTargetCard, ICard } from '../../type/card';
+import { ICard } from '../../type/card';
 
-export class DeathMatchCard implements IActiveTargetCard {
+export class DeathMatchCard implements ICard {
 	type: CardType = CardType.DEATH_MATCH;
-	cardCategory: CardCategory = CardCategory.activeTargetCard;
+	cardCategory: CardCategory = CardCategory.targetCard;
 
 	public useCard(room: Room, user: User, target: User): boolean {
 		const nowTime = Date.now();

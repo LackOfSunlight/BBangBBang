@@ -3,11 +3,11 @@ import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
-import { IActiveTargetCard, ICard } from '../../type/card';
+import { ICard } from '../../type/card';
 
-export class BBangCard implements IActiveTargetCard {
+export class BBangCard implements ICard {
 	type: CardType = CardType.BBANG;
-	cardCategory: CardCategory = CardCategory.activeTargetCard;
+	cardCategory: CardCategory = CardCategory.targetCard;
 
 	public useCard(room: Room, user: User, target: User): boolean {
 		// 정보값 가져오기

@@ -1,7 +1,4 @@
 export enum CardCategory {
-	activeTargetCard,
-	activeNonTargetCard,
-	equipCard,
-	buffCard,
-	debuffCard,
+	targetCard,
+	nonTargetCard,
 }

@@ -2,11 +2,11 @@ import { CardCategory } from '../../enums/card.category';
 import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-import { IEquipCard as IEquipCard } from '../../type/card';
+import { ICard } from '../../type/card';
 
-export class RadarCard implements IEquipCard {
+export class RadarCard implements ICard {
 	type: CardType = CardType.LASER_POINTER;
-	cardCategory: CardCategory = CardCategory.equipCard;
+	cardCategory: CardCategory = CardCategory.nonTargetCard;
 
 	public useCard(room: Room, user: User): boolean {
 		// 유효성 검증

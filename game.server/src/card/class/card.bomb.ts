@@ -11,11 +11,11 @@ import { User } from '../../models/user.model';
 import { checkAndEndGameIfNeeded } from '../../services/game.end.service';
 import { setBombTimer } from '../../services/set.bomb.timer.service';
 import { broadcastDataToRoom } from '../../sockets/notification';
-import { IActiveTargetCard, IEquipCard as IEquipCard } from '../../type/card';
+import { ICard } from '../../type/card';
 
-export class BombCard implements IActiveTargetCard {
+export class BombCard implements ICard {
 	type: CardType = CardType.BOMB;
-	cardCategory: CardCategory = CardCategory.activeTargetCard;
+	cardCategory: CardCategory = CardCategory.targetCard;
 
 	public useCard(room: Room, user: User, target: User): boolean {
 		// 유효성 검증

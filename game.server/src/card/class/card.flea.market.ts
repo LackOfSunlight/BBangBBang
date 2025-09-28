@@ -2,11 +2,11 @@ import { CardCategory } from '../../enums/card.category';
 import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-import { IActiveNonTargetCard, ICard } from '../../type/card';
+import { ICard } from '../../type/card';
 
-export class FleaMarketCard implements IActiveNonTargetCard {
+export class FleaMarketCard implements ICard {
 	type: CardType = CardType.BIG_BBANG;
-	cardCategory: CardCategory = CardCategory.activeNonTargetCard;
+	cardCategory: CardCategory = CardCategory.nonTargetCard;
 
 	public useCard(room: Room, user: User): boolean {
 		// 방에 유저들 정보 가져오기

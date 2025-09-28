@@ -158,22 +158,11 @@ export class Room {
 	}
 
 	public removeCard(user: User, cardType: CardType) {
-		const usedCard = user.character!.handCards.find((c) => c.type === cardType);
+		if (!user.character) return;
 
-		if (usedCard != undefined) {
-			usedCard.count -= 1;
-			this.repeatDeck([cardType]);
+		user.character.removeHandCard(cardType);
 
-			if (usedCard.count <= 0) {
-				user.character!.handCards = user.character!.handCards.filter((c) => c.count > 0);
-				user.character!.handCardsCount = user.character!.handCards.reduce(
-					(sum, card) => sum + card.count,
-					0,
-				);
-			}
-		} else {
-			console.log('해당 카드를 소유하고 있지 않습니다.');
-		}
+		this.repeatDeck([cardType]);
 	}
 
 	public toData(): RoomData {

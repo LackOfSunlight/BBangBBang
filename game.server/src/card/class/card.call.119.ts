@@ -1,12 +1,12 @@
 import { CardCategory } from '../../enums/card.category';
-import { CardType, CharacterStateType } from '../../generated/common/enums';
+import { CardType } from '../../generated/common/enums';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-import { IActiveTargetCard, IBuffCard } from '../../type/card';
+import { ICard } from '../../type/card';
 
-export class Call119Card implements IActiveTargetCard {
+export class Call119Card implements ICard {
 	type: CardType = CardType.CALL_119;
-	cardCategory: CardCategory = CardCategory.activeTargetCard;
+	cardCategory: CardCategory = CardCategory.targetCard;
 
 	public useCard(room: Room, user: User, target: User): boolean {
 		// 유효성 검증
@@ -15,10 +15,19 @@ export class Call119Card implements IActiveTargetCard {
 		const HEAL_AMOUNT = 1;
 
 		if (target.id !== '0') {
-			return user.character.addHealth(HEAL_AMOUNT);
+			if (user.character.hp >= user.character.maxHp) {
+				return false;
+			} else {
+				user.character.addHealth(HEAL_AMOUNT);
+				room.removeCard(user, CardType.CALL_119);
+				return true;
+			}
 		} else {
 			const usersToHeal = room.users.filter((u) => u.id !== user.id);
+			const isHeal = usersToHeal.every((u) => u.character!.hp >= u.character!.maxHp);
+			if (isHeal) return false;
 			usersToHeal.map((otherUser) => otherUser.character?.addHealth(HEAL_AMOUNT));
+			room.removeCard(user, CardType.CALL_119);
 			return true;
 		}
 	}

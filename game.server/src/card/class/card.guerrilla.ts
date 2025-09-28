@@ -2,11 +2,11 @@ import { CardCategory } from '../../enums/card.category';
 import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-import { IActiveNonTargetCard, ICard } from '../../type/card';
+import { ICard } from '../../type/card';
 
-export class GuerrillaCard implements IActiveNonTargetCard {
+export class GuerrillaCard implements ICard {
 	type: CardType = CardType.BIG_BBANG;
-	cardCategory: CardCategory = CardCategory.activeNonTargetCard;
+	cardCategory: CardCategory = CardCategory.nonTargetCard;
 
 	public useCard(room: Room, shooter: User): boolean {
 		const isBlockedStateUsers = room.users.some(

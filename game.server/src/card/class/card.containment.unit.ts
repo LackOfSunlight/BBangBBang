@@ -3,11 +3,11 @@ import { CardType, CharacterStateType } from '../../generated/common/enums';
 import roomManager from '../../managers/room.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-import { IActiveTargetCard, IEquipCard as IEquipCard } from '../../type/card';
+import { ICard, IPeriodicEffectCard } from '../../type/card';
 
-export class ContainmentUnitCard implements IActiveTargetCard {
+export class ContainmentUnitCard implements ICard, IPeriodicEffectCard {
 	type: CardType = CardType.CONTAINMENT_UNIT;
-	cardCategory: CardCategory = CardCategory.activeTargetCard;
+	cardCategory: CardCategory = CardCategory.targetCard;
 
 	public useCard(room: Room, user: User, target: User): boolean {
 		// 유효성 검증
@@ -30,6 +30,11 @@ export class ContainmentUnitCard implements IActiveTargetCard {
 		target.character.debuffs.push(CardType.CONTAINMENT_UNIT);
 
 		return true;
+	}
+
+	// 하루가 시작될 때 호출되는 효과
+	async onNewDay(room: Room): Promise<Room> {
+		return this.checkContainmentUnitTarget(room.id);
 	}
 
 	// 효과 대상자 체크

@@ -1,11 +1,12 @@
 import { warnNotificationPacketForm } from '../converter/packet.form';
 import { broadcastDataToRoom } from '../sockets/notification';
-import { WarningType } from '../generated/common/enums';
+import { CardType, WarningType } from '../generated/common/enums';
 import { GamePacketType } from '../enums/gamePacketType';
 import { bombExplosion } from '../card/debuff/card.bomb.effect';
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
 import { BombCard } from '../card/class/card.bomb';
+import { getCard } from '../dispatcher/apply.card.dispacher';
 
 /**  폭탄 매니저*/
 class SetBombTimer {
@@ -46,7 +47,7 @@ class SetBombTimer {
 				clearInterval(timer);
 				this.bombTimers.delete(key);
 				// 폭발 로직 처리
-				const bomb = new BombCard();
+				const bomb = getCard(CardType.BOMB) as BombCard;
 				bomb.bombExplosion(room, bombUser);
 			}
 		}, 1000);

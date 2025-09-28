@@ -2,11 +2,11 @@ import { CardCategory } from '../../enums/card.category';
 import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
-import { IEquipCard } from '../../type/card';
+import { ICard } from '../../type/card';
 
-export class AutoRifleCard implements IEquipCard {
+export class AutoRifleCard implements ICard {
 	type: CardType = CardType.AUTO_RIFLE;
-	cardCategory: CardCategory = CardCategory.equipCard;
+	cardCategory: CardCategory = CardCategory.nonTargetCard;
 
 	public useCard(room: Room, user: User): boolean {
 		// 유효성 검증
