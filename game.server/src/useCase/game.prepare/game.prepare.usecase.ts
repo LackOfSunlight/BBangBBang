@@ -1,26 +1,26 @@
-import { GameSocket } from '../../type/game.socket.js';
-import { C2SGamePrepareRequest } from '../../generated/packet/game_actions.js';
-import { GamePacket } from '../../generated/gamePacket.js';
+import { GameSocket } from '../../Type/game.socket.js';
+import { C2SGamePrepareRequest } from '../../Generated/packet/game_actions.js';
+import { GamePacket } from '../../Generated/gamePacket.js';
 import {
 	CharacterStateType,
 	CharacterType,
 	GlobalFailCode,
 	RoleType,
 	RoomStateType,
-} from '../../generated/common/enums.js';
+} from '../../Generated/common/enums.js';
 
-import { Room } from '../../models/room.model.js';
-import { CharacterData } from '../../generated/common/types.js';
+import { Room } from '../../Models/room.model.js';
+import { CharacterData } from '../../Generated/common/types.js';
 import characterType from '../../data/characterType.json';
-import { CharacterInfo } from '../../type/character.info.js';
-import { GamePacketType } from '../../enums/gamePacketType.js';
-import { broadcastDataToRoom } from '../../sockets/notification.js';
+import { CharacterInfo } from '../../Type/character.info.js';
+import { GamePacketType } from '../../Enums/gamePacketType.js';
+import { broadcastDataToRoom } from '../../Sockets/notification.js';
 import {
 	gamePrepareNotificationPacketForm,
 	gamePrepareResponsePacketForm,
-} from '../../converter/packet.form.js';
-import roomManger from '../../managers/room.manager.js';
-import { Character } from '../../models/character.model.js';
+} from '../../Converter/packet.form.js';
+import roomManger from '../../Managers/room.manager.js';
+import { Character } from '../../Models/character.model.js';
 
 export const gamePrepareUseCase = (socket: GameSocket, req: C2SGamePrepareRequest): GamePacket => {
 	if (!socket.roomId) {

@@ -1,9 +1,9 @@
-import { GamePacket } from '../generated/gamePacket';
-import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
-import { leaveRoomUseCase } from '../useCase/leave.room/leave.room.usecase';
-import { sendData } from '../sockets/send.data';
-import { getGamePacketType } from '../converter/type.form';
-import { GameSocket } from '../type/game.socket';
+import { GamePacket } from '../Generated/gamePacket';
+import { GamePacketType, gamePackTypeSelect } from '../Enums/gamePacketType';
+import { leaveRoomUseCase } from '../UseCase/Leave.room/leave.room.usecase';
+import { sendData } from '../Sockets/send.data';
+import { getGamePacketType } from '../Converter/type.form';
+import { GameSocket } from '../Type/game.socket';
 
 const leaveRoomHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.leaveRoomRequest);

@@ -1,12 +1,12 @@
-import { C2SLoginRequest } from '../../generated/packet/auth';
-import { getUserByEmail, setTokenService } from '../../services/prisma.service';
-import { GlobalFailCode } from '../../generated/common/enums';
-import { GamePacket } from '../../generated/gamePacket';
-import { UserData } from '../../generated/common/types';
-import checkUserPassword from '../../services/login/check.user.password';
-import { GameSocket } from '../../type/game.socket';
-import socketManger from '../../managers/socket.manger';
-import { loginResponseForm } from '../../converter/packet.form';
+import { C2SLoginRequest } from '../../Generated/packet/auth';
+import { getUserByEmail, setTokenService } from '../../Services/prisma.service';
+import { GlobalFailCode } from '../../Generated/common/enums';
+import { GamePacket } from '../../Generated/gamePacket';
+import { UserData } from '../../Generated/common/types';
+import checkUserPassword from '../../Services/login/check.user.password';
+import { GameSocket } from '../../Type/game.socket';
+import socketManger from '../../Managers/socket.manger';
+import { loginResponseForm } from '../../Converter/packet.form';
 
 const loginUseCase = async (socket: GameSocket, req: C2SLoginRequest): Promise<GamePacket> => {
 	try {
@@ -46,7 +46,6 @@ const loginUseCase = async (socket: GameSocket, req: C2SLoginRequest): Promise<G
 
 		return loginResponseForm(true, '로그인 성공', token, GlobalFailCode.NONE_FAILCODE, user);
 	} catch (error) {
-		
 		return loginResponseForm(false, '서버 에러', ' ', GlobalFailCode.UNKNOWN_ERROR);
 	}
 };

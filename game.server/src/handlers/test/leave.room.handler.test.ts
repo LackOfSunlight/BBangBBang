@@ -1,11 +1,11 @@
-import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType';
-import { GlobalFailCode } from '../../generated/common/enums';
-import { GamePacket } from '../../generated/gamePacket';
-import { C2SLeaveRoomRequest } from '../../generated/packet/room_actions';
-import { GameSocket } from '../../type/game.socket';
-import { leaveRoomUseCase } from '../../useCase/leave.room/leave.room.usecase';
-import { sendData } from '../../sockets/send.data';
-import { getGamePacketType } from '../../converter/type.form';
+import { GamePacketType, gamePackTypeSelect } from '../../Enums/gamePacketType';
+import { GlobalFailCode } from '../../Generated/common/enums';
+import { GamePacket } from '../../Generated/gamePacket';
+import { C2SLeaveRoomRequest } from '../../Generated/packet/room_actions';
+import { GameSocket } from '../../Type/game.socket';
+import { leaveRoomUseCase } from '../../UseCase/Leave.room/leave.room.usecase';
+import { sendData } from '../../Sockets/send.data';
+import { getGamePacketType } from '../../Converter/type.form';
 import leaveRoomHandler from '../leave.room.handler';
 
 // 의존성 Mock 처리

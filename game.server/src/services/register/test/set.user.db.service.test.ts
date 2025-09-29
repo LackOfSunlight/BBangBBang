@@ -1,7 +1,7 @@
 import setUserDbService from '../set.user.db.service';
-import { prisma } from '../../../utils/db';
+import { prisma } from '../../../Utils/db';
 import * as bcrypt from 'bcrypt';
-import { C2SRegisterRequest } from '../../../generated/packet/auth';
+import { C2SRegisterRequest } from '../../../Generated/packet/auth';
 
 jest.mock('../../../utils/db', () => ({
 	prisma: {

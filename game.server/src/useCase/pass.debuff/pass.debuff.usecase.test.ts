@@ -1,11 +1,11 @@
 import passDebuffUseCase from './pass.debuff.usecase';
-import { getRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import { CardType, GlobalFailCode } from '../../generated/common/enums';
-import { GamePacketType } from '../../enums/gamePacketType';
-import { Room } from '../../models/room.model';
-import { User } from '../../models/user.model';
-import { Character } from '../../models/character.model';
-import { GameSocket } from '../../type/game.socket';
+import { getRoom, updateCharacterFromRoom } from '../../Utils/room.utils';
+import { CardType, GlobalFailCode } from '../../Generated/common/enums';
+import { GamePacketType } from '../../Enums/gamePacketType';
+import { Room } from '../../Models/room.model';
+import { User } from '../../Models/user.model';
+import { Character } from '../../Models/character.model';
+import { GameSocket } from '../../Type/game.socket';
 
 // Mock 설정
 jest.mock('../../utils/room.utils');

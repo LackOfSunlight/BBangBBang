@@ -1,5 +1,5 @@
-import { C2SRegisterRequest } from '../../generated/packet/auth';
-import { prisma } from '../../utils/db';
+import { C2SRegisterRequest } from '../../Generated/packet/auth';
+import { prisma } from '../../Utils/db';
 import * as bcrypt from 'bcrypt';
 
 const setUserDbService = async (req: C2SRegisterRequest) => {

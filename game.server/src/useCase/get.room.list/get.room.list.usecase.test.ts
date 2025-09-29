@@ -1,10 +1,10 @@
 import getRoomListUseCase from './get.room.list.usecase';
-import { GameSocket } from '../../type/game.socket.js';
-import { C2SGetRoomListRequest } from '../../generated/packet/room_actions.js';
-import { getRooms } from '../../utils/room.utils.js';
-import { Room } from '../../models/room.model.js';
-import { GamePacketType } from '../../enums/gamePacketType.js';
-import { RoomStateType } from '../../generated/common/enums';
+import { GameSocket } from '../../Type/game.socket.js';
+import { C2SGetRoomListRequest } from '../../Generated/packet/room_actions.js';
+import { getRooms } from '../../Utils/room.utils.js';
+import { Room } from '../../Models/room.model.js';
+import { GamePacketType } from '../../Enums/gamePacketType.js';
+import { RoomStateType } from '../../Generated/common/enums';
 
 jest.mock('../../utils/room.utils.js');
 

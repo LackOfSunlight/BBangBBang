@@ -1,7 +1,7 @@
-import { C2SPositionUpdateRequest } from '../../generated/packet/game_actions';
-import { GameSocket } from '../../type/game.socket';
-import { CharacterPositionData } from '../../generated/common/types';
-import { notificationCharacterPosition, roomPositionChanged } from '../../managers/game.manager';
+import { C2SPositionUpdateRequest } from '../../Generated/packet/game_actions';
+import { GameSocket } from '../../Type/game.socket';
+import { CharacterPositionData } from '../../Generated/common/types';
+import { notificationCharacterPosition, roomPositionChanged } from '../../Managers/game.manager';
 
 const positionUpdateUseCase = async (
 	socket: GameSocket,

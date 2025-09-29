@@ -1,13 +1,13 @@
 import joinRoomUseCase from './join.room.usecase';
-import { C2SJoinRoomRequest } from '../../generated/packet/room_actions';
-import { GameSocket } from '../../type/game.socket';
-import { getUserByEmail, getUserByUserId } from '../../services/prisma.service';
-import { addUserToRoom, getRoom } from '../../utils/room.utils';
-import { broadcastDataToRoom } from '../../sockets/notification';
-import { GamePacketType } from '../../enums/gamePacketType';
-import { GlobalFailCode, RoomStateType } from '../../generated/common/enums';
-import { Room } from '../../models/room.model';
-import { User } from '../../models/user.model';
+import { C2SJoinRoomRequest } from '../../Generated/packet/room_actions';
+import { GameSocket } from '../../Type/game.socket';
+import { getUserByEmail, getUserByUserId } from '../../Services/prisma.service';
+import { addUserToRoom, getRoom } from '../../Utils/room.utils';
+import { broadcastDataToRoom } from '../../Sockets/notification';
+import { GamePacketType } from '../../Enums/gamePacketType';
+import { GlobalFailCode, RoomStateType } from '../../Generated/common/enums';
+import { Room } from '../../Models/room.model';
+import { User } from '../../Models/user.model';
 
 jest.mock('../../services/prisma.service');
 jest.mock('../../utils/room.utils');

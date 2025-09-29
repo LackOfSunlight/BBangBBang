@@ -1,12 +1,12 @@
-import { GlobalFailCode } from '../../generated/common/enums';
-import { GamePacket } from '../../generated/gamePacket';
-import inputFieldCheckService from '../../services/register/input.field.check.service';
-import { validateInput } from '../../utils/validation';
-import checkUserDbService from '../../services/register/check.user.db.service';
-import { C2SRegisterRequest } from '../../generated/packet/auth';
-import { createUserDB } from '../../services/prisma.service';
-import { GameSocket } from '../../type/game.socket';
-import { registerResponseForm } from '../../converter/packet.form';
+import { GlobalFailCode } from '../../Generated/common/enums';
+import { GamePacket } from '../../Generated/gamePacket';
+import inputFieldCheckService from '../../Services/register/input.field.check.service';
+import { validateInput } from '../../Utils/validation';
+import checkUserDbService from '../../Services/register/check.user.db.service';
+import { C2SRegisterRequest } from '../../Generated/packet/auth';
+import { createUserDB } from '../../Services/prisma.service';
+import { GameSocket } from '../../Type/game.socket';
+import { registerResponseForm } from '../../Converter/packet.form';
 
 export const registerUseCase = async (
 	socket: GameSocket,
@@ -60,7 +60,6 @@ export const registerUseCase = async (
 
 		// 성공 응답
 		return registerResponseForm(true, '회원가입 성공', GlobalFailCode.NONE_FAILCODE);
-		
 	} catch (error) {
 		return registerResponseForm(false, '서버 에러', GlobalFailCode.UNKNOWN_ERROR);
 	}

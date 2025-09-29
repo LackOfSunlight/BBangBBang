@@ -1,4 +1,4 @@
-import { CharacterType } from '../generated/common/enums';
+import { CharacterType } from '../Generated/common/enums';
 
 interface CharacterInfo {
 	id: string;

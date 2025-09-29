@@ -1,9 +1,9 @@
-import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
-import { GamePacket } from '../generated/gamePacket';
-import { GameSocket } from '../type/game.socket';
-import { cardSelectUseCase } from '../useCase/card.select/card.select.usecase';
-import { sendData } from '../sockets/send.data';
-import { getGamePacketType } from '../converter/type.form';
+import { GamePacketType, gamePackTypeSelect } from '../Enums/gamePacketType';
+import { GamePacket } from '../Generated/gamePacket';
+import { GameSocket } from '../Type/game.socket';
+import { cardSelectUseCase } from '../UseCase/Card.select/card.select.usecase';
+import { sendData } from '../Sockets/send.data';
+import { getGamePacketType } from '../Converter/type.form';
 
 const cardSelectHandler = (socket: GameSocket, gamePacket: GamePacket): void => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.cardSelectRequest);

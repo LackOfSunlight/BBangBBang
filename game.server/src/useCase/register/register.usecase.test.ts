@@ -1,12 +1,12 @@
 import { registerUseCase } from './register.usecase';
-import { C2SRegisterRequest } from '../../generated/packet/auth';
-import { GamePacketType } from '../../enums/gamePacketType';
-import { GlobalFailCode } from '../../generated/common/enums';
-import inputFieldCheckService from '../../services/register/input.field.check.service';
-import { validateInput } from '../../utils/validation';
-import checkUserDbService from '../../services/register/check.user.db.service';
-import { createUserDB } from '../../services/prisma.service';
-import { GameSocket } from '../../type/game.socket';
+import { C2SRegisterRequest } from '../../Generated/packet/auth';
+import { GamePacketType } from '../../Enums/gamePacketType';
+import { GlobalFailCode } from '../../Generated/common/enums';
+import inputFieldCheckService from '../../Services/register/input.field.check.service';
+import { validateInput } from '../../Utils/validation';
+import checkUserDbService from '../../Services/register/check.user.db.service';
+import { createUserDB } from '../../Services/prisma.service';
+import { GameSocket } from '../../Type/game.socket';
 
 jest.mock('../../services/register/input.field.check.service');
 jest.mock('../../utils/validation');

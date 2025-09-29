@@ -1,17 +1,17 @@
-import { GamePacketType } from '../../enums/gamePacketType';
-import { GlobalFailCode } from '../../generated/common/enums';
-import { GamePacket } from '../../generated/gamePacket';
-import { S2CLeaveRoomNotification } from '../../generated/packet/notifications';
-import { C2SLeaveRoomRequest, S2CLeaveRoomResponse } from '../../generated/packet/room_actions';
-import { GameSocket } from '../../type/game.socket';
-import { broadcastDataToRoom } from '../../sockets/notification';
-import { User } from '../../models/user.model';
+import { GamePacketType } from '../../Enums/gamePacketType';
+import { GlobalFailCode } from '../../Generated/common/enums';
+import { GamePacket } from '../../Generated/gamePacket';
+import { S2CLeaveRoomNotification } from '../../Generated/packet/notifications';
+import { C2SLeaveRoomRequest, S2CLeaveRoomResponse } from '../../Generated/packet/room_actions';
+import { GameSocket } from '../../Type/game.socket';
+import { broadcastDataToRoom } from '../../Sockets/notification';
+import { User } from '../../Models/user.model';
 import {
 	leaveRoomResponsePacketForm,
 	userLeftNotificationPacketForm,
-} from '../../converter/packet.form';
-import roomManger from '../../managers/room.manager';
-import { UserData } from '../../generated/common/types';
+} from '../../Converter/packet.form';
+import roomManger from '../../Managers/room.manager';
+import { UserData } from '../../Generated/common/types';
 
 export const leaveRoomUseCase = async (
 	socket: GameSocket,

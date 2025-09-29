@@ -1,9 +1,9 @@
 import gameStartHandler from '../game.start.handler';
-import { GameSocket } from '../../type/game.socket';
-import { GamePacket } from '../../generated/gamePacket';
-import { C2SGameStartRequest } from '../../generated/packet/game_actions';
-import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType';
-import { GlobalFailCode } from '../../generated/common/enums';
+import { GameSocket } from '../../Type/game.socket';
+import { GamePacket } from '../../Generated/gamePacket';
+import { C2SGameStartRequest } from '../../Generated/packet/game_actions';
+import { GamePacketType, gamePackTypeSelect } from '../../Enums/gamePacketType';
+import { GlobalFailCode } from '../../Generated/common/enums';
 
 // 의존성 모킹
 jest.mock('../../useCase/game.start/game.start.usecase', () => ({
@@ -17,9 +17,9 @@ jest.mock('../../utils/type.converter', () => ({
 }));
 
 // 모킹된 함수 임포트
-import { gameStartUseCase } from '../../useCase/game.start/game.start.usecase';
-import { sendData } from '../../sockets/send.data';
-import { getGamePacketType } from '../../converter/type.form';
+import { gameStartUseCase } from '../../UseCase/Game.start/game.start.usecase';
+import { sendData } from '../../Sockets/send.data';
+import { getGamePacketType } from '../../Converter/type.form';
 
 // 모의 함수 타입 캐스팅
 const mockGameStartUseCase = gameStartUseCase as jest.Mock;

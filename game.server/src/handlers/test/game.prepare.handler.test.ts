@@ -1,11 +1,11 @@
-import { GameSocket } from '../../type/game.socket';
-import { GamePacket } from '../../generated/gamePacket';
-import { C2SGamePrepareRequest } from '../../generated/packet/game_actions';
-import { GlobalFailCode } from '../../generated/common/enums';
-import { GamePacketType } from '../../enums/gamePacketType';
-import { gamePrepareUseCase } from '../../useCase/game.prepare/game.prepare.usecase';
-import { sendData } from '../../sockets/send.data';
-import { getGamePacketType } from '../../converter/type.form';
+import { GameSocket } from '../../Type/game.socket';
+import { GamePacket } from '../../Generated/gamePacket';
+import { C2SGamePrepareRequest } from '../../Generated/packet/game_actions';
+import { GlobalFailCode } from '../../Generated/common/enums';
+import { GamePacketType } from '../../Enums/gamePacketType';
+import { gamePrepareUseCase } from '../../UseCase/Game.prepare/game.prepare.usecase';
+import { sendData } from '../../Sockets/send.data';
+import { getGamePacketType } from '../../Converter/type.form';
 import gamePrepareHandler from '../game.prepare.handler';
 
 // 의존성 Mock 처리

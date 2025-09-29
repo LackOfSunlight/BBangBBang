@@ -1,7 +1,7 @@
-import { AnimationType, CardType, CharacterType } from '../generated/common/enums';
-import { playAnimationHandler } from '../handlers/play.animation.handler';
-import { Room } from '../models/room.model';
-import { User } from '../models/user.model';
+import { AnimationType, CardType, CharacterType } from '../Generated/common/enums';
+import { playAnimationHandler } from '../Handlers/play.animation.handler';
+import { Room } from '../Models/room.model';
+import { User } from '../Models/user.model';
 
 const takeDamageService = (room: Room, user: User, damage: number, shooter?: User) => {
 	let isDefended = false;

@@ -1,13 +1,13 @@
-import { C2SCreateRoomRequest } from '../../generated/packet/room_actions';
-import { GameSocket } from '../../type/game.socket';
-import { GamePacket } from '../../generated/gamePacket.js';
-import { GlobalFailCode, RoomStateType as StateType } from '../../generated/common/enums.js';
-import { Room } from '../../models/room.model.js';
-import { RoomStateType } from '../../generated/common/enums.js';
-import { User } from '../../models/user.model.js';
-import { createRoomDB, getUserByUserId } from '../../services/prisma.service.js';
-import { createRoomResponseForm } from '../../converter/packet.form';
-import roomManger from '../../managers/room.manager';
+import { C2SCreateRoomRequest } from '../../Generated/packet/room_actions';
+import { GameSocket } from '../../Type/game.socket';
+import { GamePacket } from '../../Generated/gamePacket.js';
+import { GlobalFailCode, RoomStateType as StateType } from '../../Generated/common/enums.js';
+import { Room } from '../../Models/room.model.js';
+import { RoomStateType } from '../../Generated/common/enums.js';
+import { User } from '../../Models/user.model.js';
+import { createRoomDB, getUserByUserId } from '../../Services/prisma.service.js';
+import { createRoomResponseForm } from '../../Converter/packet.form';
+import roomManger from '../../Managers/room.manager';
 
 const createRoomUseCase = async (
 	socket: GameSocket,

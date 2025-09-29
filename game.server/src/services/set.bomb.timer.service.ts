@@ -1,12 +1,12 @@
-import { warnNotificationPacketForm } from '../converter/packet.form';
-import { broadcastDataToRoom } from '../sockets/notification';
-import { CardType, WarningType } from '../generated/common/enums';
-import { GamePacketType } from '../enums/gamePacketType';
-import { bombExplosion } from '../card/debuff/card.bomb.effect';
-import { Room } from '../models/room.model';
-import { User } from '../models/user.model';
-import { BombCard } from '../card/class/card.bomb';
-import { getCard } from '../dispatcher/apply.card.dispacher';
+import { warnNotificationPacketForm } from '../Converter/packet.form';
+import { broadcastDataToRoom } from '../Sockets/notification';
+import { CardType, WarningType } from '../Generated/common/enums';
+import { GamePacketType } from '../Enums/gamePacketType';
+import { bombExplosion } from '../Cards/debuff/card.bomb.effect';
+import { Room } from '../Models/room.model';
+import { User } from '../Models/user.model';
+import { BombCard } from '../Cards/Debuff/card.bomb';
+import { getCard } from '../Dispatcher/apply.card.dispacher';
 
 /**  폭탄 매니저*/
 class SetBombTimer {

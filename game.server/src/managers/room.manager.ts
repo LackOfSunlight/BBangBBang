@@ -1,7 +1,7 @@
-import { Room } from '../models/room.model';
-import { User } from '../models/user.model';
-import { PhaseType } from '../generated/common/enums';
-import { CharacterData } from '../generated/common/types';
+import { Room } from '../Models/room.model';
+import { User } from '../Models/user.model';
+import { PhaseType } from '../Generated/common/enums';
+import { CharacterData } from '../Generated/common/types';
 
 const rooms = new Map<number, Room>();
 export const roomTimers = new Map<string, NodeJS.Timeout>();
@@ -97,7 +97,7 @@ class RoomManger {
 		};
 
 		// 배열에 반영
-		room.users[userIndex].setUserData(updatedUser.id,updatedUser.nickname,updatedUser.character);
+		room.users[userIndex].setUserData(updatedUser.id, updatedUser.nickname, updatedUser.character);
 	}
 
 	// 전체 방 불러오기
@@ -129,12 +129,11 @@ class RoomManger {
 		return userValues;
 	}
 
-	public getRoomByUser(userId: string) : Room | null{
-		
-		for(let room of rooms.values()){
-			const user = room.users.find(u => u.id === userId);
+	public getRoomByUser(userId: string): Room | null {
+		for (let room of rooms.values()) {
+			const user = room.users.find((u) => u.id === userId);
 
-			if(user) return room;
+			if (user) return room;
 		}
 
 		return null;
