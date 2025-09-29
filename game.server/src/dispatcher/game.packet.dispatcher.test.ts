@@ -1,6 +1,5 @@
 import { Socket } from 'net';
-import { gamePacketDispatcher } from './game.packet.dispatcher.js';
-import { GamePacket } from '../generated/gamePacket.js';
+import { GamePacket } from '../Generated/gamePacket.js';
 
 // Mock all handlers
 import registerHandler from '../handlers/register.handler.js';
@@ -18,6 +17,7 @@ import fleaMarketPickHandler from '../handlers/fleamarket.pick.handler.js';
 import destroyCardHandler from '../handlers/destroy.card.handler.js';
 import cardSelectHandler from '../handlers/card.select.handler.js';
 import reactionUpdateHandler from '../handlers/reaction.update.handler.js';
+import { gamePacketDispatcher } from './game.packet.dispatcher.js';
 
 jest.mock('../handlers/register.handler.js');
 jest.mock('../handlers/login.handler.js');

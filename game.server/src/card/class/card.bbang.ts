@@ -8,7 +8,7 @@ import { ICard } from '../../type/card';
 export class BBangCard implements ICard {
 	type: CardType = CardType.BBANG;
 	cardCategory: CardCategory = CardCategory.targetCard;
-
+	static readonly BBangDamage = Number(process.env.BBangDamage);
 	public useCard(room: Room, user: User, target: User): boolean {
 		// 정보값 가져오기
 		const nowTime = Date.now();

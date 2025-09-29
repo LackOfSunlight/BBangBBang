@@ -11,7 +11,6 @@ import { reactionResponsePacketForm } from '../converter/packet.form';
 import roomManger from '../managers/room.manager';
 import { invalidRequest } from '../utils/invalid.request';
 
-
 const reactionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	if (!socket.roomId) {
 		// DTO가 유효하지 않으면 즉시 에러 응답
