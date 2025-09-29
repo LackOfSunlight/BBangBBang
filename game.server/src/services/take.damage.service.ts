@@ -84,9 +84,8 @@ const takeDamageService = (room: Room, user: User, damage: number, shooter?: Use
 	if (user.character.hp <= 0) {
 		const maskMan = room.users.find((u) => u.character?.characterType === CharacterType.MASK);
 
-		if (maskMan) {
-			if (maskMan.character!.hp <= 0) return;
-
+		if (maskMan && maskMan.character!.hp > 0) {
+			// 마스크맨이 살아있으면 핸드 카드만 전달
 			if (user.character.handCardsCount > 0) {
 				for (let i = 0; i < user.character.handCards.length; i++) {
 					const card = user.character.handCards[i];
@@ -97,13 +96,11 @@ const takeDamageService = (room: Room, user: User, damage: number, shooter?: Use
 					}
 				}
 			}
+			// 장비, 디버프, 무기는 월드덱으로 반환
+			room.returnDeadPlayerCardsToDeck(user);
 		} else {
-			for (let i = 0; i < user.character.handCards.length; i++) {
-				const card = user.character.handCards[i];
-				for (let j = 0; j < card.count; j++) {
-					room.removeCard(user, card.type);
-				}
-			}
+			// 마스크맨이 없거나 죽었으면 모든 카드를 월드덱으로 반환
+			room.returnDeadPlayerCardsToDeck(user);
 		}
 	}
 };

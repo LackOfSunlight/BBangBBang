@@ -89,9 +89,9 @@ class GameManager {
 
 				// room = (await containmentCard.checkContainmentUnitTarget(room.id)) || room;
 
-				// 2. 카드 처리
+				// 2. 카드 처리 (죽은 플레이어 제외)
 				for (let user of room.users) {
-					if (user.character != null) {
+					if (user.character != null && user.character.hp > 0) {
 						console.log(
 							`${user.nickname}의 상태1:${CharacterStateType[user.character!.stateInfo!.state]}`,
 						);
