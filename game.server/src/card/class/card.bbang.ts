@@ -38,7 +38,7 @@ export class BBangCard implements ICard {
 			return false;
 		}
 
-		if (target.character.stateInfo.state !== CharacterStateType.NONE_CHARACTER_STATE) {
+		if (target.character.stateInfo.nextStateAt !== '0') {
 			return false;
 		}
 
