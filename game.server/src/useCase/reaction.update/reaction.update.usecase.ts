@@ -40,26 +40,14 @@ export const reactionUpdateUseCase = async (
 
 					let damage = 1; // 기본 데미지
 					damage = weaponDamageEffect(damage, shooter.character);
-					takeDamageService(room, user, shooter, damage);
+					takeDamageService(room, user, damage, shooter);
 
 					// 4. 공통: 처리 후 상태 복구
 					if (user.character.stateInfo) {
-						stateChangeService(
-							user,
-							CharacterStateType.NONE_CHARACTER_STATE,
-							CharacterStateType.NONE_CHARACTER_STATE,
-							0,
-							'0',
-						);
+						user.character.changeState();
 					}
 					if (shooter.character.stateInfo) {
-						stateChangeService(
-							shooter,
-							CharacterStateType.NONE_CHARACTER_STATE,
-							CharacterStateType.NONE_CHARACTER_STATE,
-							0,
-							'0',
-						);
+						shooter.character.changeState();
 						shooter.character.bbangCount += 1;
 					}
 
@@ -69,29 +57,16 @@ export const reactionUpdateUseCase = async (
 				case CharacterStateType.BIG_BBANG_TARGET: {
 					const shooterId = user.character.stateInfo.stateTargetUserId;
 					const shooter = room.users.find((u) => u.id === shooterId);
-					takeDamageService(room, user, shooter!, 1);
-					stateChangeService(
-						user,
-						CharacterStateType.NONE_CHARACTER_STATE,
-						CharacterStateType.NONE_CHARACTER_STATE,
-						0,
-						'0',
-					);
-
+					takeDamageService(room, user, 1, shooter!);
+					user.character.changeState();
 					room = CheckBigBbangService(room);
 					break;
 				}
 				case CharacterStateType.GUERRILLA_TARGET: {
 					const shooterId = user.character.stateInfo.stateTargetUserId;
 					const shooter = room.users.find((u) => u.id === shooterId);
-					takeDamageService(room, user, shooter!, 1);
-					stateChangeService(
-						user,
-						CharacterStateType.NONE_CHARACTER_STATE,
-						CharacterStateType.NONE_CHARACTER_STATE,
-						0,
-						'0',
-					);
+					takeDamageService(room, user, 1, shooter!);
+					user.character.changeState();
 					room = CheckGuerrillaService(room);
 					break;
 				}
@@ -105,12 +80,11 @@ export const reactionUpdateUseCase = async (
 			}
 		}
 	}
+	const toRoom = room.toData();
 
-
-	
-	const userUpdateNotificationPacket = userUpdateNotificationPacketForm(room.users);
+	const userUpdateNotificationPacket = userUpdateNotificationPacketForm(toRoom.users);
 	broadcastDataToRoom(
-		room.users,
+		toRoom.users,
 		userUpdateNotificationPacket,
 		GamePacketType.userUpdateNotification,
 	);

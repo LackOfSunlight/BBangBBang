@@ -9,7 +9,6 @@ import { checkAndEndGameIfNeeded } from '../../services/game.end.service';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import { setBombTimer } from '../../services/set.bomb.timer.service';
-import { cardManager } from '../../managers/card.manager';
 
 /** 폭탄 디버프 부여 */
 const cardBombEffect = (room: Room, user: User, target: User): boolean => {
@@ -27,7 +26,7 @@ const cardBombEffect = (room: Room, user: User, target: User): boolean => {
 		return false;
 	}
 
-	cardManager.removeCard(user, room, CardType.BOMB);
+	room.removeCard(user, CardType.BOMB);
 	// 이미 해당 디버프 상태일 경우 ; 중복 검증
 	if (target.character.debuffs.includes(CardType.BOMB)) {
 		console.error(`[BOMB]이미 ${target.nickname} 유저는 폭탄을 보유중입니다.`);
@@ -37,9 +36,11 @@ const cardBombEffect = (room: Room, user: User, target: User): boolean => {
 	target.character.debuffs.push(CardType.BOMB);
 
 	const explosionTime = Date.now() + 30000;
+
+	const toRoom = room.toData();
 	// 시작전 패킷 송신
 	const warnExplosion = warnNotificationPacketForm(WarningType.BOMB_WANING, `${explosionTime}`);
-	broadcastDataToRoom(room.users, warnExplosion, GamePacketType.warningNotification);
+	broadcastDataToRoom(toRoom.users, warnExplosion, GamePacketType.warningNotification);
 	// 인게임 제한시간 : 30초 / 테스트 제한시간 : 10초
 	setBombTimer.startBombTimer(room, target, explosionTime);
 
@@ -61,16 +62,18 @@ export const bombExplosion = (room: Room, userInExplode: User) => {
 		return;
 	}
 
+	const toRoom = room.toData();
+
 	//animation 추후 추가 예정
-	playAnimationHandler(room.users, userInExplode.id, AnimationType.BOMB_ANIMATION);
+	playAnimationHandler(toRoom.users, userInExplode.id, AnimationType.BOMB_ANIMATION);
 
 	userInExplode.character.hp -= 2;
 	userInExplode.character.debuffs.splice(bombCardIndex, 1);
 	checkAndEndGameIfNeeded(room.id);
 
-	const userUpdateNotificationPacket = userUpdateNotificationPacketForm(room.users);
+	const userUpdateNotificationPacket = userUpdateNotificationPacketForm(toRoom.users);
 	broadcastDataToRoom(
-		room.users,
+		toRoom.users,
 		userUpdateNotificationPacket,
 		GamePacketType.userUpdateNotification,
 	);

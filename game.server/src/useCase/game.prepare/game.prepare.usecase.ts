@@ -20,6 +20,7 @@ import {
 	gamePrepareResponsePacketForm,
 } from '../../converter/packet.form.js';
 import roomManger from '../../managers/room.manager.js';
+import { Character } from '../../models/character.model.js';
 
 export const gamePrepareUseCase = (socket: GameSocket, req: C2SGamePrepareRequest): GamePacket => {
 	if (!socket.roomId) {
@@ -108,7 +109,7 @@ export const gamePrepareUseCase = (socket: GameSocket, req: C2SGamePrepareReques
 				handCardsCount: 0,
 			};
 
-			user.character = characterData;
+			user.setCharacter(characterData);
 
 			// 중복 할당을 막기 위해 사용한 역할과 캐릭터는 목록에서 제거
 			role.splice(randomRoleIndex, 1);
@@ -118,9 +119,11 @@ export const gamePrepareUseCase = (socket: GameSocket, req: C2SGamePrepareReques
 		// 방 상태를 INGAME으로 변경
 		room.state = RoomStateType.INGAME;
 
+		const toRoom = room.toData();
+
 		// 모든 유저에게 게임 준비 완료 알림 전송
-		const notificationPacket = gamePrepareNotificationPacketForm(room);
-		broadcastDataToRoom(room.users, notificationPacket, GamePacketType.gamePrepareNotification);
+		const notificationPacket = gamePrepareNotificationPacketForm(toRoom);
+		broadcastDataToRoom(toRoom.users, notificationPacket, GamePacketType.gamePrepareNotification);
 
 		// 요청자에게 성공 응답 반환
 		return gamePrepareResponsePacketForm({

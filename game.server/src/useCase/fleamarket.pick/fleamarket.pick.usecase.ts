@@ -6,7 +6,6 @@ import { GamePacketType } from '../../enums/gamePacketType';
 import { User } from '../../models/user.model';
 import { broadcastDataToRoom } from '../../sockets/notification';
 import { C2SFleaMarketPickRequest } from '../../generated/packet/game_actions';
-import { cardManager } from '../../managers/card.manager';
 import {
 	fleaMarketNotificationForm,
 	fleaMarketResponseForm,
@@ -20,12 +19,12 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 		const room = roomManger.getRoom(Number(socket.roomId));
 		const userInfo = roomManger.getUserFromRoom(room.id, socket.userId!);
 
-		if(!room || !userInfo || !userInfo.character){
+		if (!room || !userInfo || !userInfo.character) {
 			return fleaMarketResponseForm(false, GlobalFailCode.ROOM_NOT_FOUND);
 		}
 
-		const fleaMarketCards = cardManager.roomFleaMarketCards.get(room.id);
-		const pickNumbers = cardManager.fleaMarketPickIndex.get(room.id);
+		const fleaMarketCards = room.roomFleaMarketCards;
+		const pickNumbers = room.fleaMarketPickIndex;
 
 		if (fleaMarketCards === undefined || pickNumbers === undefined) {
 			console.log('플리마켓 카드덱에서 에러 발생');
@@ -56,7 +55,7 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 				const nextIndex = (i + 1) % room.users.length;
 				const nextUser = room.users[nextIndex];
 
-				if(!nextUser || !nextUser.character || !nextUser.character.stateInfo)
+				if (!nextUser || !nextUser.character || !nextUser.character.stateInfo)
 					return fleaMarketResponseForm(false, GlobalFailCode.CHARACTER_NOT_FOUND);
 
 				if (nextUser.character.stateInfo.nextState !== CharacterStateType.NONE_CHARACTER_STATE) {
@@ -78,7 +77,7 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 
 		if (allWaiting) {
 			for (const u of room.users) {
-				if(!u || !u.character || !u.character.stateInfo)
+				if (!u || !u.character || !u.character.stateInfo)
 					return fleaMarketResponseForm(false, GlobalFailCode.CHARACTER_NOT_FOUND);
 
 				// 감옥에 있는 애들은 상태를 바꾸지 않음
@@ -87,12 +86,14 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 				stateChangeService(u);
 			}
 
-			cardManager.fleaMarketPickIndex.set(room.id, []);
-			cardManager.roomFleaMarketCards.set(room.id, []);
+			room.fleaMarketPickIndex = [];
+			room.roomFleaMarketCards = [];
 		}
 
+		const toRoom = room.toData();
+
 		const fleaMarketGamePacket = fleaMarketNotificationForm(fleaMarketCards, pickNumbers);
-		const userUpdateGamePacket = userUpdateNotificationPacketForm(room.users);
+		const userUpdateGamePacket = userUpdateNotificationPacketForm(toRoom.users);
 
 		broadcastDataToRoom(room.users, fleaMarketGamePacket, GamePacketType.fleaMarketNotification);
 

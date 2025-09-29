@@ -1,25 +1,20 @@
 // cardType = 11
 import { CardType } from '../../generated/common/enums.js';
-import { cardManager } from '../../managers/card.manager.js';
 import { User } from '../../models/user.model';
 import { Room } from '../../models/room.model';
 
 const cardMaturedSavingsEffect = (room: Room, user: User): boolean => {
 	// 유효성 검증
-	if (!user || !user.character) {
+	if (!user.character) {
 		console.error('[MATURED_SAVINGS]잘못된 사용자 정보입니다');
 		return false;
 	}
-	if (!room) {
-		console.error('[MATURED_SAVINGS]방이 존재하지 않습니다.');
-		return false;
-	}
 
-	cardManager.removeCard(user, room, CardType.MATURED_SAVINGS);
+	room.removeCard(user, CardType.MATURED_SAVINGS);
 	// 뽑을 카드 매수
 	const numberOfDraw = 2;
 	// 덱에 남은 카드 매수
-	const remainCardNumberInDeck = cardManager.getDeckSize(room.id);
+	const remainCardNumberInDeck = room.getDeckSize();
 	// 덱 매수 부족할 경우 중단
 	if (remainCardNumberInDeck < numberOfDraw) {
 		console.error(`[MATURED_SAVINGS]덱에서 뽑을 카드가 부족합니다.`);
@@ -27,7 +22,7 @@ const cardMaturedSavingsEffect = (room: Room, user: User): boolean => {
 	}
 
 	// 카드 2장 뽑기(메인 기믹) 공지
-	const drawnCards = cardManager.drawDeck(room.id, numberOfDraw);
+	const drawnCards = room.drawDeck(numberOfDraw);
 	console.log(
 		`[MATURED_SAVINGS]유저 ${user.id}(이)가 카드 ${numberOfDraw}장을 획득하였습니다\n획득 카드 : `,
 	);

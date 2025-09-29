@@ -6,13 +6,11 @@ import { shuffle } from '../utils/shuffle.util';
 import { GamePacket } from '../generated/gamePacket';
 import { GamePacketType } from '../enums/gamePacketType';
 import { broadcastDataToRoom } from '../sockets/notification';
-import { User } from '../models/user.model';
-import { checkSatelliteTargetEffect } from '../card/debuff/card.satellite_target.effect';
-import { checkContainmentUnitTarget } from '../card/debuff/card.containment_unit.effect';
 import { positionUpdateNotificationForm } from '../converter/packet.form';
-import { cardManager } from './card.manager';
 import roomManger, { roomPhase, roomTimers } from './room.manager';
 import { setBombTimer } from '../services/set.bomb.timer.service';
+import { cardPool, getCard } from '../dispatcher/apply.card.dispacher';
+import { IPeriodicEffectCard } from '../type/card';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 const positionUpdateIntervals = new Map<number, NodeJS.Timeout>();
@@ -21,6 +19,12 @@ export const notificationCharacterPosition = new Map<
 	number, // roomId
 	Map<string, CharacterPositionData> // userId → 위치 배열
 >();
+
+const prisonPosition: CharacterPositionData = {
+	id: '21',
+	x: 22,
+	y: -4,
+};
 
 // 위치 변화 감지 플래그 (성능 최적화용)
 export const roomPositionChanged = new Map<number, boolean>();
@@ -68,14 +72,22 @@ class GameManager {
 		const timer = setTimeout(async () => {
 			const timerExecutionTime = Date.now();
 			roomPhase.set(roomTimerMapId, nextPhase);
-			let room = roomManger.getRoom(roomId);
+			const room = roomManger.getRoom(roomId);
 			if (!room) return;
 
 			if (nextPhase === PhaseType.DAY) {
 				// 1. 위성 타겟 디버프 효과 체크 (하루 시작 시)
-				room = (await checkSatelliteTargetEffect(room)) || room; // room 상태 변수 재갱신
 
-				room = (await checkContainmentUnitTarget(room.id)) || room;
+				for (const card of cardPool.values()) {
+					if ('onNewDay' in card) {
+						console.log('이거 실행되지는 확인');
+						await (card as IPeriodicEffectCard).onNewDay(room);
+					}
+				}
+
+				// room = (await satelliteCard.checkSatelliteTargetEffect(room)) || room; // room 상태 변수 재갱신
+
+				// room = (await containmentCard.checkContainmentUnitTarget(room.id)) || room;
 
 				// 2. 카드 처리
 				for (let user of room.users) {
@@ -86,24 +98,18 @@ class GameManager {
 
 						//카드 삭제
 						if (user.character.handCardsCount > user.character.hp) {
-							user = cardManager.trashCards(room, user);
+							const removedCards = user.character.trashCards();
+
+							removedCards.forEach((c) => {
+								for (let i = 0; i < c.count; i++) {
+									room.repeatDeck([c.type]);
+								}
+							});
 						}
 
 						if (user.character!.stateInfo?.state !== CharacterStateType.CONTAINED) {
-							const drawCards = cardManager.drawDeck(room.id, 2);
-							drawCards.forEach((type) => {
-								const existCard = user.character?.handCards.find((card) => card.type === type);
-								if (existCard) {
-									existCard.count += 1;
-								} else {
-									user.character?.handCards.push({ type, count: 1 });
-								}
-							});
-
-							user.character!.handCardsCount = user.character!.handCards.reduce(
-								(sum, card) => sum + card.count,
-								0,
-							);
+							const drawCards = room.drawDeck(2);
+							drawCards.forEach((type) => user.character?.addCardToUser(type));
 						}
 
 						user.character!.bbangCount = 0;
@@ -129,10 +135,13 @@ class GameManager {
 					},
 				};
 
-				broadcastDataToRoom(room.users, userGamePacket, GamePacketType.userUpdateNotification);
+				const toRoom = room.toData();
+
+				broadcastDataToRoom(toRoom.users, userGamePacket, GamePacketType.userUpdateNotification);
 			}
 
 			const characterPosition = shuffle(spawnPositions);
+			const resultPosition: CharacterPositionData[] = [];
 
 			const roomMap = notificationCharacterPosition.get(room.id);
 
@@ -141,8 +150,14 @@ class GameManager {
 				roomMap.clear(); // 기존 데이터 정리
 
 				for (let i = 0; i < room.users.length; i++) {
+					if (room.users[i].character?.stateInfo?.state === CharacterStateType.CONTAINED) {
+						roomMap.set(room.users[i].id, prisonPosition);
+						resultPosition.push(prisonPosition);
+						continue;
+					}
 					// 모든 플레이어(죽은 플레이어 포함)에게 새로운 위치 할당
 					roomMap.set(room.users[i].id, characterPosition[i]);
+					resultPosition.push(characterPosition[i]);
 				}
 
 				// 🚀 페이즈 변경으로 인한 위치 변화 플래그 설정
@@ -158,12 +173,14 @@ class GameManager {
 					phaseUpdateNotification: {
 						phaseType: nextPhase,
 						nextPhaseAt: `${remainingTime > 0 ? remainingTime : 0}`,
-						characterPositions: characterPosition,
+						characterPositions: resultPosition,
 					},
 				},
 			};
 
-			broadcastDataToRoom(room.users, phaseGamePacket, GamePacketType.phaseUpdateNotification);
+			const toRoom = room.toData();
+
+			broadcastDataToRoom(toRoom.users, phaseGamePacket, GamePacketType.phaseUpdateNotification);
 
 			this.scheduleNextPhase(room.id, roomTimerMapId);
 		}, interval);
@@ -202,7 +219,6 @@ class GameManager {
 	}
 }
 
-
 export const broadcastPositionUpdates = (room: Room) => {
 	const roomMap = notificationCharacterPosition.get(room.id);
 	if (!roomMap) return; // 해당 방의 위치 정보가 없으면 종료
@@ -233,8 +249,10 @@ export const broadcastPositionUpdates = (room: Room) => {
 		// 위치 업데이트 패킷 생성
 		const gamePacket = positionUpdateNotificationForm(characterPositions);
 
+		const toRoom = room.toData();
+
 		// 방의 모든 유저에게 전송
-		broadcastDataToRoom(room.users, gamePacket, GamePacketType.positionUpdateNotification);
+		broadcastDataToRoom(toRoom.users, gamePacket, GamePacketType.positionUpdateNotification);
 
 		// 🎯 핵심: 브로드캐스트 후 Map 비우기 (다음 변화까지 대기)
 		roomMap.clear();

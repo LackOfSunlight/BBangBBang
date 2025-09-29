@@ -1,31 +1,33 @@
 import { AnimationType, CardType, CharacterType } from '../generated/common/enums';
 import { playAnimationHandler } from '../handlers/play.animation.handler';
-import { cardManager } from '../managers/card.manager';
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
 
-const takeDamageService = (room: Room, user: User, shooter: User, damage: number) => {
+const takeDamageService = (room: Room, user: User, damage: number, shooter?: User) => {
 	let isDefended = false;
 
+	if (!user.character) return;
+
 	//방어 시도
-	const hasShield = user.character!.equips.includes(CardType.AUTO_SHIELD);
-	const isFroggy = user.character!.characterType === CharacterType.FROGGY;
+	const hasShield = user.character.equips.includes(CardType.AUTO_SHIELD);
+	const isFroggy = user.character.characterType === CharacterType.FROGGY;
 
 	const shieldRoll = hasShield && Math.random() < 0.25;
 	const froggyRoll = isFroggy && Math.random() < 0.25;
 
 	if (shieldRoll || froggyRoll) {
 		isDefended = true; // 둘 중 하나라도 성공하면 방어됨
-		playAnimationHandler(room.users, user.id, AnimationType.SHIELD_ANIMATION);
+		const toRoom = room.toData();
+		playAnimationHandler(toRoom.users, user.id, AnimationType.SHIELD_ANIMATION);
 	}
 
 	if (isDefended) return;
 
 	//데미지 처리
 	if (user.character?.characterType === CharacterType.MALANG) {
-		user.character.hp -= damage;
+		user.character.takeDamage(damage);
 		// 덱에서 카드 1장 뽑기 (CardType[] 반환)
-		const newCardTypes = cardManager.drawDeck(room.id, 1);
+		const newCardTypes = room.drawDeck();
 
 		if (newCardTypes.length === 0) {
 			console.log(`[말랑이 특수능력] ${user.nickname}: 덱에 카드가 없습니다.`);
@@ -50,7 +52,9 @@ const takeDamageService = (room: Room, user: User, shooter: User, damage: number
 			0,
 		);
 	} else if (user.character?.characterType == CharacterType.PINK_SLIME) {
-		user.character.hp -= damage;
+		user.character.takeDamage(damage);
+
+		if (!shooter) return;
 		// 대상의 손에 카드가 있는지 확인s
 		const shooterHand = shooter.character!.handCards;
 		if (shooterHand.length === 0) {
@@ -74,7 +78,33 @@ const takeDamageService = (room: Room, user: User, shooter: User, damage: number
 			user.character.handCards.push(removed);
 		}
 	} else {
-		user.character!.hp -= damage;
+		user.character?.takeDamage(damage);
+	}
+
+	if (user.character.hp <= 0) {
+		const maskMan = room.users.find((u) => u.character?.characterType === CharacterType.MASK);
+
+		if (maskMan) {
+			if (maskMan.character!.hp <= 0) return;
+
+			if (user.character.handCardsCount > 0) {
+				for (let i = 0; i < user.character.handCards.length; i++) {
+					const card = user.character.handCards[i];
+
+					for (let j = 0; j < card.count; j++) {
+						maskMan.character?.addCardToUser(card.type);
+						user.character.removeHandCard(card.type);
+					}
+				}
+			}
+		} else {
+			for (let i = 0; i < user.character.handCards.length; i++) {
+				const card = user.character.handCards[i];
+				for (let j = 0; j < card.count; j++) {
+					room.removeCard(user, card.type);
+				}
+			}
+		}
 	}
 };
 

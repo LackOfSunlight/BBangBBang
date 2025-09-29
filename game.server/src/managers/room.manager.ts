@@ -97,7 +97,7 @@ class RoomManger {
 		};
 
 		// 배열에 반영
-		room.users[userIndex] = updatedUser;
+		room.users[userIndex].setUserData(updatedUser.id,updatedUser.nickname,updatedUser.character);
 	}
 
 	// 전체 방 불러오기
@@ -127,6 +127,17 @@ class RoomManger {
 			.map(([_, value]) => value); // 값만 배열로 저장
 
 		return userValues;
+	}
+
+	public getRoomByUser(userId: string) : Room | null{
+		
+		for(let room of rooms.values()){
+			const user = room.users.find(u => u.id === userId);
+
+			if(user) return room;
+		}
+
+		return null;
 	}
 }
 

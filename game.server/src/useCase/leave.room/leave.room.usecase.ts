@@ -11,6 +11,7 @@ import {
 	userLeftNotificationPacketForm,
 } from '../../converter/packet.form';
 import roomManger from '../../managers/room.manager';
+import { UserData } from '../../generated/common/types';
 
 export const leaveRoomUseCase = async (
 	socket: GameSocket,
@@ -52,8 +53,10 @@ export const leaveRoomUseCase = async (
 
 		// 방장이 나가는 경우
 		if (room.ownerId === userId) {
+			const toRoom = room.toData();
+
 			// 방에 있던 모든 유저 목록을 저장 (알림 전송용)
-			const allUsersInRoom = [...room.users];
+			const allUsersInRoom = [...toRoom.users];
 			// 방을 삭제
 			roomManger.deleteRoom(roomId);
 
@@ -82,8 +85,11 @@ export const leaveRoomUseCase = async (
 			// 일반 유저가 나가는 경우
 			// 방에서 해당 유저를 제거
 			roomManger.removeUserFromRoom(roomId, userId);
+
+			const toRoom = room.toData();
+
 			// 남은 유저 목록을 필터링
-			const remainingUsers = room.users.filter((u: User) => u.id !== userId);
+			const remainingUsers = toRoom.users.filter((u: UserData) => u.id !== userId);
 
 			// 남은 유저들에게 '누가 나갔는지' 알림 패킷 생성
 			const notificationPacket = userLeftNotificationPacketForm({ userId: userId });

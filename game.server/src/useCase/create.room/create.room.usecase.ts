@@ -14,10 +14,8 @@ const createRoomUseCase = async (
 	req: C2SCreateRoomRequest,
 ): Promise<GamePacket> => {
 	try {
-
 		if (!req.name || !socket.userId)
 			return createRoomResponseForm(false, GlobalFailCode.CREATE_ROOM_FAILED);
-		
 
 		const roomDB = await createRoomDB(socket, req);
 		const userInfo = await getUserByUserId(Number(socket.userId));
@@ -40,9 +38,10 @@ const createRoomUseCase = async (
 
 		roomManger.saveRoom(room);
 
-		return createRoomResponseForm(true, GlobalFailCode.NONE_FAILCODE, room);
-	} catch (error) {
+		const toRoom = room.toData();
 
+		return createRoomResponseForm(true, GlobalFailCode.NONE_FAILCODE, toRoom);
+	} catch (error) {
 		return createRoomResponseForm(false, GlobalFailCode.UNKNOWN_ERROR);
 	}
 };

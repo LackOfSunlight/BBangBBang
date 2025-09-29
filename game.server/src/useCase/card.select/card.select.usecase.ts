@@ -13,7 +13,6 @@ import {
 	userUpdateNotificationPacketForm,
 } from '../../converter/packet.form';
 import { GamePacket } from '../../generated/gamePacket';
-import { cardManager } from '../../managers/card.manager';
 import roomManger from '../../managers/room.manager';
 
 const DEFAULT_TARGET_USER_ID = '0';
@@ -67,7 +66,9 @@ export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest)
 			break;
 		}
 		case SelectCardType.EQUIP: {
-			const cardIndex = target.character.equips.findIndex((cardType) => cardType === selectCardType);
+			const cardIndex = target.character.equips.findIndex(
+				(cardType) => cardType === selectCardType,
+			);
 			if (cardIndex > -1) {
 				stolenCardType = target.character.equips.splice(cardIndex, 1)[0];
 			}
@@ -81,7 +82,9 @@ export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest)
 			break;
 		}
 		case SelectCardType.DEBUFF: {
-			const cardIndex = target.character.debuffs.findIndex((cardType) => cardType === selectCardType);
+			const cardIndex = target.character.debuffs.findIndex(
+				(cardType) => cardType === selectCardType,
+			);
 			if (cardIndex > -1) {
 				stolenCardType = target.character.debuffs.splice(cardIndex, 1)[0];
 			}
@@ -91,9 +94,9 @@ export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest)
 
 	if (stolenCardType) {
 		if (user.character.stateInfo!.state === CharacterStateType.ABSORBING) {
-			cardManager.addCardToUser(user, stolenCardType);
+			user.character.addCardToUser(stolenCardType);
 		}
-		
+
 		user.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
 		user.character.stateInfo!.stateTargetUserId = DEFAULT_TARGET_USER_ID;
 		target.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
@@ -101,9 +104,11 @@ export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest)
 		return cardSelectResponseForm(false, GlobalFailCode.UNKNOWN_ERROR);
 	}
 
-	const userUpdateNotificationPacket = userUpdateNotificationPacketForm(room.users);
+	const toRoom = room.toData();
+
+	const userUpdateNotificationPacket = userUpdateNotificationPacketForm(toRoom.users);
 	broadcastDataToRoom(
-		room.users,
+		toRoom.users,
 		userUpdateNotificationPacket,
 		GamePacketType.userUpdateNotification,
 	);
