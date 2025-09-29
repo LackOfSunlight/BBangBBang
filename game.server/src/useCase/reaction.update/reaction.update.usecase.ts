@@ -40,7 +40,7 @@ export const reactionUpdateUseCase = async (
 
 					let damage = 1; // 기본 데미지
 					damage = weaponDamageEffect(damage, shooter.character);
-					takeDamageService(room, user, shooter, damage);
+					takeDamageService(room, user, damage, shooter);
 
 					// 4. 공통: 처리 후 상태 복구
 					if (user.character.stateInfo) {
@@ -57,7 +57,7 @@ export const reactionUpdateUseCase = async (
 				case CharacterStateType.BIG_BBANG_TARGET: {
 					const shooterId = user.character.stateInfo.stateTargetUserId;
 					const shooter = room.users.find((u) => u.id === shooterId);
-					takeDamageService(room, user, shooter!, 1);
+					takeDamageService(room, user, 1, shooter!);
 					user.character.changeState();
 					room = CheckBigBbangService(room);
 					break;
@@ -65,7 +65,7 @@ export const reactionUpdateUseCase = async (
 				case CharacterStateType.GUERRILLA_TARGET: {
 					const shooterId = user.character.stateInfo.stateTargetUserId;
 					const shooter = room.users.find((u) => u.id === shooterId);
-					takeDamageService(room, user, shooter!, 1);
+					takeDamageService(room, user, 1, shooter!);
 					user.character.changeState();
 					room = CheckGuerrillaService(room);
 					break;

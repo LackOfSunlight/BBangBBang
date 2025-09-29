@@ -10,6 +10,7 @@ import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import { checkAndEndGameIfNeeded } from '../../services/game.end.service';
 import { setBombTimer } from '../../services/set.bomb.timer.service';
+import takeDamageService from '../../services/take.damage.service';
 import { broadcastDataToRoom } from '../../sockets/notification';
 import { ICard } from '../../type/card';
 
@@ -68,7 +69,7 @@ export class BombCard implements ICard {
 			return;
 		}
 
-		userInExplode.character.takeDamage(2);
+		takeDamageService(room, userInExplode, 2);
 		userInExplode.character.debuffs.splice(bombCardIndex, 1);
 		checkAndEndGameIfNeeded(room.id);
 

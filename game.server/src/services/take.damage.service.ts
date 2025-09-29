@@ -3,12 +3,14 @@ import { playAnimationHandler } from '../handlers/play.animation.handler';
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
 
-const takeDamageService = (room: Room, user: User, shooter: User, damage: number) => {
+const takeDamageService = (room: Room, user: User, damage: number, shooter?: User) => {
 	let isDefended = false;
 
+	if (!user.character) return;
+
 	//방어 시도
-	const hasShield = user.character!.equips.includes(CardType.AUTO_SHIELD);
-	const isFroggy = user.character!.characterType === CharacterType.FROGGY;
+	const hasShield = user.character.equips.includes(CardType.AUTO_SHIELD);
+	const isFroggy = user.character.characterType === CharacterType.FROGGY;
 
 	const shieldRoll = hasShield && Math.random() < 0.25;
 	const froggyRoll = isFroggy && Math.random() < 0.25;
@@ -51,6 +53,8 @@ const takeDamageService = (room: Room, user: User, shooter: User, damage: number
 		);
 	} else if (user.character?.characterType == CharacterType.PINK_SLIME) {
 		user.character.takeDamage(damage);
+
+		if (!shooter) return;
 		// 대상의 손에 카드가 있는지 확인s
 		const shooterHand = shooter.character!.handCards;
 		if (shooterHand.length === 0) {
@@ -75,6 +79,32 @@ const takeDamageService = (room: Room, user: User, shooter: User, damage: number
 		}
 	} else {
 		user.character?.takeDamage(damage);
+	}
+
+	if (user.character.hp <= 0) {
+		const maskMan = room.users.find((u) => u.character?.characterType === CharacterType.MASK);
+
+		if (maskMan) {
+			if (maskMan.character!.hp <= 0) return;
+
+			if (user.character.handCardsCount > 0) {
+				for (let i = 0; i < user.character.handCards.length; i++) {
+					const card = user.character.handCards[i];
+
+					for (let j = 0; j < card.count; j++) {
+						maskMan.character?.addCardToUser(card.type);
+						user.character.removeHandCard(card.type);
+					}
+				}
+			}
+		} else {
+			for (let i = 0; i < user.character.handCards.length; i++) {
+				const card = user.character.handCards[i];
+				for (let j = 0; j < card.count; j++) {
+					room.removeCard(user, card.type);
+				}
+			}
+		}
 	}
 };
 

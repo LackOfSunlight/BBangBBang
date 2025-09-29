@@ -5,6 +5,7 @@ import roomManager from '../../managers/room.manager';
 import { Room } from '../../models/room.model';
 import { User } from '../../models/user.model';
 import { checkAndEndGameIfNeeded } from '../../services/game.end.service';
+import takeDamageService from '../../services/take.damage.service';
 import { ICard, IPeriodicEffectCard } from '../../type/card';
 
 export class SatelliteTargetCard implements ICard, IPeriodicEffectCard {
@@ -71,7 +72,7 @@ export class SatelliteTargetCard implements ICard, IPeriodicEffectCard {
 				await new Promise((resolve) => setTimeout(resolve, 2000));
 
 				// 3. 실제 효과 적용
-				target.character.takeDamage(damage);
+				takeDamageService(room, target, damage);
 
 				// 4. 디버프 제거 (효과 발동 후 제거)
 				const debuffIndex = target.character.debuffs.indexOf(CardType.SATELLITE_TARGET);
