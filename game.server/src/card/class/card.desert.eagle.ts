@@ -14,8 +14,10 @@ export class DesertEagleCard implements ICard {
 
 		if (user.character.weapon === CardType.DESERT_EAGLE) return false;
 
+		if (user.character.weapon) room.repeatDeck([user.character.weapon]);
+
 		user.character.weapon = CardType.DESERT_EAGLE;
-		room.removeCard(user, CardType.DESERT_EAGLE);
+		user.character.removeHandCard(CardType.DESERT_EAGLE);
 
 		return true;
 	}
