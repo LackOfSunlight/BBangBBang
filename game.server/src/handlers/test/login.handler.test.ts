@@ -1,12 +1,12 @@
 import loginHandler from '../login.handler';
 import { GameSocket } from '../../Type/game.socket';
-import { GamePacket } from '../../generated/gamePacket';
+import { GamePacket } from '../../Generated/gamePacket';
 import { getGamePacketType } from '../../Converter/type.form';
 import { sendData } from '../../Sockets/send.data';
 import loginUseCase from '../../UseCase/Login/login.usecase';
 import { GamePacketType, gamePackTypeSelect } from '../../Enums/gamePacketType';
-import { C2SLoginRequest, S2CLoginResponse } from '../../generated/packet/auth';
-import { GlobalFailCode } from '../../generated/common/enums';
+import { C2SLoginRequest, S2CLoginResponse } from '../../Generated/packet/auth';
+import { GlobalFailCode } from '../../Generated/common/enums';
 
 jest.mock('../../utils/type.converter.js');
 jest.mock('../../useCase/login/login.usecase.js');

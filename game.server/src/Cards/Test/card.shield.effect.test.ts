@@ -3,7 +3,7 @@ import {
 	CharacterStateType,
 	CharacterType,
 	RoomStateType,
-} from '../../generated/common/enums';
+} from '../../Generated/common/enums';
 import { Room } from '../../Models/room.model';
 import { User } from '../../Models/user.model';
 import { CheckBigBbangService } from '../../Services/bigbbang.check.service';

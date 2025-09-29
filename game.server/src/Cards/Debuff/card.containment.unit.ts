@@ -1,5 +1,5 @@
 import { CardCategory } from '../../Enums/card.category';
-import { CardType, CharacterStateType } from '../../generated/common/enums';
+import { CardType, CharacterStateType } from '../../Generated/common/enums';
 import roomManager from '../../Managers/room.manager';
 import { Room } from '../../Models/room.model';
 import { User } from '../../Models/user.model';

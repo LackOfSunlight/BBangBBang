@@ -1,5 +1,5 @@
 import { GamePacketType } from '../../Enums/gamePacketType';
-import { CardType, GlobalFailCode } from '../../generated/common/enums';
+import { CardType, GlobalFailCode } from '../../Generated/common/enums';
 import { applyCardEffect } from '../../Dispatcher/apply.card.dispacher';
 import { broadcastDataToRoom } from '../../Sockets/notification.js';
 import {

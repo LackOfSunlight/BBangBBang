@@ -1,10 +1,10 @@
 import createRoomUseCase from './create.room.usecase';
-import { C2SCreateRoomRequest } from '../../generated/packet/room_actions';
+import { C2SCreateRoomRequest } from '../../Generated/packet/room_actions';
 import { GameSocket } from '../../Type/game.socket';
 import { createRoomDB, getUserByUserId } from '../../Services/prisma.service.js';
 import { saveRoom } from '../../Utils/room.utils';
 import { GamePacketType } from '../../Enums/gamePacketType.js';
-import { GlobalFailCode, RoomStateType } from '../../generated/common/enums.js';
+import { GlobalFailCode, RoomStateType } from '../../Generated/common/enums.js';
 import { Room } from '../../Models/room.model';
 
 jest.mock('../../services/prisma.service.js');

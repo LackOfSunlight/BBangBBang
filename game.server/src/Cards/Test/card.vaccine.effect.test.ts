@@ -3,7 +3,7 @@ import cardVaccineEffect from '../Active/card.vaccine.effect';
 import getMaxHp from '../../Init/character.Init';
 import { User } from '../../Models/user.model';
 import { Character } from '../../Models/character.model';
-import { CharacterType, RoleType, RoomStateType } from '../../generated/common/enums';
+import { CharacterType, RoleType, RoomStateType } from '../../Generated/common/enums';
 import { Room } from '../../Models/room.model';
 
 // 의존성 모의(Mock) 설정

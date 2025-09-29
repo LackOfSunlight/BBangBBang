@@ -1,16 +1,16 @@
 import { GameSocket } from '../../Type/game.socket.js';
-import { C2SGamePrepareRequest } from '../../generated/packet/game_actions.js';
-import { GamePacket } from '../../generated/gamePacket.js';
+import { C2SGamePrepareRequest } from '../../Generated/packet/game_actions.js';
+import { GamePacket } from '../../Generated/gamePacket.js';
 import {
 	CharacterStateType,
 	CharacterType,
 	GlobalFailCode,
 	RoleType,
 	RoomStateType,
-} from '../../generated/common/enums.js';
+} from '../../Generated/common/enums.js';
 
 import { Room } from '../../Models/room.model.js';
-import { CharacterData } from '../../generated/common/types.js';
+import { CharacterData } from '../../Generated/common/types.js';
 import characterType from '../../data/characterType.json';
 import { CharacterInfo } from '../../Type/character.info.js';
 import { GamePacketType } from '../../Enums/gamePacketType.js';

@@ -1,4 +1,4 @@
-import { CharacterStateType } from '../generated/common/enums';
+import { CharacterStateType } from '../Generated/common/enums';
 import { User } from '../Models/user.model';
 
 /**

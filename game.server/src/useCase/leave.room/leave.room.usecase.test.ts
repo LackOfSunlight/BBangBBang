@@ -1,6 +1,6 @@
 import { GamePacketType } from '../../Enums/gamePacketType';
-import { GlobalFailCode, RoomStateType } from '../../generated/common/enums';
-import { C2SLeaveRoomRequest } from '../../generated/packet/room_actions';
+import { GlobalFailCode, RoomStateType } from '../../Generated/common/enums';
+import { C2SLeaveRoomRequest } from '../../Generated/packet/room_actions';
 import { Room } from '../../Models/room.model';
 import { User } from '../../Models/user.model';
 import { GameSocket } from '../../Type/game.socket';

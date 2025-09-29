@@ -1,8 +1,8 @@
-import { C2SLoginRequest } from '../../generated/packet/auth';
+import { C2SLoginRequest } from '../../Generated/packet/auth';
 import { getUserByEmail, setTokenService } from '../../Services/prisma.service';
-import { GlobalFailCode } from '../../generated/common/enums';
-import { GamePacket } from '../../generated/gamePacket';
-import { UserData } from '../../generated/common/types';
+import { GlobalFailCode } from '../../Generated/common/enums';
+import { GamePacket } from '../../Generated/gamePacket';
+import { UserData } from '../../Generated/common/types';
 import checkUserPassword from '../../Services/login/check.user.password';
 import { GameSocket } from '../../Type/game.socket';
 import socketManger from '../../Managers/socket.manger';

@@ -7,22 +7,22 @@ import {
 	SelectCardType,
 	WinType,
 	WarningType,
-} from '../generated/common/enums';
+} from '../Generated/common/enums';
 import {
 	CardData,
 	CharacterPositionData,
 	GameStateData,
 	RoomData,
 	UserData,
-} from '../generated/common/types';
-import { GamePacket } from '../generated/gamePacket';
-import { S2CGamePrepareResponse, S2CGameStartResponse } from '../generated/packet/game_actions';
+} from '../Generated/common/types';
+import { GamePacket } from '../Generated/gamePacket';
+import { S2CGamePrepareResponse, S2CGameStartResponse } from '../Generated/packet/game_actions';
 import {
 	S2CGamePrepareNotification,
 	S2CGameStartNotification,
 	S2CLeaveRoomNotification,
-} from '../generated/packet/notifications';
-import { S2CLeaveRoomResponse } from '../generated/packet/room_actions';
+} from '../Generated/packet/notifications';
+import { S2CLeaveRoomResponse } from '../Generated/packet/room_actions';
 import { Room } from '../Models/room.model';
 import { User } from '../Models/user.model';
 import { broadcastDataToRoom } from '../Sockets/notification';

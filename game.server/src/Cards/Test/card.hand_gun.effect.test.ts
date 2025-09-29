@@ -1,6 +1,6 @@
 import cardHandGunEffect from '../weapon/card.hand_gun.effect';
 import * as roomUtils from '../../Utils/room.utils';
-import { CharacterType, RoleType } from '../../generated/common/enums';
+import { CharacterType, RoleType } from '../../Generated/common/enums';
 
 // 모킹 설정
 jest.mock('../../utils/room.utils');

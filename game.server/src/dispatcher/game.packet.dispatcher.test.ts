@@ -1,6 +1,6 @@
 import { Socket } from 'net';
 import { gamePacketDispatcher } from './game.packet.dispatcher.js';
-import { GamePacket } from '../generated/gamePacket.js';
+import { GamePacket } from '../Generated/gamePacket.js';
 
 // Mock all handlers
 import registerHandler from '../Handlers/register.handler.js';

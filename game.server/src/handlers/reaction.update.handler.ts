@@ -1,12 +1,12 @@
 import { GameSocket } from '../Type/game.socket';
-import { GamePacket } from '../generated/gamePacket';
+import { GamePacket } from '../Generated/gamePacket';
 import { getGamePacketType } from '../Converter/type.form';
 import { GamePacketType, gamePackTypeSelect } from '../Enums/gamePacketType';
 import { reactionUpdateUseCase } from '../UseCase/Reaction.update/reaction.update.usecase';
 import { sendData } from '../Sockets/send.data';
 import { checkAndEndGameIfNeeded } from '../Services/game.end.service';
 import { Room } from '../Models/room.model';
-import { GlobalFailCode } from '../generated/common/enums';
+import { GlobalFailCode } from '../Generated/common/enums';
 import { reactionResponsePacketForm } from '../Converter/packet.form';
 import roomManger from '../Managers/room.manager';
 import { invalidRequest } from '../Utils/invalid.request';

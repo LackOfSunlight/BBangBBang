@@ -1,5 +1,5 @@
-import { CharacterData } from '../generated/common/types';
-import { CardType } from '../generated/common/enums';
+import { CharacterData } from '../Generated/common/types';
+import { CardType } from '../Generated/common/enums';
 
 /**
  * 무기 효과에 따른 최종 데미지를 계산합니다. (데미지 변경 무기용)

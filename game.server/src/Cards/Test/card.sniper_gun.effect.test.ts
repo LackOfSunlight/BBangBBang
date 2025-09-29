@@ -1,4 +1,4 @@
-import { CardType } from '../../generated/common/enums';
+import { CardType } from '../../Generated/common/enums';
 import { User } from '../../Models/user.model';
 import { getUserFromRoom, updateCharacterFromRoom } from '../../Utils/room.utils';
 import cardSniperGunEffect from '../weapon/card.sniper_gun.effect';

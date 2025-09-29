@@ -1,7 +1,7 @@
 import { GamePacketType, gamePackTypeSelect } from '../../Enums/gamePacketType';
-import { GlobalFailCode } from '../../generated/common/enums';
-import { GamePacket } from '../../generated/gamePacket';
-import { C2SLeaveRoomRequest } from '../../generated/packet/room_actions';
+import { GlobalFailCode } from '../../Generated/common/enums';
+import { GamePacket } from '../../Generated/gamePacket';
+import { C2SLeaveRoomRequest } from '../../Generated/packet/room_actions';
 import { GameSocket } from '../../Type/game.socket';
 import { leaveRoomUseCase } from '../../UseCase/Leave.room/leave.room.usecase';
 import { sendData } from '../../Sockets/send.data';

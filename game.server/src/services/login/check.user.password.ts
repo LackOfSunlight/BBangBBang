@@ -1,4 +1,4 @@
-import { C2SLoginRequest } from '../../generated/packet/auth';
+import { C2SLoginRequest } from '../../Generated/packet/auth';
 import * as bcrypt from 'bcrypt';
 
 const checkUserPassword = async (req: C2SLoginRequest, password: string): Promise<boolean> => {

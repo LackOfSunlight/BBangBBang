@@ -1,4 +1,4 @@
-import { CardType, CharacterStateType } from '../../generated/common/enums';
+import { CardType, CharacterStateType } from '../../Generated/common/enums';
 import { cardManager } from '../../Managers/card.manager';
 import { Room } from '../../Models/room.model';
 import { User } from '../../Models/user.model';
@@ -9,7 +9,7 @@ import {
 	updateCharacterFromRoom,
 } from '../../Utils/room.utils';
 import cardGuerrillaEffect from '../Active/card.guerrilla.effect';
-import { RoomStateType } from '../../generated/common/enums';
+import { RoomStateType } from '../../Generated/common/enums';
 
 // Mock dependencies
 jest.mock('../../utils/room.utils');

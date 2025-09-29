@@ -1,9 +1,9 @@
-import { CardType, CharacterStateType, PhaseType } from '../generated/common/enums';
+import { CardType, CharacterStateType, PhaseType } from '../Generated/common/enums';
 import { Room } from '../Models/room.model';
 import characterSpawnPosition from '../data/character.spawn.position.json';
-import { CharacterPositionData } from '../generated/common/types';
+import { CharacterPositionData } from '../Generated/common/types';
 import { shuffle } from '../Utils/shuffle.util';
-import { GamePacket } from '../generated/gamePacket';
+import { GamePacket } from '../Generated/gamePacket';
 import { GamePacketType } from '../Enums/gamePacketType';
 import { broadcastDataToRoom } from '../Sockets/notification';
 import { positionUpdateNotificationForm } from '../Converter/packet.form';

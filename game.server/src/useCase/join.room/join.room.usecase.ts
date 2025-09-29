@@ -1,10 +1,10 @@
-import { GamePacket } from '../../generated/gamePacket';
-import { C2SJoinRoomRequest } from '../../generated/packet/room_actions';
+import { GamePacket } from '../../Generated/gamePacket';
+import { C2SJoinRoomRequest } from '../../Generated/packet/room_actions';
 import { GameSocket } from '../../Type/game.socket';
-import { GlobalFailCode } from '../../generated/common/enums';
+import { GlobalFailCode } from '../../Generated/common/enums';
 import { GamePacketType } from '../../Enums/gamePacketType';
 import { getUserByUserId } from '../../Services/prisma.service';
-import { RoomStateType } from '../../generated/common/enums';
+import { RoomStateType } from '../../Generated/common/enums';
 import { User } from '../../Models/user.model';
 import { broadcastDataToRoom } from '../../Sockets/notification';
 import { joinRoomNotificationForm, joinRoomResponseForm } from '../../Converter/packet.form';

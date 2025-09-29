@@ -1,5 +1,5 @@
 import { GameSocket } from '../Type/game.socket';
-import { GlobalFailCode } from '../generated/common/enums';
+import { GlobalFailCode } from '../Generated/common/enums';
 import { reactionResponsePacketForm, useCardResponsePacketForm } from '../Converter/packet.form';
 import { sendData } from '../Sockets/send.data';
 import { GamePacketType } from '../Enums/gamePacketType';

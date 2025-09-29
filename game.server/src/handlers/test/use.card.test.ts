@@ -5,7 +5,7 @@ import {
 } from '../../UseCase/Use.card/use.card.usecase';
 import useCardHandler, { createUseCardResponsePacket } from '../use.card.handler';
 
-import { CardType, GlobalFailCode } from '../../generated/common/enums';
+import { CardType, GlobalFailCode } from '../../Generated/common/enums';
 import { GamePacketType } from '../../Enums/gamePacketType';
 
 import { getRoom } from '../../Utils/room.utils';

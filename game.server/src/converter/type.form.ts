@@ -1,4 +1,4 @@
-import { GamePacket } from '../generated/gamePacket';
+import { GamePacket } from '../Generated/gamePacket';
 
 export function getGamePacketType<T extends GamePacket['payload']['oneofKind']>(
 	gamePacket: GamePacket,

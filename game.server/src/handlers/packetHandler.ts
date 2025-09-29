@@ -1,6 +1,6 @@
 // game.server/src/handlers/packetHandler.ts
 import { Socket } from 'net';
-import { GamePacket } from '../generated/gamePacket';
+import { GamePacket } from '../Generated/gamePacket';
 import { gamePacketDispatcher } from '../Dispatcher/game.packet.dispatcher';
 
 interface Packet {

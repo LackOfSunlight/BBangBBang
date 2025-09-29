@@ -1,5 +1,5 @@
-import { CardType } from '../generated/common/enums';
-import { CardData } from '../generated/common/types';
+import { CardType } from '../Generated/common/enums';
+import { CardData } from '../Generated/common/types';
 
 export const testCard: CardData[] = [
 	{

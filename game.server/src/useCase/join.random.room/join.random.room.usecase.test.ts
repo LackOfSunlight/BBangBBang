@@ -1,11 +1,11 @@
 import joinRandomRoomUseCase from './join.random.room.usecase';
-import { C2SJoinRandomRoomRequest } from '../../generated/packet/room_actions';
+import { C2SJoinRandomRoomRequest } from '../../Generated/packet/room_actions';
 import { GameSocket } from '../../Type/game.socket';
 import { getUserByUserId } from '../../Services/prisma.service';
 import { addUserToRoom, getRooms } from '../../Utils/room.utils';
 import { broadcastDataToRoom } from '../../Sockets/notification';
 import { GamePacketType } from '../../Enums/gamePacketType';
-import { GlobalFailCode, RoomStateType } from '../../generated/common/enums';
+import { GlobalFailCode, RoomStateType } from '../../Generated/common/enums';
 import { Room } from '../../Models/room.model';
 import { User } from '../../Models/user.model';
 

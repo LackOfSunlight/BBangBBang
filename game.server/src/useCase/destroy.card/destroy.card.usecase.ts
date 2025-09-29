@@ -1,5 +1,5 @@
-import { GamePacket } from '../../generated/gamePacket';
-import { C2SDestroyCardRequest } from '../../generated/packet/game_actions';
+import { GamePacket } from '../../Generated/gamePacket';
+import { C2SDestroyCardRequest } from '../../Generated/packet/game_actions';
 import { GameSocket } from '../../Type/game.socket';
 import { destroyResponseForm } from '../../Converter/packet.form';
 import roomManger from '../../Managers/room.manager';

@@ -1,4 +1,4 @@
-import { CharacterData } from '../generated/common/types';
+import { CharacterData } from '../Generated/common/types';
 import roomManager from '../Managers/room.manager';
 import { Character } from '../Models/character.model';
 import { Room } from '../Models/room.model';

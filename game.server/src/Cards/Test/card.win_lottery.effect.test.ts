@@ -1,7 +1,7 @@
 import cardWinLotteryEffect from '../Active/card.win_lottery.effect';
 import * as roomUtils from '../../Utils/room.utils';
 import { cardManager } from '../../Managers/card.manager';
-import { CharacterType, RoleType, CardType } from '../../generated/common/enums';
+import { CharacterType, RoleType, CardType } from '../../Generated/common/enums';
 import { User } from '../../Models/user.model';
 
 jest.mock('../../utils/room.utils');

@@ -7,8 +7,8 @@ import {
 	RoleType,
 	CharacterStateType,
 	RoomStateType,
-} from '../../generated/common/enums';
-import { CharacterData } from '../../generated/common/types';
+} from '../../Generated/common/enums';
+import { CharacterData } from '../../Generated/common/types';
 import { cardManager } from '../../Managers/card.manager';
 import { Room } from '../../Models/room.model';
 

@@ -1,5 +1,5 @@
 import { GamePacketType, gamePackTypeSelect } from '../Enums/gamePacketType';
-import { GamePacket } from '../generated/gamePacket';
+import { GamePacket } from '../Generated/gamePacket';
 import { GameSocket } from '../Type/game.socket';
 import { cardSelectUseCase } from '../UseCase/Card.select/card.select.usecase';
 import { sendData } from '../Sockets/send.data';

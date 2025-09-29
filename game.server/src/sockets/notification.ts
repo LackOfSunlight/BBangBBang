@@ -1,9 +1,9 @@
 import { GamePacketType } from '../Enums/gamePacketType';
-import { GamePacket } from '../generated/gamePacket';
+import { GamePacket } from '../Generated/gamePacket';
 import { GameSocket } from '../Type/game.socket';
 import { sendData } from './send.data';
 import { connectedSockets } from '../Managers/socket.manger';
-import { UserData } from '../generated/common/types';
+import { UserData } from '../Generated/common/types';
 
 // 특정 방의 모든 사용자에게 알림을 보내는 함수
 export const broadcastDataToRoom = (

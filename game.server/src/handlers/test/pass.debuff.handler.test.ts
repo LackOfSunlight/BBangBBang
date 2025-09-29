@@ -1,8 +1,8 @@
 import passDebuffHandler from '../pass.debuff.handler';
 import { GameSocket } from '../../Type/game.socket';
-import { GamePacket } from '../../generated/gamePacket';
+import { GamePacket } from '../../Generated/gamePacket';
 import { GamePacketType } from '../../Enums/gamePacketType';
-import { CardType, GlobalFailCode } from '../../generated/common/enums';
+import { CardType, GlobalFailCode } from '../../Generated/common/enums';
 import passDebuffUseCase from '../../UseCase/Pass.debuff/pass.debuff.usecase';
 import { getGamePacketType } from '../../Converter/type.form';
 import { sendData } from '../../Sockets/send.data';

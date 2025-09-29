@@ -1,9 +1,9 @@
 import { GameSocket } from '../Type/game.socket';
-import { GamePacket } from '../generated/gamePacket';
+import { GamePacket } from '../Generated/gamePacket';
 import { getGamePacketType } from '../Converter/type.form';
 import { GamePacketType, gamePackTypeSelect } from '../Enums/gamePacketType';
 import positionUpdateUseCase from '../UseCase/Position.update/position.update.usecase';
-import { C2SPositionUpdateRequest } from '../generated/packet/game_actions';
+import { C2SPositionUpdateRequest } from '../Generated/packet/game_actions';
 
 const positionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.positionUpdateRequest);

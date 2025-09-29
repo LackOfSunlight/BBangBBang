@@ -1,6 +1,6 @@
 import cardCall119Effect from '../Active/card.call_119.effect';
 import * as roomUtils from '../../Utils/room.utils';
-import { CharacterType, RoleType, RoomStateType } from '../../generated/common/enums';
+import { CharacterType, RoleType, RoomStateType } from '../../Generated/common/enums';
 import { User } from '../../Models/user.model';
 
 // 모킹 설정

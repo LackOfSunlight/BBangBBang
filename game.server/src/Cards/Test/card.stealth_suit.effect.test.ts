@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { CardType } from '../../generated/common/enums';
+import { CardType } from '../../Generated/common/enums';
 import cardStealthSuitEffect from '../equip/card.stealth_suit.effect';
 import { getUserFromRoom, updateCharacterFromRoom } from '../../Utils/room.utils';
 import { User } from '../../Models/user.model';
-import { CharacterData } from '../../generated/common/types';
+import { CharacterData } from '../../Generated/common/types';
 
 jest.mock('../../utils/room.utils', () => ({
 	getUserFromRoom: jest.fn(),

@@ -1,4 +1,4 @@
-import { AnimationType, CardType, CharacterType } from '../generated/common/enums';
+import { AnimationType, CardType, CharacterType } from '../Generated/common/enums';
 import { playAnimationHandler } from '../Handlers/play.animation.handler';
 import { Room } from '../Models/room.model';
 import { User } from '../Models/user.model';

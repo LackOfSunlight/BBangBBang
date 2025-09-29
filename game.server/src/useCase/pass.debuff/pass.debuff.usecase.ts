@@ -1,7 +1,7 @@
-import { C2SPassDebuffRequest } from '../../generated/packet/game_actions';
-import { GlobalFailCode, CardType, WarningType } from '../../generated/common/enums';
+import { C2SPassDebuffRequest } from '../../Generated/packet/game_actions';
+import { GlobalFailCode, CardType, WarningType } from '../../Generated/common/enums';
 import { GamePacketType } from '../../Enums/gamePacketType';
-import { GamePacket } from '../../generated/gamePacket';
+import { GamePacket } from '../../Generated/gamePacket';
 import { GameSocket } from '../../Type/game.socket';
 import { passDebuffResponseForm, warnNotificationPacketForm } from '../../Converter/packet.form';
 import { setBombTimer } from '../../Services/set.bomb.timer.service';

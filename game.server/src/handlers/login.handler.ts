@@ -1,5 +1,5 @@
 import { GameSocket } from '../Type/game.socket';
-import { GamePacket } from '../generated/gamePacket';
+import { GamePacket } from '../Generated/gamePacket';
 import { getGamePacketType } from '../Converter/type.form';
 import { GamePacketType, gamePackTypeSelect } from '../Enums/gamePacketType';
 import loginUseCase from '../UseCase/Login/login.usecase';

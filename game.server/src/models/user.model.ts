@@ -1,5 +1,5 @@
-import { UserData } from '../generated/common/types';
-import { CharacterData } from '../generated/common/types';
+import { UserData } from '../Generated/common/types';
+import { CharacterData } from '../Generated/common/types';
 import { Character } from './character.model';
 
 export class User {

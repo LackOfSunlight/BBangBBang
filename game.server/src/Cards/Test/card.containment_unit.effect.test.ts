@@ -2,7 +2,7 @@ import cardContainmentUnitEffect, {
 	checkContainmentUnitTarget,
 	debuffContainmentUnitEffect,
 } from '../debuff/card.containment_unit.effect';
-import { CardType, CharacterStateType } from '../../generated/common/enums.js';
+import { CardType, CharacterStateType } from '../../Generated/common/enums.js';
 import { getUserFromRoom, updateCharacterFromRoom, getRoom } from '../../Utils/room.utils';
 
 jest.mock('../../utils/room.utils', () => ({

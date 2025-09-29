@@ -1,5 +1,5 @@
 import { Room } from '../Models/room.model';
-import { RoleType, WinType, RoomStateType } from '../generated/common/enums';
+import { RoleType, WinType, RoomStateType } from '../Generated/common/enums';
 import { broadcastDataToRoom } from '../Sockets/notification';
 import { GamePacketType } from '../Enums/gamePacketType';
 import gameManager from '../Managers/game.manager';

@@ -3,8 +3,8 @@ import {
 	useCardResponsePacketForm,
 	userUpdateNotificationPacketForm,
 } from '../Converter/packet.form';
-import { CardType, GlobalFailCode } from '../generated/common/enums';
-import { GamePacket } from '../generated/gamePacket';
+import { CardType, GlobalFailCode } from '../Generated/common/enums';
+import { GamePacket } from '../Generated/gamePacket';
 import { Room } from '../Models/room.model';
 import { GameSocket } from '../Type/game.socket';
 import { useCardUseCase } from '../UseCase/Use.card/use.card.usecase';

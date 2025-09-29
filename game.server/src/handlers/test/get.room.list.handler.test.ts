@@ -1,11 +1,11 @@
 import getRoomListRequestHandler from '../get.room.list.handler';
 import { GameSocket } from '../../Type/game.socket.js';
-import { GamePacket } from '../../generated/gamePacket.js';
+import { GamePacket } from '../../Generated/gamePacket.js';
 import { getGamePacketType } from '../../Converter/type.form.js';
 import { sendData } from '../../Sockets/send.data.js';
 import getRoomListUseCase from '../../UseCase/Get.room.list/get.room.list.usecase.js';
 import { GamePacketType } from '../../Enums/gamePacketType.js';
-import { C2SGetRoomListRequest, S2CGetRoomListResponse } from '../../generated/packet/room_actions';
+import { C2SGetRoomListRequest, S2CGetRoomListResponse } from '../../Generated/packet/room_actions';
 
 jest.mock('../../utils/type.converter.js');
 jest.mock('../../useCase/get.room.list/get.room.list.usecase.js');

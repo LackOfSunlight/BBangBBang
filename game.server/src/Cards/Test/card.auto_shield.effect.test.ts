@@ -1,4 +1,4 @@
-import { CardType, CharacterType, RoleType, RoomStateType } from '../../generated/common/enums';
+import { CardType, CharacterType, RoleType, RoomStateType } from '../../Generated/common/enums';
 import { cardManager } from '../../Managers/card.manager';
 import { Room } from '../../Models/room.model';
 import { User } from '../../Models/user.model';

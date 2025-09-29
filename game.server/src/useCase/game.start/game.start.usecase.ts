@@ -1,15 +1,15 @@
 import { GameSocket } from '../../Type/game.socket.js';
-import { GamePacket } from '../../generated/gamePacket.js';
-import { C2SGameStartRequest } from '../../generated/packet/game_actions.js';
+import { GamePacket } from '../../Generated/gamePacket.js';
+import { C2SGameStartRequest } from '../../Generated/packet/game_actions.js';
 import {
 	CardType,
 	GlobalFailCode,
 	PhaseType,
 	RoomStateType,
-} from '../../generated/common/enums.js';
+} from '../../Generated/common/enums.js';
 import { GamePacketType } from '../../Enums/gamePacketType.js';
 import { Room } from '../../Models/room.model.js';
-import { CharacterPositionData, GameStateData } from '../../generated/common/types.js';
+import { CharacterPositionData, GameStateData } from '../../Generated/common/types.js';
 import { broadcastDataToRoom } from '../../Sockets/notification.js';
 import { shuffle } from '../../Utils/shuffle.util.js';
 import gameManager, { notificationCharacterPosition } from '../../Managers/game.manager.js';

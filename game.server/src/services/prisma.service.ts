@@ -1,9 +1,9 @@
 import { prisma } from '../Utils/db';
-import { C2SRegisterRequest } from '../generated/packet/auth';
+import { C2SRegisterRequest } from '../Generated/packet/auth';
 import * as bcrypt from 'bcrypt';
-import { C2SCreateRoomRequest } from '../generated/packet/room_actions';
+import { C2SCreateRoomRequest } from '../Generated/packet/room_actions';
 import { GameSocket } from '../Type/game.socket';
-import { RoomStateType } from '../generated/prisma';
+import { RoomStateType } from '../Generated/prisma';
 
 // DB에서 유저 가져오기
 export const getUserByUserId = async (
