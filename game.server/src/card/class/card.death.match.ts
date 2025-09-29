@@ -26,7 +26,7 @@ export class DeathMatchCard implements ICard {
 			return false;
 		}
 
-		room.removeCard(user, CardType.BIG_BBANG);
+		room.removeCard(user, CardType.DEATH_MATCH);
 		if (user.character && target.character) {
 			user.character.changeState(
 				CharacterStateType.DEATH_MATCH_TURN_STATE,

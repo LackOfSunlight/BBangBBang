@@ -100,7 +100,8 @@ const takeDamageService = (room: Room, user: User, damage: number, shooter?: Use
 		} else {
 			for (let i = 0; i < user.character.handCards.length; i++) {
 				const card = user.character.handCards[i];
-				for (let j = 0; j < card.count; j++) {
+				const totalCount = card.count;
+				for (let j = 0; j < totalCount; j++) {
 					room.removeCard(user, card.type);
 				}
 			}

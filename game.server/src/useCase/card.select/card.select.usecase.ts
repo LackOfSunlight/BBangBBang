@@ -97,9 +97,9 @@ export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest)
 			user.character.addCardToUser(stolenCardType);
 		}
 
-		user.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
-		user.character.stateInfo!.stateTargetUserId = DEFAULT_TARGET_USER_ID;
-		target.character.stateInfo!.state = CharacterStateType.NONE_CHARACTER_STATE;
+		user.character.changeState();
+
+		target.character.changeState();
 	} else {
 		return cardSelectResponseForm(false, GlobalFailCode.UNKNOWN_ERROR);
 	}
