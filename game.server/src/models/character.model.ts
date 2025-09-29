@@ -75,6 +75,12 @@ export class Character {
 	public addCardToUser(cardType: CardType) {
 		if (!this) return;
 
+		// 카드 타입 유효성 검사
+		if (cardType === undefined || cardType === CardType.NONE || cardType < 1 || cardType > 23) {
+			console.error(`[addCardToUser] 잘못된 카드 타입: ${cardType}`);
+			return;
+		}
+
 		const cardInHand = this.handCards.find((c) => c.type === cardType);
 		if (cardInHand) {
 			cardInHand.count++;
@@ -123,6 +129,15 @@ export class Character {
 	}
 
 	public toData(): CharacterData {
+		// 유효하지 않은 카드 필터링
+		const validHandCards = this.handCards.filter(card => 
+			card.type !== undefined && 
+			card.type !== CardType.NONE && 
+			card.type >= 1 && 
+			card.type <= 23 && 
+			card.count > 0
+		);
+
 		return {
 			characterType: this.characterType,
 			roleType: this.roleType,
@@ -131,9 +146,9 @@ export class Character {
 			stateInfo: this.stateInfo,
 			equips: this.equips,
 			debuffs: this.debuffs,
-			handCards: this.handCards,
+			handCards: validHandCards, // 필터링된 카드만 전송
 			bbangCount: this.bbangCount,
-			handCardsCount: this.handCardsCount,
+			handCardsCount: validHandCards.reduce((sum, card) => sum + card.count, 0),
 		};
 	}
 }

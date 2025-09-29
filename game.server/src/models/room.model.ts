@@ -5,10 +5,20 @@ import { CharacterData } from '../generated/common/types';
 import { User } from './user.model';
 import { shuffle } from '../utils/shuffle.util';
 
-const cardDefinitions: CardData[] = (cardData as any[]).map((card) => ({
-	...card,
-	type: CardType[card.type as keyof typeof CardType],
-}));
+const cardDefinitions: CardData[] = (cardData as any[]).map((card) => {
+	const cardType = CardType[card.type as keyof typeof CardType];
+	
+	// undefined 체크 및 유효한 카드 타입만 허용
+	if (cardType === undefined || cardType === CardType.NONE || cardType < 1 || cardType > 23) {
+		console.error(`[initializeDeck] 잘못된 카드 타입: ${card.type}, 변환된 값: ${cardType}`);
+		return null;
+	}
+	
+	return {
+		...card,
+		type: cardType,
+	};
+}).filter((card): card is CardData => card !== null);
 
 export class Room {
 	id: number;
