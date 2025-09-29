@@ -4,7 +4,7 @@ import characterSpawnPosition from '../data/character.spawn.position.json';
 import { CharacterPositionData } from '../generated/common/types';
 import { shuffle } from '../utils/shuffle.util';
 import { GamePacket } from '../generated/gamePacket';
-import { GamePacketType } from '../Enums/gamePacketType';
+import { GamePacketType } from '../enums/gamePacketType';
 import { broadcastDataToRoom } from '../sockets/notification';
 import { positionUpdateNotificationForm } from '../converter/packet.form';
 import roomManger, { roomPhase, roomTimers } from './room.manager';
