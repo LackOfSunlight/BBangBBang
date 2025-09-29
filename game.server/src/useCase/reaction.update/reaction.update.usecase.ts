@@ -8,7 +8,6 @@ import { broadcastDataToRoom } from '../../sockets/notification';
 import takeDamageService from '../../services/take.damage.service';
 import { userUpdateNotificationPacketForm } from '../../converter/packet.form';
 import roomManger from '../../managers/room.manager';
-import { stateChangeService } from '../../services/state.change.service';
 
 export const reactionUpdateUseCase = async (
 	socket: GameSocket,
