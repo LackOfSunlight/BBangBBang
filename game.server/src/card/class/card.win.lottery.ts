@@ -1,3 +1,4 @@
+import cardMap from '../../converter/card.map';
 import { CardCategory } from '../../enums/card.category';
 import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { Room } from '../../models/room.model';
@@ -11,6 +12,8 @@ export class WinLotteryCard implements ICard {
 	public useCard(room: Room, user: User): boolean {
 		// 유효성 검증
 		if (!user.character) return false;
+
+		room.removeCard(user, CardType.WIN_LOTTERY);
 
 		const LOTTERY_CARD_COUNT = 3;
 
