@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../game.server/src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int        @id @default(autoincrement())
+  email      String     @unique
+  password   String
+  nickname   String     @unique
+  createdAt  DateTime   @default(now())
+  token      String?
+  roomsOwned Room[]     @relation("RoomOwner")
+  rooms      UserData[] @relation("UserRooms")
+}
+
+model Room {
+  id         Int           @id @default(autoincrement())
+  ownerId    Int
+  name       String
+  state      RoomStateType
+  createdAt  DateTime      @default(now())
+  maxUserNum Int
+  owner      User          @relation("RoomOwner", fields: [ownerId], references: [id])
+  users      UserData[]    @relation("RoomUsers")
+
+  @@index([ownerId], map: "Room_ownerId_fkey")
+}
+
+model UserData {
+  userId Int
+  roomId Int
+  room   Room @relation("RoomUsers", fields: [roomId], references: [id])
+  user   User @relation("UserRooms", fields: [userId], references: [id])
+
+  @@id([userId, roomId])
+  @@index([roomId], map: "UserData_roomId_fkey")
+}
+
+enum RoomStateType {
+  WAIT
+  PREPARE
+  INGAME
+}
