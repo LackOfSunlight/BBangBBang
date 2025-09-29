@@ -52,64 +52,64 @@ export class SatelliteTargetCard implements ICard, IPeriodicEffectCard {
 
 	// 개별 유저의 위성 타겟 효과 처리
 	public async processSatelliteTargetEffect(user: User, room: Room, allUsers: any[]) {
-		try {
-			const target = roomManager.getUserFromRoom(room.id, user.id);
-			if (!target || !target.character) return;
+		const target = roomManager.getUserFromRoom(room.id, user.id);
+		if (!target || !target.character) return;
 
-			const probability = 0.03; // 대낮에 번개 맞을 확률
-			const damage = 3; // 번개 데미지
+		const probability = 0.03; // 대낮에 번개 맞을 확률
+		const damage = 3; // 번개 데미지
 
-			// 지정 확률로 효과 발동
-			const isEffectTriggered = Math.random() < probability;
+		// 지정 확률로 효과 발동
+		const isEffectTriggered = Math.random() < probability;
 
-			if (isEffectTriggered) {
-				// 효과 발동: 애니메이션 재생 후 HP 데미지 감소
+		if (isEffectTriggered) {
+			// 효과 발동: 애니메이션 재생 후 HP 데미지 감소
 
-				// 1. 위성 타겟 애니메이션 전송
-				playAnimationHandler(allUsers, user.id, AnimationType.SATELLITE_TARGET_ANIMATION);
+			// 1. 위성 타겟 애니메이션 전송
+			playAnimationHandler(allUsers, user.id, AnimationType.SATELLITE_TARGET_ANIMATION);
 
-				// 2. 애니메이션 재생 시간 대기 (2초)
-				await new Promise((resolve) => setTimeout(resolve, 2000));
+			// 2. 애니메이션 재생 시간 대기 (2초)
+			await new Promise((resolve) => setTimeout(resolve, 2000));
 
-				// 3. 실제 효과 적용
-				takeDamageService(room, target, damage);
+			// 3. 실제 효과 적용
+			takeDamageService(room, target, damage);
 
-				// 4. 디버프 제거 (효과 발동 후 제거)
-				const debuffIndex = target.character.debuffs.indexOf(CardType.SATELLITE_TARGET);
-				if (debuffIndex > -1) {
-					target.character.debuffs.splice(debuffIndex, 1);
-				}
-
-				// 게임 종료 조건 검사
-				await checkAndEndGameIfNeeded(room.id);
-			} else {
-				// 효과 미발동: 다음 유저에게 디버프 이전
-
-				// 1. 현재 타겟의 디버프 제거
-				const debuffIndex = target.character.debuffs.indexOf(CardType.SATELLITE_TARGET);
-				if (debuffIndex > -1) {
-					target.character.debuffs.splice(debuffIndex, 1);
-				}
-
-				roomManager.updateCharacterFromRoom(room.id, user.id, target.character);
-
-				// 2. 다음 차례에 있는 유저 찾기
-				const currentUserIndex = allUsers.findIndex((u) => u.id === user.id);
-				if (currentUserIndex === -1) return;
-
-				const nextUserIndex = (currentUserIndex + 1) % allUsers.length;
-				const nextUserId = allUsers[nextUserIndex].id;
-				const nextUser = roomManager.getUserFromRoom(room.id, nextUserId);
-
-				if (!nextUser || !nextUser.character) return;
-
-				// 3. 찾은 다음 유저에게 디버프 추가
-				if (!nextUser.character.debuffs.includes(CardType.SATELLITE_TARGET)) {
-					nextUser.character.debuffs.push(CardType.SATELLITE_TARGET);
-				}
+			// 4. 디버프 제거 (효과 발동 후 제거)
+			const debuffIndex = target.character.debuffs.indexOf(CardType.SATELLITE_TARGET);
+			if (debuffIndex > -1) {
+				target.character.debuffs.splice(debuffIndex, 1);
 			}
-		} catch (error) {
-			// 에러 처리
+
+			// 게임 종료 조건 검사
+			await checkAndEndGameIfNeeded(room.id);
+		} else {
+			// 효과 미발동: 다음 유저에게 디버프 이전
+
+			// 1. 현재 타겟의 디버프 제거
+			const debuffIndex = target.character.debuffs.indexOf(CardType.SATELLITE_TARGET);
+			if (debuffIndex > -1) {
+				target.character.debuffs.splice(debuffIndex, 1);
+			}
+
+			roomManager.updateCharacterFromRoom(room.id, user.id, target.character);
+
+			// 2. 다음 차례에 있는 유저 찾기
+			const currentUserIndex = allUsers.findIndex((u) => u.id === user.id);
+			if (currentUserIndex === -1) return;
+
+			const rearrangedUsers = [
+				...allUsers.slice(currentUserIndex + 1),
+				...allUsers.slice(0, currentUserIndex),
+			];
+
+			const nextTarget = rearrangedUsers.find((u) => u && u.character && u.character.hp > 0);
+
+			if (!nextTarget) {
+				return;
+			}
+
+			if (!nextTarget.character.debuffs.includes(CardType.SATELLITE_TARGET)) {
+				nextTarget.character.debuffs.push(CardType.SATELLITE_TARGET);
+			}
 		}
 	}
 }
