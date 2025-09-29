@@ -7,7 +7,6 @@ import {
 	PhaseType,
 	RoomStateType,
 } from '../../generated/common/enums.js';
-import { GamePacketType } from '../../enums/gamePacketType.js';
 import { Room } from '../../models/room.model.js';
 import { CharacterPositionData, GameStateData } from '../../generated/common/types.js';
 import { broadcastDataToRoom } from '../../sockets/notification.js';
@@ -19,6 +18,7 @@ import {
 	gameStartResponsePacketForm,
 } from '../../converter/packet.form.js';
 import roomManger from '../../managers/room.manager.js';
+import { GamePacketType } from '../../enums/gamePacketType.js';
 
 export const gameStartUseCase = async (
 	socket: GameSocket,

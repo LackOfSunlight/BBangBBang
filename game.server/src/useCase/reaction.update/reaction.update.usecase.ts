@@ -1,3 +1,4 @@
+import { BBangCard } from '../../card/class/card.bbang';
 import { GameSocket } from '../../type/game.socket';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { ReactionType, GlobalFailCode, CharacterStateType } from '../../generated/common/enums';
@@ -37,7 +38,7 @@ export const reactionUpdateUseCase = async (
 					const shooter = room.users.find((u) => u.id === shooterId);
 					if (!shooter || !shooter.character) break;
 
-					let damage = 1; // 기본 데미지
+					let damage = BBangCard.BBangDamage; // 기본 데미지
 					damage = weaponDamageEffect(damage, shooter.character);
 					takeDamageService(room, user, damage, shooter);
 
