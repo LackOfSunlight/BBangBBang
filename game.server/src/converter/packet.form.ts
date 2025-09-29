@@ -1,4 +1,4 @@
-import { GamePacketType } from '../Enums/gamePacketType';
+import { GamePacketType } from '../enums/gamePacketType';
 import {
 	AnimationType,
 	CardType,
@@ -7,25 +7,25 @@ import {
 	SelectCardType,
 	WinType,
 	WarningType,
-} from '../Generated/common/enums';
+} from '../generated/common/enums';
 import {
 	CardData,
 	CharacterPositionData,
 	GameStateData,
 	RoomData,
 	UserData,
-} from '../Generated/common/types';
-import { GamePacket } from '../Generated/gamePacket';
-import { S2CGamePrepareResponse, S2CGameStartResponse } from '../Generated/packet/game_actions';
+} from '../generated/common/types';
+import { GamePacket } from '../generated/gamePacket';
+import { S2CGamePrepareResponse, S2CGameStartResponse } from '../generated/packet/game_actions';
 import {
 	S2CGamePrepareNotification,
 	S2CGameStartNotification,
 	S2CLeaveRoomNotification,
-} from '../Generated/packet/notifications';
-import { S2CLeaveRoomResponse } from '../Generated/packet/room_actions';
-import { Room } from '../Models/room.model';
-import { User } from '../Models/user.model';
-import { broadcastDataToRoom } from '../Sockets/notification';
+} from '../generated/packet/notifications';
+import { S2CLeaveRoomResponse } from '../generated/packet/room_actions';
+import { Room } from '../models/room.model';
+import { User } from '../models/user.model';
+import { broadcastDataToRoom } from '../sockets/notification';
 
 /**
  * 회원가입 응답

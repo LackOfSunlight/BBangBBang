@@ -1,4 +1,4 @@
-import { GameSocket } from '../Type/game.socket';
+import { GameSocket } from '../type/game.socket';
 
 // 전역적으로 연결된 소켓들을 관리하는 Map (userId를 키로 사용)
 export const connectedSockets = new Map<string, GameSocket>();

@@ -1,6 +1,8 @@
-import { CardType, CharacterStateType, CharacterType, RoleType } from '../Generated/common/enums';
-import { CardData, CharacterData, CharacterStateInfoData } from '../Generated/common/types';
-import getMaxHp from '../Init/character.Init';
+import { threadCpuUsage } from 'process';
+import { CardType, CharacterStateType, CharacterType, RoleType } from '../generated/common/enums';
+import { CardData, CharacterData, CharacterStateInfoData } from '../generated/common/types';
+import getMaxHp from '../init/character.Init';
+import { Room } from './room.model';
 
 export class Character {
 	characterType: CharacterType;

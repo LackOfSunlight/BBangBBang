@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import checkUserPassword from '../check.user.password';
-import { C2SLoginRequest } from '../../../Generated/packet/auth';
+import { C2SLoginRequest } from '../../../generated/packet/auth';
 
 jest.mock('bcrypt', () => ({
 	compare: jest.fn(),

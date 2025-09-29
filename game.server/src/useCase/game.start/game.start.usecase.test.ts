@@ -1,10 +1,10 @@
-import { GameSocket } from '../../Type/game.socket';
-import { C2SGameStartRequest } from '../../Generated/packet/game_actions';
-import { Room } from '../../Models/room.model';
-import { User } from '../../Models/user.model';
-import { GlobalFailCode, RoomStateType, PhaseType, CardType } from '../../Generated/common/enums';
-import { GamePacketType } from '../../Enums/gamePacketType';
-import { CharacterPositionData, GameStateData } from '../../Generated/common/types';
+import { GameSocket } from '../../type/game.socket';
+import { C2SGameStartRequest } from '../../generated/packet/game_actions';
+import { Room } from '../../models/room.model';
+import { User } from '../../models/user.model';
+import { GlobalFailCode, RoomStateType, PhaseType, CardType } from '../../generated/common/enums';
+import { GamePacketType } from '../../enums/gamePacketType';
+import { CharacterPositionData, GameStateData } from '../../generated/common/types';
 
 // Mocking dependencies
 jest.mock('../../utils/room.utils', () => ({
@@ -31,11 +31,11 @@ jest.mock('../../managers/game.manager', () => ({
 }));
 
 // Imports for the use case and mocks
-import { getRoom, saveRoom } from '../../Utils/room.utils';
-import { broadcastDataToRoom } from '../../Sockets/notification';
-import { shuffle } from '../../Utils/shuffle.util';
-import { cardManager } from '../../Managers/card.manager';
-import gameManager, { notificationCharacterPosition } from '../../Managers/game.manager';
+import { getRoom, saveRoom } from '../../utils/room.utils';
+import { broadcastDataToRoom } from '../../sockets/notification';
+import { shuffle } from '../../utils/shuffle.util';
+import { cardManager } from '../../managers/card.manager';
+import gameManager, { notificationCharacterPosition } from '../../managers/game.manager';
 import { gameStartUseCase } from './game.start.usecase';
 
 // Mock 함수 캐스팅

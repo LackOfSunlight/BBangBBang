@@ -1,13 +1,13 @@
-import { handleError } from '../Handlers/handleError.js';
-import socketManger from '../Managers/socket.manger.js';
-import { GameSocket } from '../Type/game.socket.js';
-import { removeTokenUserDB } from '../Services/prisma.service.js';
-import { checkAndEndGameIfNeeded } from '../Services/game.end.service.js';
+import { handleError } from '../handlers/handleError.js';
+import socketManger from '../managers/socket.manger.js';
+import { GameSocket } from '../type/game.socket.js';
+import { removeTokenUserDB } from '../services/prisma.service.js';
+import { checkAndEndGameIfNeeded } from '../services/game.end.service.js';
 import { broadcastDataToRoom } from './notification.js';
-import { GamePacketType } from '../Enums/gamePacketType.js';
-import { RoomStateType } from '../Generated/common/enums.js';
-import { userUpdateNotificationPacketForm } from '../Converter/packet.form.js';
-import roomManger from '../Managers/room.manager.js';
+import { GamePacketType } from '../enums/gamePacketType.js';
+import { RoomStateType } from '../generated/common/enums.js';
+import { userUpdateNotificationPacketForm } from '../converter/packet.form.js';
+import roomManger from '../managers/room.manager.js';
 
 const onEnd = (socket: GameSocket) => async () => {
 	try {

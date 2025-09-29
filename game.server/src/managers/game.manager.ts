@@ -1,16 +1,16 @@
-import { CardType, CharacterStateType, PhaseType } from '../Generated/common/enums';
-import { Room } from '../Models/room.model';
+import { CardType, CharacterStateType, PhaseType } from '../generated/common/enums';
+import { Room } from '../models/room.model';
 import characterSpawnPosition from '../data/character.spawn.position.json';
-import { CharacterPositionData } from '../Generated/common/types';
-import { shuffle } from '../Utils/shuffle.util';
-import { GamePacket } from '../Generated/gamePacket';
-import { GamePacketType } from '../Enums/gamePacketType';
-import { broadcastDataToRoom } from '../Sockets/notification';
-import { positionUpdateNotificationForm } from '../Converter/packet.form';
+import { CharacterPositionData } from '../generated/common/types';
+import { shuffle } from '../utils/shuffle.util';
+import { GamePacket } from '../generated/gamePacket';
+import { GamePacketType } from '../enums/gamePacketType';
+import { broadcastDataToRoom } from '../sockets/notification';
+import { positionUpdateNotificationForm } from '../converter/packet.form';
 import roomManger, { roomPhase, roomTimers } from './room.manager';
-import { setBombTimer } from '../Services/set.bomb.timer.service';
-import { cardPool, getCard } from '../Dispatcher/apply.card.dispacher';
-import { IPeriodicEffectCard } from '../Type/card';
+import { setBombTimer } from '../services/set.bomb.timer.service';
+import { cardPool, getCard } from '../dispatcher/apply.card.dispacher';
+import { IPeriodicEffectCard } from '../type/card';
 
 export const spawnPositions = characterSpawnPosition as CharacterPositionData[];
 const positionUpdateIntervals = new Map<number, NodeJS.Timeout>();

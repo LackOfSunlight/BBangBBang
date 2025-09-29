@@ -1,0 +1,298 @@
+import cardCall119Effect from '../active/card.call_119.effect';
+import * as roomUtils from '../../utils/room.utils';
+import { CharacterType, RoleType, RoomStateType } from '../../generated/common/enums';
+import { User } from '../../models/user.model';
+
+// 모킹 설정
+jest.mock('../../utils/room.utils');
+
+// 모킹 함수 생성
+const mockGetUserFromRoom = jest.spyOn(roomUtils, 'getUserFromRoom');
+const mockGetRoom = jest.spyOn(roomUtils, 'getRoom');
+const mockUpdateCharacterFromRoom = jest.spyOn(roomUtils, 'updateCharacterFromRoom');
+
+// 에러 로그 출력 억제
+beforeAll(() => {
+	jest.spyOn(console, 'error').mockImplementation(() => {});
+});
+
+afterAll(() => {
+	jest.restoreAllMocks();
+});
+
+describe('cardCall119Effect', () => {
+	const roomId = 1;
+	const userId = 'user1';
+	const targetUserId = 'user2';
+
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
+	describe('유효성 검증', () => {
+		it('방이 없으면 함수가 종료된다', () => {
+			// @ts-expect-error: 테스트를 위한 모킹
+			mockGetUserFromRoom.mockResolvedValue({
+				id: userId,
+				nickname: 'user1',
+				character: {
+					characterType: CharacterType.RED,
+					roleType: RoleType.TARGET,
+					hp: 2,
+					weapon: 0,
+					equips: [],
+					debuffs: [],
+					handCards: [],
+					bbangCount: 0,
+					handCardsCount: 0,
+				},
+			});
+			mockGetRoom.mockImplementation(() => {
+				throw new Error('Room not found');
+			});
+
+			const result = cardCall119Effect(roomId, userId, '0'); // '0'을 사용하여 다른 플레이어 회복 시도
+
+			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
+			expect(result).toBe(false);
+		});
+
+		it('사용자가 없으면 함수가 종료된다', () => {
+			// @ts-expect-error: 테스트를 위한 모킹
+			mockGetUserFromRoom.mockResolvedValue(null);
+
+			const result = cardCall119Effect(roomId, userId, targetUserId);
+
+			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
+			expect(result).toBe(false);
+		});
+
+		it('사용자의 캐릭터가 없으면 함수가 종료된다', () => {
+			// @ts-expect-error: 테스트를 위한 모킹
+			mockGetUserFromRoom.mockResolvedValue({
+				id: userId,
+				nickname: 'testUser',
+			});
+
+			const result = cardCall119Effect(roomId, userId, targetUserId);
+
+			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
+			expect(result).toBe(false);
+		});
+	});
+
+	describe('체력 회복 로직', () => {
+		const createMockCharacter = (characterType: CharacterType, hp: number) => ({
+			characterType,
+			roleType: RoleType.TARGET,
+			hp,
+			weapon: 0,
+			equips: [],
+			debuffs: [],
+			handCards: [],
+			bbangCount: 0,
+			handCardsCount: 0,
+		});
+
+		it('자신의 체력을 1 회복한다 (targetUserId가 있는 경우)', () => {
+			const mockCharacter = createMockCharacter(CharacterType.RED, 2);
+			// ts-expect-error: 테스트를 위한 모킹
+			mockGetUserFromRoom.mockReturnValue({
+				id: userId,
+				nickname: 'user1',
+				character: mockCharacter,
+			});
+
+			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+			const result = cardCall119Effect(roomId, userId, userId); // targetUserId가 있으면 자신 회복
+
+			expect(result).toBe(true);
+			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
+				...mockCharacter,
+				hp: 3,
+			});
+			expect(consoleSpy).toHaveBeenCalledWith(
+				'[119 호출] user1의 체력이 2 → 3로 회복되었습니다. (최대: 4)',
+			);
+
+			consoleSpy.mockRestore();
+		});
+
+		it('나머지 플레이어들의 체력을 1 회복한다 (targetUserId가 없는 경우)', () => {
+			const userCharacter = createMockCharacter(CharacterType.RED, 4);
+			const user2Character = createMockCharacter(CharacterType.SHARK, 2);
+			const user3Character = createMockCharacter(CharacterType.DINOSAUR, 1);
+
+			// ts-expect-error: 테스트를 위한 모킹
+			mockGetUserFromRoom.mockReturnValue({
+				id: userId,
+				nickname: 'user1',
+				character: userCharacter,
+			});
+
+			const mockRoom = {
+				id: roomId,
+				users: [
+					{
+						id: userId,
+						nickname: 'user1',
+						character: userCharacter,
+					},
+					{
+						id: 'user2',
+						nickname: 'user2',
+						character: user2Character,
+					},
+					{
+						id: 'user3',
+						nickname: 'user3',
+						character: user3Character,
+					},
+				],
+				ownerId: 'user1',
+				name: 'test room',
+				maxUserNum: 8,
+				state: RoomStateType.INGAME,
+			};
+
+			mockGetRoom.mockReturnValue(mockRoom);
+
+			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+			const result = cardCall119Effect(roomId, userId, '0'); // targetUserId가 "0"이면 나머지 회복
+
+			expect(result).toBe(true);
+			expect(mockGetRoom).toHaveBeenCalledWith(roomId);
+
+			// user2와 user3의 체력이 회복되어야 함 (user1은 제외)
+			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledTimes(2);
+			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, 'user2', {
+				...user2Character,
+				hp: 3,
+			});
+			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, 'user3', {
+				...user3Character,
+				hp: 2,
+			});
+
+			consoleSpy.mockRestore();
+		});
+
+		it('최대 체력에 도달한 경우 회복하지 않는다', () => {
+			const mockCharacter = createMockCharacter(CharacterType.RED, 4); // 최대 체력
+			// ts-expect-error: 테스트를 위한 모킹
+			mockGetUserFromRoom.mockReturnValue({
+				id: userId,
+				nickname: 'user1',
+				character: mockCharacter,
+			});
+
+			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+			const result = cardCall119Effect(roomId, userId, userId); // 자신 회복
+
+			expect(result).toBe(true);
+			expect(consoleSpy).toHaveBeenCalledWith('[119 호출] user1의 체력이 이미 최대치(4)입니다.');
+			expect(mockUpdateCharacterFromRoom).not.toHaveBeenCalled();
+
+			consoleSpy.mockRestore();
+		});
+
+		it('공룡이 캐릭터의 최대 체력(3)을 초과하지 않는다', () => {
+			const mockCharacter = createMockCharacter(CharacterType.DINOSAUR, 2);
+			// ts-expect-error: 테스트를 위한 모킹
+			mockGetUserFromRoom.mockReturnValue({
+				id: userId,
+				nickname: 'user1',
+				character: mockCharacter,
+			});
+
+			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+			const result = cardCall119Effect(roomId, userId, userId); // 자신 회복
+
+			expect(result).toBe(true);
+			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
+				...mockCharacter,
+				hp: 3, // 최대 체력 3에 제한됨
+			});
+			expect(consoleSpy).toHaveBeenCalledWith(
+				'[119 호출] user1의 체력이 2 → 3로 회복되었습니다. (최대: 3)',
+			);
+
+			consoleSpy.mockRestore();
+		});
+
+		it('핑크슬라임 캐릭터의 최대 체력(3)을 초과하지 않는다', () => {
+			const mockCharacter = createMockCharacter(CharacterType.PINK_SLIME, 2);
+			// ts-expect-error: 테스트를 위한 모킹
+			mockGetUserFromRoom.mockReturnValue({
+				id: userId,
+				nickname: 'user1',
+				character: mockCharacter,
+			});
+
+			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+			const result = cardCall119Effect(roomId, userId, userId); // 자신 회복
+
+			expect(result).toBe(true);
+			expect(mockUpdateCharacterFromRoom).toHaveBeenCalledWith(roomId, userId, {
+				...mockCharacter,
+				hp: 3, // 최대 체력 3에 제한됨
+			});
+			expect(consoleSpy).toHaveBeenCalledWith(
+				'[119 호출] user1의 체력이 2 → 3로 회복되었습니다. (최대: 3)',
+			);
+
+			consoleSpy.mockRestore();
+		});
+	});
+
+	describe('에러 처리', () => {
+		it('방을 찾을 수 없으면 에러가 처리된다', () => {
+			mockGetUserFromRoom.mockImplementation(() => {
+				throw new Error('User not found');
+			});
+
+			const result = cardCall119Effect(roomId, userId, userId);
+
+			expect(result).toBe(false);
+		});
+
+		it('updateCharacterFromRoom에서 에러가 발생해도 함수가 정상적으로 처리된다', () => {
+			const mockCharacter = {
+				characterType: CharacterType.RED,
+				roleType: RoleType.TARGET,
+				hp: 2,
+				weapon: 0,
+				equips: [],
+				debuffs: [],
+				handCards: [],
+				bbangCount: 0,
+				handCardsCount: 0,
+			};
+
+			// ts-expect-error: 테스트를 위한 모킹
+			mockGetUserFromRoom.mockReturnValue({
+				id: userId,
+				nickname: 'user1',
+				character: mockCharacter,
+			});
+
+			mockUpdateCharacterFromRoom.mockImplementation(() => {
+				throw new Error('Update error');
+			});
+
+			const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+			// 에러가 발생해도 함수가 정상적으로 처리되는지 확인
+			const result = cardCall119Effect(roomId, userId, userId);
+
+			expect(result).toBe(true);
+
+			consoleSpy.mockRestore();
+		});
+	});
+});

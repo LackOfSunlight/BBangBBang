@@ -1,31 +1,31 @@
-import { applyCardEffect } from '../../Dispatcher/apply.card.dispacher';
+import { applyCardEffect } from '../../dispatcher/apply.card.dispacher';
 import { getUserFromRoom, updateCharacterFromRoom } from '../room.utils';
-import { cardManager } from '../../Managers/card.manager.js';
+import { cardManager } from '../../managers/card.manager.js';
 
 // 카드 효과 모듈 mock
-import cardAbsorbEffect from '../../Cards/Active/card.absorb.effect.js';
-import cardAutoRifleEffect from '../../Cards/weapon/card.auto_rifle.effect.js';
-import cardAutoShieldEffect from '../../Cards/equip/card.auto_shield.effect.js';
-import cardBbangEffect from '../../Cards/Active/card.bbang.effect.js';
-import cardBigBbangEffect from '../../Cards/Active/card.bigbbang.effect.js';
-import cardBombEffect from '../../Cards/debuff/card.bomb.effect.js';
-import cardCall119Effect from '../../Cards/Active/card.call_119.effect.js';
-import cardContainmentUnitEffect from '../../Cards/debuff/card.containment_unit.effect.js';
-import cardDeathMatchEffect from '../../Cards/Active/card.death_match.effect.js';
-import cardDesertEagleEffect from '../../Cards/weapon/card.desert_eagle.effect.js';
-import cardFleaMarketEffect from '../../Cards/Active/card.flea_market.effect.js';
-import cardGuerrillaEffect from '../../Cards/Active/card.guerrilla.effect.js';
-import cardHallucinationEffect from '../../Cards/Active/card.hallucination.effect.js';
-import cardHandGunEffect from '../../Cards/weapon/card.hand_gun.effect.js';
-import cardLaserPointerEffect from '../../Cards/equip/card.laser_pointer.effect.js';
-import cardMaturedSavingsEffect from '../../Cards/Active/card.matured_savings.effect.js';
-import cardRaderEffect from '../../Cards/equip/card.rader.effect.js';
-import cardSatelliteTargetEffect from '../../Cards/debuff/card.satellite_target.effect.js';
-import cardShieldEffect from '../../Cards/Active/card.shield.effect.js';
-import cardSniperGunEffect from '../../Cards/weapon/card.sniper_gun.effect.js';
-import cardStealthSuitEffect from '../../Cards/equip/card.stealth_suit.effect.js';
-import cardVaccineEffect from '../../Cards/Active/card.vaccine.effect.js';
-import cardWinLotteryEffect from '../../Cards/Active/card.win_lottery.effect.js';
+import cardAbsorbEffect from '../../card/active/card.absorb.effect.js';
+import cardAutoRifleEffect from '../../card/weapon/card.auto_rifle.effect.js';
+import cardAutoShieldEffect from '../../card/equip/card.auto_shield.effect.js';
+import cardBbangEffect from '../../card/active/card.bbang.effect.js';
+import cardBigBbangEffect from '../../card/active/card.bigbbang.effect.js';
+import cardBombEffect from '../../card/debuff/card.bomb.effect.js';
+import cardCall119Effect from '../../card/active/card.call_119.effect.js';
+import cardContainmentUnitEffect from '../../card/debuff/card.containment_unit.effect.js';
+import cardDeathMatchEffect from '../../card/active/card.death_match.effect.js';
+import cardDesertEagleEffect from '../../card/weapon/card.desert_eagle.effect.js';
+import cardFleaMarketEffect from '../../card/active/card.flea_market.effect.js';
+import cardGuerrillaEffect from '../../card/active/card.guerrilla.effect.js';
+import cardHallucinationEffect from '../../card/active/card.hallucination.effect.js';
+import cardHandGunEffect from '../../card/weapon/card.hand_gun.effect.js';
+import cardLaserPointerEffect from '../../card/equip/card.laser_pointer.effect.js';
+import cardMaturedSavingsEffect from '../../card/active/card.matured_savings.effect.js';
+import cardRaderEffect from '../../card/equip/card.rader.effect.js';
+import cardSatelliteTargetEffect from '../../card/debuff/card.satellite_target.effect.js';
+import cardShieldEffect from '../../card/active/card.shield.effect.js';
+import cardSniperGunEffect from '../../card/weapon/card.sniper_gun.effect.js';
+import cardStealthSuitEffect from '../../card/equip/card.stealth_suit.effect.js';
+import cardVaccineEffect from '../../card/active/card.vaccine.effect.js';
+import cardWinLotteryEffect from '../../card/active/card.win_lottery.effect.js';
 
 jest.mock('../room.utils', () => ({
 	getUserFromRoom: jest.fn(),

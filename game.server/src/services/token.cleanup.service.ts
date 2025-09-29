@@ -1,4 +1,4 @@
-import { prisma } from '../Utils/db.js';
+import { prisma } from '../utils/db.js';
 
 /**
  * 서버 시작 시 모든 토큰을 정리하는 서비스

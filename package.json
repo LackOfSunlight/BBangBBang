@@ -9,7 +9,7 @@
 		"build": "prisma generate && tsc && node scripts/add-js-extensions.js && copyfiles -u 3 \"game.server/src/generated/prisma/**/*\" game.server/dist/generated",
 		"dev": "tsx game.server/src/app.ts",
 		"copy-assets": "copyfiles --up 1 \"assets/**/*\" dist ",
-		"protoc": "protoc --ts_out game.server/src/Generated --ts_opt long_type_string --Proto_path game.server/src/Proto game.server/src/Proto/common/enums.proto game.server/src/Proto/common/types.proto game.server/src/Proto/packet/auth.proto game.server/src/Proto/packet/game_actions.proto game.server/src/Proto/packet/notifications.proto game.server/src/Proto/packet/room_actions.proto game.server/src/Proto/gamePacket.proto",
+		"protoc": "protoc --ts_out game.server/src/generated --ts_opt long_type_string --proto_path game.server/src/proto game.server/src/proto/common/enums.proto game.server/src/proto/common/types.proto game.server/src/proto/packet/auth.proto game.server/src/proto/packet/game_actions.proto game.server/src/proto/packet/notifications.proto game.server/src/proto/packet/room_actions.proto game.server/src/proto/gamePacket.proto",
 		"test": "jest",
 		"prepare": "husky",
 		"postinstall": "husky install",

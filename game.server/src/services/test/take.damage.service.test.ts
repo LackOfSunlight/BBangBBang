@@ -1,8 +1,8 @@
-import { AnimationType, CardType, CharacterType } from '../../Generated/common/enums';
-import { playAnimationHandler } from '../../Handlers/play.animation.handler';
-import { cardManager } from '../../Managers/card.manager';
-import { Room } from '../../Models/room.model';
-import { User } from '../../Models/user.model';
+import { AnimationType, CardType, CharacterType } from '../../generated/common/enums';
+import { playAnimationHandler } from '../../handlers/play.animation.handler';
+import { cardManager } from '../../managers/card.manager';
+import { Room } from '../../models/room.model';
+import { User } from '../../models/user.model';
 import takeDamageService from '../take.damage.service';
 
 // Mock dependencies

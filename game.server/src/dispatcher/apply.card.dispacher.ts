@@ -1,9 +1,9 @@
-import { User } from '../Models/user.model';
-import { Room } from '../Models/room.model';
-import cardMap from '../Converter/card.map';
-import { CardType } from '../Generated/common/enums';
-import { CardCategory } from '../Enums/card.category';
-import { ICard } from '../Type/card';
+import { User } from '../models/user.model';
+import { Room } from '../models/room.model';
+import cardMap from '../converter/card.map';
+import { CardType } from '../generated/common/enums';
+import { CardCategory } from '../enums/card.category';
+import { ICard } from '../type/card';
 
 export const cardPool: Map<CardType, ICard> = new Map<CardType, ICard>();
 
