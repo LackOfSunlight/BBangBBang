@@ -12,7 +12,10 @@ export class HallucinationCard implements ICard {
 		// 유효성 검증
 		if (!user.character || !target.character) return false;
 
-		if (target.character.stateInfo?.state === CharacterStateType.CONTAINED) {
+		if (
+			target.character.stateInfo?.state === CharacterStateType.CONTAINED ||
+			target.character.stateInfo.state !== CharacterStateType.NONE_CHARACTER_STATE
+		) {
 			return false;
 		}
 
