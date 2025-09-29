@@ -4,7 +4,7 @@ import characterSpawnPosition from '../data/character.spawn.position.json';
 import { CharacterPositionData } from '../generated/common/types';
 import { shuffle } from '../utils/shuffle.util';
 import { GamePacket } from '../generated/gamePacket';
-import { GamePacketType } from '../enums/gamePacketType';
+import { GamePacketType } from '../Enums/gamePacketType';
 import { broadcastDataToRoom } from '../sockets/notification';
 import { positionUpdateNotificationForm } from '../converter/packet.form';
 import roomManger, { roomPhase, roomTimers } from './room.manager';
@@ -179,6 +179,11 @@ class GameManager {
 			};
 
 			const toRoom = room.toData();
+
+			for (let user of room.users) {
+				console.log(`캐릭터타입: ${user.character?.characterType}`);
+				console.log(`캐릭터 카드수: ${user.character?.handCardsCount}`);
+			}
 
 			broadcastDataToRoom(toRoom.users, phaseGamePacket, GamePacketType.phaseUpdateNotification);
 
