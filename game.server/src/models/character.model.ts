@@ -117,6 +117,7 @@ export class Character {
 		}
 
 		this.handCards = this.handCards.filter((c) => c.count > 0);
+		this.handCardsCount = this.handCards.reduce((sum, card) => sum + card.count, 0);
 
 		return removedCards;
 	}
