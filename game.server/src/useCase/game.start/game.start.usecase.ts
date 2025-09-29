@@ -76,7 +76,7 @@ export const gameStartUseCase = async (
 
 				character.handCards = [
 					// { type: CardType.HALLUCINATION, count: 3 },
-					// { type: CardType.SHIELD, count: 3 },
+					{ type: CardType.SHIELD, count: 3 },
 					// { type: CardType.SNIPER_GUN, count: 1 },
 					{ type: CardType.BBANG, count: 10 },
 					// { type: CardType.BIG_BBANG, count: 3 },
