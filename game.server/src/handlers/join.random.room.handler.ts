@@ -1,7 +1,7 @@
 import { GameSocket } from '../type/game.socket';
 import { GamePacket } from '../generated/gamePacket';
 import { getGamePacketType } from '../converter/type.form';
-import { gamePackTypeSelect, GamePacketType } from '../enums/gamePacketType';
+import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
 import joinRandomRoomUseCase from '../useCase/join.random.room/join.random.room.usecase';
 import { sendData } from '../sockets/send.data';
 

@@ -1,22 +1,22 @@
-import { Socket } from 'dgram';
-import { GamePacketType, RequestPacketType } from '../Enums/gamePacketType';
-import { GamePacket } from '../Generated/gamePacket';
-import registerHandler from '../Handlers/register.handler';
-import loginHandler from '../Handlers/login.handler';
-import getRoomListHandler from '../Handlers/get.room.list.handler';
-import joinRoomHandler from '../Handlers/join.room.handler';
-import createRoomHandler from '../Handlers/create.room.handler';
+import { GamePacketType, RequestPacketType } from '../enums/gamePacketType';
+import { GamePacket } from '../generated/gamePacket';
+import registerHandler from '../handlers/register.handler';
+import loginHandler from '../handlers/login.handler';
+import getRoomListHandler from '../handlers/get.room.list.handler';
+import joinRoomHandler from '../handlers/join.room.handler';
+import createRoomHandler from '../handlers/create.room.handler';
 import joinRandomRoomHandler from '../handlers/join.random.room.handler';
-import leaveRoomHandler from '../Handlers/leave.room.handler';
-import gamePrepareHandler from '../Handlers/game.prepare.handler';
-import gameStartHandler from '../Handlers/game.start.handler';
-import positionUpdateHandler from '../Handlers/position.update.handler';
-import useCardHandler from '../Handlers/use.card.handler';
-import fleaMarketPickHandler from '../Handlers/fleamarket.pick.handler';
-import reactionUpdateHandler from '../Handlers/reaction.update.handler';
-import destroyCardHandler from '../Handlers/destroy.card.handler';
-import cardSelectHandler from '../Handlers/card.select.handler';
-import passDebuffHandler from '../Handlers/pass.debuff.handler';
+import leaveRoomHandler from '../handlers/leave.room.handler';
+import gamePrepareHandler from '../handlers/game.prepare.handler';
+import gameStartHandler from '../handlers/game.start.handler';
+import positionUpdateHandler from '../handlers/position.update.handler';
+import useCardHandler from '../handlers/use.card.handler';
+import fleaMarketPickHandler from '../handlers/fleamarket.pick.handler';
+import reactionUpdateHandler from '../handlers/reaction.update.handler';
+import destroyCardHandler from '../handlers/destroy.card.handler';
+import cardSelectHandler from '../handlers/card.select.handler';
+import passDebuffHandler from '../handlers/pass.debuff.handler';
+import { Socket } from 'net';
 
 const handlers: Record<RequestPacketType, (socket: Socket, gamePacket: GamePacket) => void> = {
 	// Requests
