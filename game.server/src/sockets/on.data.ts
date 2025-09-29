@@ -1,7 +1,7 @@
 import { Socket } from 'net';
-import { handleError } from '../handlers/handleError.js';
+import { handleError } from '../Handlers/handleError.js';
 import { GamePacket } from '../generated/gamePacket.js';
-import { gamePacketDispatcher } from '../dispatcher/game.packet.dispatcher.js';
+import { gamePacketDispatcher } from '../Dispatcher/game.packet.dispatcher.js';
 
 interface Packet {
 	payloadType: number;

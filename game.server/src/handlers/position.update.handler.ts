@@ -1,8 +1,8 @@
-import { GameSocket } from '../type/game.socket';
+import { GameSocket } from '../Type/game.socket';
 import { GamePacket } from '../generated/gamePacket';
-import { getGamePacketType } from '../converter/type.form';
-import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
-import positionUpdateUseCase from '../useCase/position.update/position.update.usecase';
+import { getGamePacketType } from '../Converter/type.form';
+import { GamePacketType, gamePackTypeSelect } from '../Enums/gamePacketType';
+import positionUpdateUseCase from '../UseCase/Position.update/position.update.usecase';
 import { C2SPositionUpdateRequest } from '../generated/packet/game_actions';
 
 const positionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket) => {

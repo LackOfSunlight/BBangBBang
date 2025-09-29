@@ -1,8 +1,8 @@
 import { CharacterData } from '../generated/common/types';
-import roomManager from '../managers/room.manager';
-import { Character } from '../models/character.model';
-import { Room } from '../models/room.model';
-import { User } from '../models/user.model';
+import roomManager from '../Managers/room.manager';
+import { Character } from '../Models/character.model';
+import { Room } from '../Models/room.model';
+import { User } from '../Models/user.model';
 
 export const applyCardUseHandler = (
 	roomId: number,

@@ -1,13 +1,13 @@
 import joinRoomHandler from '../join.room.handler';
-import { GameSocket } from '../../type/game.socket.js';
+import { GameSocket } from '../../Type/game.socket.js';
 import { GamePacket } from '../../generated/gamePacket.js';
-import { getGamePacketType } from '../../converter/type.form.js';
-import { sendData } from '../../sockets/send.data.js';
-import joinRoomUseCase from '../../useCase/join.room/join.room.usecase.js';
-import { GamePacketType } from '../../enums/gamePacketType.js';
+import { getGamePacketType } from '../../Converter/type.form.js';
+import { sendData } from '../../Sockets/send.data.js';
+import joinRoomUseCase from '../../UseCase/Join.room/join.room.usecase.js';
+import { GamePacketType } from '../../Enums/gamePacketType.js';
 import { GlobalFailCode, RoomStateType } from '../../generated/common/enums';
-import { Room } from '../../models/room.model';
-import { User } from '../../models/user.model';
+import { Room } from '../../Models/room.model';
+import { User } from '../../Models/user.model';
 import { C2SJoinRoomRequest } from '../../generated/packet/room_actions';
 
 jest.mock('../../utils/type.converter.js');

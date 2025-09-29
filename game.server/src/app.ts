@@ -1,7 +1,7 @@
 // server.ts
 import { createServer } from 'net';
-import onConnection from './sockets/on.connection.js';
-import { cleanupAllTokens } from './services/token.cleanup.service.js';
+import onConnection from './Sockets/on.connection.js';
+import { cleanupAllTokens } from './Services/token.cleanup.service.js';
 
 const PORT = 3000;
 

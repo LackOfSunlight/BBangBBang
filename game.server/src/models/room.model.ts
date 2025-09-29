@@ -3,7 +3,7 @@ import { CardData, RoomData } from '../generated/common/types';
 import { CardType, RoomStateType } from '../generated/common/enums';
 import { CharacterData } from '../generated/common/types';
 import { User } from './user.model';
-import { shuffle } from '../utils/shuffle.util';
+import { shuffle } from '../Utils/shuffle.util';
 
 const cardDefinitions: CardData[] = (cardData as any[]).map((card) => ({
 	...card,

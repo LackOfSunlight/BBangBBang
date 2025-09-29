@@ -1,18 +1,18 @@
-import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
+import { GamePacketType, gamePackTypeSelect } from '../Enums/gamePacketType';
 import {
 	useCardResponsePacketForm,
 	userUpdateNotificationPacketForm,
-} from '../converter/packet.form';
+} from '../Converter/packet.form';
 import { CardType, GlobalFailCode } from '../generated/common/enums';
 import { GamePacket } from '../generated/gamePacket';
-import { Room } from '../models/room.model';
-import { GameSocket } from '../type/game.socket';
-import { useCardUseCase } from '../useCase/use.card/use.card.usecase';
-import { broadcastDataToRoom } from '../sockets/notification';
-import { sendData } from '../sockets/send.data';
-import { getGamePacketType } from '../converter/type.form';
-import roomManger from '../managers/room.manager';
-import { invalidRequest } from '../utils/invalid.request';
+import { Room } from '../Models/room.model';
+import { GameSocket } from '../Type/game.socket';
+import { useCardUseCase } from '../UseCase/Use.card/use.card.usecase';
+import { broadcastDataToRoom } from '../Sockets/notification';
+import { sendData } from '../Sockets/send.data';
+import { getGamePacketType } from '../Converter/type.form';
+import roomManger from '../Managers/room.manager';
+import { invalidRequest } from '../Utils/invalid.request';
 
 const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	/// 1. DTO 생성 및 기본 유효성 검사

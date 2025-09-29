@@ -1,16 +1,15 @@
-import { GameSocket } from '../type/game.socket';
+import { GameSocket } from '../Type/game.socket';
 import { GamePacket } from '../generated/gamePacket';
-import { getGamePacketType } from '../converter/type.form';
-import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
-import { reactionUpdateUseCase } from '../useCase/reaction.update/reaction.update.usecase';
-import { sendData } from '../sockets/send.data';
-import { checkAndEndGameIfNeeded } from '../services/game.end.service';
-import { Room } from '../models/room.model';
+import { getGamePacketType } from '../Converter/type.form';
+import { GamePacketType, gamePackTypeSelect } from '../Enums/gamePacketType';
+import { reactionUpdateUseCase } from '../UseCase/Reaction.update/reaction.update.usecase';
+import { sendData } from '../Sockets/send.data';
+import { checkAndEndGameIfNeeded } from '../Services/game.end.service';
+import { Room } from '../Models/room.model';
 import { GlobalFailCode } from '../generated/common/enums';
-import { reactionResponsePacketForm } from '../converter/packet.form';
-import roomManger from '../managers/room.manager';
-import { invalidRequest } from '../utils/invalid.request';
-
+import { reactionResponsePacketForm } from '../Converter/packet.form';
+import roomManger from '../Managers/room.manager';
+import { invalidRequest } from '../Utils/invalid.request';
 
 const reactionUpdateHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	if (!socket.roomId) {

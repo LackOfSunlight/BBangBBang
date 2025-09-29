@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { prisma } from '../../utils/db';
+import { prisma } from '../../Utils/db';
 
 const setTokenService = async (userId: number, userEmail: string): Promise<string> => {
 	const token = await bcrypt.hash(userEmail, 4);

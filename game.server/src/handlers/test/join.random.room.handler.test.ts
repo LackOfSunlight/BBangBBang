@@ -1,12 +1,12 @@
 import joinRandomRoomHandler from '../join.random.room.handler';
-import { GameSocket } from '../../type/game.socket.js';
+import { GameSocket } from '../../Type/game.socket.js';
 import { GamePacket } from '../../generated/gamePacket.js';
-import { getGamePacketType } from '../../converter/type.form.js';
-import { sendData } from '../../sockets/send.data.js';
-import joinRandomRoomUseCase from '../../useCase/join.random.room/join.random.room.usecase.js';
-import { GamePacketType } from '../../enums/gamePacketType.js';
-import { Room } from '../../models/room.model';
-import { User } from '../../models/user.model';
+import { getGamePacketType } from '../../Converter/type.form.js';
+import { sendData } from '../../Sockets/send.data.js';
+import joinRandomRoomUseCase from '../../UseCase/Join.random.room/join.random.room.usecase.js';
+import { GamePacketType } from '../../Enums/gamePacketType.js';
+import { Room } from '../../Models/room.model';
+import { User } from '../../Models/user.model';
 import { C2SJoinRandomRoomRequest, C2SJoinRoomRequest } from '../../generated/packet/room_actions';
 import { GlobalFailCode, RoomStateType } from '../../generated/common/enums';
 

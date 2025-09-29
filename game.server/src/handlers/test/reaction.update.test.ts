@@ -1,15 +1,15 @@
 // reaction.update.test.ts
-import reactionUpdateHandler from '../../handlers/reaction.update.handler';
-import { reactionUpdateUseCase } from '../../useCase/reaction.update/reaction.update.usecase';
+import reactionUpdateHandler from '../reaction.update.handler';
+import { reactionUpdateUseCase } from '../../UseCase/Reaction.update/reaction.update.usecase';
 
-import { GameSocket } from '../../type/game.socket';
+import { GameSocket } from '../../Type/game.socket';
 import { GamePacket } from '../../generated/gamePacket';
-import { GamePacketType } from '../../enums/gamePacketType';
+import { GamePacketType } from '../../Enums/gamePacketType';
 import { GlobalFailCode, ReactionType, CharacterStateType } from '../../generated/common/enums';
 
-import * as roomUtils from '../../utils/room.utils';
-import * as sendDataUtil from '../../sockets/send.data';
-import * as notificationUtil from '../../sockets/notification';
+import * as roomUtils from '../../Utils/room.utils';
+import * as sendDataUtil from '../../Sockets/send.data';
+import * as notificationUtil from '../../Sockets/notification';
 
 // Mock utils
 jest.mock('dotenv', () => ({

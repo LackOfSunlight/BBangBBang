@@ -1,12 +1,12 @@
 import destroyCardHandler from '../destroy.card.handler';
-import { GameSocket } from '../../type/game.socket.js';
+import { GameSocket } from '../../Type/game.socket.js';
 import { GamePacket } from '../../generated/gamePacket.js';
-import { getGamePacketType } from '../../converter/type.form.js';
-import { sendData } from '../../sockets/send.data.js';
-import destroyCardUseCase from '../../useCase/destroy.card/destroy.card.usecase';
-import { GamePacketType } from '../../enums/gamePacketType.js';
+import { getGamePacketType } from '../../Converter/type.form.js';
+import { sendData } from '../../Sockets/send.data.js';
+import destroyCardUseCase from '../../UseCase/Destroy.card/destroy.card.usecase';
+import { GamePacketType } from '../../Enums/gamePacketType.js';
 import { CardType, CharacterType, RoleType } from '../../generated/common/enums';
-import { User } from '../../models/user.model';
+import { User } from '../../Models/user.model';
 import { CardData, CharacterData } from '../../generated/common/types';
 import { C2SDestroyCardRequest } from '../../generated/packet/game_actions';
 

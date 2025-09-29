@@ -1,4 +1,4 @@
-import { GameSocket } from '../../type/game.socket.js';
+import { GameSocket } from '../../Type/game.socket.js';
 import { GamePacket } from '../../generated/gamePacket.js';
 import { C2SGameStartRequest } from '../../generated/packet/game_actions.js';
 import {
@@ -7,18 +7,18 @@ import {
 	PhaseType,
 	RoomStateType,
 } from '../../generated/common/enums.js';
-import { GamePacketType } from '../../enums/gamePacketType.js';
-import { Room } from '../../models/room.model.js';
+import { GamePacketType } from '../../Enums/gamePacketType.js';
+import { Room } from '../../Models/room.model.js';
 import { CharacterPositionData, GameStateData } from '../../generated/common/types.js';
-import { broadcastDataToRoom } from '../../sockets/notification.js';
-import { shuffle } from '../../utils/shuffle.util.js';
-import gameManager, { notificationCharacterPosition } from '../../managers/game.manager.js';
+import { broadcastDataToRoom } from '../../Sockets/notification.js';
+import { shuffle } from '../../Utils/shuffle.util.js';
+import gameManager, { notificationCharacterPosition } from '../../Managers/game.manager.js';
 import characterSpawnPosition from '../../data/character.spawn.position.json';
 import {
 	gameStartNotificationPacketForm,
 	gameStartResponsePacketForm,
-} from '../../converter/packet.form.js';
-import roomManger from '../../managers/room.manager.js';
+} from '../../Converter/packet.form.js';
+import roomManger from '../../Managers/room.manager.js';
 
 export const gameStartUseCase = async (
 	socket: GameSocket,

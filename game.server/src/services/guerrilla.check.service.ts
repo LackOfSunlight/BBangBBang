@@ -1,5 +1,5 @@
-import { Room } from '../models/room.model';
-import { User } from '../models/user.model';
+import { Room } from '../Models/room.model';
+import { User } from '../Models/user.model';
 import { CharacterStateType } from '../generated/common/enums';
 import { stateChangeService } from './state.change.service';
 

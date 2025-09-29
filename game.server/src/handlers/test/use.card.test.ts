@@ -2,16 +2,16 @@ import {
 	useCardUseCase,
 	createUseCardNotificationPacket,
 	createUserUpdateNotificationPacket,
-} from '../../useCase/use.card/use.card.usecase';
+} from '../../UseCase/Use.card/use.card.usecase';
 import useCardHandler, { createUseCardResponsePacket } from '../use.card.handler';
 
 import { CardType, GlobalFailCode } from '../../generated/common/enums';
-import { GamePacketType } from '../../enums/gamePacketType';
+import { GamePacketType } from '../../Enums/gamePacketType';
 
-import { getRoom } from '../../utils/room.utils';
-import { applyCardEffect } from '../../dispatcher/apply.card.dispacher';
-import { sendData } from '../../sockets/send.data';
-import { broadcastDataToRoom } from '../../sockets/notification';
+import { getRoom } from '../../Utils/room.utils';
+import { applyCardEffect } from '../../Dispatcher/apply.card.dispacher';
+import { sendData } from '../../Sockets/send.data';
+import { broadcastDataToRoom } from '../../Sockets/notification';
 
 jest.mock('../../utils/room.utils', () => ({
 	getRoom: jest.fn(),

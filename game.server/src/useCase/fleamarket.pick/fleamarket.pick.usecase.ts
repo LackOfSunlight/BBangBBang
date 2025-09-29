@@ -1,18 +1,18 @@
 import { GamePacket } from '../../generated/gamePacket';
-import { GameSocket } from '../../type/game.socket';
-import { Room } from '../../models/room.model';
+import { GameSocket } from '../../Type/game.socket';
+import { Room } from '../../Models/room.model';
 import { CharacterStateType, GlobalFailCode } from '../../generated/common/enums';
-import { GamePacketType } from '../../enums/gamePacketType';
-import { User } from '../../models/user.model';
-import { broadcastDataToRoom } from '../../sockets/notification';
+import { GamePacketType } from '../../Enums/gamePacketType';
+import { User } from '../../Models/user.model';
+import { broadcastDataToRoom } from '../../Sockets/notification';
 import { C2SFleaMarketPickRequest } from '../../generated/packet/game_actions';
 import {
 	fleaMarketNotificationForm,
 	fleaMarketResponseForm,
 	userUpdateNotificationPacketForm,
-} from '../../converter/packet.form';
-import roomManger from '../../managers/room.manager';
-import { stateChangeService } from '../../services/state.change.service';
+} from '../../Converter/packet.form';
+import roomManger from '../../Managers/room.manager';
+import { stateChangeService } from '../../Services/state.change.service';
 
 const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest): GamePacket => {
 	try {

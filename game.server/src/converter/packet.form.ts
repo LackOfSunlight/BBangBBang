@@ -1,4 +1,4 @@
-import { GamePacketType } from '../enums/gamePacketType';
+import { GamePacketType } from '../Enums/gamePacketType';
 import {
 	AnimationType,
 	CardType,
@@ -23,9 +23,9 @@ import {
 	S2CLeaveRoomNotification,
 } from '../generated/packet/notifications';
 import { S2CLeaveRoomResponse } from '../generated/packet/room_actions';
-import { Room } from '../models/room.model';
-import { User } from '../models/user.model';
-import { broadcastDataToRoom } from '../sockets/notification';
+import { Room } from '../Models/room.model';
+import { User } from '../Models/user.model';
+import { broadcastDataToRoom } from '../Sockets/notification';
 
 /**
  * 회원가입 응답

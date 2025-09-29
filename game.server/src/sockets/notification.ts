@@ -1,9 +1,8 @@
-import { GamePacketType } from '../enums/gamePacketType';
+import { GamePacketType } from '../Enums/gamePacketType';
 import { GamePacket } from '../generated/gamePacket';
-import { User } from '../models/user.model';
-import { GameSocket } from '../type/game.socket';
+import { GameSocket } from '../Type/game.socket';
 import { sendData } from './send.data';
-import { connectedSockets } from '../managers/socket.manger';
+import { connectedSockets } from '../Managers/socket.manger';
 import { UserData } from '../generated/common/types';
 
 // 특정 방의 모든 사용자에게 알림을 보내는 함수

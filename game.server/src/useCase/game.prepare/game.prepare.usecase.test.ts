@@ -1,18 +1,18 @@
-import { GameSocket } from '../../type/game.socket.js';
+import { GameSocket } from '../../Type/game.socket.js';
 import { C2SGamePrepareRequest } from '../../generated/packet/game_actions.js';
-import { Room } from '../../models/room.model.js';
-import { User } from '../../models/user.model.js';
+import { Room } from '../../Models/room.model.js';
+import { User } from '../../Models/user.model.js';
 import {
 	GlobalFailCode,
 	RoleType,
 	RoomStateType,
 	CharacterType,
 } from '../../generated/common/enums.js';
-import { GamePacketType } from '../../enums/gamePacketType.js';
-import { broadcastDataToRoom } from '../../sockets/notification.js';
+import { GamePacketType } from '../../Enums/gamePacketType.js';
+import { broadcastDataToRoom } from '../../Sockets/notification.js';
 import { gamePrepareUseCase } from './game.prepare.usecase.js';
 import characterType from '../../data/characterType.json';
-import { getRoom, saveRoom } from '../../utils/room.utils.js';
+import { getRoom, saveRoom } from '../../Utils/room.utils.js';
 
 // 의존성 Mock 처리
 jest.mock('../../utils/room.utils.js');

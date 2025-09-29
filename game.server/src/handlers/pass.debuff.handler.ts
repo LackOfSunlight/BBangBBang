@@ -1,9 +1,9 @@
-import { GameSocket } from '../type/game.socket';
+import { GameSocket } from '../Type/game.socket';
 import { GamePacket } from '../generated/gamePacket';
-import { getGamePacketType } from '../converter/type.form';
-import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
-import { sendData } from '../sockets/send.data';
-import passDebuffUseCase from '../useCase/pass.debuff/pass.debuff.usecase';
+import { getGamePacketType } from '../Converter/type.form';
+import { GamePacketType, gamePackTypeSelect } from '../Enums/gamePacketType';
+import { sendData } from '../Sockets/send.data';
+import passDebuffUseCase from '../UseCase/Pass.debuff/pass.debuff.usecase';
 import { C2SPassDebuffRequest } from '../generated/packet/game_actions';
 
 const passDebuffHandler = async (socket: GameSocket, gamePacket: GamePacket) => {

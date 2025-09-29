@@ -1,7 +1,7 @@
-import { CardCategory } from '../enums/card.category';
+import { CardCategory } from '../Enums/card.category';
 import { CardType } from '../generated/common/enums';
-import { Room } from '../models/room.model';
-import { User } from '../models/user.model';
+import { Room } from '../Models/room.model';
+import { User } from '../Models/user.model';
 
 export interface ICard {
 	type: CardType;

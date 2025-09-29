@@ -1,10 +1,10 @@
 import loginHandler from '../login.handler';
-import { GameSocket } from '../../type/game.socket';
+import { GameSocket } from '../../Type/game.socket';
 import { GamePacket } from '../../generated/gamePacket';
-import { getGamePacketType } from '../../converter/type.form';
-import { sendData } from '../../sockets/send.data';
-import loginUseCase from '../../useCase/login/login.usecase';
-import { GamePacketType, gamePackTypeSelect } from '../../enums/gamePacketType';
+import { getGamePacketType } from '../../Converter/type.form';
+import { sendData } from '../../Sockets/send.data';
+import loginUseCase from '../../UseCase/Login/login.usecase';
+import { GamePacketType, gamePackTypeSelect } from '../../Enums/gamePacketType';
 import { C2SLoginRequest, S2CLoginResponse } from '../../generated/packet/auth';
 import { GlobalFailCode } from '../../generated/common/enums';
 

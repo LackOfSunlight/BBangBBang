@@ -3,21 +3,21 @@ import { gamePacketDispatcher } from './game.packet.dispatcher.js';
 import { GamePacket } from '../generated/gamePacket.js';
 
 // Mock all handlers
-import registerHandler from '../handlers/register.handler.js';
-import loginHandler from '../handlers/login.handler.js';
-import createRoomHandler from '../handlers/create.room.handler.js';
-import getRoomListHandler from '../handlers/get.room.list.handler.js';
-import joinRoomHandler from '../handlers/join.room.handler.js';
-import leaveRoomHandler from '../handlers/leave.room.handler.js';
-import gamePrepareHandler from '../handlers/game.prepare.handler.js';
-import positionUpdateHandler from '../handlers/position.update.handler.js';
-import useCardHandler from '../handlers/use.card.handler.js';
-import passDebuffHandler from '../handlers/pass.debuff.handler.js';
-import gameStartHandler from '../handlers/game.start.handler.js';
-import fleaMarketPickHandler from '../handlers/fleamarket.pick.handler.js';
-import destroyCardHandler from '../handlers/destroy.card.handler.js';
-import cardSelectHandler from '../handlers/card.select.handler.js';
-import reactionUpdateHandler from '../handlers/reaction.update.handler.js';
+import registerHandler from '../Handlers/register.handler.js';
+import loginHandler from '../Handlers/login.handler.js';
+import createRoomHandler from '../Handlers/create.room.handler.js';
+import getRoomListHandler from '../Handlers/get.room.list.handler.js';
+import joinRoomHandler from '../Handlers/join.room.handler.js';
+import leaveRoomHandler from '../Handlers/leave.room.handler.js';
+import gamePrepareHandler from '../Handlers/game.prepare.handler.js';
+import positionUpdateHandler from '../Handlers/position.update.handler.js';
+import useCardHandler from '../Handlers/use.card.handler.js';
+import passDebuffHandler from '../Handlers/pass.debuff.handler.js';
+import gameStartHandler from '../Handlers/game.start.handler.js';
+import fleaMarketPickHandler from '../Handlers/fleamarket.pick.handler.js';
+import destroyCardHandler from '../Handlers/destroy.card.handler.js';
+import cardSelectHandler from '../Handlers/card.select.handler.js';
+import reactionUpdateHandler from '../Handlers/reaction.update.handler.js';
 
 jest.mock('../handlers/register.handler.js');
 jest.mock('../handlers/login.handler.js');

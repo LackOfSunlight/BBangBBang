@@ -1,10 +1,10 @@
 import destroyCardUseCase from './destroy.card.usecase';
 import { C2SDestroyCardRequest } from '../../generated/packet/game_actions';
-import { GameSocket } from '../../type/game.socket';
-import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import { GamePacketType } from '../../enums/gamePacketType';
+import { GameSocket } from '../../Type/game.socket';
+import { getUserFromRoom, updateCharacterFromRoom } from '../../Utils/room.utils';
+import { GamePacketType } from '../../Enums/gamePacketType';
 import { CardData, CharacterData, CharacterStateInfoData } from '../../generated/common/types';
-import { User } from '../../models/user.model';
+import { User } from '../../Models/user.model';
 import { CardType, CharacterType, RoleType } from '../../generated/common/enums';
 
 jest.mock('../../utils/room.utils');

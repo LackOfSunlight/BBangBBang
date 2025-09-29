@@ -1,13 +1,13 @@
 import { C2SPassDebuffRequest } from '../../generated/packet/game_actions';
 import { GlobalFailCode, CardType, WarningType } from '../../generated/common/enums';
-import { GamePacketType } from '../../enums/gamePacketType';
+import { GamePacketType } from '../../Enums/gamePacketType';
 import { GamePacket } from '../../generated/gamePacket';
-import { GameSocket } from '../../type/game.socket';
-import { passDebuffResponseForm, warnNotificationPacketForm } from '../../converter/packet.form';
-import { setBombTimer } from '../../services/set.bomb.timer.service';
-import { userUpdateNotificationPacketForm } from '../../converter/packet.form';
-import { broadcastDataToRoom } from '../../sockets/notification';
-import roomManger from '../../managers/room.manager';
+import { GameSocket } from '../../Type/game.socket';
+import { passDebuffResponseForm, warnNotificationPacketForm } from '../../Converter/packet.form';
+import { setBombTimer } from '../../Services/set.bomb.timer.service';
+import { userUpdateNotificationPacketForm } from '../../Converter/packet.form';
+import { broadcastDataToRoom } from '../../Sockets/notification';
+import roomManger from '../../Managers/room.manager';
 
 const passDebuffUseCase = async (
 	socket: GameSocket,

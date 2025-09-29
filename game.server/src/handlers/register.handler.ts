@@ -1,9 +1,9 @@
-import { GameSocket } from '../type/game.socket';
+import { GameSocket } from '../Type/game.socket';
 import { GamePacket } from '../generated/gamePacket';
-import { getGamePacketType } from '../converter/type.form';
-import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
-import { registerUseCase } from '../useCase/register/register.usecase';
-import { sendData } from '../sockets/send.data';
+import { getGamePacketType } from '../Converter/type.form';
+import { GamePacketType, gamePackTypeSelect } from '../Enums/gamePacketType';
+import { registerUseCase } from '../UseCase/Register/register.usecase';
+import { sendData } from '../Sockets/send.data';
 
 const registerHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	const payload = getGamePacketType(gamePacket, gamePackTypeSelect.registerRequest);

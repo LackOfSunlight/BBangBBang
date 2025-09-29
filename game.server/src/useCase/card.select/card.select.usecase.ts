@@ -1,4 +1,4 @@
-import { GamePacketType } from '../../enums/gamePacketType';
+import { GamePacketType } from '../../Enums/gamePacketType';
 import {
 	CardType,
 	CharacterStateType,
@@ -6,14 +6,14 @@ import {
 	SelectCardType,
 } from '../../generated/common/enums';
 import { C2SCardSelectRequest } from '../../generated/packet/game_actions';
-import { GameSocket } from '../../type/game.socket';
-import { broadcastDataToRoom } from '../../sockets/notification';
+import { GameSocket } from '../../Type/game.socket';
+import { broadcastDataToRoom } from '../../Sockets/notification';
 import {
 	cardSelectResponseForm,
 	userUpdateNotificationPacketForm,
-} from '../../converter/packet.form';
+} from '../../Converter/packet.form';
 import { GamePacket } from '../../generated/gamePacket';
-import roomManger from '../../managers/room.manager';
+import roomManger from '../../Managers/room.manager';
 
 const DEFAULT_TARGET_USER_ID = '0';
 

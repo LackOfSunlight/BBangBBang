@@ -1,8 +1,8 @@
-import CustomError from '../error/custom.error.js';
-import { handleError } from '../handlers/handleError.js';
-import { GameSocket } from '../type/game.socket.js';
-import socketManger from '../managers/socket.manger.js';
-import { removeTokenUserDB } from '../services/prisma.service.js';
+import CustomError from '../Error/custom.error.js';
+import { handleError } from '../Handlers/handleError.js';
+import { GameSocket } from '../Type/game.socket.js';
+import socketManger from '../Managers/socket.manger.js';
+import { removeTokenUserDB } from '../Services/prisma.service.js';
 
 const onError = (socket: GameSocket) => async (err: CustomError) => {
 	try {
