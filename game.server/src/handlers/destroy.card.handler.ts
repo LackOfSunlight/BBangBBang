@@ -1,7 +1,7 @@
 import { GameSocket } from '../type/game.socket';
 import { GamePacket } from '../generated/gamePacket';
 import { getGamePacketType } from '../converter/type.form';
-import { GamePacketType, gamePackTypeSelect } from '../Enums/gamePacketType';
+import { GamePacketType, gamePackTypeSelect } from '../enums/gamePacketType';
 import destroyCardUseCase from '../useCase/destroy.card/destroy.card.usecase';
 import { sendData } from '../sockets/send.data';
 
