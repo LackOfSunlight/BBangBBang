@@ -14,8 +14,10 @@ export class SniperGunCard implements ICard {
 
 		if (user.character.weapon === CardType.SNIPER_GUN) return false;
 
+		if (user.character.weapon) room.repeatDeck([user.character.weapon]);
+
 		user.character.weapon = CardType.SNIPER_GUN;
-		room.removeCard(user, CardType.SNIPER_GUN);
+		user.character.removeHandCard(CardType.SNIPER_GUN);
 
 		return true;
 	}

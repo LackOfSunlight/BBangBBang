@@ -26,7 +26,7 @@ export class ContainmentUnitCard implements ICard, IPeriodicEffectCard {
 			return false;
 		}
 
-		room.removeCard(user, CardType.CONTAINMENT_UNIT);
+		user.character.removeHandCard(CardType.CONTAINMENT_UNIT);
 		target.character.debuffs.push(CardType.CONTAINMENT_UNIT);
 
 		return true;
@@ -82,6 +82,7 @@ export class ContainmentUnitCard implements ICard, IPeriodicEffectCard {
 
 					if (yourProb < escapeProb) {
 						// 탈출에 성공하면 디버프 상태 해제
+						room.repeatDeck([CardType.CONTAINMENT_UNIT]);
 						user.character.stateInfo.state = CharacterStateType.NONE_CHARACTER_STATE;
 						const yourDebuffIndex = user.character.debuffs.findIndex(
 							(c) => c === CardType.CONTAINMENT_UNIT,
