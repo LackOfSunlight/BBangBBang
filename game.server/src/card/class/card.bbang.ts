@@ -38,10 +38,6 @@ export class BBangCard implements ICard {
 			return false;
 		}
 
-		if (target.character.stateInfo.nextStateAt !== '0') {
-			return false;
-		}
-
 		room.removeCard(user, CardType.BBANG);
 		if (user.character.stateInfo.state === CharacterStateType.NONE_CHARACTER_STATE) {
 			// 상태 설정
