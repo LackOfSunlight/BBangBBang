@@ -176,7 +176,9 @@ export class Room {
 		// 모든 카드를 월드덱에 추가
 		this.repeatDeck(cardsToReturn);
 
-		console.log(`[죽은 플레이어 카드 정리] ${user.nickname}: ${cardsToReturn.length}장의 카드를 월드덱으로 반환`);
+		console.log(
+			`[죽은 플레이어 카드 정리] ${user.nickname}: ${cardsToReturn.length}장의 카드를 월드덱으로 반환`,
+		);
 	}
 
 	public getDeckSize(): number {
@@ -198,6 +200,7 @@ export class Room {
 	public removeCard(user: User, cardType: CardType) {
 		if (!user.character) return;
 
+		console.log('111111111111111111111111111111111111111111');
 		user.character.removeHandCard(cardType);
 
 		this.repeatDeck([cardType]);

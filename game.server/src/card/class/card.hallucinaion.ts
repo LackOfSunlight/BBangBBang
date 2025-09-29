@@ -27,9 +27,19 @@ export class HallucinationCard implements ICard {
 		room.removeCard(user, CardType.HALLUCINATION);
 
 		// 상태 변경
-		user.character.stateInfo!.state = CharacterStateType.HALLUCINATING;
-		user.character.stateInfo!.stateTargetUserId = target.id;
-		target.character.stateInfo!.state = CharacterStateType.HALLUCINATION_TARGET;
+		user.character.changeState(
+			CharacterStateType.HALLUCINATING,
+			CharacterStateType.NONE_CHARACTER_STATE,
+			10,
+			target.id,
+		);
+
+		target.character.changeState(
+			CharacterStateType.HALLUCINATION_TARGET,
+			CharacterStateType.NONE_CHARACTER_STATE,
+			10,
+			user.id,
+		);
 
 		return true;
 	}
