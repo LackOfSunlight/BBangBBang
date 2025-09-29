@@ -1,9 +1,9 @@
 import gameStartHandler from '../game.start.handler';
 import { GameSocket } from '../../Type/game.socket';
-import { GamePacket } from '../../Generated/gamePacket';
-import { C2SGameStartRequest } from '../../Generated/packet/game_actions';
+import { GamePacket } from '../../generated/gamePacket';
+import { C2SGameStartRequest } from '../../generated/packet/game_actions';
 import { GamePacketType, gamePackTypeSelect } from '../../Enums/gamePacketType';
-import { GlobalFailCode } from '../../Generated/common/enums';
+import { GlobalFailCode } from '../../generated/common/enums';
 
 // 의존성 모킹
 jest.mock('../../useCase/game.start/game.start.usecase', () => ({

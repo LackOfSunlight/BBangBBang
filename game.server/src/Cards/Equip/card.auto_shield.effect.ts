@@ -1,4 +1,4 @@
-import { CardType } from '../../Generated/common/enums';
+import { CardType } from '../../generated/common/enums';
 import { User } from '../../Models/user.model';
 import { Room } from '../../Models/room.model';
 

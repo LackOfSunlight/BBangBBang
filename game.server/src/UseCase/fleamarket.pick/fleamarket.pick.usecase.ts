@@ -1,11 +1,11 @@
-import { GamePacket } from '../../Generated/gamePacket';
+import { GamePacket } from '../../generated/gamePacket';
 import { GameSocket } from '../../Type/game.socket';
 import { Room } from '../../Models/room.model';
-import { CharacterStateType, GlobalFailCode } from '../../Generated/common/enums';
+import { CharacterStateType, GlobalFailCode } from '../../generated/common/enums';
 import { GamePacketType } from '../../Enums/gamePacketType';
 import { User } from '../../Models/user.model';
 import { broadcastDataToRoom } from '../../Sockets/notification';
-import { C2SFleaMarketPickRequest } from '../../Generated/packet/game_actions';
+import { C2SFleaMarketPickRequest } from '../../generated/packet/game_actions';
 import {
 	fleaMarketNotificationForm,
 	fleaMarketResponseForm,

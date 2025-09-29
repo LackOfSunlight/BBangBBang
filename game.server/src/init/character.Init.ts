@@ -1,4 +1,4 @@
-import { CharacterType } from '../Generated/common/enums';
+import { CharacterType } from '../generated/common/enums';
 
 // 캐릭터 타입별 최대 체력 정의
 const getMaxHp = (characterType: CharacterType): number => {

@@ -1,4 +1,4 @@
-import { CardType } from '../Generated/common/enums';
+import { CardType } from '../generated/common/enums';
 import { ICard } from '../Type/card';
 import { AbsorbCard } from '../Cards/Class/card.absorb';
 import { AutoRifleCard } from '../Cards/Class/card.auto.rifle';

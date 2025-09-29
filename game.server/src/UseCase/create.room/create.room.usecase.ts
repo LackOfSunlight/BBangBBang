@@ -1,9 +1,9 @@
-import { C2SCreateRoomRequest } from '../../Generated/packet/room_actions';
+import { C2SCreateRoomRequest } from '../../generated/packet/room_actions';
 import { GameSocket } from '../../Type/game.socket';
-import { GamePacket } from '../../Generated/gamePacket.js';
-import { GlobalFailCode, RoomStateType as StateType } from '../../Generated/common/enums.js';
+import { GamePacket } from '../../generated/gamePacket.js';
+import { GlobalFailCode, RoomStateType as StateType } from '../../generated/common/enums.js';
 import { Room } from '../../Models/room.model.js';
-import { RoomStateType } from '../../Generated/common/enums.js';
+import { RoomStateType } from '../../generated/common/enums.js';
 import { User } from '../../Models/user.model.js';
 import { createRoomDB, getUserByUserId } from '../../Services/prisma.service.js';
 import { createRoomResponseForm } from '../../Converter/packet.form';

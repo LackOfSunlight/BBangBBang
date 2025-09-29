@@ -5,8 +5,8 @@ import {
 	CharacterType,
 	RoleType,
 	CardType,
-} from '../../Generated/common/enums';
-import type { CharacterData, UserData } from '../../Generated/common/types';
+} from '../../generated/common/enums';
+import type { CharacterData, UserData } from '../../generated/common/types';
 
 // Mock room utils functions
 jest.mock('../../utils/room.utils', () => ({

@@ -1,5 +1,5 @@
 import { GameSocket } from '../Type/game.socket';
-import { GamePacket } from '../Generated/gamePacket.js';
+import { GamePacket } from '../generated/gamePacket.js';
 import { getGamePacketType } from '../Converter/type.form.js';
 import { GamePacketType, gamePackTypeSelect } from '../Enums/gamePacketType.js';
 import { sendData } from '../Sockets/send.data.js';

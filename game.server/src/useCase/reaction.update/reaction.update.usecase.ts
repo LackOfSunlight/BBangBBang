@@ -1,6 +1,6 @@
 import { GameSocket } from '../../Type/game.socket';
 import { GamePacketType } from '../../Enums/gamePacketType';
-import { ReactionType, GlobalFailCode, CharacterStateType } from '../../Generated/common/enums';
+import { ReactionType, GlobalFailCode, CharacterStateType } from '../../generated/common/enums';
 import { weaponDamageEffect } from '../../Init/weapon.Init';
 import { CheckBigBbangService } from '../../Services/bigbbang.check.service';
 import { CheckGuerrillaService } from '../../Services/guerrilla.check.service';

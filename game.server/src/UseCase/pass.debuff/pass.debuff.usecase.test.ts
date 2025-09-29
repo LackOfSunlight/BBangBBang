@@ -1,6 +1,6 @@
 import passDebuffUseCase from './pass.debuff.usecase';
 import { getRoom, updateCharacterFromRoom } from '../../Utils/room.utils';
-import { CardType, GlobalFailCode } from '../../Generated/common/enums';
+import { CardType, GlobalFailCode } from '../../generated/common/enums';
 import { GamePacketType } from '../../Enums/gamePacketType';
 import { Room } from '../../Models/room.model';
 import { User } from '../../Models/user.model';

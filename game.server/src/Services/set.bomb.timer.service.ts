@@ -1,6 +1,6 @@
 import { warnNotificationPacketForm } from '../Converter/packet.form';
 import { broadcastDataToRoom } from '../Sockets/notification';
-import { CardType, WarningType } from '../Generated/common/enums';
+import { CardType, WarningType } from '../generated/common/enums';
 import { GamePacketType } from '../Enums/gamePacketType';
 import { bombExplosion } from '../Cards/Debuff/card.bomb.effect';
 import { Room } from '../Models/room.model';

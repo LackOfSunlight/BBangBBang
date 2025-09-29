@@ -1,4 +1,4 @@
-import { CharacterStateType, RoomStateType, CardType } from '../../Generated/common/enums';
+import { CharacterStateType, RoomStateType, CardType } from '../../generated/common/enums';
 import { Room } from '../../Models/room.model';
 import { User } from '../../Models/user.model';
 import { CheckGuerrillaService } from '../../Services/guerrilla.check.service';

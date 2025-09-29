@@ -1,8 +1,8 @@
-import { GamePacket } from '../../Generated/gamePacket';
-import { C2SJoinRandomRoomRequest } from '../../Generated/packet/room_actions';
+import { GamePacket } from '../../generated/gamePacket';
+import { C2SJoinRandomRoomRequest } from '../../generated/packet/room_actions';
 import { GameSocket } from '../../Type/game.socket';
 import { Room } from '../../Models/room.model';
-import { GlobalFailCode, RoomStateType } from '../../Generated/common/enums';
+import { GlobalFailCode, RoomStateType } from '../../generated/common/enums';
 import { GamePacketType } from '../../Enums/gamePacketType';
 import { getUserByUserId } from '../../Services/prisma.service';
 import { User } from '../../Models/user.model';

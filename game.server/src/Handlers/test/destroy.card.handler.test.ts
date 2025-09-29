@@ -1,14 +1,14 @@
 import destroyCardHandler from '../destroy.card.handler';
 import { GameSocket } from '../../Type/game.socket.js';
-import { GamePacket } from '../../Generated/gamePacket.js';
+import { GamePacket } from '../../generated/gamePacket.js';
 import { getGamePacketType } from '../../Converter/type.form.js';
 import { sendData } from '../../Sockets/send.data.js';
 import destroyCardUseCase from '../../UseCase/destroy.card/destroy.card.usecase';
 import { GamePacketType } from '../../Enums/gamePacketType.js';
-import { CardType, CharacterType, RoleType } from '../../Generated/common/enums';
+import { CardType, CharacterType, RoleType } from '../../generated/common/enums';
 import { User } from '../../Models/user.model';
-import { CardData, CharacterData } from '../../Generated/common/types';
-import { C2SDestroyCardRequest } from '../../Generated/packet/game_actions';
+import { CardData, CharacterData } from '../../generated/common/types';
+import { C2SDestroyCardRequest } from '../../generated/packet/game_actions';
 
 jest.mock('../../utils/type.converter.js');
 jest.mock('../../useCase/destroy.card/destroy.card.usecase');

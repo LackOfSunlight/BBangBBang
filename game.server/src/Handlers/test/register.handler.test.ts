@@ -4,9 +4,9 @@ import { registerUseCase } from '../../UseCase/register/register.usecase';
 import { sendData } from '../../Sockets/send.data';
 import { GamePacketType } from '../../Enums/gamePacketType';
 import { GameSocket } from '../../Type/game.socket';
-import { GamePacket } from '../../Generated/gamePacket';
-import { C2SRegisterRequest } from '../../Generated/packet/auth';
-import { GlobalFailCode } from '../../Generated/common/enums';
+import { GamePacket } from '../../generated/gamePacket';
+import { C2SRegisterRequest } from '../../generated/packet/auth';
+import { GlobalFailCode } from '../../generated/common/enums';
 
 jest.mock('../../utils/type.converter.js');
 jest.mock('../../useCase/register/register.usecase.js');

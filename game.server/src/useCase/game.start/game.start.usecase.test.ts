@@ -1,10 +1,10 @@
 import { GameSocket } from '../../Type/game.socket';
-import { C2SGameStartRequest } from '../../Generated/packet/game_actions';
+import { C2SGameStartRequest } from '../../generated/packet/game_actions';
 import { Room } from '../../Models/room.model';
 import { User } from '../../Models/user.model';
-import { GlobalFailCode, RoomStateType, PhaseType, CardType } from '../../Generated/common/enums';
+import { GlobalFailCode, RoomStateType, PhaseType, CardType } from '../../generated/common/enums';
 import { GamePacketType } from '../../Enums/gamePacketType';
-import { CharacterPositionData, GameStateData } from '../../Generated/common/types';
+import { CharacterPositionData, GameStateData } from '../../generated/common/types';
 
 // Mocking dependencies
 jest.mock('../../utils/room.utils', () => ({

@@ -1,4 +1,4 @@
-import { GamePacket } from '../Generated/gamePacket';
+import { GamePacket } from '../generated/gamePacket';
 import { GamePacketType } from '../Enums/gamePacketType';
 import { Socket } from 'net';
 

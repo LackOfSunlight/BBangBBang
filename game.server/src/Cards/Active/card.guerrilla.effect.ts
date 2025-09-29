@@ -1,5 +1,5 @@
 // cardType = 7
-import { CardType, CharacterStateType } from '../../Generated/common/enums.js';
+import { CardType, CharacterStateType } from '../../generated/common/enums.js';
 import { Room } from '../../Models/room.model.js';
 import { User } from '../../Models/user.model.js';
 import { stateChangeService } from '../../Services/state.change.service.js';

@@ -1,6 +1,6 @@
 import { Room } from '../Models/room.model';
 import { User } from '../Models/user.model';
-import { CharacterStateType } from '../Generated/common/enums';
+import { CharacterStateType } from '../generated/common/enums';
 import { stateChangeService } from './state.change.service';
 
 export const CheckBigBbangService = (room: Room): Room => {

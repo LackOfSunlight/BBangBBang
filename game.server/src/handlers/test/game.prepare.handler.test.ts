@@ -1,7 +1,7 @@
 import { GameSocket } from '../../Type/game.socket';
-import { GamePacket } from '../../Generated/gamePacket';
-import { C2SGamePrepareRequest } from '../../Generated/packet/game_actions';
-import { GlobalFailCode } from '../../Generated/common/enums';
+import { GamePacket } from '../../generated/gamePacket';
+import { C2SGamePrepareRequest } from '../../generated/packet/game_actions';
+import { GlobalFailCode } from '../../generated/common/enums';
 import { GamePacketType } from '../../Enums/gamePacketType';
 import { gamePrepareUseCase } from '../../UseCase/game.prepare/game.prepare.usecase';
 import { sendData } from '../../Sockets/send.data';

@@ -1,9 +1,9 @@
-import { GlobalFailCode } from '../../Generated/common/enums';
-import { GamePacket } from '../../Generated/gamePacket';
+import { GlobalFailCode } from '../../generated/common/enums';
+import { GamePacket } from '../../generated/gamePacket';
 import inputFieldCheckService from '../../Services/register/input.field.check.service';
 import { validateInput } from '../../Utils/validation';
 import checkUserDbService from '../../Services/register/check.user.db.service';
-import { C2SRegisterRequest } from '../../Generated/packet/auth';
+import { C2SRegisterRequest } from '../../generated/packet/auth';
 import { createUserDB } from '../../Services/prisma.service';
 import { GameSocket } from '../../Type/game.socket';
 import { registerResponseForm } from '../../Converter/packet.form';

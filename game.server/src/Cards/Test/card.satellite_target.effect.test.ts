@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, jest, afterEach } from '@jest/globals';
-import { CardType, AnimationType } from '../../Generated/common/enums';
+import { CardType, AnimationType } from '../../generated/common/enums';
 import { checkSatelliteTargetEffect } from '../Debuff/card.satellite_target.effect';
 import cardSatelliteTargetEffect from '../Debuff/card.satellite_target.effect';
 import { getRoom, getUserFromRoom, updateCharacterFromRoom } from '../../Utils/room.utils';

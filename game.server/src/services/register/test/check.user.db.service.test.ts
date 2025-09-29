@@ -1,6 +1,6 @@
 import checkUserDbService from '../check.user.db.service';
 import { prisma } from '../../../Utils/db';
-import { C2SRegisterRequest } from '../../../Generated/packet/auth';
+import { C2SRegisterRequest } from '../../../generated/packet/auth';
 
 jest.mock('../../../utils/db', () => ({
 	prisma: {

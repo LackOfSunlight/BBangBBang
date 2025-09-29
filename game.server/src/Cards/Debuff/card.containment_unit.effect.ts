@@ -1,5 +1,5 @@
 // cardType = 21
-import { CardType, CharacterStateType } from '../../Generated/common/enums';
+import { CardType, CharacterStateType } from '../../generated/common/enums';
 import roomManger from '../../Managers/room.manager';
 import { Room } from '../../Models/room.model';
 import { User } from '../../Models/user.model';

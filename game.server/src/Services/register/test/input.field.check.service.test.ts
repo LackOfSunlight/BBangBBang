@@ -1,4 +1,4 @@
-import { C2SRegisterRequest } from '../../../Generated/packet/auth';
+import { C2SRegisterRequest } from '../../../generated/packet/auth';
 import inputFieldCheckService from '../input.field.check.service';
 
 describe('inputFieldCheckService', () => {

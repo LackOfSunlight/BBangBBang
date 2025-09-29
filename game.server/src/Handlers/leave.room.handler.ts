@@ -1,4 +1,4 @@
-import { GamePacket } from '../Generated/gamePacket';
+import { GamePacket } from '../generated/gamePacket';
 import { GamePacketType, gamePackTypeSelect } from '../Enums/gamePacketType';
 import { leaveRoomUseCase } from '../UseCase/leave.room/leave.room.usecase';
 import { sendData } from '../Sockets/send.data';

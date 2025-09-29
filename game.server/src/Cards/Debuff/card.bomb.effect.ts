@@ -1,5 +1,5 @@
 // cardType = 22
-import { AnimationType, CardType, WarningType } from '../../Generated/common/enums';
+import { AnimationType, CardType, WarningType } from '../../generated/common/enums';
 import { GamePacketType } from '../../Enums/gamePacketType';
 import { warnNotificationPacketForm } from '../../Converter/packet.form';
 import { userUpdateNotificationPacketForm } from '../../Converter/packet.form';

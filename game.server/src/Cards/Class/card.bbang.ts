@@ -1,5 +1,5 @@
 import { CardCategory } from '../../Enums/card.category';
-import { CardType, CharacterStateType } from '../../Generated/common/enums';
+import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { Room } from '../../Models/room.model';
 import { User } from '../../Models/user.model';
 import { CheckGuerrillaService } from '../../Services/guerrilla.check.service';

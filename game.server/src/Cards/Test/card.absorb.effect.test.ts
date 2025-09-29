@@ -1,5 +1,5 @@
-import { CardType, CharacterType } from '../../Generated/common/enums';
-import { Coordinate } from '../../Generated/common/types';
+import { CardType, CharacterType } from '../../generated/common/enums';
+import { Coordinate } from '../../generated/common/types';
 import { cardManager } from '../../Managers/card.manager';
 import { Character } from '../../Models/character.model';
 import { User } from '../../Models/user.model';

@@ -1,6 +1,6 @@
 import { Socket } from 'net';
 import { handleError } from '../Handlers/handleError.js';
-import { GamePacket } from '../Generated/gamePacket.js';
+import { GamePacket } from '../generated/gamePacket.js';
 import { gamePacketDispatcher } from '../Dispatcher/game.packet.dispatcher.js';
 
 interface Packet {

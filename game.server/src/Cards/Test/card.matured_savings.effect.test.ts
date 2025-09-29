@@ -2,7 +2,7 @@
 import cardMaturedSavingsEffect from '../Active/card.matured_savings.effect';
 import { getUserFromRoom, updateCharacterFromRoom } from '../../Utils/room.utils';
 import { cardManager } from '../../Managers/card.manager';
-import { CardType } from '../../Generated/common/enums';
+import { CardType } from '../../generated/common/enums';
 
 jest.mock('../../utils/room.utils', () => ({
 	getUserFromRoom: jest.fn(),

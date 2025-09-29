@@ -1,6 +1,6 @@
 // game.server/src/handlers/gamePacketHandler.ts
 import { Socket } from 'net';
-import { GamePacket } from '../Generated/gamePacket';
+import { GamePacket } from '../generated/gamePacket';
 import { GamePacketType, RequestPacketType } from '../Enums/gamePacketType';
 import registerHandler from '../Handlers/register.handler';
 import loginHandler from '../Handlers/login.handler';

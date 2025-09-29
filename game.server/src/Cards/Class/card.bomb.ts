@@ -4,7 +4,7 @@ import {
 } from '../../Converter/packet.form';
 import { CardCategory } from '../../Enums/card.category';
 import { GamePacketType } from '../../Enums/gamePacketType';
-import { AnimationType, CardType, WarningType } from '../../Generated/common/enums';
+import { AnimationType, CardType, WarningType } from '../../generated/common/enums';
 import { playAnimationHandler } from '../../Handlers/play.animation.handler';
 import { Room } from '../../Models/room.model';
 import { User } from '../../Models/user.model';

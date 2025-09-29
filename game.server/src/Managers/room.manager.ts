@@ -1,7 +1,7 @@
 import { Room } from '../Models/room.model';
 import { User } from '../Models/user.model';
-import { PhaseType } from '../Generated/common/enums';
-import { CharacterData } from '../Generated/common/types';
+import { PhaseType } from '../generated/common/enums';
+import { CharacterData } from '../generated/common/types';
 
 const rooms = new Map<number, Room>();
 export const roomTimers = new Map<string, NodeJS.Timeout>();

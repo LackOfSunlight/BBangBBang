@@ -1,6 +1,6 @@
 import { User } from '../../Models/user.model';
 import { Room } from '../../Models/room.model';
-import { CardType } from '../../Generated/common/enums';
+import { CardType } from '../../generated/common/enums';
 
 const cardVaccineEffect = (room: Room, user: User): boolean => {
 	const HEAL_AMOUNT = 1;

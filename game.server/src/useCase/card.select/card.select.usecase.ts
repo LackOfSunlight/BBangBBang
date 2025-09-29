@@ -4,15 +4,15 @@ import {
 	CharacterStateType,
 	GlobalFailCode,
 	SelectCardType,
-} from '../../Generated/common/enums';
-import { C2SCardSelectRequest } from '../../Generated/packet/game_actions';
+} from '../../generated/common/enums';
+import { C2SCardSelectRequest } from '../../generated/packet/game_actions';
 import { GameSocket } from '../../Type/game.socket';
 import { broadcastDataToRoom } from '../../Sockets/notification';
 import {
 	cardSelectResponseForm,
 	userUpdateNotificationPacketForm,
 } from '../../Converter/packet.form';
-import { GamePacket } from '../../Generated/gamePacket';
+import { GamePacket } from '../../generated/gamePacket';
 import roomManger from '../../Managers/room.manager';
 
 const DEFAULT_TARGET_USER_ID = '0';

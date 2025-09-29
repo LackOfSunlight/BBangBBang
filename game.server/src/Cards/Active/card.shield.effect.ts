@@ -1,5 +1,5 @@
 // cardType = 3
-import { CardType, CharacterStateType, CharacterType } from '../../Generated/common/enums.js';
+import { CardType, CharacterStateType, CharacterType } from '../../generated/common/enums.js';
 import { CheckBigBbangService as checkBigBbangService } from '../../Services/bigbbang.check.service.js';
 import { User } from '../../Models/user.model.js';
 import { Room } from '../../Models/room.model.js';

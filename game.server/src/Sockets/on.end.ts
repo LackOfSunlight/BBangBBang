@@ -5,7 +5,7 @@ import { removeTokenUserDB } from '../Services/prisma.service.js';
 import { checkAndEndGameIfNeeded } from '../Services/game.end.service.js';
 import { broadcastDataToRoom } from './notification.js';
 import { GamePacketType } from '../Enums/gamePacketType.js';
-import { RoomStateType } from '../Generated/common/enums.js';
+import { RoomStateType } from '../generated/common/enums.js';
 import { userUpdateNotificationPacketForm } from '../Converter/packet.form.js';
 import roomManger from '../Managers/room.manager.js';
 

@@ -1,5 +1,5 @@
 import { GameSocket } from '../../Type/game.socket.js';
-import { C2SGamePrepareRequest } from '../../Generated/packet/game_actions.js';
+import { C2SGamePrepareRequest } from '../../generated/packet/game_actions.js';
 import { Room } from '../../Models/room.model.js';
 import { User } from '../../Models/user.model.js';
 import {
@@ -7,7 +7,7 @@ import {
 	RoleType,
 	RoomStateType,
 	CharacterType,
-} from '../../Generated/common/enums.js';
+} from '../../generated/common/enums.js';
 import { GamePacketType } from '../../Enums/gamePacketType.js';
 import { broadcastDataToRoom } from '../../Sockets/notification.js';
 import { gamePrepareUseCase } from './game.prepare.usecase.js';

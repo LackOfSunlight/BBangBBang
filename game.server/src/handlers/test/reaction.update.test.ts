@@ -3,9 +3,9 @@ import reactionUpdateHandler from '../reaction.update.handler';
 import { reactionUpdateUseCase } from '../../UseCase/reaction.update/reaction.update.usecase';
 
 import { GameSocket } from '../../Type/game.socket';
-import { GamePacket } from '../../Generated/gamePacket';
+import { GamePacket } from '../../generated/gamePacket';
 import { GamePacketType } from '../../Enums/gamePacketType';
-import { GlobalFailCode, ReactionType, CharacterStateType } from '../../Generated/common/enums';
+import { GlobalFailCode, ReactionType, CharacterStateType } from '../../generated/common/enums';
 
 import * as roomUtils from '../../Utils/room.utils';
 import * as sendDataUtil from '../../Sockets/send.data';

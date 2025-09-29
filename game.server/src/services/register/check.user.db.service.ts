@@ -1,4 +1,4 @@
-import { C2SRegisterRequest } from '../../Generated/packet/auth';
+import { C2SRegisterRequest } from '../../generated/packet/auth';
 import { prisma } from '../../Utils/db';
 
 const checkUserDbService = async (req: C2SRegisterRequest): Promise<Boolean> => {

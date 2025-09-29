@@ -1,5 +1,5 @@
 // cardType = 17
-import { CardType } from '../../Generated/common/enums';
+import { CardType } from '../../generated/common/enums';
 import { Room } from '../../Models/room.model';
 import { User } from '../../Models/user.model';
 

@@ -1,7 +1,7 @@
 import { User } from '../Models/user.model';
 import { Room } from '../Models/room.model';
 import cardMap from '../Converter/card.map';
-import { CardType } from '../Generated/common/enums';
+import { CardType } from '../generated/common/enums';
 import { CardCategory } from '../Enums/card.category';
 import { ICard } from '../Type/card';
 

@@ -1,7 +1,7 @@
 import positionUpdateUseCase from './position.update.usecase';
-import { C2SPositionUpdateRequest } from '../../Generated/packet/game_actions';
+import { C2SPositionUpdateRequest } from '../../generated/packet/game_actions';
 import { GameSocket } from '../../Type/game.socket';
-import { CharacterPositionData } from '../../Generated/common/types';
+import { CharacterPositionData } from '../../generated/common/types';
 import { notificationCharacterPosition } from '../../Managers/game.manager';
 
 jest.mock('../../managers/game.manager', () => ({

@@ -1,5 +1,5 @@
 // cardType = 11
-import { CardType } from '../../Generated/common/enums.js';
+import { CardType } from '../../generated/common/enums.js';
 import { User } from '../../Models/user.model.js';
 import { Room } from '../../Models/room.model.js';
 

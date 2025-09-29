@@ -1,7 +1,7 @@
 import { registerUseCase } from './register.usecase';
-import { C2SRegisterRequest } from '../../Generated/packet/auth';
+import { C2SRegisterRequest } from '../../generated/packet/auth';
 import { GamePacketType } from '../../Enums/gamePacketType';
-import { GlobalFailCode } from '../../Generated/common/enums';
+import { GlobalFailCode } from '../../generated/common/enums';
 import inputFieldCheckService from '../../Services/register/input.field.check.service';
 import { validateInput } from '../../Utils/validation';
 import checkUserDbService from '../../Services/register/check.user.db.service';

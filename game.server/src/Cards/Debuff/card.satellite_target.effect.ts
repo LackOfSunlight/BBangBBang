@@ -1,5 +1,5 @@
 // cardType = 22
-import { CardType, AnimationType } from '../../Generated/common/enums';
+import { CardType, AnimationType } from '../../generated/common/enums';
 import { playAnimationHandler } from '../../Handlers/play.animation.handler';
 import { checkAndEndGameIfNeeded } from '../../Services/game.end.service';
 import { User } from '../../Models/user.model';

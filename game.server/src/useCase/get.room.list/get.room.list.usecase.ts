@@ -1,6 +1,6 @@
 import { GameSocket } from '../../Type/game.socket.js';
-import { C2SGetRoomListRequest } from '../../Generated/packet/room_actions.js';
-import { GamePacket } from '../../Generated/gamePacket.js';
+import { C2SGetRoomListRequest } from '../../generated/packet/room_actions.js';
+import { GamePacket } from '../../generated/gamePacket.js';
 import { getRoomListResponseForm } from '../../Converter/packet.form.js';
 import roomManger from '../../Managers/room.manager.js';
 
