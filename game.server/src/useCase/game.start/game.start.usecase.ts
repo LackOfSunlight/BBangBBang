@@ -2,7 +2,7 @@ import { GameSocket } from '../../type/game.socket';
 import { GamePacket } from '../../generated/gamePacket';
 import { C2SGameStartRequest } from '../../generated/packet/game_actions';
 import { CardType, GlobalFailCode, PhaseType, RoomStateType } from '../../generated/common/enums';
-import { GamePacketType } from '../../Enums/gamePacketType';
+import { GamePacketType } from '../../enums/gamePacketType';
 import { Room } from '../../models/room.model';
 import { CharacterPositionData, GameStateData } from '../../generated/common/types';
 import { broadcastDataToRoom } from '../../sockets/notification';
