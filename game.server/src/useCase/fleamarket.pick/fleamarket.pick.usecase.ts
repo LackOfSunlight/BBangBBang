@@ -52,8 +52,17 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 
 		for (let i = 0; i < room.users.length; i++) {
 			if (room.users[i].id === userInfo.id) {
-				const nextIndex = (i + 1) % room.users.length;
-				const nextUser = room.users[nextIndex];
+				let nextIndex = (i + 1) % room.users.length;
+				let nextUser = room.users[nextIndex];
+
+				// 죽은 플레이어를 건너뛰고 살아있는 플레이어 찾기
+				while (nextUser && nextUser.character && nextUser.character.hp <= 0) {
+					nextIndex = (nextIndex + 1) % room.users.length;
+					nextUser = room.users[nextIndex];
+					
+					// 무한 루프 방지 (한 바퀴 돌았으면 중단)
+					if (nextIndex === i) break;
+				}
 
 				if (!nextUser || !nextUser.character || !nextUser.character.stateInfo)
 					return fleaMarketResponseForm(false, GlobalFailCode.CHARACTER_NOT_FOUND);
@@ -70,9 +79,9 @@ const fleaMarketPickUseCase = (socket: GameSocket, req: C2SFleaMarketPickRequest
 			}
 		}
 
-		// 모든 유저가 FLEA_MARKET_WAIT 상태인지 확인
+		// 모든 유저가 FLEA_MARKET_WAIT 상태인지 확인 (죽은 플레이어와 감금된 플레이어 제외)
 		const allWaiting = room.users
-			.filter((u) => u.character?.stateInfo?.state !== CharacterStateType.CONTAINED)
+			.filter((u) => u.character?.hp > 0 && u.character?.stateInfo?.state !== CharacterStateType.CONTAINED)
 			.every((u) => u.character?.stateInfo?.state === CharacterStateType.FLEA_MARKET_WAIT);
 
 		if (allWaiting) {

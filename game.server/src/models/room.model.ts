@@ -140,6 +140,45 @@ export class Room {
 		if (this.roomDecks) this.roomDecks.push(...cards);
 	}
 
+	// 죽은 플레이어의 모든 카드를 월드덱으로 이동
+	public returnDeadPlayerCardsToDeck(user: User): void {
+		if (!user.character || user.character.hp > 0) return;
+
+		const cardsToReturn: CardType[] = [];
+
+		// 핸드 카드들 월드덱으로 이동
+		user.character.handCards.forEach((card) => {
+			for (let i = 0; i < card.count; i++) {
+				cardsToReturn.push(card.type);
+			}
+		});
+		user.character.handCards = [];
+		user.character.handCardsCount = 0;
+
+		// 장비 카드들 월드덱으로 이동
+		user.character.equips.forEach((cardType) => {
+			cardsToReturn.push(cardType);
+		});
+		user.character.equips = [];
+
+		// 디버프 카드들 월드덱으로 이동
+		user.character.debuffs.forEach((cardType) => {
+			cardsToReturn.push(cardType);
+		});
+		user.character.debuffs = [];
+
+		// 무기 카드 월드덱으로 이동
+		if (user.character.weapon !== CardType.NONE) {
+			cardsToReturn.push(user.character.weapon);
+			user.character.weapon = CardType.NONE;
+		}
+
+		// 모든 카드를 월드덱에 추가
+		this.repeatDeck(cardsToReturn);
+
+		console.log(`[죽은 플레이어 카드 정리] ${user.nickname}: ${cardsToReturn.length}장의 카드를 월드덱으로 반환`);
+	}
+
 	public getDeckSize(): number {
 		if (this.roomDecks) return this.roomDecks.length;
 		else return 0;
