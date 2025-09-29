@@ -2,6 +2,9 @@
 import { createServer } from 'net';
 import onConnection from './sockets/on.connection.js';
 import { cleanupAllTokens } from './services/token.cleanup.service.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const PORT = 3000;
 
