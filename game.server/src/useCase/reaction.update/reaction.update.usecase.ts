@@ -97,12 +97,12 @@ export const reactionUpdateUseCase = async (
 
 // 현피 실패 처리 (빵야! 카드 없음)
 const handleDeathMatchFailure = async (room: any, user: any) => {
-	// 패배 처리
-	user.character.hp -= 1;
-
 	// 현피 종료 (양쪽 상태 초기화)
 	const targetUserId = user.character.stateInfo.stateTargetUserId;
 	const target = room.users.find((u: any) => u.id === targetUserId);
+
+	// 패배 처리
+	takeDamageService(room, user, 1, target);
 
 	if (target && target.character) {
 		// 사용자 상태 초기화

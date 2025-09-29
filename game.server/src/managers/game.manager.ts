@@ -180,6 +180,11 @@ class GameManager {
 
 			const toRoom = room.toData();
 
+			for (let user of room.users) {
+				console.log(`캐릭터타입: ${user.character?.characterType}`);
+				console.log(`캐릭터 카드수: ${user.character?.handCardsCount}`);
+			}
+
 			broadcastDataToRoom(toRoom.users, phaseGamePacket, GamePacketType.phaseUpdateNotification);
 
 			this.scheduleNextPhase(room.id, roomTimerMapId);

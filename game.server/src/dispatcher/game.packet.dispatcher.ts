@@ -1,3 +1,4 @@
+import { Socket } from 'net';
 import { GamePacketType, RequestPacketType } from '../enums/gamePacketType';
 import { GamePacket } from '../generated/gamePacket';
 import registerHandler from '../handlers/register.handler';
@@ -16,7 +17,6 @@ import reactionUpdateHandler from '../handlers/reaction.update.handler';
 import destroyCardHandler from '../handlers/destroy.card.handler';
 import cardSelectHandler from '../handlers/card.select.handler';
 import passDebuffHandler from '../handlers/pass.debuff.handler';
-import { Socket } from 'net';
 
 const handlers: Record<RequestPacketType, (socket: Socket, gamePacket: GamePacket) => void> = {
 	// Requests
