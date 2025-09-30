@@ -22,7 +22,7 @@ export class SatelliteTargetCard implements ICard, IPeriodicEffectCard {
 			return true;
 		}
 
-		room.removeCard(user, CardType.SATELLITE_TARGET);
+		user.character?.removeHandCard(CardType.SATELLITE_TARGET);
 
 		// 디버프 추가
 		target.character.debuffs.push(CardType.SATELLITE_TARGET);
@@ -72,6 +72,7 @@ export class SatelliteTargetCard implements ICard, IPeriodicEffectCard {
 
 			// 3. 실제 효과 적용
 			takeDamageService(room, target, damage);
+			room.repeatDeck([CardType.SATELLITE_TARGET]);
 
 			// 4. 디버프 제거 (효과 발동 후 제거)
 			const debuffIndex = target.character.debuffs.indexOf(CardType.SATELLITE_TARGET);

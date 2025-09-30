@@ -15,7 +15,7 @@ export class RadarCard implements ICard {
 		if (user.character.equips.includes(CardType.RADAR)) return false;
 
 		user.character.equips.push(CardType.RADAR);
-		room.removeCard(user, CardType.RADAR);
+		user.character.removeHandCard(CardType.RADAR);
 
 		return true;
 	}

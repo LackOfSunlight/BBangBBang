@@ -14,6 +14,15 @@ export class FleaMarketCard implements ICard {
 
 		if (!users || users.length === 0) return false;
 
+		const isBlockedStateUsers = room.users.some(
+			(s) =>
+				s.character && s.character.stateInfo?.state !== CharacterStateType.NONE_CHARACTER_STATE,
+		);
+
+		if (isBlockedStateUsers) {
+			return false;
+		}
+
 		room.removeCard(user, CardType.FLEA_MARKET);
 
 		const prisonCount = users.reduce(
@@ -23,7 +32,7 @@ export class FleaMarketCard implements ICard {
 		);
 
 		// 살아있는 플레이어 수만큼 카드 드로우 (죽은 플레이어 제외)
-		const aliveUsersCount = users.filter(u => u.character && u.character.hp > 0).length;
+		const aliveUsersCount = users.filter((u) => u.character && u.character.hp > 0).length;
 		const selectedCards = room.drawDeck(aliveUsersCount - prisonCount);
 		if (!selectedCards || !room.roomFleaMarketCards || !room.fleaMarketPickIndex) return false;
 		room.roomFleaMarketCards.push(...selectedCards);

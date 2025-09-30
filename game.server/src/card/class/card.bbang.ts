@@ -33,8 +33,40 @@ export class BBangCard implements ICard {
 			return false;
 		}
 
-		room.removeCard(user, CardType.BBANG);
-		if (user.character.stateInfo.state === CharacterStateType.NONE_CHARACTER_STATE) {
+		if (target.character.stateInfo.state !== CharacterStateType.NONE_CHARACTER_STATE) {
+			if (
+				user.character.stateInfo.state === CharacterStateType.DEATH_MATCH_TURN_STATE &&
+				target.character.stateInfo.state === CharacterStateType.DEATH_MATCH_STATE
+			) {
+				room.removeCard(user, CardType.BBANG);
+				// 상태 설정
+				user.character.changeState(
+					CharacterStateType.DEATH_MATCH_STATE,
+					CharacterStateType.DEATH_MATCH_TURN_STATE,
+					10,
+					target.id,
+				);
+
+				target.character.changeState(
+					CharacterStateType.DEATH_MATCH_TURN_STATE,
+					CharacterStateType.DEATH_MATCH_STATE,
+					10,
+					user.id,
+				);
+
+				return true;
+			} else if (user.character.stateInfo.state === CharacterStateType.GUERRILLA_TARGET) {
+				room.removeCard(user, CardType.BBANG);
+				user.character.changeState();
+
+				CheckGuerrillaService(room);
+
+				return true;
+			}
+
+			return false;
+		} else {
+			room.removeCard(user, CardType.BBANG);
 			// 상태 설정
 			user.character.changeState(
 				CharacterStateType.BBANG_SHOOTER,
@@ -49,29 +81,48 @@ export class BBangCard implements ICard {
 				10,
 				user.id,
 			);
-		} else if (user.character.stateInfo.state === CharacterStateType.DEATH_MATCH_TURN_STATE) {
-			// 상태 설정
-
-			user.character.changeState(
-				CharacterStateType.DEATH_MATCH_STATE,
-				CharacterStateType.DEATH_MATCH_TURN_STATE,
-				10,
-				target.id,
-			);
-
-			target.character.changeState(
-				CharacterStateType.DEATH_MATCH_TURN_STATE,
-				CharacterStateType.DEATH_MATCH_STATE,
-				10,
-				user.id,
-			);
-		} else if (user.character.stateInfo.state === CharacterStateType.GUERRILLA_TARGET) {
-			user.character.changeState();
-
-			CheckGuerrillaService(room);
 
 			return true;
 		}
-		return true;
+
+		// room.removeCard(user, CardType.BBANG);
+		// if (user.character.stateInfo.state === CharacterStateType.NONE_CHARACTER_STATE) {
+		// 	// 상태 설정
+		// 	user.character.changeState(
+		// 		CharacterStateType.BBANG_SHOOTER,
+		// 		CharacterStateType.NONE_CHARACTER_STATE,
+		// 		10,
+		// 		target.id,
+		// 	);
+
+		// 	target.character.changeState(
+		// 		CharacterStateType.BBANG_TARGET,
+		// 		CharacterStateType.NONE_CHARACTER_STATE,
+		// 		10,
+		// 		user.id,
+		// 	);
+		// } else if (user.character.stateInfo.state === CharacterStateType.DEATH_MATCH_TURN_STATE) {
+		// 	// 상태 설정
+		// 	user.character.changeState(
+		// 		CharacterStateType.DEATH_MATCH_STATE,
+		// 		CharacterStateType.DEATH_MATCH_TURN_STATE,
+		// 		10,
+		// 		target.id,
+		// 	);
+
+		// 	target.character.changeState(
+		// 		CharacterStateType.DEATH_MATCH_TURN_STATE,
+		// 		CharacterStateType.DEATH_MATCH_STATE,
+		// 		10,
+		// 		user.id,
+		// 	);
+		// } else if (user.character.stateInfo.state === CharacterStateType.GUERRILLA_TARGET) {
+		// 	user.character.changeState();
+
+		// 	CheckGuerrillaService(room);
+
+		// 	return true;
+		// }
+		// return true;
 	}
 }

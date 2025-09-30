@@ -15,7 +15,7 @@ export class LaserPointerCard implements ICard {
 		if (user.character.equips.includes(CardType.LASER_POINTER)) return false;
 
 		user.character.equips.push(CardType.LASER_POINTER);
-		room.removeCard(user, CardType.LASER_POINTER);
+		user.character.removeHandCard(CardType.LASER_POINTER);
 
 		return true;
 	}
