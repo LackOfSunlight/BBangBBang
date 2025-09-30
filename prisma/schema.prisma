@@ -13,8 +13,8 @@ model User {
   email      String     @unique
   password   String
   nickname   String     @unique
-  createdAt  DateTime   @default(now())
   token      String?
+  createdAt  DateTime   @default(now())
   roomsOwned Room[]     @relation("RoomOwner")
   rooms      UserData[] @relation("UserRooms")
 }
