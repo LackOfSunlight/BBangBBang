@@ -31,6 +31,28 @@ export const getUserByUserId = async (
 	}
 };
 
+export const getUserByEmail = async (email: string) => {
+	const userData = await prisma.user.findUnique({
+		where: { email },
+	});
+
+	return userData;
+};
+
+export const setTokenService = async (userId: number, userEmail: string): Promise<string> => {
+	const token = await bcrypt.hash(userEmail, 4);
+
+	await prisma.user.update({
+		where: {
+			id: userId,
+		},
+		data: {
+			token: token,
+		},
+	});
+
+	return token;
+};
 
 // DB에 새로운 유저 생성
 export const createUserDB = async (req: C2SRegisterRequest) => {
@@ -48,13 +70,12 @@ export const createUserDB = async (req: C2SRegisterRequest) => {
 };
 
 //DB 업데이트
-export const removeTokenUserDB = async (userId: number) =>{
-    await prisma.user.update({
-        where:{ id: userId},
-        data:{ token: null},
-    });
-}
-
+export const removeTokenUserDB = async (userId: number) => {
+	await prisma.user.update({
+		where: { id: userId },
+		data: { token: null },
+	});
+};
 
 // DB에 방 찾기
 export const findRoomDB = async (
@@ -73,7 +94,6 @@ export const findRoomDB = async (
 	if (roomData) return roomData;
 	else return null;
 };
-
 
 // DB에 방 생성
 export const createRoomDB = async (
@@ -98,6 +118,3 @@ export const createRoomDB = async (
 	if (roomData) return roomData;
 	else return null;
 };
-
-
-
