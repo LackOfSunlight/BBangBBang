@@ -33,14 +33,14 @@ export class HallucinationCard implements ICard {
 		user.character.changeState(
 			CharacterStateType.HALLUCINATING,
 			CharacterStateType.NONE_CHARACTER_STATE,
-			10,
+			Number(process.env.NEXT_TIME),
 			target.id,
 		);
 
 		target.character.changeState(
 			CharacterStateType.HALLUCINATION_TARGET,
 			CharacterStateType.NONE_CHARACTER_STATE,
-			10,
+			Number(process.env.NEXT_TIME),
 			user.id,
 		);
 

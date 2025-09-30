@@ -20,11 +20,7 @@ export const notificationCharacterPosition = new Map<
 	Map<string, CharacterPositionData> // userId → 위치 배열
 >();
 
-const prisonPosition: CharacterPositionData = {
-	id: '21',
-	x: 22,
-	y: -4,
-};
+const prisonPosition: CharacterPositionData = JSON.parse(process.env.PRISON_POSITION!);
 
 // 위치 변화 감지 플래그 (성능 최적화용)
 export const roomPositionChanged = new Map<number, boolean>();
@@ -59,15 +55,9 @@ class GameManager {
 		const dayInterval = 60000; // 1분
 		const eveningInterval = 30000; //30초
 
-		let nextPhase: PhaseType;
-		let interval: number;
-		if (roomPhase.get(roomTimerMapId) === PhaseType.DAY) {
-			nextPhase = PhaseType.END;
-			interval = dayInterval;
-		} else {
-			nextPhase = PhaseType.DAY;
-			interval = eveningInterval;
-		}
+		const targetRoomPhase = roomPhase.get(roomTimerMapId);
+		const nextPhase = targetRoomPhase === PhaseType.DAY ? PhaseType.END : PhaseType.DAY;
+		const interval = targetRoomPhase === PhaseType.DAY ? dayInterval : eveningInterval;
 
 		const timer = setTimeout(async () => {
 			const timerExecutionTime = Date.now();

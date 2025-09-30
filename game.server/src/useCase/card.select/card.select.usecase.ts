@@ -56,12 +56,8 @@ export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest)
 			const targetCard = targetHand[randomIndex];
 			if (targetCard) {
 				stolenCardType = targetCard.type;
-				if (targetCard.count > 1) {
-					targetCard.count -= 1;
-				} else {
-					const index = targetHand.indexOf(targetCard);
-					targetHand.splice(index, 1);
-				}
+
+				target.character.removeHandCard(stolenCardType);
 			}
 			break;
 		}
@@ -95,6 +91,8 @@ export const cardSelectUseCase = (socket: GameSocket, req: C2SCardSelectRequest)
 	if (stolenCardType) {
 		if (user.character.stateInfo!.state === CharacterStateType.ABSORBING) {
 			user.character.addCardToUser(stolenCardType);
+		} else if (user.character.stateInfo.state === CharacterStateType.HALLUCINATING) {
+			room.repeatDeck([stolenCardType]);
 		}
 
 		user.character.changeState();

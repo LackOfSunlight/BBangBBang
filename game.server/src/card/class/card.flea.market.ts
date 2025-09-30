@@ -42,7 +42,7 @@ export class FleaMarketCard implements ICard {
 		user.character.changeState(
 			CharacterStateType.FLEA_MARKET_TURN,
 			CharacterStateType.FLEA_MARKET_WAIT,
-			5,
+			Number(process.env.NEXT_TIME),
 		);
 
 		for (let i = 0; i < room.users.length; i++) {

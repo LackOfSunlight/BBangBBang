@@ -9,13 +9,12 @@ export const applyCardUseHandler = (
 ): { room: Room; user: User; target: User } => {
 	const room = roomManager.getRoom(roomId);
 	const user = roomManager.getUserFromRoom(roomId, userId);
-	const nonTarget = '0';
-	if (targetId != '0') {
+	if (targetId != process.env.NON_TARGET) {
 		const target = roomManager.getUserFromRoom(roomId, targetId);
 		return { room, user, target };
 	} else {
 		const target = {
-			id: nonTarget,
+			id: process.env.NON_TARGET,
 			nickname: 'none',
 		} as User;
 		return { room, user, target };
