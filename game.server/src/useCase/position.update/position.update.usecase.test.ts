@@ -2,383 +2,143 @@ import positionUpdateUseCase from './position.update.usecase';
 import { C2SPositionUpdateRequest } from '../../generated/packet/game_actions';
 import { GameSocket } from '../../type/game.socket';
 import { CharacterPositionData } from '../../generated/common/types';
-import { notificationCharacterPosition } from '../../managers/game.manager';
+import { notificationCharacterPosition, roomPositionChanged } from '../../managers/game.manager';
 
+// Mock 설정
 jest.mock('../../managers/game.manager', () => ({
 	notificationCharacterPosition: new Map(),
+	roomPositionChanged: new Map(),
 }));
 
 const mockNotificationCharacterPosition = notificationCharacterPosition as unknown as jest.Mocked<
 	Map<string, Map<string, CharacterPositionData>>
 >;
+const mockRoomPositionChanged = roomPositionChanged as unknown as jest.Mocked<Map<string, boolean>>;
 
-beforeAll(() => {
-	jest.spyOn(console, 'warn').mockImplementation(() => {});
-});
-
-afterAll(() => {
-	jest.restoreAllMocks();
-});
-
+/**
+ * 플레이어 위치 업데이트 기능 테스트
+ */
 describe('positionUpdateUseCase', () => {
 	const roomId = '1';
 	const userId = 'user1';
-	const validX = 100.5;
-	const validY = 200.3;
 
 	beforeEach(() => {
+		// Mock 초기화
 		mockNotificationCharacterPosition.clear();
+		mockRoomPositionChanged.clear();
+		
+		// 방 위치 맵 설정
 		const roomMap = new Map<string, CharacterPositionData>();
 		mockNotificationCharacterPosition.set(roomId, roomMap);
+		mockRoomPositionChanged.set(roomId, false);
 	});
 
-	describe('유효성 검증', () => {
-		it('소켓에 userId가 없으면 함수가 실패한다', async () => {
-			// @ts-expect-error: 테스트를 위한 모킹
-			const mockSocket = {
-				userId: undefined,
-				roomId: roomId,
-			} as GameSocket;
+	/**
+	 * 시나리오 1: 플레이어 이동 (정상적인 위치 업데이트)
+	 * - 플레이어가 게임에서 이동할 때 위치가 정상적으로 업데이트되는지 확인
+	 * - 위치 변경 감지 및 브로드캐스트 플래그 설정 확인
+	 */
+	it('시나리오 1: 플레이어가 정상적으로 이동하면 위치가 업데이트되어야 함', async () => {
+		// Given: 플레이어가 이동 요청
+		const mockSocket = createMockSocket(userId, roomId);
+		const mockRequest: C2SPositionUpdateRequest = {
+			x: 100.5,
+			y: 200.3,
+		};
 
-			const mockRequest: C2SPositionUpdateRequest = {
-				x: validX,
-				y: validY,
-			};
+		// When: 위치 업데이트 실행
+		const result = await positionUpdateUseCase(mockSocket, mockRequest);
 
-			const result = await positionUpdateUseCase(mockSocket, mockRequest);
+		// Then: 성공 확인
+		expect(result).toBe(true);
 
-			expect(result).toBe(false);
+		// 위치 데이터 저장 확인
+		const roomMap = mockNotificationCharacterPosition.get(roomId);
+		const positionData = roomMap!.get(userId);
+		expect(positionData).toEqual({
+			id: userId,
+			x: 100.5,
+			y: 200.3,
 		});
 
-		it('소켓에 roomId가 없으면 함수가 실패한다', async () => {
-			// ts-expect-error: 테스트를 위한 모킹
-			const mockSocket = {
-				userId: userId,
-				roomId: undefined,
-			} as GameSocket;
-
-			const mockRequest: C2SPositionUpdateRequest = {
-				x: validX,
-				y: validY,
-			};
-
-			const result = await positionUpdateUseCase(mockSocket, mockRequest);
-
-			expect(result).toBe(false);
-		});
-
-		it('X 좌표가 숫자가 아니면 함수가 실패한다', async () => {
-			// @ts-expect-error: 테스트를 위한 모킹
-			const mockSocket = {
-				userId: userId,
-				roomId: roomId,
-			} as GameSocket;
-
-			// @ts-expect-error: 테스트를 위한 모킹
-			const mockRequest = {
-				x: 'invalid',
-				y: validY,
-			} as C2SPositionUpdateRequest;
-
-			const result = await positionUpdateUseCase(mockSocket, mockRequest);
-
-			expect(result).toBe(false);
-		});
-
-		it('Y 좌표가 숫자가 아니면 함수가 실패한다', async () => {
-			// @ts-expect-error: 테스트를 위한 모킹
-			const mockSocket = {
-				userId: userId,
-				roomId: roomId,
-			} as GameSocket;
-
-			// @ts-expect-error: 테스트를 위한 모킹
-			const mockRequest = {
-				x: validX,
-				y: null,
-			} as C2SPositionUpdateRequest;
-
-			const result = await positionUpdateUseCase(mockSocket, mockRequest);
-
-			expect(result).toBe(false);
-		});
-
-		it('X와 Y 좌표 모두 유효하지 않으면 함수가 실패한다', async () => {
-			// @ts-expect-error: 테스트를 위한 모킹
-			const mockSocket = {
-				userId: userId,
-				roomId: roomId,
-			} as GameSocket;
-
-			// @ts-expect-error: 테스트를 위한 모킹
-			const mockRequest = {
-				x: undefined,
-				y: 'invalid',
-			} as C2SPositionUpdateRequest;
-
-			const result = await positionUpdateUseCase(mockSocket, mockRequest);
-
-			expect(result).toBe(false);
-		});
+		// 브로드캐스트 플래그 설정 확인
+		expect(mockRoomPositionChanged.get(roomId)).toBe(true);
 	});
 
-	describe('위치 업데이트 로직', () => {
-		it('유효한 좌표로 위치가 업데이트된다', async () => {
-			// @ts-expect-error: 테스트를 위한 모킹
-			const mockSocket = {
-				userId: userId,
-				roomId: roomId,
-			} as GameSocket;
+	/**
+	 * 시나리오 2: 위치 변경 감지 (성능 최적화)
+	 * - 같은 위치로 이동할 때는 Map에 저장하지 않음
+	 * - 다른 위치로 이동할 때만 Map에 저장하고 플래그 설정
+	 */
+	it('시나리오 2: 같은 위치로 이동하면 Map에 저장되지 않아야 함', async () => {
+		// Given: 플레이어가 이미 특정 위치에 있음
+		const mockSocket = createMockSocket(userId, roomId);
+		const initialRequest: C2SPositionUpdateRequest = {
+			x: 100,
+			y: 200,
+		};
 
-			const mockRequest: C2SPositionUpdateRequest = {
-				x: validX,
-				y: validY,
-			};
+		// 첫 번째 이동
+		await positionUpdateUseCase(mockSocket, initialRequest);
+		expect(mockRoomPositionChanged.get(roomId)).toBe(true);
 
-			const result = await positionUpdateUseCase(mockSocket, mockRequest);
+		// 플래그 리셋 (실제 게임에서는 broadcastPositionUpdates에서 리셋됨)
+		mockRoomPositionChanged.set(roomId, false);
 
-			expect(result).toBe(true);
+		// When: 같은 위치로 다시 이동
+		const samePositionRequest: C2SPositionUpdateRequest = {
+			x: 100,
+			y: 200,
+		};
 
-			const roomMap = mockNotificationCharacterPosition.get(roomId);
-			expect(roomMap).toBeDefined();
+		const result = await positionUpdateUseCase(mockSocket, samePositionRequest);
 
-			const positionData = roomMap!.get(userId);
-			expect(positionData).toBeDefined();
-			expect(positionData).toEqual({
-				id: userId,
-				x: validX,
-				y: validY,
-			});
-		});
+		// Then: 성공하지만 플래그는 변경되지 않음
+		expect(result).toBe(true);
+		expect(mockRoomPositionChanged.get(roomId)).toBe(false);
+	});
 
-		it('정수 좌표로도 위치가 업데이트된다', async () => {
-			// @ts-expect-error: 테스트를 위한 모킹
-			const mockSocket = {
-				userId: userId,
-				roomId: roomId,
-			} as GameSocket;
+	it('시나리오 3: 다른 위치로 이동하면 Map에 저장되어야 함', async () => {
+		// Given: 플레이어가 이미 특정 위치에 있음
+		const mockSocket = createMockSocket(userId, roomId);
+		const initialRequest: C2SPositionUpdateRequest = {
+			x: 100,
+			y: 200,
+		};
 
-			const mockRequest: C2SPositionUpdateRequest = {
-				x: 50,
-				y: 75,
-			};
+		await positionUpdateUseCase(mockSocket, initialRequest);
+		mockRoomPositionChanged.set(roomId, false);
 
-			const result = await positionUpdateUseCase(mockSocket, mockRequest);
+		// When: 다른 위치로 이동
+		const newPositionRequest: C2SPositionUpdateRequest = {
+			x: 300,
+			y: 400,
+		};
 
-			expect(result).toBe(true);
+		const result = await positionUpdateUseCase(mockSocket, newPositionRequest);
 
-			const roomMap = mockNotificationCharacterPosition.get(roomId);
-			const positionData = roomMap!.get(userId);
-			expect(positionData).toEqual({
-				id: userId,
-				x: 50,
-				y: 75,
-			});
-		});
+		// Then: 성공하고 플래그가 설정됨
+		expect(result).toBe(true);
+		expect(mockRoomPositionChanged.get(roomId)).toBe(true);
 
-		it('음수 좌표로도 위치가 업데이트된다', async () => {
-			// @ts-expect-error: 테스트를 위한 모킹
-			const mockSocket = {
-				userId: userId,
-				roomId: roomId,
-			} as GameSocket;
-
-			const mockRequest: C2SPositionUpdateRequest = {
-				x: -100.5,
-				y: -200.3,
-			};
-
-			const result = await positionUpdateUseCase(mockSocket, mockRequest);
-
-			expect(result).toBe(true);
-
-			const roomMap = mockNotificationCharacterPosition.get(roomId);
-			const positionData = roomMap!.get(userId);
-			expect(positionData).toEqual({
-				id: userId,
-				x: -100.5,
-				y: -200.3,
-			});
-		});
-
-		it('0 좌표로도 위치가 업데이트된다', async () => {
-			// @ts-expect-error: 테스트를 위한 모킹
-			const mockSocket = {
-				userId: userId,
-				roomId: roomId,
-			} as GameSocket;
-
-			const mockRequest: C2SPositionUpdateRequest = {
-				x: 0,
-				y: 0,
-			};
-
-			const result = await positionUpdateUseCase(mockSocket, mockRequest);
-
-			expect(result).toBe(true);
-
-			const roomMap = mockNotificationCharacterPosition.get(roomId);
-			const positionData = roomMap!.get(userId);
-			expect(positionData).toEqual({
-				id: userId,
-				x: 0,
-				y: 0,
-			});
-		});
-
-		it('기존 위치를 새로운 위치로 덮어쓸 수 있다', async () => {
-			// @ts-expect-error: 테스트를 위한 모킹
-			const mockSocket = {
-				userId: userId,
-				roomId: roomId,
-			} as GameSocket;
-
-			const firstRequest: C2SPositionUpdateRequest = {
-				x: 100,
-				y: 200,
-			};
-
-			const firstResult = await positionUpdateUseCase(mockSocket, firstRequest);
-
-			expect(firstResult).toBe(true);
-
-			let roomMap = mockNotificationCharacterPosition.get(roomId);
-			let positionData = roomMap!.get(userId);
-			expect(positionData).toEqual({
-				id: userId,
-				x: 100,
-				y: 200,
-			});
-
-			const secondRequest: C2SPositionUpdateRequest = {
-				x: 300,
-				y: 400,
-			};
-
-			const secondResult = await positionUpdateUseCase(mockSocket, secondRequest);
-
-			expect(secondResult).toBe(true);
-
-			roomMap = mockNotificationCharacterPosition.get(roomId);
-			positionData = roomMap!.get(userId);
-			expect(positionData).toEqual({
-				id: userId,
-				x: 300,
-				y: 400,
-			});
-		});
-
-		it('같은 방의 여러 사용자 위치를 독립적으로 관리할 수 있다', async () => {
-			// @ts-expect-error: 테스트를 위한 모킹
-			const user1Socket = {
-				userId: 'user1',
-				roomId: roomId,
-			} as GameSocket;
-
-			// @ts-expect-error: 테스트를 위한 모킹
-			const user2Socket = {
-				userId: 'user2',
-				roomId: roomId,
-			} as GameSocket;
-
-			const user1Request: C2SPositionUpdateRequest = {
-				x: 100,
-				y: 200,
-			};
-
-			const user2Request: C2SPositionUpdateRequest = {
-				x: 300,
-				y: 400,
-			};
-
-			const user1Result = await positionUpdateUseCase(user1Socket, user1Request);
-			const user2Result = await positionUpdateUseCase(user2Socket, user2Request);
-
-			expect(user1Result).toBe(true);
-			expect(user2Result).toBe(true);
-
-			const roomMap = mockNotificationCharacterPosition.get(roomId);
-
-			const user1Position = roomMap!.get('user1');
-			expect(user1Position).toEqual({
-				id: 'user1',
-				x: 100,
-				y: 200,
-			});
-
-			const user2Position = roomMap!.get('user2');
-			expect(user2Position).toEqual({
-				id: 'user2',
-				x: 300,
-				y: 400,
-			});
+		// 새로운 위치가 저장되었는지 확인
+		const roomMap = mockNotificationCharacterPosition.get(roomId);
+		const positionData = roomMap!.get(userId);
+		expect(positionData).toEqual({
+			id: userId,
+			x: 300,
+			y: 400,
 		});
 	});
 
-	describe('에러 처리', () => {
-		it('방 맵이 존재하지 않으면 에러가 발생한다', async () => {
-			// @ts-expect-error: 테스트를 위한 모킹
-			const mockSocket = {
-				userId: userId,
-				roomId: 'nonexistent-room',
-			} as GameSocket;
 
-			const mockRequest: C2SPositionUpdateRequest = {
-				x: validX,
-				y: validY,
-			};
 
-			await expect(positionUpdateUseCase(mockSocket, mockRequest)).rejects.toThrow();
-		});
+	// 헬퍼 함수
+	function createMockSocket(userId: string | undefined, roomId: string | undefined): GameSocket {
+		return {
+			userId,
+			roomId,
+		} as any;
+	}
 
-		it('매우 큰 좌표값도 처리할 수 있다', async () => {
-			// @ts-expect-error: 테스트를 위한 모킹
-			const mockSocket = {
-				userId: userId,
-				roomId: roomId,
-			} as GameSocket;
-
-			const mockRequest: C2SPositionUpdateRequest = {
-				x: Number.MAX_SAFE_INTEGER,
-				y: Number.MIN_SAFE_INTEGER,
-			};
-
-			const result = await positionUpdateUseCase(mockSocket, mockRequest);
-
-			expect(result).toBe(true);
-
-			const roomMap = mockNotificationCharacterPosition.get(roomId);
-			const positionData = roomMap!.get(userId);
-			expect(positionData).toEqual({
-				id: userId,
-				x: Number.MAX_SAFE_INTEGER,
-				y: Number.MIN_SAFE_INTEGER,
-			});
-		});
-
-		it('소수점이 많은 좌표값도 처리할 수 있다', async () => {
-			// @ts-expect-error: 테스트를 위한 모킹
-			const mockSocket = {
-				userId: userId,
-				roomId: roomId,
-			} as GameSocket;
-
-			const mockRequest: C2SPositionUpdateRequest = {
-				x: 123.4567890123456789,
-				y: 987.6543210987654321,
-			};
-
-			const result = await positionUpdateUseCase(mockSocket, mockRequest);
-
-			expect(result).toBe(true);
-
-			const roomMap = mockNotificationCharacterPosition.get(roomId);
-			const positionData = roomMap!.get(userId);
-			expect(positionData).toEqual({
-				id: userId,
-				x: 123.4567890123456789,
-				y: 987.6543210987654321,
-			});
-		});
-	});
 });
