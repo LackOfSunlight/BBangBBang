@@ -1,10 +1,1 @@
 process.env.PRISON_POSITION = JSON.stringify({ x: 100, y: 100, id: 'prison' });
-process.env.NON_TARGET = '0';
-process.env.NEXT_TIME = '5';
-process.env.MATURED_SAVINGS_DRAW = '2';
-process.env.WIN_LOTTERY_DRAW = '3';
-process.env.HEAL_AMOUNT = '1';
-process.env.BBangDamage = '1';
-process.env.SharkRequiredShield = '2';
-process.env.LaserRequiredShield = '2';
-process.env.SynergyRequiredShield = '4';
