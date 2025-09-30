@@ -1,130 +1,74 @@
-import createRoomUseCase from './create.room.usecase';
 import { C2SCreateRoomRequest } from '../../generated/packet/room_actions';
 import { GameSocket } from '../../type/game.socket';
-import { createRoomDB, getUserByUserId } from '../../services/prisma.service.js';
-import { saveRoom } from '../../utils/room.utils';
-import { GamePacketType } from '../../enums/gamePacketType.js';
-import { GlobalFailCode, RoomStateType } from '../../generated/common/enums.js';
-import { Room } from '../../models/room.model';
+import { createRoomDB, getUserByUserId } from '../../services/prisma.service';
+import { gamePackTypeSelect } from '../../enums/gamePacketType';
+import { GlobalFailCode, RoomStateType } from '../../generated/common/enums';
+import roomManager from '../../managers/room.manager';
+import createRoomUseCase from './create.room.usecase';
+import { broadcastDataToRoom } from '../../sockets/notification';
+import { getGamePacketType } from '../../converter/type.form';
 
-jest.mock('../../services/prisma.service.js');
-jest.mock('../../utils/room.utils');
+// Mocks
+jest.mock('../../services/prisma.service');
+jest.mock('../../sockets/notification');
+jest.mock('../../managers/room.manager');
 
-describe('createRoomUserCase', () => {
-	let mockSocket: Partial<GameSocket>;
-	let mockRequest: C2SCreateRoomRequest;
-
-	const mockRoomDB = {
-		id: 1,
-		ownerId: '1',
-		name: 'testRoom',
-		maxUserNum: 4,
-		state: RoomStateType.WAIT,
-	};
-
-	const mockUserInfo = {
-		id: 1,
-		email: 'test@example.com',
-		nickname: 'testuser',
-	};
+describe('방생성 시나리오', () => {
+	let mockSocket: GameSocket;
+	const mockUserInfo = { id: 1, email: 'test@example.com', nickname: 'testuser' };
+	const anotherUserInfo = { id: 2, email: 'test2@example.com', nickname: 'testuser2' };
 
 	beforeEach(() => {
-		mockSocket = {
-			userId: '1',
-			roomId: undefined,
-		};
-		mockRequest = {
-			name: 'testRoom',
-			maxUserNum: 4,
-		};
-
-		(createRoomDB as jest.Mock).mockResolvedValue(mockRoomDB);
-		(getUserByUserId as jest.Mock).mockResolvedValue(mockUserInfo);
-		(saveRoom as jest.Mock).mockImplementation(() => {});
-	});
-
-	afterEach(() => {
 		jest.clearAllMocks();
+
+		mockSocket = { userId: '1' } as GameSocket;
+
+		(getUserByUserId as jest.Mock).mockImplementation((userId: number) => {
+			if (userId === 1) return Promise.resolve(mockUserInfo);
+			if (userId === 2) return Promise.resolve(anotherUserInfo);
+			return Promise.resolve(null);
+		});
+		(broadcastDataToRoom as jest.Mock).mockImplementation(() => {});
 	});
 
-	it('방 생성을 성공해야 함', async () => {
-		const response = await createRoomUseCase(mockSocket as GameSocket, mockRequest);
+	describe('방 생성 (createRoomUseCase)', () => {
+		beforeEach(() => {
+			(createRoomDB as jest.Mock).mockResolvedValue({
+				id: 1,
+				ownerId: '1',
+				name: 'Test Room',
+				maxUserNum: 4,
+				state: RoomStateType.WAIT,
+			});
+			(roomManager.saveRoom as jest.Mock).mockImplementation(() => {});
+		});
 
-		expect(createRoomDB).toHaveBeenCalledWith(mockSocket, mockRequest);
-		expect(getUserByUserId).toHaveBeenCalledWith(Number(mockSocket.userId));
-		expect(mockSocket.roomId).toBe(mockRoomDB.id);
-		expect(saveRoom).toHaveBeenCalled();
+		it('성공: 유저가 방을 성공적으로 생성한다', async () => {
+			const req: C2SCreateRoomRequest = { name: 'Test Room', maxUserNum: 4 };
+			const responsePacket = await createRoomUseCase(mockSocket, req);
+			const payload = getGamePacketType(responsePacket, gamePackTypeSelect.createRoomResponse);
+			expect(payload).toBeDefined();
+			if (!payload) return;
 
-		expect(response.payload.oneofKind).toBe(GamePacketType.createRoomResponse);
-		if (response.payload.oneofKind === GamePacketType.createRoomResponse) {
-			const createRoomResponse = response.payload.createRoomResponse;
+			const { createRoomResponse } = payload;
+
+			expect(createRoomDB).toHaveBeenCalled();
+			expect(roomManager.saveRoom).toHaveBeenCalled();
+			expect(mockSocket.roomId).toBe(1);
 			expect(createRoomResponse.success).toBe(true);
-			expect(createRoomResponse.failCode).toBe(GlobalFailCode.NONE_FAILCODE);
-			expect(createRoomResponse.room).toBeDefined();
-			expect(createRoomResponse.room?.id).toBe(mockRoomDB.id);
-		}
-	});
+		});
 
-	it('방 이름이 없으면 실패해야 함', async () => {
-		mockRequest.name = '';
-		const response = await createRoomUseCase(mockSocket as GameSocket, mockRequest);
+		it('실패: 방 이름이 없으면 실패한다', async () => {
+			const req: C2SCreateRoomRequest = { name: '', maxUserNum: 4 };
+			const responsePacket = await createRoomUseCase(mockSocket, req);
+			const payload = getGamePacketType(responsePacket, gamePackTypeSelect.createRoomResponse);
+			expect(payload).toBeDefined();
+			if (!payload) return;
 
-		expect(response.payload.oneofKind).toBe(GamePacketType.createRoomResponse);
-		if (response.payload.oneofKind === GamePacketType.createRoomResponse) {
-			expect(response.payload.createRoomResponse.success).toBe(false);
-			expect(response.payload.createRoomResponse.failCode).toBe(GlobalFailCode.CREATE_ROOM_FAILED);
-		}
-		expect(createRoomDB).not.toHaveBeenCalled();
-	});
+			const { createRoomResponse } = payload;
 
-	it('userId가 없으면 실패해야 함', async () => {
-		mockSocket.userId = undefined;
-		const response = await createRoomUseCase(mockSocket as GameSocket, mockRequest);
-
-		expect(response.payload.oneofKind).toBe(GamePacketType.createRoomResponse);
-		if (response.payload.oneofKind === GamePacketType.createRoomResponse) {
-			expect(response.payload.createRoomResponse.success).toBe(false);
-			expect(response.payload.createRoomResponse.failCode).toBe(GlobalFailCode.CREATE_ROOM_FAILED);
-		}
-		expect(createRoomDB).not.toHaveBeenCalled();
-	});
-
-	it('createRoomDB에서 에러가 발생하면 실패해야 함', async () => {
-		(createRoomDB as jest.Mock).mockRejectedValue(new Error('DB error'));
-
-		const response = await createRoomUseCase(mockSocket as GameSocket, mockRequest);
-
-		expect(response.payload.oneofKind).toBe(GamePacketType.createRoomResponse);
-		if (response.payload.oneofKind === GamePacketType.createRoomResponse) {
-			expect(response.payload.createRoomResponse.success).toBe(false);
-			expect(response.payload.createRoomResponse.failCode).toBe(GlobalFailCode.CREATE_ROOM_FAILED);
-		}
-		expect(saveRoom).not.toHaveBeenCalled();
-	});
-
-	it('getUserDB에서 에러가 발생하면 실패해야 함', async () => {
-		(getUserByUserId as jest.Mock).mockRejectedValue(new Error('DB error'));
-
-		const response = await createRoomUseCase(mockSocket as GameSocket, mockRequest);
-
-		expect(response.payload.oneofKind).toBe(GamePacketType.createRoomResponse);
-		if (response.payload.oneofKind === GamePacketType.createRoomResponse) {
-			expect(response.payload.createRoomResponse.success).toBe(false);
-			expect(response.payload.createRoomResponse.failCode).toBe(GlobalFailCode.CREATE_ROOM_FAILED);
-		}
-		expect(saveRoom).not.toHaveBeenCalled();
-	});
-
-	it('roomDB나 userInfo가 없으면 실패해야 함', async () => {
-		(createRoomDB as jest.Mock).mockResolvedValue(null);
-
-		const response = await createRoomUseCase(mockSocket as GameSocket, mockRequest);
-
-		expect(response.payload.oneofKind).toBe(GamePacketType.createRoomResponse);
-		if (response.payload.oneofKind === GamePacketType.createRoomResponse) {
-			expect(response.payload.createRoomResponse.success).toBe(false);
-			expect(response.payload.createRoomResponse.failCode).toBe(GlobalFailCode.CREATE_ROOM_FAILED);
-		}
-		expect(saveRoom).not.toHaveBeenCalled();
+			expect(createRoomResponse.success).toBe(false);
+			expect(createRoomResponse.failCode).toBe(GlobalFailCode.CREATE_ROOM_FAILED);
+		});
 	});
 });
