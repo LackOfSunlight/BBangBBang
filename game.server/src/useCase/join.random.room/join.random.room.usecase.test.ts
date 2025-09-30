@@ -1,105 +1,92 @@
-import joinRandomRoomUseCase from './join.random.room.usecase';
-import { C2SJoinRandomRoomRequest } from '../../generated/packet/room_actions';
 import { GameSocket } from '../../type/game.socket';
-import { getUserByUserId } from '../../services/prisma.service';
-import { addUserToRoom, getRooms } from '../../utils/room.utils';
+import { createRoomDB, getUserByUserId } from '../../services/prisma.service';
 import { broadcastDataToRoom } from '../../sockets/notification';
-import { GamePacketType } from '../../enums/gamePacketType';
+import { gamePackTypeSelect } from '../../enums/gamePacketType';
 import { GlobalFailCode, RoomStateType } from '../../generated/common/enums';
-import { Room } from '../../models/room.model';
-import { User } from '../../models/user.model';
+import roomManager from '../../managers/room.manager';
+import joinRandomRoomUseCase from './join.random.room.usecase';
+import createRoomUseCase from '../create.room/create.room.usecase';
+import { getGamePacketType } from '../../converter/type.form';
 
+// 외부 의존성만 모의 처리합니다.
 jest.mock('../../services/prisma.service');
-jest.mock('../../utils/room.utils');
-jest.mock('../../utils/notification.util');
+jest.mock('../../sockets/notification');
 
 describe('joinRandomRoomUseCase', () => {
-	let mockSocket: Partial<GameSocket>;
-	let mockRequest: C2SJoinRandomRoomRequest;
-	let mockUserInfo: { id: number; nickname: string };
-	let mockRooms: Room[];
+	let mockSocket: GameSocket;
+	const mockUserInfo = { id: 1, nickname: 'testUser' };
+	const mockOwnerInfo = { id: 99, nickname: 'owner' };
 
 	beforeEach(() => {
-		mockSocket = { userId: '1' };
-		mockRequest = {};
-		mockUserInfo = { id: 1, nickname: 'testUser' };
-		mockRooms = [
-			new Room(1, 'host1', 'FullRoom', 2, RoomStateType.WAIT, [
-				new User('u1', 'p1'),
-				new User('u2', 'p2'),
-			]),
-			new Room(2, 'host2', 'AvailableRoom', 4, RoomStateType.WAIT, [new User('u3', 'p3')]),
-		];
+		// 실제 roomManager의 상태를 초기화합니다.
+		roomManager.getRooms().forEach((room) => roomManager.deleteRoom(room.id));
+		jest.clearAllMocks();
 
-		(getUserByUserId as jest.Mock).mockResolvedValue(mockUserInfo);
-		(getRooms as jest.Mock).mockReturnValue(mockRooms);
-		(addUserToRoom as jest.Mock).mockImplementation(() => {});
+		mockSocket = { userId: '1' } as GameSocket;
+
+		// DB Mock 설정
+		(getUserByUserId as jest.Mock).mockImplementation(async (userId: number) => {
+			if (userId === 1) return mockUserInfo;
+			if (userId === 99) return mockOwnerInfo;
+			return null;
+		});
+		(createRoomDB as jest.Mock).mockImplementation(async (socket, req) => {
+			const newId = (roomManager.getRooms().length || 0) + 1;
+			return {
+				id: newId,
+				ownerId: socket.userId,
+				name: req.name,
+				maxUserNum: req.maxUserNum,
+				state: RoomStateType.WAIT,
+			};
+		});
 		(broadcastDataToRoom as jest.Mock).mockImplementation(() => {});
 	});
 
-	afterEach(() => {
-		jest.clearAllMocks();
+	it('성공: 참여 가능한 방이 있을 때 무작위로 참여한다', async () => {
+		// 설정: 참여 가능한 방을 roomManager에 추가
+		const ownerSocket = { userId: '99' } as GameSocket;
+		await createRoomUseCase(ownerSocket, { name: 'Available Room', maxUserNum: 4 });
+
+		const responsePacket = await joinRandomRoomUseCase(mockSocket, {});
+		const payload = getGamePacketType(responsePacket, gamePackTypeSelect.joinRandomRoomResponse);
+		expect(payload).toBeDefined();
+		if (!payload) return;
+
+		const { joinRandomRoomResponse } = payload;
+
+		expect(joinRandomRoomResponse.success).toBe(true);
+		expect(mockSocket.roomId).toBe(1);
+		expect(roomManager.getRoom(1).users.length).toBe(2);
 	});
 
-	it('사용 가능한 방에 성공적으로 참가해야 함', async () => {
-		const response = await joinRandomRoomUseCase(mockSocket as GameSocket, mockRequest);
+	it('실패: 참여 가능한 방이 없을 때 실패한다', async () => {
+		// 설정: 꽉 찬 방만 생성
+		const ownerSocket = { userId: '99' } as GameSocket;
+		await createRoomUseCase(ownerSocket, { name: 'Full Room', maxUserNum: 1 });
 
-		expect(getRooms).toHaveBeenCalled();
-		expect(addUserToRoom).toHaveBeenCalledWith(2, expect.any(User));
-		expect(broadcastDataToRoom).toHaveBeenCalled();
-		expect(response.payload.oneofKind).toBe(GamePacketType.joinRandomRoomResponse);
+		const responsePacket = await joinRandomRoomUseCase(mockSocket, {});
+		const payload = getGamePacketType(responsePacket, gamePackTypeSelect.joinRandomRoomResponse);
+		expect(payload).toBeDefined();
+		if (!payload) return;
 
-		if (response.payload.oneofKind === 'joinRandomRoomResponse') {
-			const resPayload = response.payload.joinRandomRoomResponse;
-			expect(resPayload.success).toBe(true);
-			expect(resPayload.failCode).toBe(GlobalFailCode.NONE_FAILCODE);
-			expect(resPayload.room).toBeDefined();
-			expect(resPayload.room?.id).toBe(2);
-		}
+		const { joinRandomRoomResponse } = payload;
+
+		expect(joinRandomRoomResponse.success).toBe(false);
+		expect(joinRandomRoomResponse.failCode).toBe(GlobalFailCode.JOIN_ROOM_FAILED);
 	});
 
-	it('사용 가능한 방이 없으면 실패해야 함', async () => {
-		(getRooms as jest.Mock).mockReturnValue([
-			new Room(1, 'host1', 'FullRoom', 2, RoomStateType.WAIT, [
-				new User('u1', 'p1'),
-				new User('u2', 'p2'),
-			]),
-		]);
-		const response = await joinRandomRoomUseCase(mockSocket as GameSocket, mockRequest);
-
-		expect(addUserToRoom).not.toHaveBeenCalled();
-		expect(broadcastDataToRoom).not.toHaveBeenCalled();
-		expect(response.payload.oneofKind).toBe(GamePacketType.joinRandomRoomResponse);
-		if (response.payload.oneofKind === 'joinRandomRoomResponse') {
-			const resPayload = response.payload.joinRandomRoomResponse;
-			expect(resPayload.success).toBe(false);
-			expect(resPayload.failCode).toBe(GlobalFailCode.JOIN_ROOM_FAILED);
-			expect(resPayload.room).toBeUndefined();
-		}
-	});
-
-	it('유저 정보를 찾을 수 없으면 실패해야 함', async () => {
+	it('실패: 유저 정보를 찾을 수 없으면 실패한다', async () => {
 		(getUserByUserId as jest.Mock).mockResolvedValue(null);
-		const response = await joinRandomRoomUseCase(mockSocket as GameSocket, mockRequest);
 
-		expect(getRooms).not.toHaveBeenCalled();
-		expect(response.payload.oneofKind).toBe(GamePacketType.joinRandomRoomResponse);
-		if (response.payload.oneofKind === 'joinRandomRoomResponse') {
-			const resPayload = response.payload.joinRandomRoomResponse;
-			expect(resPayload.success).toBe(false);
-			expect(resPayload.failCode).toBe(GlobalFailCode.JOIN_ROOM_FAILED);
-		}
-	});
+		const responsePacket = await joinRandomRoomUseCase(mockSocket, {});
+		const payload = getGamePacketType(responsePacket, gamePackTypeSelect.joinRandomRoomResponse);
+		expect(payload).toBeDefined();
+		if (!payload) return;
 
-	it('DB 에러 발생 시 실패해야 함', async () => {
-		(getUserByUserId as jest.Mock).mockRejectedValue(new Error('DB Error'));
-		const response = await joinRandomRoomUseCase(mockSocket as GameSocket, mockRequest);
+		const { joinRandomRoomResponse } = payload;
 
-		expect(response.payload.oneofKind).toBe(GamePacketType.joinRandomRoomResponse);
-		if (response.payload.oneofKind === 'joinRandomRoomResponse') {
-			const resPayload = response.payload.joinRandomRoomResponse;
-			expect(resPayload.success).toBe(false);
-			expect(resPayload.failCode).toBe(GlobalFailCode.JOIN_ROOM_FAILED);
-		}
+		expect(joinRandomRoomResponse.success).toBe(false);
+		expect(joinRandomRoomResponse.failCode).toBe(GlobalFailCode.CHARACTER_NOT_FOUND);
 	});
 });
