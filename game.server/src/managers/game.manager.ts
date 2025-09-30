@@ -89,7 +89,7 @@ class GameManager {
 
 				// room = (await containmentCard.checkContainmentUnitTarget(room.id)) || room;
 
-				setBombTimer.clearRoom(roomId); // 밤 페이즈에 모든 폭탄 타이머 제거
+				setBombTimer.clearRoom(room); // 밤 페이즈에 모든 폭탄 타이머 제거
 
 				// 2. 카드 처리 (죽은 플레이어 제외)
 				for (let user of room.users) {
@@ -208,7 +208,7 @@ class GameManager {
 		this.clearTimer(roomId);
 
 		// 방 종료 시 폭탄 타이머 정리
-		setBombTimer.clearRoom(room.id);
+		setBombTimer.clearRoom(room);
 
 		// 위치 변화 플래그 정리
 		roomPositionChanged.delete(room.id);

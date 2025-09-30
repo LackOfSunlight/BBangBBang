@@ -97,7 +97,7 @@ export const gameStartUseCase = async (
 					// { type: CardType.STEALTH_SUIT, count: 3 },
 					// { type: CardType.VACCINE, count: 3 },
 					// { type: CardType.WIN_LOTTERY, count: 3 },
-					// { type: CardType.BOMB, count: 3 },
+					{ type: CardType.BOMB, count: 3 },
 				];
 				character.handCardsCount = character.handCards.reduce((sum, card) => sum + card.count, 0);
 			}
