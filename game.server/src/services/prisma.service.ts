@@ -6,19 +6,21 @@ import { GameSocket } from '../type/game.socket';
 import { Room, RoomStateType } from '../generated/prisma';
 
 // DB에서 유저 가져오기
-export const getUserDB = async (
+export const getUserByUserId = async (
 	userId: number,
 ): Promise<{
 	id: number;
 	email: string;
 	nickname: string;
-	password: string;
-	token: string | null;
-	createdAt: Date;
 } | null> => {
 	const userData = await prisma.user.findUnique({
 		where: {
 			id: userId,
+		},
+		select: {
+			id: true,
+			email: true,
+			nickname: true,
 		},
 	});
 

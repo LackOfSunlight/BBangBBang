@@ -3,6 +3,7 @@
 module.exports = {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
+	setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
 	roots: ['<rootDir>/game.server/src'], // 테스트 파일 root 경로
 	moduleNameMapper: {
 		// 모듈 이름 매핑

@@ -1,9 +1,5 @@
 [
 	{
-		"type": "NONE",
-		"count": 0
-	},
-	{
 		"type": "BBANG",
 		"count": 20
 	},
@@ -37,11 +33,11 @@
 	},
 	{
 		"type": "HALLUCINATION",
-		"count": 0
+		"count": 4
 	},
 	{
 		"type": "FLEA_MARKET",
-		"count": 0
+		"count": 3
 	},
 	{
 		"type": "MATURED_SAVINGS",
@@ -86,14 +82,14 @@
 	},
 	{
 		"type": "CONTAINMENT_UNIT",
-		"count": 0
+		"count": 3
 	},
 	{
 		"type": "SATELLITE_TARGET",
-		"count": 0
+		"count": 1
 	},
 	{
 		"type": "BOMB",
-		"count": 0
+		"count": 1
 	}
 ]
