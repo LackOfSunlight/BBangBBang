@@ -9,10 +9,6 @@ export class DeathMatchCard implements ICard {
 	cardCategory: CardCategory = CardCategory.targetCard;
 
 	public useCard(room: Room, user: User, target: User): boolean {
-		const nowTime = Date.now();
-
-		const DEATH_MATCH_DURATION_MS = 10;
-
 		// 유효성 검증
 		if (!user.character || !target.character) return false;
 
@@ -33,14 +29,14 @@ export class DeathMatchCard implements ICard {
 			user.character.changeState(
 				CharacterStateType.DEATH_MATCH_TURN_STATE,
 				CharacterStateType.NONE_CHARACTER_STATE,
-				nowTime + DEATH_MATCH_DURATION_MS,
+				Number(process.env.NEXT_TIME),
 				target.id,
 			);
 
 			target.character.changeState(
 				CharacterStateType.DEATH_MATCH_STATE,
 				CharacterStateType.NONE_CHARACTER_STATE,
-				nowTime + DEATH_MATCH_DURATION_MS,
+				Number(process.env.NEXT_TIME),
 				user.id,
 			);
 		}

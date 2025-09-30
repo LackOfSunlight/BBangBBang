@@ -33,7 +33,7 @@ export class BigBBangCard implements ICard {
 				user.character.changeState(
 					CharacterStateType.BIG_BBANG_SHOOTER,
 					CharacterStateType.NONE_CHARACTER_STATE,
-					5,
+					Number(process.env.NEXT_TIME),
 				);
 				continue;
 			}
@@ -42,7 +42,7 @@ export class BigBBangCard implements ICard {
 				user.character.changeState(
 					CharacterStateType.BIG_BBANG_TARGET,
 					CharacterStateType.NONE_CHARACTER_STATE,
-					5,
+					Number(process.env.NEXT_TIME),
 					shooter.id,
 				);
 			}

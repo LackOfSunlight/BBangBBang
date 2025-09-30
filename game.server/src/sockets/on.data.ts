@@ -3,6 +3,20 @@ import { handleError } from '../handlers/handleError.js';
 import { GamePacket } from '../generated/gamePacket.js';
 import { gamePacketDispatcher } from '../dispatcher/game.packet.dispatcher.js';
 
+// import { fileURLToPath } from 'url';
+// import * as fs from 'fs';
+// import * as path from 'path';
+
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+
+// const logDir = path.join(__dirname, 'logs');
+// const hexLogFile = path.join(logDir, 'packets.hex');
+
+// if (!fs.existsSync(logDir)) {
+// 	fs.mkdirSync(logDir, { recursive: true });
+// }
+
 interface Packet {
 	payloadType: number;
 	version: string;
@@ -57,6 +71,11 @@ export const onData = (socket: Socket, chunk: Buffer) => {
 			};
 
 			console.log(`패킷 수신: type=${packet.payloadType}, seq=${packet.sequence}`);
+
+			// 🔥 패킷 전체(hex 문자열) 저장
+			// const fullPacketHex = buffer.subarray(0, payloadEnd).toString('hex');
+			// fs.appendFileSync(hexLogFile, fullPacketHex + '\n');
+			///
 
 			const gamePacket = GamePacket.fromBinary(payloadBuf);
 			// handleGamePacket(socket, gamePacket);

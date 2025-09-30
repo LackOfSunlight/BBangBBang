@@ -1,7 +1,6 @@
 import { Room } from '../models/room.model';
 import { User } from '../models/user.model';
 import { CharacterStateType } from '../generated/common/enums';
-import { stateChangeService } from './state.change.service';
 
 export const CheckBigBbangService = (room: Room): Room => {
 	const users: User[] = room.users;
@@ -20,7 +19,7 @@ export const CheckBigBbangService = (room: Room): Room => {
 	if (!hasValidTarget) {
 		for (const u of users) {
 			if (u.character?.stateInfo?.state === CharacterStateType.BIG_BBANG_SHOOTER) {
-				stateChangeService(u);
+				u.character.changeState();
 			}
 		}
 	}

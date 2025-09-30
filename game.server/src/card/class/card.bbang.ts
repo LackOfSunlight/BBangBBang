@@ -48,14 +48,14 @@ export class BBangCard implements ICard {
 				user.character.changeState(
 					CharacterStateType.DEATH_MATCH_STATE,
 					CharacterStateType.DEATH_MATCH_TURN_STATE,
-					10,
+					Number(process.env.NEXT_TIME),
 					target.id,
 				);
 
 				target.character.changeState(
 					CharacterStateType.DEATH_MATCH_TURN_STATE,
 					CharacterStateType.DEATH_MATCH_STATE,
-					10,
+					Number(process.env.NEXT_TIME),
 					user.id,
 				);
 
