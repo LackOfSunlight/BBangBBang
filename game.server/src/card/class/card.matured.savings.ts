@@ -15,21 +15,21 @@ export class MaturedSavingsCard implements ICard {
 			return false;
 		}
 
-		room.removeCard(user, CardType.MATURED_SAVINGS);
-		// 뽑을 카드 매수
-		const numberOfDraw = 2;
+		// 뽑을 카드 매수 ; 환경변수로 관리 (default: 2)
+		const drawCount = Number(process.env.MATURED_SAVINGS_DRAW_COUNT) || 2;
 		// 덱에 남은 카드 매수
-		const remainCardNumberInDeck = room.getDeckSize();
+		const deckSize = room.getDeckSize();
 		// 덱 매수 부족할 경우 중단
-		if (remainCardNumberInDeck < numberOfDraw) {
+		if (deckSize < drawCount) {
 			console.error(`[MATURED_SAVINGS]덱에서 뽑을 카드가 부족합니다.`);
 			return false;
 		}
 
+		room.removeCard(user, CardType.MATURED_SAVINGS);
 		// 카드 2장 뽑기(메인 기믹) 공지
-		const drawnCards = room.drawDeck(numberOfDraw);
+		const drawnCards = room.drawDeck(drawCount);
 		console.log(
-			`[MATURED_SAVINGS]유저 ${user.id}(이)가 카드 ${numberOfDraw}장을 획득하였습니다\n획득 카드 : `,
+			`[MATURED_SAVINGS]유저 ${user.id}(이)가 카드 ${drawCount}장을 획득하였습니다\n획득 카드 : `,
 		);
 
 		// 뽑은 카드 정리 및 공지

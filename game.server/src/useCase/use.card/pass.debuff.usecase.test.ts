@@ -1,4 +1,4 @@
-import passDebuffUseCase from './pass.debuff.usecase';
+import passDebuffUseCase from '../pass.debuff/pass.debuff.usecase';
 import { CardType, GlobalFailCode } from '../../generated/common/enums';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { Room } from '../../models/room.model';

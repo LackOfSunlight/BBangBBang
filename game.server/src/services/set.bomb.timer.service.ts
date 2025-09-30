@@ -66,14 +66,14 @@ class SetBombTimer {
 	}
 
 	// 방의 잔여 타이머 전부 초기화
-	public clearRoom(roomId: number) {
+	public clearRoom(room: Room) {
 		for (const key of this.bombTimers.keys()) {
-			if (key.startsWith(`${roomId}:`)) {
+			if (key.startsWith(`${room.id}:`)) {
 				clearInterval(this.bombTimers.get(key)!.timer);
 				this.bombTimers.delete(key);
 			}
 		}
-		console.log(`[BOMB] Room ${roomId} 타이머 제거 완료`);
+		console.log(`[BOMB] Room ${room.id} 타이머 제거 완료`);
 	}
 }
 export const setBombTimer = SetBombTimer.getInstance();
