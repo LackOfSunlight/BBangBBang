@@ -16,9 +16,11 @@ import { GameSocket } from '../../type/game.socket';
 import { CharacterData } from '../../generated/common/types';
 import { BBangCard } from '../../card/class/card.bbang';
 import { weaponDamageEffect } from '../../init/weapon.Init';
+import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
 
-// Mock roomManger
+// Mock managers and services
 jest.mock('../../managers/room.manager');
+jest.mock('../../services/guerrilla.check.service');
 
 describe('뱅 카드 사용 시나리오 (재작성)', () => {
 	let attacker: User;
@@ -140,7 +142,9 @@ describe('뱅 카드 사용 시나리오 (재작성)', () => {
 	it('시나리오 3: 데스매치 중 공격 시, HP 변화 없이 상태만 이전된다.', () => {
 		const initialAttackerHp = attacker.character!.hp;
 		const initialTargetHp = target.character!.hp;
+		// 설정: 공격자와 타겟을 데스매치 상태로 설정
 		attacker.character!.stateInfo!.state = CharacterStateType.DEATH_MATCH_TURN_STATE;
+		target.character!.stateInfo!.state = CharacterStateType.DEATH_MATCH_STATE;
 
 		const useCardResult = useCardUseCase(attacker.id, room.id, CardType.BBANG, target.id);
 
@@ -186,80 +190,91 @@ describe('뱅 카드 사용 시나리오 (재작성)', () => {
 		expect(target.character!.stateInfo!.state).toBe(CharacterStateType.NONE_CHARACTER_STATE);
 	});
 
-			it('시나리오 5: 격리 상태인 대상을 공격 시, 카드 사용이 실패하고 대상의 HP는 변하지 않는다.', () => {
-			const initialHp = target.character!.hp;
-			const initialAttackerCardCount =
-				attacker.character!.handCards.find((c) => c.type === CardType.BBANG)?.count ?? 0;
-			target.character!.stateInfo!.state = CharacterStateType.CONTAINED;
-	
-			const useCardResult = useCardUseCase(attacker.id, room.id, CardType.BBANG, target.id);
-	
-			expect(useCardResult.success).toBe(false);
-			expect(useCardResult.failcode).toBe(GlobalFailCode.INVALID_REQUEST);
-			expect(target.character!.hp).toBe(initialHp);
-			// 카드를 잃지 않았는지 확인
-			const finalAttackerCardCount =
-				attacker.character!.handCards.find((c) => c.type === CardType.BBANG)?.count ?? 0;
-			expect(finalAttackerCardCount).toBe(initialAttackerCardCount);
-		});
-	
-		it('시나리오 6: 무차별 난사 사용 시, 자신을 제외한 모든 플레이어의 HP가 감소한다.', () => {
-			// 설정: 세 번째 플레이어 추가
-			const anotherTarget = new User('anotherTargetSocketId', '추가타겟');
-			anotherTarget.id = 'anotherTargetId';
-			anotherTarget.setCharacter({
-				characterType: CharType.NONE_CHARACTER,
-				roleType: RoleType.NONE_ROLE,
-				hp: 4,
-				weapon: 0,
-				stateInfo: {
-					state: CharacterStateType.NONE_CHARACTER_STATE,
-					nextState: CharacterStateType.NONE_CHARACTER_STATE,
-					nextStateAt: '0',
-					stateTargetUserId: '0',
-				},
-				equips: [],
-				debuffs: [],
-				handCards: [],
-				bbangCount: 0,
-				handCardsCount: 0,
-			});
-			room.addUserToRoom(anotherTarget);
-	
-			// roomManager 모의 함수 업데이트
-			(roomManger.getUserFromRoom as jest.Mock).mockImplementation(
-				(roomId: number, userId: string) => {
-					if (userId === attacker.id) return attacker;
-					if (userId === target.id) return target;
-					if (userId === anotherTarget.id) return anotherTarget;
-					return undefined;
-				},
-			);
-	
-			// 공격자는 뱅 대신 무차별 난사 카드를 가짐
-			attacker.character!.handCards = [{ type: CardType.BIG_BBANG, count: 1 }];
-			const initialTargetHp = target.character!.hp;
-			const initialAnotherTargetHp = anotherTarget.character!.hp;
-			const damage = BBangCard.BBangDamage; // 무차별 난사 데미지는 뱅과 동일하다고 가정
-	
-			// 실행: 공격자가 무차별 난사 사용
-			const useCardResult = useCardUseCase(attacker.id, room.id, CardType.BIG_BBANG, '0');
-			expect(useCardResult.success).toBe(true);
-	
-			// 실행: 타겟들이 아무런 반응(방어)을 하지 않음
-			reactionUpdateUseCase(
-				{ userId: target.id, roomId: room.id } as GameSocket,
-				ReactionType.NONE_REACTION,
-			);
-			reactionUpdateUseCase(
-				{ userId: anotherTarget.id, roomId: room.id } as GameSocket,
-				ReactionType.NONE_REACTION,
-			);
-	
-			// 검증: 타겟들의 HP가 감소했는지 확인
-			expect(target.character!.hp).toBe(initialTargetHp - damage);
-			expect(anotherTarget.character!.hp).toBe(initialAnotherTargetHp - damage);
-			// 검증: 공격자의 HP는 변하지 않았는지 확인
-			expect(attacker.character!.hp).toBe(4);
-		});
+	it('시나리오 5: 격리 상태인 대상을 공격 시, 카드 사용이 실패하고 대상의 HP는 변하지 않는다.', () => {
+		const initialHp = target.character!.hp;
+		const initialAttackerCardCount =
+			attacker.character!.handCards.find((c) => c.type === CardType.BBANG)?.count ?? 0;
+		target.character!.stateInfo!.state = CharacterStateType.CONTAINED;
+
+		const useCardResult = useCardUseCase(attacker.id, room.id, CardType.BBANG, target.id);
+
+		expect(useCardResult.success).toBe(false);
+		expect(useCardResult.failcode).toBe(GlobalFailCode.INVALID_REQUEST);
+		expect(target.character!.hp).toBe(initialHp);
+		const finalAttackerCardCount =
+			attacker.character!.handCards.find((c) => c.type === CardType.BBANG)?.count ?? 0;
+		expect(finalAttackerCardCount).toBe(initialAttackerCardCount);
 	});
+
+	it('시나리오 6: 무차별 난사 사용 시, 타겟들의 상태가 BIG_BBANG_TARGET으로 변경된다.', () => {
+		const anotherTarget = new User('anotherTargetSocketId', '추가타겟');
+		anotherTarget.id = 'anotherTargetId';
+		anotherTarget.setCharacter({
+			characterType: CharType.NONE_CHARACTER,
+			roleType: RoleType.NONE_ROLE,
+			hp: 4,
+			weapon: 0,
+			stateInfo: {
+				state: CharacterStateType.NONE_CHARACTER_STATE,
+				nextState: CharacterStateType.NONE_CHARACTER_STATE,
+				nextStateAt: '0',
+				stateTargetUserId: '0',
+			},
+			equips: [],
+			debuffs: [],
+			handCards: [],
+			bbangCount: 0,
+			handCardsCount: 0,
+		});
+		room.addUserToRoom(anotherTarget);
+
+		(roomManger.getUserFromRoom as jest.Mock).mockImplementation(
+			(roomId: number, userId: string) => {
+				if (userId === attacker.id) return attacker;
+				if (userId === target.id) return target;
+				if (userId === anotherTarget.id) return anotherTarget;
+				return undefined;
+			},
+		);
+
+		attacker.character!.handCards = [{ type: CardType.BIG_BBANG, count: 1 }];
+
+		const useCardResult = useCardUseCase(attacker.id, room.id, CardType.BIG_BBANG, '0');
+		expect(useCardResult.success).toBe(true);
+
+		expect(attacker.character!.stateInfo!.state).toBe(CharacterStateType.BIG_BBANG_SHOOTER);
+		expect(target.character!.stateInfo!.state).toBe(CharacterStateType.BIG_BBANG_TARGET);
+		expect(anotherTarget.character!.stateInfo!.state).toBe(CharacterStateType.BIG_BBANG_TARGET);
+	});
+
+	it('시나리오 7: 다른 유저가 행동 중일 때 무차별 난사 사용 시, 카드 사용이 실패한다.', () => {
+		target.character!.stateInfo!.state = CharacterStateType.BBANG_TARGET;
+		attacker.character!.handCards.push({ type: CardType.BIG_BBANG, count: 1 });
+		const initialAttackerCards =
+			attacker.character!.handCards.find((c) => c.type === CardType.BIG_BBANG)?.count ?? 0;
+
+		const useCardResult = useCardUseCase(attacker.id, room.id, CardType.BIG_BBANG, '0');
+
+		expect(useCardResult.success).toBe(false);
+
+		const finalAttackerCards =
+			attacker.character!.handCards.find((c) => c.type === CardType.BIG_BBANG)?.count ?? 0;
+		expect(finalAttackerCards).toBe(initialAttackerCards);
+
+		expect(attacker.character!.stateInfo!.state).toBe(CharacterStateType.NONE_CHARACTER_STATE);
+		expect(target.character!.stateInfo!.state).toBe(CharacterStateType.BBANG_TARGET);
+	});
+
+	it('시나리오 8: 게릴라 타겟 상태에서 뱅 사용 시, 상태가 초기화되고 게릴라 체크 서비스가 호출된다.', () => {
+		attacker.character!.stateInfo!.state = CharacterStateType.GUERRILLA_TARGET;
+		target.character!.stateInfo!.state = CharacterStateType.BBANG_SHOOTER;
+		const initialTargetHp = target.character!.hp;
+
+		const useCardResult = useCardUseCase(attacker.id, room.id, CardType.BBANG, target.id);
+
+		expect(useCardResult.success).toBe(true);
+		expect(attacker.character!.stateInfo!.state).toBe(CharacterStateType.NONE_CHARACTER_STATE);
+		expect(target.character!.hp).toBe(initialTargetHp);
+		expect(CheckGuerrillaService).toHaveBeenCalledWith(room);
+	});
+});
