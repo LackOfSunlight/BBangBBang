@@ -42,7 +42,7 @@ function createFakeRoom(id: number, users: any[]) {
   } as any;
 }
 
-describe('mock객체를 활용한 통합테스트', () => {
+describe('Bomb Test', () => {
   let room: any;
   let user: any;
   let target: any;
