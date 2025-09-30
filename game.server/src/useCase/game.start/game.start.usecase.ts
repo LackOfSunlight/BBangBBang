@@ -76,7 +76,7 @@ export const gameStartUseCase = async (
 
 				character.handCards = [
 					// { type: CardType.HALLUCINATION, count: 3 },
-					// { type: CardType.SHIELD, count: 3 },
+					{ type: CardType.SHIELD, count: 6 },
 					// { type: CardType.SNIPER_GUN, count: 1 },
 					{ type: CardType.BBANG, count: 10 },
 					// { type: CardType.BIG_BBANG, count: 3 },
@@ -90,7 +90,7 @@ export const gameStartUseCase = async (
 					// { type: CardType.FLEA_MARKET, count: 3 },
 					// { type: CardType.HAND_GUN, count: 3 },
 					// { type: CardType.GUERRILLA, count: 3 },
-					// { type: CardType.LASER_POINTER, count: 3 },
+					{ type: CardType.LASER_POINTER, count: 3 },
 					// { type: CardType.MATURED_SAVINGS, count: 3 },
 					// { type: CardType.RADAR, count: 3 },
 					// { type: CardType.SATELLITE_TARGET, count: 3 },
