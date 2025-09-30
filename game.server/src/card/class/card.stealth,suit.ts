@@ -15,7 +15,7 @@ export class StealthSuitCard implements ICard {
 		if (user.character.equips.includes(CardType.STEALTH_SUIT)) return false;
 
 		user.character.equips.push(CardType.STEALTH_SUIT);
-		room.removeCard(user, CardType.STEALTH_SUIT);
+		user.character.removeHandCard(CardType.STEALTH_SUIT);
 
 		return true;
 	}

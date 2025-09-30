@@ -14,8 +14,9 @@ export class AutoRifleCard implements ICard {
 
 		if (user.character.weapon === CardType.AUTO_RIFLE) return false;
 
+		if (user.character.weapon) room.repeatDeck([user.character.weapon]);
 		user.character.weapon = CardType.AUTO_RIFLE;
-		room.removeCard(user, CardType.AUTO_RIFLE);
+		user.character.removeHandCard(CardType.AUTO_RIFLE);
 
 		return true;
 	}

@@ -200,7 +200,6 @@ export class Room {
 	public removeCard(user: User, cardType: CardType) {
 		if (!user.character) return;
 
-		console.log('111111111111111111111111111111111111111111');
 		user.character.removeHandCard(cardType);
 
 		this.repeatDeck([cardType]);

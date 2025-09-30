@@ -33,7 +33,8 @@ export class BombCard implements ICard {
 			return false;
 		}
 
-		room.removeCard(user, CardType.BOMB);
+		user.character.removeHandCard(CardType.BOMB);
+
 		// 이미 해당 디버프 상태일 경우 ; 중복 검증
 		if (target.character.debuffs.includes(CardType.BOMB)) {
 			console.error(`[BOMB]이미 ${target.nickname} 유저는 폭탄을 보유중입니다.`);
@@ -70,6 +71,7 @@ export class BombCard implements ICard {
 		}
 
 		takeDamageService(room, userInExplode, 2);
+		room.repeatDeck([CardType.BOMB]);
 		userInExplode.character.debuffs.splice(bombCardIndex, 1);
 		checkAndEndGameIfNeeded(room.id);
 
