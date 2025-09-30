@@ -2,14 +2,14 @@ import loginUseCase from './login.usecase';
 import { C2SLoginRequest } from '../../generated/packet/auth';
 import { GameSocket } from '../../type/game.socket';
 import { getUserByEmail, setTokenService } from '../../services/prisma.service';
-import checkUserPassword from '../../services/login/check.user.password';
+import checkUserPassword from '../../services/login.request.handler/check.user.password';
 import socketManager from '../../managers/socket.manger';
 import { gamePackTypeSelect } from '../../enums/gamePacketType';
 import { GlobalFailCode } from '../../generated/common/enums';
 import { getGamePacketType } from '../../converter/type.form';
 
 jest.mock('../../services/prisma.service');
-jest.mock('../../services/login/check.user.password');
+jest.mock('../../services/login.request.handler/check.user.password');
 jest.mock('../../managers/socket.manger');
 
 describe('loginUseCase', () => {
