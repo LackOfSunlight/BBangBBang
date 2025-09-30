@@ -16,7 +16,7 @@ export class MaturedSavingsCard implements ICard {
 		}
 
 		room.removeCard(user, CardType.MATURED_SAVINGS);
-		// 뽑을 카드 매수 ; 환경변수로 관리
+		// 뽑을 카드 매수 ; 환경변수로 관리 (default: 2)
 		const numberOfDraw = Number(process.env.MATURED_SAVINGS_DRAW_COUNT);
 		// 덱에 남은 카드 매수
 		const remainCardNumberInDeck = room.getDeckSize();
