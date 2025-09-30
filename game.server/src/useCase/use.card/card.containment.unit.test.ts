@@ -1,4 +1,4 @@
-import { ContainmentUnitCard } from '../class/card.containment.unit';
+import { ContainmentUnitCard } from '../../card/class/card.containment.unit';
 import { CardType, CharacterStateType } from '../../generated/common/enums';
 import { CardCategory } from '../../enums/card.category';
 import roomManager from '../../managers/room.manager';
