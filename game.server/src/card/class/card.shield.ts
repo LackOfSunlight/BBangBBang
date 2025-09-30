@@ -19,26 +19,23 @@ export class ShieldCard implements ICard {
 			return false;
 		}
 
-		room.removeCard(user, CardType.SHIELD);
-
 		if (user.character.stateInfo.state === CharacterStateType.BBANG_TARGET) {
-			// const shooter = room.users.find((u) => u.id === user.character?.stateInfo?.stateTargetUserId);
-
 			if (!target.character) return false;
 
 			const requiredShields = this.requiredShieldCount(target);
+			const userShields =
+				user.character.handCards.find((c) => c.type === CardType.SHIELD)?.count ?? 0;
 
-			if (requiredShields > 0) {
+			if (userShields >= requiredShields) {
 				this.removeShields(user, requiredShields);
-			}
-
-			user.character.changeState();
-
-			if (target.character.stateInfo) {
-				target.character.changeState();
-				target.character.bbangCount += 1;
+				user.character.changeState();
+				if (target.character.stateInfo) {
+					target.character.changeState();
+					target.character.bbangCount += 1;
+				}
 			}
 		} else {
+			room.removeCard(user, CardType.SHIELD);
 			user.character.changeState();
 		}
 
@@ -67,10 +64,15 @@ export class ShieldCard implements ICard {
 		const isShark = shooter!.character!.characterType === CharacterType.SHARK;
 		const hasLaser = shooter!.character!.equips.includes(CardType.LASER_POINTER);
 
-		let requiredShields = 0;
-		if (isShark) requiredShields += 1;
-		if (hasLaser) requiredShields += 1;
-		if (isShark && hasLaser) requiredShields += 1;
+		let requiredShields = 1;
+		if (isShark && hasLaser) {
+			requiredShields = Number(process.env.SynergyRequiredShield);
+			console.log(requiredShields);
+		} else if (isShark) {
+			requiredShields = Number(process.env.SharkRequiredShield);
+		} else if (hasLaser) {
+			requiredShields = Number(process.env.LaserRequiredShield);
+		}
 
 		return requiredShields;
 	};
