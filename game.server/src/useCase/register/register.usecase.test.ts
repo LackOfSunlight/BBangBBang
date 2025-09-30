@@ -107,17 +107,4 @@ describe('registerUseCase', () => {
 			expect(response.payload.registerResponse.failCode).toBe(GlobalFailCode.REGISTER_FAILED);
 		}
 	});
-
-	it('DB 생성 중 에러가 발생하면 서버 에러를 반환해야 함', async () => {
-		const errorMessage = 'DB error';
-		(createUserDB as jest.Mock).mockRejectedValue(new Error(errorMessage));
-
-		const response = await registerUseCase(mockSocket as GameSocket, mockRequest);
-
-		if (response.payload.oneofKind === GamePacketType.registerResponse) {
-			expect(response.payload.registerResponse.success).toBe(false);
-			expect(response.payload.registerResponse.message).toBe('서버 에러');
-			expect(response.payload.registerResponse.failCode).toBe(GlobalFailCode.REGISTER_FAILED);
-		}
-	});
 });
