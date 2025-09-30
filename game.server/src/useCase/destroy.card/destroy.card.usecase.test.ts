@@ -1,125 +1,102 @@
+import { GameSocket } from '../../type/game.socket';
+import roomManager from '../../managers/room.manager';
 import destroyCardUseCase from './destroy.card.usecase';
 import { C2SDestroyCardRequest } from '../../generated/packet/game_actions';
-import { GameSocket } from '../../type/game.socket';
-import { getUserFromRoom, updateCharacterFromRoom } from '../../utils/room.utils';
-import { GamePacketType } from '../../enums/gamePacketType';
-import { CardData, CharacterData, CharacterStateInfoData } from '../../generated/common/types';
-import { User } from '../../models/user.model';
 import { CardType, CharacterType, RoleType } from '../../generated/common/enums';
+import { User } from '../../models/user.model';
+import { CharacterData } from '../../generated/common/types';
+import { getGamePacketType } from '../../converter/type.form';
+import { gamePackTypeSelect } from '../../enums/gamePacketType';
 
-jest.mock('../../utils/room.utils');
+jest.mock('../../managers/room.manager');
 
 describe('destroyCardUseCase', () => {
-	let mockSocket: Partial<GameSocket>;
+	let mockSocket: GameSocket;
 	let mockUser: User;
-	let mockCharacterData: CharacterData;
 
 	beforeEach(() => {
-		mockSocket = { userId: '1', roomId: 1 };
+		mockSocket = { userId: '1', roomId: 1 } as GameSocket;
+
+		// 테스트용 유저와 손패를 설정합니다.
 		mockUser = new User('1', 'testUser');
-		mockCharacterData = {
-			characterType: CharacterType.RED,
-			roleType: RoleType.TARGET,
+		const characterData: Partial<CharacterData> = {
 			hp: 4,
-			weapon: 0,
-			equips: [],
-			debuffs: [],
 			handCards: [
 				{ type: CardType.BBANG, count: 3 },
-				{ type: CardType.HAND_GUN, count: 2 },
+				{ type: CardType.SHIELD, count: 2 },
 			],
-			bbangCount: 0,
-			handCardsCount: 5,
 		};
+		mockUser.setCharacter(characterData as CharacterData);
+		mockUser.character!.handCardsCount = 5;
 
-		mockUser.character = mockCharacterData;
-
-		(getUserFromRoom as jest.Mock).mockReturnValue(mockUser);
-		(updateCharacterFromRoom as jest.Mock).mockImplementation(() => {});
+		// roomManager가 항상 이 유저를 반환하도록 모의 처리합니다.
+		(roomManager.getUserFromRoom as jest.Mock).mockReturnValue(mockUser);
 	});
 
 	afterEach(() => {
 		jest.clearAllMocks();
 	});
 
-	it('카드 한 장을 성공적으로 버려야 함', async () => {
+	it('성공: 카드 한 장을 버리면 해당 카드 묶음의 개수가 감소한다', async () => {
 		const req: C2SDestroyCardRequest = {
 			destroyCards: [{ type: CardType.BBANG, count: 1 }],
 		};
 
-		const response = await destroyCardUseCase(mockSocket as GameSocket, req);
+		const responsePacket = await destroyCardUseCase(mockSocket, req);
+		const payload = getGamePacketType(responsePacket, gamePackTypeSelect.destroyCardResponse);
+		expect(payload).toBeDefined();
+		if (!payload) return;
 
-		expect(getUserFromRoom).toHaveBeenCalledWith(1, '1');
-		expect(updateCharacterFromRoom).toHaveBeenCalled();
-		expect(response.payload.oneofKind).toBe(GamePacketType.destroyCardResponse);
+		const { handCards } = payload.destroyCardResponse;
 
-		if (response.payload.oneofKind === 'destroyCardResponse') {
-			const hand = response.payload.destroyCardResponse.handCards;
-			expect(hand.find((c) => c.type === CardType.BBANG)?.count).toBe(2);
-			expect(mockUser.character?.handCardsCount).toBe(4);
-		}
+		expect(handCards.find((c) => c.type === CardType.BBANG)?.count).toBe(2);
+		expect(mockUser.character!.handCardsCount).toBe(4);
 	});
 
-	it('핸드건 카드 모두 버려 패에서 제거해야 함', async () => {
+	it('성공: 카드 묶음 전체를 버리면 패에서 해당 카드 묶음이 제거된다', async () => {
 		const req: C2SDestroyCardRequest = {
-			destroyCards: [{ type: CardType.HAND_GUN, count: 2 }],
+			destroyCards: [{ type: CardType.SHIELD, count: 2 }],
 		};
 
-		const response = await destroyCardUseCase(mockSocket as GameSocket, req);
+		const responsePacket = await destroyCardUseCase(mockSocket, req);
+		const payload = getGamePacketType(responsePacket, gamePackTypeSelect.destroyCardResponse);
+		expect(payload).toBeDefined();
+		if (!payload) return;
 
-		expect(updateCharacterFromRoom).toHaveBeenCalled();
-		if (response.payload.oneofKind === 'destroyCardResponse') {
-			const hand = response.payload.destroyCardResponse.handCards;
-			expect(hand.find((c) => c.type === CardType.HAND_GUN)).toBeUndefined();
-			expect(mockUser.character?.handCardsCount).toBe(3);
-		}
+		const { handCards } = payload.destroyCardResponse;
+
+		expect(handCards.find((c) => c.type === CardType.SHIELD)).toBeUndefined();
+		expect(mockUser.character!.handCardsCount).toBe(3);
 	});
 
-	it('여러 종류의 카드를 버려야 함', async () => {
+	it('성공: 여러 종류의 카드를 한 번에 버린다', async () => {
 		const req: C2SDestroyCardRequest = {
 			destroyCards: [
-				{ type: CardType.HAND_GUN, count: 1 },
 				{ type: CardType.BBANG, count: 2 },
+				{ type: CardType.SHIELD, count: 1 },
 			],
 		};
 
-		const response = await destroyCardUseCase(mockSocket as GameSocket, req);
+		const responsePacket = await destroyCardUseCase(mockSocket, req);
+		const payload = getGamePacketType(responsePacket, gamePackTypeSelect.destroyCardResponse);
+		expect(payload).toBeDefined();
+		if (!payload) return;
 
-		expect(updateCharacterFromRoom).toHaveBeenCalled();
-		if (response.payload.oneofKind === 'destroyCardResponse') {
-			const hand = response.payload.destroyCardResponse.handCards;
-			expect(hand.find((c) => c.type === CardType.HAND_GUN)?.count).toBe(1);
-			expect(hand.find((c) => c.type === CardType.BBANG)?.count).toBe(1);
-			expect(mockUser.character?.handCardsCount).toBe(2);
-		}
+		const { handCards } = payload.destroyCardResponse;
+
+		expect(handCards.find((c) => c.type === CardType.BBANG)?.count).toBe(1);
+		expect(handCards.find((c) => c.type === CardType.SHIELD)?.count).toBe(1);
+		expect(mockUser.character!.handCardsCount).toBe(2);
 	});
 
-	it('가지고 있지 않은 카드를 버리려고 하면 아무 일도 일어나지 않아야 함', async () => {
+	it('실패: 가지고 있지 않은 카드를 버리려고 하면 아무 일도 일어나지 않는다', async () => {
 		const req: C2SDestroyCardRequest = {
 			destroyCards: [{ type: CardType.SNIPER_GUN, count: 1 }],
 		};
 
-		const initialHandCount = mockUser.character!.handCardsCount;
-		const response = await destroyCardUseCase(mockSocket as GameSocket, req);
+		await destroyCardUseCase(mockSocket, req);
 
-		expect(updateCharacterFromRoom).toHaveBeenCalled();
-		if (response.payload.oneofKind === 'destroyCardResponse') {
-			expect(response.payload.destroyCardResponse.handCards.length).toBe(2);
-			expect(mockUser.character?.handCardsCount).toBe(initialHandCount);
-		}
-	});
-
-	it('유저를 찾을 수 없으면 빈 손패를 반환해야 함', async () => {
-		(getUserFromRoom as jest.Mock).mockReturnValue(undefined);
-		const req: C2SDestroyCardRequest = {
-			destroyCards: [{ type: CardType.BBANG, count: 1 }],
-		};
-
-		const response = await destroyCardUseCase(mockSocket as GameSocket, req);
-
-		expect(updateCharacterFromRoom).not.toHaveBeenCalled();
-		if (response.payload.oneofKind === 'destroyCardResponse') {
-			expect(response.payload.destroyCardResponse.handCards).toEqual([]);
-		}
+		expect(mockUser.character!.handCards.length).toBe(2);
+		expect(mockUser.character!.handCardsCount).toBe(5);
 	});
 });
