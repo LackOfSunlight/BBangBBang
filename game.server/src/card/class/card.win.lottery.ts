@@ -15,7 +15,7 @@ export class WinLotteryCard implements ICard {
 
 		room.removeCard(user, CardType.WIN_LOTTERY);
 
-		const LOTTERY_CARD_COUNT = 3;
+		const LOTTERY_CARD_COUNT = Number(process.env.WIN_LOTTERY_DRAW) || 3;
 
 		const newCardTypes = room.drawDeck(LOTTERY_CARD_COUNT);
 
