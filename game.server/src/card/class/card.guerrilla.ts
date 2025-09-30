@@ -27,7 +27,7 @@ export class GuerrillaCard implements ICard {
 				user.character.changeState(
 					CharacterStateType.GUERRILLA_SHOOTER,
 					CharacterStateType.NONE_CHARACTER_STATE,
-					5,
+					Number(process.env.NEXT_TIME),
 				);
 
 				continue;
@@ -37,7 +37,7 @@ export class GuerrillaCard implements ICard {
 				user.character.changeState(
 					CharacterStateType.GUERRILLA_TARGET,
 					CharacterStateType.NONE_CHARACTER_STATE,
-					5,
+					Number(process.env.NEXT_TIME),
 					shooter.id,
 				);
 			}
