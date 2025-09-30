@@ -8,3 +8,5 @@ game.server/dist/
 # Generated Prisma Client
 /game.server/src/generated/prisma
 /game.server/dist/ 
+
+.husky
