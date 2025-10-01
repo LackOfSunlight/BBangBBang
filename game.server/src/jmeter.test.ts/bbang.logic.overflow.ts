@@ -91,8 +91,7 @@ const bbangLogicOverflowTest = async (socket: Socket) => {
 
 	if (i >= 10) i = 0;
 
-	socket.write('전송완료\n');
-	// socket.end();
+	socket.end();
 };
 
 export default bbangLogicOverflowTest;

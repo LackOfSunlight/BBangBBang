@@ -1,6 +1,5 @@
 import { GamePacketType } from '../enums/gamePacketType';
 import { GamePacket } from '../generated/gamePacket';
-import { User } from '../models/user.model';
 import { GameSocket } from '../type/game.socket';
 import { sendData } from './send.data';
 import { connectedSockets } from '../managers/socket.manger';
@@ -13,8 +12,6 @@ export const broadcastDataToRoom = (
 	packetType: GamePacketType,
 	excludeSocket?: GameSocket,
 ) => {
-	console.log(`${gamePacket.payload}`);
-
 	users.forEach((user) => {
 		const targetSocket = connectedSockets.get(user.id);
 		if (targetSocket && (!excludeSocket || targetSocket.userId !== excludeSocket.userId)) {

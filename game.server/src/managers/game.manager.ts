@@ -50,7 +50,7 @@ class GameManager {
 
 	private scheduleNextPhase(roomId: number, roomTimerMapId: string) {
 		this.clearTimer(roomTimerMapId);
-		const dayInterval = 10000; // 1분
+		const dayInterval = 60000; // 1분
 		const eveningInterval = 30000; //30초
 
 		const targetRoomPhase = roomPhase.get(roomTimerMapId);
@@ -170,11 +170,6 @@ class GameManager {
 			};
 
 			const toRoom = room.toData();
-
-			for (let user of room.users) {
-				console.log(`캐릭터타입: ${user.character?.characterType}`);
-				console.log(`캐릭터 카드수: ${user.character?.handCardsCount}`);
-			}
 
 			broadcastDataToRoom(toRoom.users, phaseGamePacket, GamePacketType.phaseUpdateNotification);
 
