@@ -1,6 +1,7 @@
 import { Socket } from 'net';
 import jmeterTestHandler from '../handlers/jmeter.test.handler';
 import { cleanupSocketBuffer } from './on.data';
+import socketManger from '../managers/socket.manger';
 
 const onJmeterConnection = (socket: Socket) => {
 	let buffer = '';

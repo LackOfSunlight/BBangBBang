@@ -15,6 +15,7 @@ import { Character } from '../models/character.model';
 import { CharacterStateInfoData } from '../generated/common/types';
 import roomManager from '../managers/room.manager';
 import { Socket } from 'net';
+import socketManger from '../managers/socket.manger';
 
 let i = 0;
 
@@ -23,6 +24,8 @@ const bbangLogicOverflowTest = async (socket: Socket) => {
 
 	gs.userId = `${999999 + i}`;
 	gs.roomId = 999999 + i;
+
+	socketManger.addSocket(gs);
 
 	const user: User = new User(gs.userId, `테스트${gs.userId}`);
 	const target: User = new User(`${888888 + i}`, '타켓유저');
@@ -90,6 +93,8 @@ const bbangLogicOverflowTest = async (socket: Socket) => {
 	await useCardHandler(gs, gamePacket);
 
 	if (i >= 10) i = 0;
+
+	socketManger.removeSocket(gs);
 
 	socket.end();
 };
