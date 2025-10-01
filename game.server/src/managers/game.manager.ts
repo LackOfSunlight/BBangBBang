@@ -79,8 +79,6 @@ class GameManager {
 
 				// room = (await containmentCard.checkContainmentUnitTarget(room.id)) || room;
 
-				setBombTimer.clearRoom(room); // 밤 페이즈에 모든 폭탄 타이머 제거
-
 				// 2. 카드 처리 (죽은 플레이어 제외)
 				for (let user of room.users) {
 					if (user.character != null && user.character.hp > 0) {
@@ -130,6 +128,9 @@ class GameManager {
 				const toRoom = room.toData();
 
 				broadcastDataToRoom(toRoom.users, userGamePacket, GamePacketType.userUpdateNotification);
+			}
+			else if (nextPhase === PhaseType.END) {
+				setBombTimer.clearRoom(room); // 밤 페이즈에 모든 폭탄 타이머 제거
 			}
 
 			const characterPosition = shuffle(spawnPositions);
