@@ -40,11 +40,12 @@ export const reactionUpdateUseCase = async (
 			switch (user.character.stateInfo.state) {
 				case CharacterStateType.BBANG_TARGET: {
 					// 피격자(user)와 공격자(shooter) 정보 확인
+					const bbagCard = getCard(CardType.BBANG) as BBangCard;
 					const shooterId = user.character.stateInfo.stateTargetUserId;
 					const shooter = room.users.find((u) => u.id === shooterId);
 					if (!shooter || !shooter.character) break;
 
-					let damage = 1; // 기본 데미지
+					let damage = bbagCard.BBangDamage; // 기본 데미지
 
 					damage = weaponDamageEffect(damage, shooter.character);
 
