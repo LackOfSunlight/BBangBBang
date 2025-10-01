@@ -1,7 +1,12 @@
 import { BBangCard } from '../../card/class/card.bbang';
 import { GameSocket } from '../../type/game.socket';
 import { GamePacketType } from '../../enums/gamePacketType';
-import { ReactionType, GlobalFailCode, CharacterStateType } from '../../generated/common/enums';
+import {
+	ReactionType,
+	GlobalFailCode,
+	CharacterStateType,
+	CardType,
+} from '../../generated/common/enums';
 import { weaponDamageEffect } from '../../init/weapon.Init';
 import { CheckBigBbangService } from '../../services/bigbbang.check.service';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
@@ -9,6 +14,7 @@ import { broadcastDataToRoom } from '../../sockets/notification';
 import takeDamageService from '../../services/take.damage.service';
 import { userUpdateNotificationPacketForm } from '../../converter/packet.form';
 import roomManger from '../../managers/room.manager';
+import { getCard } from '../../dispatcher/apply.card.dispacher';
 
 export const reactionUpdateUseCase = async (
 	socket: GameSocket,
@@ -29,17 +35,20 @@ export const reactionUpdateUseCase = async (
 	// 메인 로직
 	if (reactionType === ReactionType.NONE_REACTION) {
 		const user = room.users.find((u) => u.id === userId);
-		console.log(`유저id:${user?.id}`);
+
 		if (user != null && user.character && user.character.stateInfo) {
 			switch (user.character.stateInfo.state) {
 				case CharacterStateType.BBANG_TARGET: {
 					// 피격자(user)와 공격자(shooter) 정보 확인
+					const bbagCard = getCard(CardType.BBANG) as BBangCard;
 					const shooterId = user.character.stateInfo.stateTargetUserId;
 					const shooter = room.users.find((u) => u.id === shooterId);
 					if (!shooter || !shooter.character) break;
 
-					let damage = BBangCard.BBangDamage; // 기본 데미지
+					let damage = bbagCard.BBangDamage; // 기본 데미지
+
 					damage = weaponDamageEffect(damage, shooter.character);
+
 					takeDamageService(room, user, damage, shooter);
 
 					// 4. 공통: 처리 후 상태 복구
