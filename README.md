@@ -25,7 +25,7 @@
 
 * TCP 소켓 기반 실시간 통신
 * 방 생성/참여/목록 조회
-* 저지연 위치 동기화(주기 브로드캐스트)
+* 100ms 주기 위치 동기화
 
 </td>
 <td width="25%" valign="top">
@@ -34,7 +34,7 @@
 
 * **23종**의 카드 효과
 * 역할 기반 승리 조건
-* 페이즈 시스템(DAY/EVENING/END)
+* 페이즈 시스템(DAY/END)
 
 </td>
 <td width="25%" valign="top">
@@ -89,15 +89,17 @@
 * **흡수(Absorb)**: 상대의 카드를 강제로 가져오기
 * **폭탄 돌리기(Bomb)**: 일정 시간 후 폭발하는 디버프
 
-덱은 시작 시 셔플되며, **매 ‘낮(DAY)’ 시작 시 카드 2장**이 지급됩니다. 사용된 카드는 **덱 뒤로 되돌아가 재사용**되므로 **장기 운영 전략**이 중요합니다.
+덱은 시작 시 셔플되며, **매 DAY 페이즈 시작 시 카드 2장**이 지급됩니다. 사용된 카드는 **덱 뒤로 되돌아가 재사용**되므로 **장기 운영 전략**이 중요합니다.
 
 ### ⏳ 게임 진행
 
 게임은 **페이즈(Phase)** 단위로 진행됩니다.
 
-1. **DAY (3분)**: 이동 및 카드 사용, 전투가 벌어지는 메인 시간
-2. **EVENING (30초)**: 체력보다 많은 카드를 버리는 정리 단계
-3. **END**: 하루 종료 및 승리 조건 체크
+1. **DAY (60초)**: 이동 및 카드 사용, 전투가 벌어지는 메인 시간
+2. **END (30초)**: 
+   - 체력보다 많은 카드를 버리는 정리 단계
+   - 하루 종료 및 다음 DAY로 전환
+   - 승리 조건 체크
 
 ### 🧍 캐릭터와 스폰
 
@@ -123,7 +125,7 @@
 * 상단 **덱 버튼**으로 보유 카드를 확인·사용합니다.
 * 카드는 **공격 · 방어 · 회복 · 무기 · 장비 · 디버프**로 구분되며, 상황에 맞는 전략이 필요합니다.
 * 사용된 카드는 **덱 뒤로** 돌아가 **재사용**됩니다.
-* **낮(DAY) 시작마다 카드 2장**이 자동 지급됩니다.
+* **DAY 페이즈 시작마다 카드 2장**이 자동 지급됩니다.
 
 ---
 
@@ -169,17 +171,19 @@ BBangBBang/
 ├── game.server/
 │   ├── src/
 │   │   ├── card/         # 각 카드의 고유 효과 로직
+│   │   ├── converter/    # 패킷 변환 및 생성
 │   │   ├── data/         # 게임 데이터(카드/스폰 등)
-│   │   ├── dispatcher/   # 패킷 → 핸들러 분배
+│   │   ├── dispatcher/   # 패킷/카드 효과 분배
 │   │   ├── enums/        # 열거형 타입
-│   │   ├── factory/      # 응답 패킷 생성
 │   │   ├── generated/    # .proto → TS 생성물
 │   │   ├── handlers/     # 클라 요청 처리
+│   │   ├── init/         # 초기화 로직
 │   │   ├── managers/     # 게임 상태 관리
 │   │   ├── models/       # 엔티티(User, Room 등)
 │   │   ├── proto/        # Protocol Buffers 정의
 │   │   ├── services/     # 보조 비즈니스 로직
 │   │   ├── sockets/      # 소켓 연결/수신/에러 처리
+│   │   ├── type/         # TypeScript 타입 정의
 │   │   ├── useCase/      # 핵심 비즈니스 로직
 │   │   └── utils/        # 공통 유틸 함수
 │   └── app.ts            # 서버 엔트리포인트
@@ -203,19 +207,20 @@ BBangBBang/
 
    * **Handler**: `handlers/*.handler.ts`가 요청을 받아 `UseCase` 호출
    * **UseCase**: `useCase/**/*.usecase.ts`에서 핵심 로직 수행(Managers/Models 조작)
-   * **Factory**: `factory/packet.factory.ts`로 응답 패킷 생성
+   * **Converter**: `converter/packet.form.ts`로 응답 패킷 생성
 5. **응답·알림**
 
-   * 응답은 요청자에게 전송(`utils/send.data.ts`)
-   * 방 전체 공지는 브로드캐스트(`utils/notification.util.ts`)
+   * 응답은 요청자에게 전송(`sockets/send.data.ts`)
+   * 방 전체 공지는 브로드캐스트(`sockets/notification.ts`)
 
 ## ⚙️ 주요 컴포넌트
 
 * **Packet Dispatcher**: `Map`으로 패킷 타입 ↔ 핸들러 1:1 매핑, 신규 패킷 확장 용이
 * **Card Effect System**: `src/card/`에 카드별 모듈, `applyCardEffect`로 동적 적용
-* **Game Manager**: 페이즈/타이머 등 전체 흐름 관리(싱글톤)
-* **Card Manager**: 덱/드로우/셔플 관리(싱글톤)
-* **State Management**: 룸/유저/덱 상태를 메모리(Map)로 관리
+* **Game Manager**: 페이즈/타이머 등 전체 게임 흐름 관리(싱글톤)
+* **Room Manager**: 방 생성/삭제/조회 및 유저 관리(싱글톤)
+* **Socket Manager**: 소켓 연결 관리 및 userId 매핑(싱글톤)
+* **Room Model**: 각 방의 카드 덱/드로우/셔플 관리
 
 ## 🚀 실행 및 테스트 방법
 
@@ -243,10 +248,10 @@ npm run dev
 
 ### 프로덕션 빌드 및 실행
 
-```bash
+    ```bash
 npm run build   # TS → JS 컴파일
 npm start       # 빌드 산출물 실행
-```
+    ```
 
 ### 테스트 실행
 
