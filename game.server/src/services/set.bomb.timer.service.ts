@@ -1,4 +1,4 @@
-import { warnNotificationPacketForm } from '../converter/packet.form';
+import { userUpdateNotificationPacketForm, warnNotificationPacketForm } from '../converter/packet.form';
 import { broadcastDataToRoom } from '../sockets/notification';
 import { CardType, WarningType } from '../generated/common/enums';
 import { GamePacketType } from '../enums/gamePacketType';
@@ -71,6 +71,22 @@ class SetBombTimer {
 			if (key.startsWith(`${room.id}:`)) {
 				clearInterval(this.bombTimers.get(key)!.timer);
 				this.bombTimers.delete(key);
+
+				const userId = key.split(':')[1];
+				const user = room.users.find(u => u.id === userId);
+				if ( user && user.character && user.character.debuffs.includes(CardType.BOMB)) {
+					const idx = user.character.debuffs.findIndex((c) => c === CardType.BOMB);
+					if (idx !== undefined && idx >= 0) {
+						user.character.debuffs.splice(idx, 1);
+					}
+					const toRoom = room.toData();
+					
+					const updateClient = userUpdateNotificationPacketForm(toRoom.users);
+					broadcastDataToRoom(toRoom.users, updateClient, GamePacketType.userUpdateNotification);
+					
+					const clearBomb = warnNotificationPacketForm(WarningType.NO_WARNING, `0`);
+					broadcastDataToRoom(toRoom.users, clearBomb, GamePacketType.warningNotification);
+				}
 			}
 		}
 		console.log(`[BOMB] Room ${room.id} 타이머 제거 완료`);
