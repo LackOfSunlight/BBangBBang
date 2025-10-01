@@ -7,10 +7,6 @@ import onJmeterConnection from './sockets/on.jmeter.connection.js';
 
 dotenv.config();
 
-if (!process.env.BBANG_DAMAG) {
-	throw process.env;
-}
-
 const PORT = 3000;
 
 const JMETER_PORT = 4000;
