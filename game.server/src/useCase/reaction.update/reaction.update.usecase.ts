@@ -1,7 +1,12 @@
 import { BBangCard } from '../../card/class/card.bbang';
 import { GameSocket } from '../../type/game.socket';
 import { GamePacketType } from '../../enums/gamePacketType';
-import { ReactionType, GlobalFailCode, CharacterStateType } from '../../generated/common/enums';
+import {
+	ReactionType,
+	GlobalFailCode,
+	CharacterStateType,
+	CardType,
+} from '../../generated/common/enums';
 import { weaponDamageEffect } from '../../init/weapon.Init';
 import { CheckBigBbangService } from '../../services/bigbbang.check.service';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
@@ -9,6 +14,7 @@ import { broadcastDataToRoom } from '../../sockets/notification';
 import takeDamageService from '../../services/take.damage.service';
 import { userUpdateNotificationPacketForm } from '../../converter/packet.form';
 import roomManger from '../../managers/room.manager';
+import { getCard } from '../../dispatcher/apply.card.dispacher';
 
 export const reactionUpdateUseCase = async (
 	socket: GameSocket,
@@ -38,7 +44,7 @@ export const reactionUpdateUseCase = async (
 					const shooter = room.users.find((u) => u.id === shooterId);
 					if (!shooter || !shooter.character) break;
 
-					let damage = BBangCard.BBangDamage; // 기본 데미지
+					let damage = (getCard(CardType.BBANG) as BBangCard).BBangDamage; // 기본 데미지
 
 					damage = weaponDamageEffect(damage, shooter.character);
 
