@@ -44,7 +44,7 @@ export const reactionUpdateUseCase = async (
 					const shooter = room.users.find((u) => u.id === shooterId);
 					if (!shooter || !shooter.character) break;
 
-					let damage = (getCard(CardType.BBANG) as BBangCard).BBangDamage; // 기본 데미지
+					let damage = 1; // 기본 데미지
 
 					damage = weaponDamageEffect(damage, shooter.character);
 
