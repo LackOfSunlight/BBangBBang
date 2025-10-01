@@ -39,7 +39,7 @@ const passDebuffUseCase = async (
 		}
 
 		// 3. 요청자가 해당 디버프를 가지고 있는지 확인
-		const hasDebuff = fromUser.character!!.debuffs.includes(CardType.BOMB);
+		const hasDebuff = fromUser.character!.debuffs.includes(CardType.BOMB);
 		// 4. 대상자가 이미 해당 디버프를 가지고 있는지 확인
 		const alreadyDebuffed = toUser.character!.debuffs.includes(CardType.BOMB);
 		if (!hasDebuff || alreadyDebuffed) {
