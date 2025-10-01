@@ -84,7 +84,7 @@ export const gameStartUseCase = async (
 					// { type: CardType.AUTO_RIFLE, count: 3 },
 					// { type: CardType.AUTO_SHIELD, count: 3 },
 					// { type: CardType.CALL_119, count: 3 },
-					// { type: CardType.CONTAINMENT_UNIT, count: 3 },
+					{ type: CardType.CONTAINMENT_UNIT, count: 3 },
 					{ type: CardType.DEATH_MATCH, count: 3 },
 					// { type: CardType.DESERT_EAGLE, count: 3 },
 					// { type: CardType.FLEA_MARKET, count: 3 },
