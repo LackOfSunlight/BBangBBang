@@ -77,7 +77,7 @@ export class BombCard implements ICard {
 
 		const toRoom = room.toData();
 
-		//animation 추후 추가 예정
+		//animation
 		playAnimationHandler(toRoom.users, userInExplode.id, AnimationType.BOMB_ANIMATION);
 
 		const userUpdateNotificationPacket = userUpdateNotificationPacketForm(toRoom.users);

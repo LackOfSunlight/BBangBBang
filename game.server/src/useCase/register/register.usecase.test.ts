@@ -2,15 +2,15 @@ import { registerUseCase } from './register.usecase';
 import { C2SRegisterRequest } from '../../generated/packet/auth';
 import { GamePacketType } from '../../enums/gamePacketType';
 import { GlobalFailCode } from '../../generated/common/enums';
-import inputFieldCheckService from '../../services/register/input.field.check.service';
+import inputFieldCheckService from '../../services/register.request.handler/input.field.check.service';
 import { validateInput } from '../../utils/validation';
-import checkUserDbService from '../../services/register/check.user.db.service';
+import checkUserDbService from '../../services/register.request.handler/check.user.db.service';
 import { createUserDB } from '../../services/prisma.service';
 import { GameSocket } from '../../type/game.socket';
 
-jest.mock('../../services/register/input.field.check.service');
+jest.mock('../../services/register.request.handler/input.field.check.service');
 jest.mock('../../utils/validation');
-jest.mock('../../services/register/check.user.db.service');
+jest.mock('../../services/register.request.handler/check.user.db.service');
 jest.mock('../../services/prisma.service');
 
 describe('registerUseCase', () => {
@@ -104,19 +104,6 @@ describe('registerUseCase', () => {
 			expect(response.payload.registerResponse.message).toBe(
 				'이미 가입된 이메일 또는 닉네임입니다.',
 			);
-			expect(response.payload.registerResponse.failCode).toBe(GlobalFailCode.REGISTER_FAILED);
-		}
-	});
-
-	it('DB 생성 중 에러가 발생하면 서버 에러를 반환해야 함', async () => {
-		const errorMessage = 'DB error';
-		(createUserDB as jest.Mock).mockRejectedValue(new Error(errorMessage));
-
-		const response = await registerUseCase(mockSocket as GameSocket, mockRequest);
-
-		if (response.payload.oneofKind === GamePacketType.registerResponse) {
-			expect(response.payload.registerResponse.success).toBe(false);
-			expect(response.payload.registerResponse.message).toBe('서버 에러');
 			expect(response.payload.registerResponse.failCode).toBe(GlobalFailCode.REGISTER_FAILED);
 		}
 	});

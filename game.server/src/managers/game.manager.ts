@@ -20,8 +20,6 @@ export const notificationCharacterPosition = new Map<
 	Map<string, CharacterPositionData> // userId → 위치 배열
 >();
 
-const prisonPosition: CharacterPositionData = JSON.parse(process.env.PRISON_POSITION!);
-
 // 위치 변화 감지 플래그 (성능 최적화용)
 export const roomPositionChanged = new Map<number, boolean>();
 
@@ -58,6 +56,7 @@ class GameManager {
 		const targetRoomPhase = roomPhase.get(roomTimerMapId);
 		const nextPhase = targetRoomPhase === PhaseType.DAY ? PhaseType.END : PhaseType.DAY;
 		const interval = targetRoomPhase === PhaseType.DAY ? dayInterval : eveningInterval;
+		const prisonPosition: CharacterPositionData = JSON.parse(process.env.PRISON_POSITION!);
 
 		const timer = setTimeout(async () => {
 			const timerExecutionTime = Date.now();
@@ -78,6 +77,8 @@ class GameManager {
 				// room = (await satelliteCard.checkSatelliteTargetEffect(room)) || room; // room 상태 변수 재갱신
 
 				// room = (await containmentCard.checkContainmentUnitTarget(room.id)) || room;
+
+				setBombTimer.clearRoom(room); // 밤 페이즈에 모든 폭탄 타이머 제거
 
 				// 2. 카드 처리 (죽은 플레이어 제외)
 				for (let user of room.users) {
@@ -196,7 +197,7 @@ class GameManager {
 		this.clearTimer(roomId);
 
 		// 방 종료 시 폭탄 타이머 정리
-		setBombTimer.clearRoom(room.id);
+		setBombTimer.clearRoom(room);
 
 		// 위치 변화 플래그 정리
 		roomPositionChanged.delete(room.id);

@@ -3,10 +3,10 @@ import { getUserByEmail, setTokenService } from '../../services/prisma.service';
 import { GlobalFailCode } from '../../generated/common/enums';
 import { GamePacket } from '../../generated/gamePacket';
 import { UserData } from '../../generated/common/types';
-import checkUserPassword from '../../services/login/check.user.password';
 import { GameSocket } from '../../type/game.socket';
 import socketManger from '../../managers/socket.manger';
 import { loginResponseForm } from '../../converter/packet.form';
+import checkUserPassword from '../../services/login.request.handler/check.user.password';
 
 const loginUseCase = async (socket: GameSocket, req: C2SLoginRequest): Promise<GamePacket> => {
 	try {
@@ -46,7 +46,6 @@ const loginUseCase = async (socket: GameSocket, req: C2SLoginRequest): Promise<G
 
 		return loginResponseForm(true, '로그인 성공', token, GlobalFailCode.NONE_FAILCODE, user);
 	} catch (error) {
-		
 		return loginResponseForm(false, '서버 에러', ' ', GlobalFailCode.UNKNOWN_ERROR);
 	}
 };
