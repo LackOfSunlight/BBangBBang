@@ -88,7 +88,19 @@ export const reactionUpdateUseCase = async (
 	for (let user of toRoom.users) {
 		console.log(`유저 아이디 ${user.id}`);
 		console.log(`유저 닉네임 ${user.nickname}`);
-		console.log(`${user.character?.characterType}`);
+		console.log(`타입: ${user.character?.characterType}`);
+		console.log(`빵카운트 ${user.character?.bbangCount}`);
+		console.log(`디버프 ${user.character?.debuffs}`);
+		console.log(`장착 ${user.character?.equips}`);
+		console.log(`손에 카드 ${user.character?.handCards}`);
+		console.log(`총 카드수 ${user.character?.handCardsCount}`);
+		console.log(`hp ${user.character?.hp}`);
+		console.log(`역할 ${user.character?.roleType}`);
+		console.log(`상태 ${user.character?.stateInfo}`);
+		console.log(`현재상태 ${user.character?.stateInfo?.state}`);
+		console.log(`다음상태 ${user.character?.stateInfo?.nextState}`);
+		console.log(`시간 ${user.character?.stateInfo?.nextStateAt}`);
+		console.log(`타켓 유저 ${user.character?.stateInfo?.stateTargetUserId}`);
 	}
 
 	const userUpdateNotificationPacket = userUpdateNotificationPacketForm(toRoom.users);
