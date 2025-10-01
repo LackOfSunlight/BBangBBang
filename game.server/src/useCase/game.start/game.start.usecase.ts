@@ -81,7 +81,7 @@ export const gameStartUseCase = async (
 					{ type: CardType.BBANG, count: 10 },
 					// { type: CardType.BIG_BBANG, count: 3 },
 					// { type: CardType.ABSORB, count: 3 },
-					// { type: CardType.AUTO_RIFLE, count: 3 },
+					{ type: CardType.AUTO_RIFLE, count: 3 },
 					// { type: CardType.AUTO_SHIELD, count: 3 },
 					// { type: CardType.CALL_119, count: 3 },
 					// { type: CardType.CONTAINMENT_UNIT, count: 3 },

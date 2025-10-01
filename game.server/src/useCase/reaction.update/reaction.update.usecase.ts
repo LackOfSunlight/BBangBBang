@@ -40,15 +40,19 @@ export const reactionUpdateUseCase = async (
 
 					let damage = BBangCard.BBangDamage; // 기본 데미지
 					damage = weaponDamageEffect(damage, shooter.character);
+					console.log('11111111111111111111111111111111111111');
 					takeDamageService(room, user, damage, shooter);
+					console.log('22222222222222222222222222222222222222222');
 
 					// 4. 공통: 처리 후 상태 복구
 					if (user.character.stateInfo) {
 						user.character.changeState();
+						console.log('333333333333333333333333333333');
 					}
 					if (shooter.character.stateInfo) {
 						shooter.character.changeState();
 						shooter.character.bbangCount += 1;
+						console.log('44444444444444444444444444444444444444');
 					}
 
 					break;
