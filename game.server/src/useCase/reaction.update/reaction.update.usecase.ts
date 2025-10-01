@@ -39,7 +39,7 @@ export const reactionUpdateUseCase = async (
 					if (!shooter || !shooter.character) break;
 
 					let damage = BBangCard.BBangDamage; // 기본 데미지
-					console.log(`데미지 ${damage}`);
+
 					damage = weaponDamageEffect(damage, shooter.character);
 
 					takeDamageService(room, user, damage, shooter);
