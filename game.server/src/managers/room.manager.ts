@@ -97,7 +97,7 @@ class RoomManger {
 		};
 
 		// 배열에 반영
-		room.users[userIndex].setUserData(updatedUser.id,updatedUser.nickname,updatedUser.character);
+		room.users[userIndex].setUserData(updatedUser.id, updatedUser.nickname, updatedUser.character);
 	}
 
 	// 전체 방 불러오기
@@ -122,19 +122,16 @@ class RoomManger {
 		if (!user) return [];
 
 		// 속성값을 배열로 추출
-		const userValues = Object.entries(user)
-			//.filter(([key]) => key !== 'id') // id 제외
-			.map(([_, value]) => value); // 값만 배열로 저장
+		const userValues = Object.values(user);
 
 		return userValues;
 	}
 
-	public getRoomByUser(userId: string) : Room | null{
-		
-		for(let room of rooms.values()){
-			const user = room.users.find(u => u.id === userId);
+	public getRoomByUser(userId: string): Room | null {
+		for (let room of rooms.values()) {
+			const user = room.users.find((u) => u.id === userId);
 
-			if(user) return room;
+			if (user) return room;
 		}
 
 		return null;

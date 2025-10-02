@@ -56,6 +56,7 @@ class GameManager {
 		const targetRoomPhase = roomPhase.get(roomTimerMapId);
 		const nextPhase = targetRoomPhase === PhaseType.DAY ? PhaseType.END : PhaseType.DAY;
 		const interval = targetRoomPhase === PhaseType.DAY ? dayInterval : eveningInterval;
+
 		const prisonPosition: CharacterPositionData = JSON.parse(process.env.PRISON_POSITION!);
 
 		const timer = setTimeout(async () => {
@@ -69,22 +70,13 @@ class GameManager {
 
 				for (const card of cardPool.values()) {
 					if ('onNewDay' in card) {
-						console.log('이거 실행되지는 확인');
 						await (card as IPeriodicEffectCard).onNewDay(room);
 					}
 				}
 
-				// room = (await satelliteCard.checkSatelliteTargetEffect(room)) || room; // room 상태 변수 재갱신
-
-				// room = (await containmentCard.checkContainmentUnitTarget(room.id)) || room;
-
 				// 2. 카드 처리 (죽은 플레이어 제외)
 				for (let user of room.users) {
 					if (user.character != null && user.character.hp > 0) {
-						console.log(
-							`${user.nickname}의 상태1:${CharacterStateType[user.character!.stateInfo!.state]}`,
-						);
-
 						//카드 삭제
 						if (user.character.handCardsCount > user.character.hp) {
 							const removedCards = user.character.trashCards();
@@ -109,10 +101,6 @@ class GameManager {
 							user.character!.stateInfo!.stateTargetUserId = '0';
 						}
 					}
-
-					console.log(
-						`${user.nickname}의 상태2:${CharacterStateType[user.character!.stateInfo!.state]}`,
-					);
 				}
 
 				const userGamePacket: GamePacket = {
@@ -127,8 +115,7 @@ class GameManager {
 				const toRoom = room.toData();
 
 				broadcastDataToRoom(toRoom.users, userGamePacket, GamePacketType.userUpdateNotification);
-			}
-			else if (nextPhase === PhaseType.END) {
+			} else if (nextPhase === PhaseType.END) {
 				setBombTimer.clearRoom(room); // 밤 페이즈에 모든 폭탄 타이머 제거
 			}
 
@@ -171,11 +158,6 @@ class GameManager {
 			};
 
 			const toRoom = room.toData();
-
-			for (let user of room.users) {
-				console.log(`캐릭터타입: ${user.character?.characterType}`);
-				console.log(`캐릭터 카드수: ${user.character?.handCardsCount}`);
-			}
 
 			broadcastDataToRoom(toRoom.users, phaseGamePacket, GamePacketType.phaseUpdateNotification);
 

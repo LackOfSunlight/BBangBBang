@@ -38,8 +38,6 @@ export const sendData = (
 	]);
 
 	socket.write(packetBuffer);
-
-	console.log(`패킷 전송 type:${type}, seq:${sequence}, length: ${packetBuffer.length}`);
 };
 
 const getTypeNumber = (gamePacketType: GamePacketType) => {

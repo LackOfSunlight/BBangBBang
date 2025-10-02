@@ -1,7 +1,7 @@
 [
 	{
 		"type": "BBANG",
-		"count": 20
+		"count": 30
 	},
 	{
 		"type": "BIG_BBANG",
@@ -13,7 +13,7 @@
 	},
 	{
 		"type": "VACCINE",
-		"count": 6
+		"count": 4
 	},
 	{
 		"type": "CALL_119",
@@ -37,15 +37,15 @@
 	},
 	{
 		"type": "FLEA_MARKET",
-		"count": 3
+		"count": 5
 	},
 	{
 		"type": "MATURED_SAVINGS",
-		"count": 2
+		"count": 5
 	},
 	{
 		"type": "WIN_LOTTERY",
-		"count": 1
+		"count": 5
 	},
 	{
 		"type": "SNIPER_GUN",
@@ -82,7 +82,7 @@
 	},
 	{
 		"type": "CONTAINMENT_UNIT",
-		"count": 3
+		"count": 1
 	},
 	{
 		"type": "SATELLITE_TARGET",

@@ -56,8 +56,6 @@ export const onData = (socket: Socket, chunk: Buffer) => {
 				payload: payloadBuf,
 			};
 
-			console.log(`패킷 수신: type=${packet.payloadType}, seq=${packet.sequence}`);
-
 			const gamePacket = GamePacket.fromBinary(payloadBuf);
 			// handleGamePacket(socket, gamePacket);
 			gamePacketDispatcher(socket, gamePacket);

@@ -64,8 +64,7 @@ export class ContainmentUnitCard implements ICard, IPeriodicEffectCard {
 		if (!user || !user.character || !user.character.stateInfo) return;
 
 		// 탈출 확률
-		const escapeProb = 50;
-		// 실제확률 25; // 테스트용 99;
+		const escapeProb = 90;
 
 		if (user.character.debuffs.includes(CardType.CONTAINMENT_UNIT)) {
 			switch (user.character.stateInfo.state) {
