@@ -43,7 +43,7 @@ export class BombCard implements ICard {
 
 		target.character.debuffs.push(CardType.BOMB);
 
-		const explosionTime = Date.now() + 30000;
+		const explosionTime = Date.now() + 15000;
 
 		const toRoom = room.toData();
 		// 시작전 패킷 송신

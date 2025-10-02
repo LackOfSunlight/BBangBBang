@@ -13,8 +13,6 @@ export const broadcastDataToRoom = (
 	packetType: GamePacketType,
 	excludeSocket?: GameSocket,
 ) => {
-	console.log(`${gamePacket.payload}`);
-
 	users.forEach((user) => {
 		const targetSocket = connectedSockets.get(user.id);
 		if (targetSocket && (!excludeSocket || targetSocket.userId !== excludeSocket.userId)) {

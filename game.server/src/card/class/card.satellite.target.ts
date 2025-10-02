@@ -55,8 +55,8 @@ export class SatelliteTargetCard implements ICard, IPeriodicEffectCard {
 		const target = roomManager.getUserFromRoom(room.id, user.id);
 		if (!target || !target.character) return;
 
-		const probability = 0.03; // 대낮에 번개 맞을 확률
-		const damage = 3; // 번개 데미지
+		const probability = 0.3; // 대낮에 번개 맞을 확률
+		const damage = 2; // 번개 데미지
 
 		// 지정 확률로 효과 발동
 		const isEffectTriggered = Math.random() < probability;

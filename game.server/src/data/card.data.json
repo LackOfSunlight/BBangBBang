@@ -1,7 +1,7 @@
 [
 	{
 		"type": "BBANG",
-		"count": 30
+		"count": 25
 	},
 	{
 		"type": "BIG_BBANG",
@@ -53,16 +53,16 @@
 	},
 	{
 		"type": "HAND_GUN",
-		"count": 2
+		"count": 5
 	},
 	{
 		"type": "DESERT_EAGLE",
-		"count": 3
+		"count": 1
 	},
 
 	{
 		"type": "AUTO_RIFLE",
-		"count": 2
+		"count": 1
 	},
 	{
 		"type": "LASER_POINTER",
