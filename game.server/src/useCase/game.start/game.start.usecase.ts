@@ -74,8 +74,6 @@ export const gameStartUseCase = async (
 					}
 				});
 
-				user.character!.handCards = [{ type: CardType.CONTAINMENT_UNIT, count: 1 }];
-
 				character.handCardsCount = character.handCards.reduce((sum, card) => sum + card.count, 0);
 			}
 		}
