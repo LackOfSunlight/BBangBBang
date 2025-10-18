@@ -66,12 +66,12 @@ export class ShieldCard implements ICard {
 
 		let requiredShields = 1;
 		if (isShark && hasLaser) {
-			requiredShields = Number(process.env.SynergyRequiredShield);
+			requiredShields = Number(process.env.SYNERGY_REQUIRED_SHELD);
 			console.log(requiredShields);
 		} else if (isShark) {
-			requiredShields = Number(process.env.SharkRequiredShield);
+			requiredShields = Number(process.env.SHARK_REQUIRED_SHELD);
 		} else if (hasLaser) {
-			requiredShields = Number(process.env.LaserRequiredShield);
+			requiredShields = Number(process.env.LASER_REQUIRED_SHELD);
 		}
 
 		return requiredShields;
