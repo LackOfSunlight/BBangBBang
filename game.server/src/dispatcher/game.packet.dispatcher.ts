@@ -18,10 +18,17 @@ import destroyCardHandler from '../handlers/destroy.card.handler';
 import cardSelectHandler from '../handlers/card.select.handler';
 import passDebuffHandler from '../handlers/pass.debuff.handler';
 
+// 새로운 Auth 도메인 핸들러들
+import newRegisterHandler from '../domains/auth/handlers/register.handler';
+import newLoginHandler from '../domains/auth/handlers/login.handler';
+
+// Feature Flag: 새로운 Auth 핸들러 사용 여부
+const USE_NEW_AUTH_HANDLERS = process.env.USE_NEW_AUTH === 'true';
+
 const handlers: Record<RequestPacketType, (socket: Socket, gamePacket: GamePacket) => void> = {
 	// Requests
-	[GamePacketType.registerRequest]: registerHandler,
-	[GamePacketType.loginRequest]: loginHandler,
+	[GamePacketType.registerRequest]: USE_NEW_AUTH_HANDLERS ? newRegisterHandler : registerHandler,
+	[GamePacketType.loginRequest]: USE_NEW_AUTH_HANDLERS ? newLoginHandler : loginHandler,
 	[GamePacketType.createRoomRequest]: createRoomHandler,
 	[GamePacketType.getRoomListRequest]: getRoomListHandler,
 	[GamePacketType.joinRoomRequest]: joinRoomHandler,
@@ -48,6 +55,11 @@ export function gamePacketDispatcher(socket: Socket, gamePacket: GamePacket) {
 
 	const packetType = payload.oneofKind;
 	const handler = handlers[packetType as RequestPacketType];
+
+	// Feature Flag 상태 로깅
+	if (packetType === 'registerRequest' || packetType === 'loginRequest') {
+		console.log(`[PacketDispatcher] Auth handler mode: ${USE_NEW_AUTH_HANDLERS ? 'NEW' : 'LEGACY'}`);
+	}
 
 	if (handler) {
 		// The handler function is called with the socket and the specific payload

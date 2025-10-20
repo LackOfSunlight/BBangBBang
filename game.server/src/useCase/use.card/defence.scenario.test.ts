@@ -114,7 +114,7 @@ describe('쉴드 카드 및 방어 시나리오 (최종 수정)', () => {
 	});
 
 	it('시나리오 2: 상어의 뱅 공격을 필요한 쉴드 개수(2장)만큼 소모하여 방어한다.', () => {
-		process.env.SharkRequiredShield = '2';
+		process.env.SHARK_REQUIRED_SHELD = '2';
 		const shieldCard = new ShieldCard();
 		attacker.character!.characterType = CharType.SHARK;
 		const requiredShields = shieldCard.requiredShieldCount(attacker);
@@ -133,7 +133,7 @@ describe('쉴드 카드 및 방어 시나리오 (최종 수정)', () => {
 	});
 
 	it('시나리오 3: 레이저 포인터 뱅 공격을 필요한 쉴드 개수(2장)만큼 소모하여 방어한다.', () => {
-		process.env.LaserRequiredShield = '2';
+		process.env.LASER_REQUIRED_SHELD = '2';
 		const shieldCard = new ShieldCard();
 		attacker.character!.equips.push(CardType.LASER_POINTER);
 		const requiredShields = shieldCard.requiredShieldCount(attacker);
@@ -182,7 +182,7 @@ describe('쉴드 카드 및 방어 시나리오 (최종 수정)', () => {
 	});
 
 	it('시나리오 6: 상어+레이저포인터 공격을 필요한 쉴드 개수(4장)만큼 소모하여 방어한다.', () => {
-		process.env.SynergyRequiredShield = '4';
+		process.env.SYNERGY_REQUIRED_SHELD = '4';
 		const shieldCard = new ShieldCard();
 		attacker.character!.characterType = CharType.SHARK;
 		attacker.character!.equips.push(CardType.LASER_POINTER);

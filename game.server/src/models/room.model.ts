@@ -39,12 +39,13 @@ export class Room {
 	}
 
 	// 유저를 방에 추가
-	public addUserToRoom(user: User) {
+	public addUserToRoom(user: User): boolean {
 		if (this.users.length >= this.maxUserNum) {
-			return;
+			return false;
 		}
 
 		this.users.push(user);
+		return true;
 	}
 
 	// 유저를 방에서 제거
@@ -203,6 +204,10 @@ export class Room {
 		user.character.removeHandCard(cardType);
 
 		this.repeatDeck([cardType]);
+	}
+
+	public canStartGame(): boolean {
+		return this.users.length >= 2 && this.state === 0;
 	}
 
 	public toData(): RoomData {

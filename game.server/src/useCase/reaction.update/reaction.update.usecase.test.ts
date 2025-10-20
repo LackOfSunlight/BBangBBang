@@ -10,6 +10,7 @@ import takeDamageService from '../../services/take.damage.service';
 import { CheckBigBbangService } from '../../services/bigbbang.check.service';
 import { CheckGuerrillaService } from '../../services/guerrilla.check.service';
 import { useCardUseCase } from '../use.card/use.card.usecase';
+import { BBangCard } from '../../card/class/card.bbang';
 
 // Mock 설정
 jest.mock('../../managers/room.manager');
@@ -55,8 +56,17 @@ describe('reactionUpdateUseCase', () => {
 			attackerId: 'playerA',
 			victimId: 'playerB',
 			attackType: 'BBANG',
-			victimState: CharacterStateType.BBANG_TARGET
+			victimState: CharacterStateType.NONE_CHARACTER_STATE // 빵 카드 사용을 위해 NONE 상태로 설정
 		});
+
+		// 빵 카드를 실제로 사용해서 bbangCount 증가
+		const bbangCard = new BBangCard();
+		const useResult = bbangCard.useCard(room, attacker, victim);
+		expect(useResult).toBe(true); // 빵 카드 사용 성공 확인
+
+		// 빵 카드 사용 후 상태 확인
+		expect(attacker.character!.bbangCount).toBe(1);
+		expect(victim.character!.stateInfo!.state).toBe(CharacterStateType.BBANG_TARGET);
 
 		// When: 플레이어B가 반응 버튼 클릭
 		const result = await reactionUpdateUseCase(socket, ReactionType.NONE_REACTION);
@@ -333,7 +343,12 @@ describe('reactionUpdateUseCase', () => {
 			maxUserNum: 4,
 			state: 0, // WAIT
 			users,
-			toData: jest.fn().mockReturnValue({ users })
+			toData: jest.fn().mockReturnValue({ users }),
+			// BBangCard.useCard에서 필요한 메서드들 추가
+			removeCard: jest.fn().mockReturnValue(true),
+			drawCards: jest.fn().mockReturnValue([]),
+			getDeckSize: jest.fn().mockReturnValue(10),
+			canStartGame: jest.fn().mockReturnValue(true)
 		} as any;
 	}
 
