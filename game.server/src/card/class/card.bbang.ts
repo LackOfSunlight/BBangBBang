@@ -75,6 +75,8 @@ export class BBangCard implements ICard {
 				target.id,
 			);
 
+			user.character.bbangCount += 1;
+
 			target.character.changeState(
 				CharacterStateType.BBANG_TARGET,
 				CharacterStateType.NONE_CHARACTER_STATE,

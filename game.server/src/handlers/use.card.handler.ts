@@ -49,10 +49,6 @@ const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 	/// 2. 유즈케이스 호출
 	const res = useCardUseCase(userId, roomId, cardType, targetUserId);
 
-	/// 3. 유즈케이스 결과에 따라 응답/알림 전송
-	const useCardResponsePacket = useCardResponsePacketForm(res.success, res.failcode);
-	sendData(socket, useCardResponsePacket, GamePacketType.useCardResponse);
-
 	if (res.success) {
 		const userUpdateNotificationPacket = userUpdateNotificationPacketForm(room.users);
 		broadcastDataToRoom(
@@ -61,6 +57,10 @@ const useCardHandler = async (socket: GameSocket, gamePacket: GamePacket) => {
 			GamePacketType.userUpdateNotification,
 		);
 	}
+
+	/// 3. 유즈케이스 결과에 따라 응답/알림 전송
+	const useCardResponsePacket = useCardResponsePacketForm(res.success, res.failcode);
+	sendData(socket, useCardResponsePacket, GamePacketType.useCardResponse);
 };
 
 export default useCardHandler;

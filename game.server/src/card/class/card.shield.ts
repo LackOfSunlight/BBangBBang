@@ -31,7 +31,6 @@ export class ShieldCard implements ICard {
 				user.character.changeState();
 				if (target.character.stateInfo) {
 					target.character.changeState();
-					target.character.bbangCount += 1;
 				}
 			}
 		} else {
