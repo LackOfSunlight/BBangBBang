@@ -37,7 +37,7 @@ const joinRoomUseCase = async (
 		}
 
 		// 4. 유저를 방에 추가 (엔티티 메서드)
-		const user = new User(socket.userId!, userInfo.nickname);
+		const user = User.createUser(socket.userId!, userInfo.nickname);
 		const ok = room.addUserToRoom(user);
 		if (!ok) return joinRoomResponseForm(false, GlobalFailCode.JOIN_ROOM_FAILED);
 		socket.roomId = req.roomId;

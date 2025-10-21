@@ -5,7 +5,7 @@ import { User } from '@game/models/user.model';
 import { ICard } from '@common/types/card';
 
 export class GuerrillaCard implements ICard {
-	type: CardType = CardType.BIG_BBANG;
+	type: CardType = CardType.GUERRILLA;
 	cardCategory: CardCategory = CardCategory.nonTargetCard;
 
 	public useCard(room: Room, shooter: User): boolean {

@@ -3,7 +3,7 @@ import { Room } from '@game/models/room.model';
 import { User } from '@game/models/user.model';
 import { useCardUseCase } from './use.card.usecase';
 import roomManger from '@game/managers/room.manager';
-import { SatelliteTargetCard } from '@game/cards/card.satellite.target';
+import { Card } from '@game/models/card.model';
 
 jest.mock('../../managers/room.manager');
 
@@ -105,8 +105,8 @@ describe('위성 타겟 카드 인게임 시나리오', () => {
         const originalRandom = Math.random;
         Math.random = () => 1; // 항상 실패
 
-        const card = new SatelliteTargetCard();
-        await card.checkSatelliteTargetEffect(room);
+        const card = Card.createCard(CardType.SATELLITE_TARGET);
+        await (card as any).checkSatelliteTargetEffect(room);
 
         // target에서 제거되고 another에게 추가되었는지
         expect(target.character!.debuffs).not.toContain(CardType.SATELLITE_TARGET);
@@ -127,8 +127,8 @@ describe('위성 타겟 카드 인게임 시나리오', () => {
 
         // 타이머 대기 시간을 빠르게 넘기기 위해 setTimeout을 즉시 실행으로 모킹하는 대신, 실제 코드 2초 대기
         // 테스트 시간을 고려해 여기서는 실제 대기를 유지하되, 필요시 jest.useFakeTimers()로 개선 가능
-        const card = new SatelliteTargetCard();
-        await card.checkSatelliteTargetEffect(room);
+        const card = Card.createCard(CardType.SATELLITE_TARGET);
+        await (card as any).checkSatelliteTargetEffect(room);
 
         expect(target.character!.hp).toBeLessThan(initialHp);
         expect(target.character!.debuffs).not.toContain(CardType.SATELLITE_TARGET);
@@ -147,8 +147,8 @@ describe('위성 타겟 카드 인게임 시나리오', () => {
 		const originalRandom = Math.random;
 		Math.random = () => 1; // 항상 실패(미발동)
 
-		const card = new SatelliteTargetCard();
-		await card.checkSatelliteTargetEffect(room);
+		const card = Card.createCard(CardType.SATELLITE_TARGET);
+		await (card as any).checkSatelliteTargetEffect(room);
 
 		// target에서 제거되었고, 사망한 another는 건너뛰고 caster에게 전달되었는지 확인
 		expect(target.character!.debuffs).not.toContain(CardType.SATELLITE_TARGET);

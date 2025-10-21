@@ -1,4 +1,4 @@
-import { BombCard } from '@game/cards/card.bomb';
+import { Card } from '@game/models/card.model';
 import { CardType, GlobalFailCode } from '@core/generated/common/enums';
 import { setBombTimer } from '@game/services/set.bomb.timer.service';
 import roomManager from '@game/managers/room.manager';
@@ -46,14 +46,14 @@ describe('Bomb Test', () => {
   let room: any;
   let user: any;
   let target: any;
-  let bombCard: BombCard;
+  let bombCard: any;
 
   beforeEach(() => {
     user = createFakeUser('1', 'Red');
     target = createFakeUser('2', 'Malang');
 
     room = createFakeRoom(1, [user, target]);
-    bombCard = new BombCard();
+    bombCard = Card.createCard(CardType.BOMB);
 
     (roomManager.getRoom as jest.Mock).mockReturnValue(room);
     (setBombTimer.clearTimer as jest.Mock).mockReturnValue(Date.now() + 5000);

@@ -220,4 +220,66 @@ export class Room {
 			users: this.users.map((u) => u.toData()),
 		};
 	}
+
+	// ===== 정적 팩토리 메서드들 =====
+
+	/**
+	 * 일반 방 생성
+	 * @param ownerId 방 소유자 ID
+	 * @param name 방 이름
+	 * @param maxUserNum 최대 사용자 수
+	 * @returns 생성된 Room 인스턴스
+	 */
+	public static createRoom(ownerId: string, name: string, maxUserNum: number): Room {
+		return new Room(
+			Room.generateRoomId(),
+			ownerId,
+			name,
+			maxUserNum,
+			RoomStateType.WAIT,
+			[]
+		);
+	}
+
+	/**
+	 * 소유자 포함 방 생성
+	 * @param owner 방 소유자 User 객체
+	 * @param name 방 이름
+	 * @param maxUserNum 최대 사용자 수
+	 * @returns 생성된 Room 인스턴스
+	 */
+	public static createRoomWithOwner(owner: User, name: string, maxUserNum: number): Room {
+		return new Room(
+			Room.generateRoomId(),
+			owner.id,
+			name,
+			maxUserNum,
+			RoomStateType.WAIT,
+			[owner]
+		);
+	}
+
+	/**
+	 * DB 데이터로부터 방 생성
+	 * @param dbData DB에서 가져온 방 데이터
+	 * @returns 생성된 Room 인스턴스
+	 */
+	public static createRoomFromDB(dbData: any): Room {
+		return new Room(
+			dbData.id,
+			dbData.ownerId,
+			dbData.name,
+			dbData.maxUserNum,
+			dbData.state || RoomStateType.WAIT,
+			[]
+		);
+	}
+
+	/**
+	 * 고유한 방 ID 생성
+	 * @returns 생성된 방 ID
+	 */
+	private static generateRoomId(): number {
+		return Date.now() + Math.floor(Math.random() * 1000);
+	}
 }

@@ -1,5 +1,4 @@
-import { MaturedSavingsCard } from '@game/cards/card.matured.savings';
-import { WinLotteryCard } from '@game/cards/card.win.lottery';
+import { Card } from '@game/models/card.model';
 import { CardType } from '@core/generated/common/enums';
 import { Room } from '@game/models/room.model';
 import { User } from '@game/models/user.model';
@@ -30,7 +29,7 @@ describe('MaturedSavingsCard', () => {
     mockRoom.getDeckSize.mockReturnValue(5);
     mockRoom.drawDeck.mockReturnValue([CardType.BBANG, CardType.SHIELD]);
 
-    const card = new MaturedSavingsCard();
+    const card = Card.createCard(CardType.MATURED_SAVINGS);
     const result = card.useCard(mockRoom, mockUser);
 
     expect(result).toBe(true);
@@ -41,7 +40,7 @@ describe('MaturedSavingsCard', () => {
 
   it('시나리오 2 : 덱에 뽑을 카드 보다 남은 카드가 적을 경우 실패 처리', () => {
     mockRoom.getDeckSize.mockReturnValue(1);
-    const card = new MaturedSavingsCard();
+    const card = Card.createCard(CardType.MATURED_SAVINGS);
     expect(card.useCard(mockRoom, mockUser)).toBe(false);
   });
 
@@ -52,7 +51,7 @@ describe('MaturedSavingsCard', () => {
     // 이미 같은 카드 보유
     mockUser.character!.handCards = [{ type: CardType.BIG_BBANG, count: 1 }];
 
-    const card = new MaturedSavingsCard();
+    const card = Card.createCard(CardType.MATURED_SAVINGS);
     const result = card.useCard(mockRoom, mockUser);
     
     expect(result).toBe(true);
@@ -88,7 +87,7 @@ describe('WinLotteryCard', () => {
 
   it('시나리오 1 : 복권 당첨 로직이 정상적으로 처리되는 지', () => {
     mockRoom.drawDeck.mockReturnValue([CardType.BBANG, CardType.BIG_BBANG, CardType.MATURED_SAVINGS]);
-    const card = new WinLotteryCard();
+    const card = Card.createCard(CardType.WIN_LOTTERY);
 
     const result = card.useCard(mockRoom, mockUser);
 
@@ -103,13 +102,13 @@ describe('WinLotteryCard', () => {
 
   it('시나리오 2 : 덱에 뽑을 카드 보다 남은 카드가 적을 경우 실패 처리', () => {
     mockRoom.drawDeck.mockReturnValue([]);
-    const card = new WinLotteryCard();
+    const card = Card.createCard(CardType.WIN_LOTTERY);
     expect(card.useCard(mockRoom, mockUser)).toBe(false);
   });
 
   it('시나리오 3 : 소지한 카드와 같은 카드를 뽑았을 경우 중복되는 카드는 카운트 증가 처리', () => {
     mockRoom.drawDeck.mockReturnValue([CardType.BIG_BBANG, CardType.BIG_BBANG, CardType.MATURED_SAVINGS]);
-    const card = new WinLotteryCard();
+    const card = Card.createCard(CardType.WIN_LOTTERY);
 
     const result = card.useCard(mockRoom, mockUser);
 

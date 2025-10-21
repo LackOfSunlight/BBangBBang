@@ -24,16 +24,15 @@ const createRoomUseCase = async (
 		if (!roomDB || !userInfo)
 			return createRoomResponseForm(false, GlobalFailCode.CREATE_ROOM_FAILED);
 
-		const user: User = new User(socket.userId, userInfo.nickname);
+		const user: User = User.createUser(socket.userId, userInfo.nickname);
 
-		const room: Room = new Room(
-			roomDB.id,
-			socket.userId,
-			req.name,
-			req.maxUserNum,
-			RoomStateType.WAIT,
-			[],
-		);
+		const room: Room = Room.createRoomFromDB({
+			id: roomDB.id,
+			ownerId: socket.userId,
+			name: req.name,
+			maxUserNum: req.maxUserNum,
+			state: RoomStateType.WAIT
+		});
 		room.addUserToRoom(user);
 
 		socket.roomId = room.id;

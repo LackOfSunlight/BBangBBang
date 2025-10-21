@@ -1,54 +1,32 @@
 import { CardType } from '@core/generated/common/enums';
 import { ICard } from '@common/types/card';
-import { AbsorbCard } from '@game/cards/card.absorb';
-import { AutoRifleCard } from '@game/cards/card.auto.rifle';
-import { AutoShieldCard } from '@game/cards/card.auto.shield';
-import { BBangCard } from '@game/cards/card.bbang';
-import { BigBBangCard } from '@game/cards/card.bibbang';
-import { BombCard } from '@game/cards/card.bomb';
-import { Call119Card } from '@game/cards/card.call.119';
-import { ContainmentUnitCard } from '@game/cards/card.containment.unit';
-import { DeathMatchCard } from '@game/cards/card.death.match';
-import { DesertEagleCard } from '@game/cards/card.desert.eagle';
-import { FleaMarketCard } from '@game/cards/card.flea.market';
-import { GuerrillaCard } from '@game/cards/card.guerrilla';
-import { HallucinationCard } from '@game/cards/card.hallucinaion';
-import { HandGunCard } from '@game/cards/card.hand.gun';
-import { LaserPointerCard } from '@game/cards/card.laser.pointer';
-import { MaturedSavingsCard } from '@game/cards/card.matured.savings';
-import { RadarCard } from '@game/cards/card.radar';
-import { SatelliteTargetCard } from '@game/cards/card.satellite.target';
-import { ShieldCard } from '@game/cards/card.shield';
-import { SniperGunCard } from '@game/cards/card.sniper.gun';
-import { StealthSuitCard } from '@game/cards/card.stealth,suit';
-import { VaccineCard } from '@game/cards/card.vaccine';
-import { WinLotteryCard } from '@game/cards/card.win.lottery';
+import { Card } from '@game/models/card.model';
 
 const cardMap: Record<CardType, ICard | null> = {
 	[CardType.NONE]: null,
-	[CardType.BBANG]: new BBangCard(),
-	[CardType.BIG_BBANG]: new BigBBangCard(),
-	[CardType.SHIELD]: new ShieldCard(),
-	[CardType.VACCINE]: new VaccineCard(),
-	[CardType.CALL_119]: new Call119Card(),
-	[CardType.DEATH_MATCH]: new DeathMatchCard(),
-	[CardType.GUERRILLA]: new GuerrillaCard(),
-	[CardType.ABSORB]: new AbsorbCard(),
-	[CardType.HALLUCINATION]: new HallucinationCard(),
-	[CardType.FLEA_MARKET]: new FleaMarketCard(),
-	[CardType.MATURED_SAVINGS]: new MaturedSavingsCard(),
-	[CardType.WIN_LOTTERY]: new WinLotteryCard(),
-	[CardType.SNIPER_GUN]: new SniperGunCard(),
-	[CardType.HAND_GUN]: new HandGunCard(),
-	[CardType.DESERT_EAGLE]: new DesertEagleCard(),
-	[CardType.AUTO_RIFLE]: new AutoRifleCard(),
-	[CardType.LASER_POINTER]: new LaserPointerCard(),
-	[CardType.RADAR]: new RadarCard(),
-	[CardType.AUTO_SHIELD]: new AutoShieldCard(),
-	[CardType.STEALTH_SUIT]: new StealthSuitCard(),
-	[CardType.CONTAINMENT_UNIT]: new ContainmentUnitCard(),
-	[CardType.SATELLITE_TARGET]: new SatelliteTargetCard(),
-	[CardType.BOMB]: new BombCard(),
+	[CardType.BBANG]: Card.createCard(CardType.BBANG),
+	[CardType.BIG_BBANG]: Card.createCard(CardType.BIG_BBANG),
+	[CardType.SHIELD]: Card.createCard(CardType.SHIELD),
+	[CardType.VACCINE]: Card.createCard(CardType.VACCINE),
+	[CardType.CALL_119]: Card.createCard(CardType.CALL_119),
+	[CardType.DEATH_MATCH]: Card.createCard(CardType.DEATH_MATCH),
+	[CardType.GUERRILLA]: Card.createCard(CardType.GUERRILLA),
+	[CardType.ABSORB]: Card.createCard(CardType.ABSORB),
+	[CardType.HALLUCINATION]: Card.createCard(CardType.HALLUCINATION),
+	[CardType.FLEA_MARKET]: Card.createCard(CardType.FLEA_MARKET),
+	[CardType.MATURED_SAVINGS]: Card.createCard(CardType.MATURED_SAVINGS),
+	[CardType.WIN_LOTTERY]: Card.createCard(CardType.WIN_LOTTERY),
+	[CardType.SNIPER_GUN]: Card.createCard(CardType.SNIPER_GUN),
+	[CardType.HAND_GUN]: Card.createCard(CardType.HAND_GUN),
+	[CardType.DESERT_EAGLE]: Card.createCard(CardType.DESERT_EAGLE),
+	[CardType.AUTO_RIFLE]: Card.createCard(CardType.AUTO_RIFLE),
+	[CardType.LASER_POINTER]: Card.createCard(CardType.LASER_POINTER),
+	[CardType.RADAR]: Card.createCard(CardType.RADAR),
+	[CardType.AUTO_SHIELD]: Card.createCard(CardType.AUTO_SHIELD),
+	[CardType.STEALTH_SUIT]: Card.createCard(CardType.STEALTH_SUIT),
+	[CardType.CONTAINMENT_UNIT]: Card.createCard(CardType.CONTAINMENT_UNIT),
+	[CardType.SATELLITE_TARGET]: Card.createCard(CardType.SATELLITE_TARGET),
+	[CardType.BOMB]: Card.createCard(CardType.BOMB),
 };
 
 export default cardMap;

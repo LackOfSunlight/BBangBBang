@@ -1,7 +1,8 @@
 import { CardType } from '@core/generated/common/enums';
 import { Room } from '@game/models/room.model';
 import { User } from '@game/models/user.model';
-import { Card } from '../Card';
+import { Card } from '@game/models/card.model';
+import { CardCategory } from '@game/enums/card.category';
 
 /**
  * WeaponCard 추상 클래스
@@ -12,8 +13,8 @@ export abstract class WeaponCard extends Card {
 	protected range?: number;
 	protected specialEffects?: string[];
 
-	constructor(cardType: CardType, damage: number, range?: number, specialEffects?: string[]) {
-		super(cardType);
+	constructor(cardType: CardType, cardCategory: CardCategory, damage: number, range?: number, specialEffects?: string[]) {
+		super(cardType, cardCategory);
 		this.damage = damage;
 		this.range = range;
 		this.specialEffects = specialEffects;
@@ -23,9 +24,9 @@ export abstract class WeaponCard extends Card {
 	 * 무기 카드 사용 메서드
 	 * 기본적으로 데미지를 주는 로직을 포함합니다.
 	 */
-	public useCard(user: User, room: Room, target?: User): boolean {
+	public useCard(room: Room, user: User, target?: User): boolean {
 		if (!target) {
-			console.log(`[${this.cardType}] 대상이 지정되지 않았습니다.`);
+			console.log(`[${this.type}] 대상이 지정되지 않았습니다.`);
 			return false;
 		}
 
@@ -72,7 +73,7 @@ export abstract class WeaponCard extends Card {
 
 		// 같은 플레이어를 공격할 수 없음
 		if (user.id === target.id) {
-			console.log(`[${this.cardType}] 자기 자신을 공격할 수 없습니다.`);
+			console.log(`[${this.type}] 자기 자신을 공격할 수 없습니다.`);
 			return false;
 		}
 

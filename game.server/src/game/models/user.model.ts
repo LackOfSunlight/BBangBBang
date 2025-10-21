@@ -42,4 +42,33 @@ export class User {
 			character: this.character?.toData(),
 		};
 	}
+
+	// ===== 정적 팩토리 메서드들 =====
+
+	/**
+	 * 기본 사용자 생성
+	 * @param id 사용자 ID
+	 * @param nickname 사용자 닉네임
+	 * @returns 생성된 User 인스턴스
+	 */
+	public static createUser(id: string, nickname: string): User {
+		return new User(id, nickname);
+	}
+
+	/**
+	 * 캐릭터 포함 사용자 생성
+	 * @param id 사용자 ID
+	 * @param nickname 사용자 닉네임
+	 * @param characterData 캐릭터 데이터
+	 * @returns 생성된 User 인스턴스
+	 */
+	public static createUserWithCharacter(
+		id: string, 
+		nickname: string, 
+		characterData: CharacterData
+	): User {
+		const user = new User(id, nickname);
+		user.setCharacter(characterData);
+		return user;
+	}
 }

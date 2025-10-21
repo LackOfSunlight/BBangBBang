@@ -14,7 +14,7 @@ import roomManger from '@game/managers/room.manager';
 import { GameSocket } from '@common/types/game.socket';
 import { CharacterData } from '@core/generated/common/types';
 import { cardPool } from '@core/network/dispatcher/apply.card.dispacher';
-import { ShieldCard } from '@game/cards/card.shield';
+import { Card } from '@game/models/card.model';
 
 // Mock managers and services
 jest.mock('../../managers/room.manager');
@@ -98,8 +98,8 @@ describe('쉴드 카드 및 방어 시나리오 (최종 수정)', () => {
 	});
 
 	it('시나리오 1: 기본 뱅 공격을 쉴드 1장으로 방어한다.', () => {
-		const shieldCard = new ShieldCard();
-		const requiredShields = shieldCard.requiredShieldCount(attacker);
+		const shieldCard = Card.createCard(CardType.SHIELD);
+		const requiredShields = (shieldCard as any).requiredShieldCount(attacker);
 		target.character!.handCards.push({ type: CardType.SHIELD, count: requiredShields });
 		expect(requiredShields).toBe(1);
 
@@ -115,9 +115,9 @@ describe('쉴드 카드 및 방어 시나리오 (최종 수정)', () => {
 
 	it('시나리오 2: 상어의 뱅 공격을 필요한 쉴드 개수(2장)만큼 소모하여 방어한다.', () => {
 		process.env.SHARK_REQUIRED_SHELD = '2';
-		const shieldCard = new ShieldCard();
+		const shieldCard = Card.createCard(CardType.SHIELD);
 		attacker.character!.characterType = CharType.SHARK;
-		const requiredShields = shieldCard.requiredShieldCount(attacker);
+		const requiredShields = (shieldCard as any).requiredShieldCount(attacker);
 		target.character!.handCards.push({ type: CardType.SHIELD, count: requiredShields });
 		expect(requiredShields).toBe(2);
 
@@ -134,9 +134,9 @@ describe('쉴드 카드 및 방어 시나리오 (최종 수정)', () => {
 
 	it('시나리오 3: 레이저 포인터 뱅 공격을 필요한 쉴드 개수(2장)만큼 소모하여 방어한다.', () => {
 		process.env.LASER_REQUIRED_SHELD = '2';
-		const shieldCard = new ShieldCard();
+		const shieldCard = Card.createCard(CardType.SHIELD);
 		attacker.character!.equips.push(CardType.LASER_POINTER);
-		const requiredShields = shieldCard.requiredShieldCount(attacker);
+		const requiredShields = (shieldCard as any).requiredShieldCount(attacker);
 		target.character!.handCards.push({ type: CardType.SHIELD, count: requiredShields });
 		expect(requiredShields).toBe(2);
 
@@ -152,8 +152,8 @@ describe('쉴드 카드 및 방어 시나리오 (최종 수정)', () => {
 	});
 
 	it('시나리오 4: 무차별 난사 공격을 쉴드 1장으로 방어한다.', () => {
-		const shieldCard = new ShieldCard();
-		const requiredShields = shieldCard.requiredShieldCount(attacker);
+		const shieldCard = Card.createCard(CardType.SHIELD);
+		const requiredShields = (shieldCard as any).requiredShieldCount(attacker);
 		target.character!.handCards.push({ type: CardType.SHIELD, count: requiredShields });
 		expect(requiredShields).toBe(1);
 		const initialHp = target.character!.hp;
@@ -183,10 +183,10 @@ describe('쉴드 카드 및 방어 시나리오 (최종 수정)', () => {
 
 	it('시나리오 6: 상어+레이저포인터 공격을 필요한 쉴드 개수(4장)만큼 소모하여 방어한다.', () => {
 		process.env.SYNERGY_REQUIRED_SHELD = '4';
-		const shieldCard = new ShieldCard();
+		const shieldCard = Card.createCard(CardType.SHIELD);
 		attacker.character!.characterType = CharType.SHARK;
 		attacker.character!.equips.push(CardType.LASER_POINTER);
-		const requiredShields = shieldCard.requiredShieldCount(attacker);
+		const requiredShields = (shieldCard as any).requiredShieldCount(attacker);
 		target.character!.handCards.push({ type: CardType.SHIELD, count: requiredShields });
 		expect(requiredShields).toBe(4);
 		const initialHp = target.character!.hp;

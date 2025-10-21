@@ -1,4 +1,4 @@
-import { ContainmentUnitCard } from '@game/cards/card.containment.unit';
+import { Card } from '@game/models/card.model';
 import { CardType, CharacterStateType } from '@core/generated/common/enums';
 import { CardCategory } from '@game/enums/card.category';
 import roomManager from '@game/managers/room.manager';
@@ -8,13 +8,13 @@ import { User } from '@game/models/user.model';
 jest.mock('../../managers/room.manager');
 
 describe('ContainmentUnitCard', () => {
-  let card: ContainmentUnitCard;
+  let card: any;
   let room: Room;
   let user: User;
   let target: User;
 
   beforeEach(() => {
-    card = new ContainmentUnitCard();
+    card = Card.createCard(CardType.CONTAINMENT_UNIT);
 
     user = {
       nickname: 'user',

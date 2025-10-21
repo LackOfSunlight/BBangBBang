@@ -5,7 +5,7 @@ import { User } from '@game/models/user.model';
 import { ICard } from '@common/types/card';
 
 export class HallucinationCard implements ICard {
-	type: CardType = CardType.BBANG;
+	type: CardType = CardType.HALLUCINATION;
 	cardCategory: CardCategory = CardCategory.targetCard;
 
 	public useCard(room: Room, user: User, target: User): boolean {

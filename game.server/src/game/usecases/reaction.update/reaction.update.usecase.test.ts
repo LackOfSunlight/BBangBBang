@@ -10,7 +10,7 @@ import takeDamageService from '@game/services/take.damage.service';
 import { CheckBigBbangService } from '@game/services/bigbbang.check.service';
 import { CheckGuerrillaService } from '@game/services/guerrilla.check.service';
 import { useCardUseCase } from '../use.card/use.card.usecase';
-import { BBangCard } from '@game/cards/card.bbang';
+import { Card } from '@game/models/card.model';
 
 // Mock 설정
 jest.mock('../../managers/room.manager');
@@ -60,7 +60,7 @@ describe('reactionUpdateUseCase', () => {
 		});
 
 		// 빵 카드를 실제로 사용해서 bbangCount 증가
-		const bbangCard = new BBangCard();
+		const bbangCard = Card.createCard(CardType.BBANG);
 		const useResult = bbangCard.useCard(room, attacker, victim);
 		expect(useResult).toBe(true); // 빵 카드 사용 성공 확인
 

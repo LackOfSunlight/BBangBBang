@@ -2,6 +2,7 @@ import { CardType } from '@core/generated/common/enums';
 import { Room } from '@game/models/room.model';
 import { User } from '@game/models/user.model';
 import { WeaponCard } from './WeaponCard';
+import { CardCategory } from '@game/enums/card.category';
 
 /**
  * HandGun 카드 클래스
@@ -9,23 +10,23 @@ import { WeaponCard } from './WeaponCard';
  */
 export class HandGunCard extends WeaponCard {
 	constructor() {
-		super(CardType.HAND_GUN, 1); // 데미지 1
+		super(CardType.HAND_GUN, CardCategory.targetCard, 1); // 데미지 1
 	}
 
 	/**
 	 * HandGun 카드 사용
 	 * 기존 로직을 새로운 구조로 포팅
 	 */
-	public useCard(user: User, room: Room, target?: User): boolean {
+	public useCard(room: Room, user: User, target?: User): boolean {
 		// 유효성 검증
 		if (!user.character) {
-			console.log(`[${this.cardType}] 사용자 캐릭터가 없습니다.`);
+			console.log(`[${this.type}] 사용자 캐릭터가 없습니다.`);
 			return false;
 		}
 
 		// 이미 같은 무기를 장착하고 있는지 확인
 		if (user.character.weapon === CardType.HAND_GUN) {
-			console.log(`[${this.cardType}] 이미 권총을 장착하고 있습니다.`);
+			console.log(`[${this.type}] 이미 권총을 장착하고 있습니다.`);
 			return false;
 		}
 
@@ -38,7 +39,7 @@ export class HandGunCard extends WeaponCard {
 		user.character.weapon = CardType.HAND_GUN;
 		user.character.removeHandCard(CardType.HAND_GUN);
 
-		console.log(`[${this.cardType}] ${user.nickname}이(가) 권총을 장착했습니다.`);
+		console.log(`[${this.type}] ${user.nickname}이(가) 권총을 장착했습니다.`);
 		return true;
 	}
 
