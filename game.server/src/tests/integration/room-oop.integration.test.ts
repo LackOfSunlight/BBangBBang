@@ -1,10 +1,10 @@
-import { CharacterType, RoleType, CardType } from '../../generated/common/enums';
-import { CharacterStateInfoData } from '../../generated/common/types';
-import { User } from '../../models/user.model';
-import { Room } from '../../domains/game/rooms/Room';
-import { RoomService } from '../../domains/game/rooms/services/RoomService';
-import { MemoryRoomRepository } from '../../domains/game/rooms/repositories/MemoryRoomRepository';
-import { RoomFactory } from '../../domains/game/rooms/RoomFactory';
+import { CharacterType, RoleType, CardType } from '@core/generated/common/enums';
+import { CharacterStateInfoData } from '@core/generated/common/types';
+import { User } from '@game/models/user.model';
+import { Room } from '@game/models/room.model';
+// import { RoomService } from '@game/services/room.service';
+// import { MemoryRoomRepository } from '@game/repositories/memory.room.repository';
+// import { RoomFactory } from '@game/factories/room.factory';
 
 describe('Room OOP Integration Tests', () => {
 	let roomService: RoomService;

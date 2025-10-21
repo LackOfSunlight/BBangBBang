@@ -16,7 +16,23 @@
 		"moduleDetection": "force",
 		"skipLibCheck": true,
 		"resolveJsonModule": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"baseUrl": "./game.server/src",
+		"paths": {
+			"@auth/*": ["auth/*"],
+			"@game/*": ["game/*"],
+			"@core/*": ["core/*"],
+			"@common/*": ["common/*"],
+			"@data/*": ["data/*"],
+			"@game/init/*": ["init/*"],
+			"@game/config/*": ["game/config/*"]
+		}
 	},
 	"include": ["game.server/src/**/*.ts"]
+	,
+	"exclude": [
+		"game.server/src/tests/**",
+		"game.server/src/**.test.ts",
+		"game.server/src/**/test/**"
+	]
 }

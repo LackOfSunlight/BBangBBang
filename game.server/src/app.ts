@@ -1,7 +1,7 @@
 // server.ts
 import { createServer } from 'net';
-import onConnection from './sockets/on.connection.js';
-import { cleanupAllTokens } from './services/token.cleanup.service.js';
+import onConnection from '@core/network/sockets/on.connection.js';
+import { cleanupAllTokens } from '@game/services/token.cleanup.service.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
