@@ -55,6 +55,7 @@ export const reactionUpdateUseCase = async (
 					}
 					if (shooter.character.stateInfo) {
 						shooter.character.changeState();
+						shooter.character.bbangCount += 1;
 					}
 
 					break;
