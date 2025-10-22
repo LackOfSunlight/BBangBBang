@@ -103,7 +103,7 @@ export const gamePrepareUseCase = (socket: GameSocket, req: C2SGamePrepareReques
 			const characterData: CharacterData = {
 				characterType: characterList[randomCharacterIndex].characterType,
 				roleType: role[randomRoleIndex],
-				hp: characterList[randomCharacterIndex].hp,
+				hp: 4,
 				stateInfo: {
 					state: CharacterStateType.NONE_CHARACTER_STATE,
 					nextState: CharacterStateType.NONE_CHARACTER_STATE,
