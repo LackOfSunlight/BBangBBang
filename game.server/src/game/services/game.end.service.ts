@@ -147,8 +147,6 @@ async function endGame(room: Room, gameResult: GameEndResult): Promise<void> {
 
 		gameManager.endGame(room);
 
-		gameManager.endGame(room);
-
 		console.log(`[GameEnd] 게임 종료 완료: ${room.id}번 방`);
 	} catch (error) {
 		console.error(`[GameEnd] 게임 종료 처리 중 오류 발생:`, error);
