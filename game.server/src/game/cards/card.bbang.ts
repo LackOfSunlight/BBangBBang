@@ -34,15 +34,6 @@ export class BBangCard implements ICard {
 			return false;
 		}
 
-		// bbangCount 제한 검증 (일반 빵야 사용 시)
-		if (target.character.stateInfo.state === CharacterStateType.NONE_CHARACTER_STATE) {
-			const maxBbangCount = getMaxBbangCount(user.character.characterType);
-			if (user.character.bbangCount >= maxBbangCount) {
-				console.error('[BBANG]이미 빵야를 최대 횟수만큼 사용했습니다.');
-				return false;
-			}
-		}
-
 		if (target.character.stateInfo.state !== CharacterStateType.NONE_CHARACTER_STATE) {
 			if (
 				user.character.stateInfo.state === CharacterStateType.DEATH_MATCH_TURN_STATE &&
