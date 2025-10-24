@@ -1,5 +1,11 @@
 import { threadCpuUsage } from 'process';
-import { AnimationType, CardType, CharacterStateType, CharacterType, RoleType } from '@core/generated/common/enums';
+import {
+	AnimationType,
+	CardType,
+	CharacterStateType,
+	CharacterType,
+	RoleType,
+} from '@core/generated/common/enums';
 import { CardData, CharacterData, CharacterStateInfoData } from '@core/generated/common/types';
 import getMaxHp from '@game/config/character.init';
 import { Room } from './room.model';
@@ -70,7 +76,7 @@ export class Character {
 	 */
 	public processDamage(context: DamageContext): DamageResult {
 		const { room, user, damage, shooter } = context;
-		
+
 		// 1. 방어 시도
 		const defenseResult = this.tryDefense(room, user);
 		if (defenseResult.defended) {
@@ -82,22 +88,22 @@ export class Character {
 
 		// 3. 캐릭터별 특수 능력 처리
 		const abilityResult = this.handleDamageAbility(room, user, shooter);
-		
+
 		// 4. 사망 처리
 		if (this.hp <= 0) {
 			this.handleDeath(room, user);
-			return { 
-				success: true, 
-				defended: false, 
-				maskManTriggered: abilityResult.maskManTriggered 
+			return {
+				success: true,
+				defended: false,
+				maskManTriggered: abilityResult.maskManTriggered,
 			};
 		}
 
-		return { 
-			success: true, 
-			defended: false, 
+		return {
+			success: true,
+			defended: false,
 			cardDrawn: abilityResult.cardDrawn,
-			cardStolen: abilityResult.cardStolen 
+			cardStolen: abilityResult.cardStolen,
 		};
 	}
 
@@ -192,7 +198,10 @@ export class Character {
 		}
 
 		// 공격자의 handCardsCount 업데이트
-		shooter.character.handCardsCount = shooter.character.handCards.reduce((sum, card) => sum + card.count, 0);
+		shooter.character.handCardsCount = shooter.character.handCards.reduce(
+			(sum, card) => sum + card.count,
+			0,
+		);
 
 		// 핑크슬라임에게 카드 추가 (addCardToUser 메서드 사용)
 		this.addCardToUser(stolenCardType);
@@ -227,6 +236,7 @@ export class Character {
 	}
 
 	public addHealth(value: number) {
+		if (this.hp <= 0) return;
 		this.hp = Math.min(this.hp + value, this.maxHp);
 	}
 

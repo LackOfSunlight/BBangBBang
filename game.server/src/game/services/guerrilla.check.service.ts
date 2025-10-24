@@ -1,6 +1,7 @@
 import { Room } from '@game/models/room.model';
 import { User } from '@game/models/user.model';
 import { CharacterStateType } from '@core/generated/common/enums';
+import { Debug } from 'generated/prisma/runtime/library';
 
 export const CheckGuerrillaService = (room: Room): Room => {
 	const users: User[] = room.users;
@@ -11,7 +12,7 @@ export const CheckGuerrillaService = (room: Room): Room => {
 		if (!u.character?.stateInfo) return false;
 		const { state, nextStateAt } = u.character.stateInfo;
 		if (Number(state) !== CharacterStateType.GUERRILLA_TARGET) return false;
-		// if (nextStateAt && Number(nextStateAt) > now) return true; // 아직 유효
+		if (nextStateAt && Number(nextStateAt) > now) return true; // 아직 유효
 		return false;
 	});
 

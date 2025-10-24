@@ -11,7 +11,7 @@ export const CheckBigBbangService = (room: Room): Room => {
 		if (!u.character?.stateInfo) return false;
 		const { state, nextStateAt } = u.character.stateInfo;
 		if (Number(state) !== CharacterStateType.BIG_BBANG_TARGET) return false;
-		// if (nextStateAt && Number(nextStateAt) > now) return true; // 아직 유효
+		if (nextStateAt && Number(nextStateAt) > now) return true; // 아직 유효
 		return false;
 	});
 

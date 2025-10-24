@@ -44,9 +44,9 @@ function evaluateGameEndConditions(room: Room): GameEndResult | null {
 	const aliveCount = aliveUsers.length;
 
 	// 1. 3명 이상이면 승리 불가능
-	if (aliveCount >= 3) {
-		return null;
-	}
+	// if (aliveCount >= 3) {
+	// 	return null;
+	// }
 
 	// 2. 역할별로 그룹화 (모든 인원에서 공통)
 	const usersByRole = new Map<RoleType, typeof aliveUsers>();

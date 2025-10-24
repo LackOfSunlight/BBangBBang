@@ -15,6 +15,7 @@ import {
 import roomManger from '@game/managers/room.manager';
 // RoomService 제거
 import characterSpawnPosition from '@data/character.spawn.position.json';
+import Card from '@game/models/card.model';
 
 export const gameStartUseCase = async (
 	socket: GameSocket,
